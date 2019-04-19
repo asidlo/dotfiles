@@ -1,0 +1,9 @@
+[submodule "vim/pack/asidlo/start/nerdtree"]
+	path = vim/pack/asidlo/start/nerdtree
+	url = https://github.com/scrooloose/nerdtree
+[submodule "vim/pack/asidlo/start/vim-fugitive"]
+	path = vim/pack/asidlo/start/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "vim/pack/asidlo/start/vim-gitgutter"]
+	path = vim/pack/asidlo/start/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter

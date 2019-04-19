@@ -1,0 +1,9 @@
+[user]
+    email = sidlo.andrew@gmail.com
+    name = asidlo
+[core]
+    editor = vim
+[diff]
+    tool = vimdiff
+[difftool]
+    prompt = 0
