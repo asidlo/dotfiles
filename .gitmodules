@@ -7,3 +7,9 @@
 [submodule "vim/pack/asidlo/start/vim-gitgutter"]
 	path = vim/pack/asidlo/start/vim-gitgutter
 	url = https://github.com/airblade/vim-gitgutter
+[submodule "vim/pack/asidlo/start/comfortable-motion"]
+	path = vim/pack/asidlo/start/comfortable-motion
+	url = https://github.com/yuttie/comfortable-motion.vim
+[submodule "vim/pack/asidlo/start/tabular"]
+	path = vim/pack/asidlo/start/tabular
+	url = https://github.com/godlygeek/tabular
