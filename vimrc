@@ -568,14 +568,16 @@ nmap <leader>g? :map <leader>g<cr>
 "==============================================================================
 " Tabularize
 "==============================================================================
-" NOTE: a = align
+" NOTE:
+"   - a = align
+"   - t = table
 if exists(":Tabularize")
   nmap <leader>a= :Tabularize /=<CR>
   vmap <leader>a= :Tabularize /=<CR>
   nmap <leader>a: :Tabularize /:\zs<CR>
   vmap <leader>a: :Tabularize /:\zs<CR>
-  nmap <leader>a\| :Tabularize /\|<CR>
-  vmap <leader>a\| :Tabularize /\|<CR>
+  nmap <leader>at :Tabularize /\|<CR>
+  vmap <leader>at :Tabularize /\|<CR>
   nmap <leader>a? :map <leader>a<cr>
 endif
 
