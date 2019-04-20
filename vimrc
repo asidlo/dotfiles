@@ -1,10 +1,12 @@
-"Author  : Andrew Sidlo
-"Updated : April 14, 2019
+"==============================================================================
+" Author:  Andrew Sidlo
+" Updated: April 14, 2019
+"==============================================================================
 
 " Set to auto read when a file is changed from the outside
 set autoread
 
-"Movement
+" Movement
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 
@@ -14,6 +16,19 @@ set whichwrap+=<,>,h,l
 
 " For regular expressions turn magic on
 set magic
+
+" Disable the netrw history file which is otherwise added to ~/.vim/.netrwhist
+let g:netrw_dirhistmax = 0
+
+" How to represent non-printable characters
+" In general, don't want tabs, so have them show up as special characters
+set listchars=tab:>-,trail:·,extends:>,precedes:<
+set list "turn the above on
+
+" Make merging lines smarter when using <shift-j>
+if v:version > 703 || v:version == 703 && has('patch541')
+  set formatoptions+=j
+endif
 
 " Section: Leader {{{
 "==============================================================================
@@ -29,6 +44,9 @@ let mapleader=","
 " Add line numbers
 set number
 
+"Linenumbers are relative to current line
+set relativenumber 
+
 " Disable line wrapping
 set nowrap
 
@@ -39,7 +57,7 @@ set colorcolumn=80,120
 set ruler
 
 "==============================================================================
-" Command Bar 
+" Command Bar
 "==============================================================================
 " Height of the command bar
 set cmdheight=1
@@ -150,6 +168,9 @@ inoremap jj <Esc>
 
 "}}}
 " Section: Buffers {{{
+"==============================================================================
+" Management 
+"==============================================================================
 " A buffer becomes hidden when it is abandoned
 set hid
 
@@ -159,10 +180,17 @@ map <leader>bd :bd<cr>
 "Close all the buffers
 map <leader>ba :bufdo bd<cr>
 
+"Closing buffers
+"<C-w>c -> closes current buffer
+
 "Open scratch buffer
 map <leader> bn :e ~/buffer<cr>
 map <leader> bm :e ~/buffer.md<cr>
 
+
+"==============================================================================
+" View
+"==============================================================================
 "https://stackoverflow.com/questions/1269603/to-switch-from-vertical-split-to-horizontal-split-fast-in-vim
 "Changed tv and th for **To Vertical** and **To Horizontal**
 "Horizontal buffer to vertical
@@ -183,10 +211,24 @@ endif
 nmap > :vertical res +1<Enter>
 nmap < :vertical res -1<Enter>
 
+"==============================================================================
+" Splits
+"==============================================================================
+"https://vim.fandom.com/wiki/Buffers
+"<C-w>s -> Horizontal split
+"<C-w>v -> Vertical split
+"
+"New splits below, not above
+set splitbelow 
 
+"New splits on the right, not left
+set splitright 
+
+"==============================================================================
+" Misc
+"==============================================================================
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
-
 
 " Specify the behavior when switching between buffers
 try
@@ -197,82 +239,87 @@ endtry
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-"Splitting buffers
-"https://vim.fandom.com/wiki/Buffers
-"<C-w>s -> Horizontal split
-"<C-w>v -> Vertical split
-
-"Closing buffers
-"<C-w>c -> closes current buffer
-
 "}}}
-"Folds {{{
+" Section: Folds {{{
 
-"https://vim.fandom.com/wiki/Make_views_automatic
-"Save folds in between buffer sessions
-"au BufWinLeave * mkview
-"au BufWinEnter * silent loadview
-"TODO - Figure out how to make this work when closing all buffers, and opening
+" https://vim.fandom.com/wiki/Make_views_automatic
+" Save folds in between buffer sessions
+" au BufWinLeave * mkview
+" au BufWinEnter * silent loadview
+" TODO - Figure out how to make this work when closing all buffers, and opening
 "	new one from no name buffer via confe
 
+"==============================================================================
+" Commands
+"==============================================================================
 "https://vim.fandom.com/wiki/Folding
-"Toggle fold
-"za
 
-"Open fold
-"zo
-
-"Close fold
-"zc
-
-"Open all folds
-"zR
-
-"Close all folds
-"zM
+" | Command | Description      |
+" | za      | Toggle fold      |
+" | zo      | Open fold        |
+" | zc      | Close fold       |
+" | zR      | Open all folds   |
+" | zM      | Close all folds  |
+" | zi      | Toggle all folds |
 
 "}}}
-"Refactoring {{{
+" Section: Refactoring {{{
 
+"==============================================================================
+" Shift Text Block
+"==============================================================================
 "Go back to visual mode after indenting
 vnoremap < <gv
 vnoremap > >gv
 
-
+"==============================================================================
+" Move Text Block
+"==============================================================================
 " Use alt+j/k to move line down/up
 " https://vim.fandom.com/wiki/Moving_lines_up_or_down
 " https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
 if has("mac") || has("macunix")
-  nmap <D-j> <M-j>
-  nmap <D-k> <M-k>
-  vmap <D-j> <M-j>
-  vmap <D-k> <M-k>
+  nmap ∆ mz:m+<cr>`z
+  nmap ˚ mz:m-2<cr>`z
+  vmap ∆ :m'>+<cr>`<my`>mzgv`yo`z
+  vmap ˚ :m'<-2<cr>`>my`<mzgv`yo`z
+else
+  nmap <A-j> mz:m+<cr>`z
+  nmap <A-k> mz:m-2<cr>`z
+  vmap <A-j> :m'>+<cr>`<my`>mzgv`yo`z
+  vmap <A-k> :m'<-2<cr>`>my`<mzgv`yo`z
 endif
 
-"}}}
-"Terminal {{{
 
+"}}}
+" Section: Terminal {{{
+"==============================================================================
+" Open Terminal
+"==============================================================================
 "Open terminal on the bottom
 nnoremap <leader>t :wincmd b \| bel terminal<cr>
 
 "}}}
-"Navigation {{{
-
+" Section: Navigation {{{
+"==============================================================================
+" Window Navigation
+"==============================================================================
 "Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+" Move to the first/last non-blank character on this line
+map H ^
+map L $
+
 "}}}
 " Section: Saving/Backups {{{
-
+"==============================================================================
+" Saving
+"==============================================================================
 " Quick Saving
 nmap <leader>w :w<cr>
 
@@ -280,16 +327,24 @@ nmap <leader>w :w<cr>
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
 
+"==============================================================================
+" Backups
+"==============================================================================
 " Turn backup off, since most stuff is in SVN, git et.c anyway...
 set nobackup
 set nowb
 set noswapfile
 
-"ZZ saves and quits
+"==============================================================================
+" Notes/Tips
+"==============================================================================
+" ZZ saves and quits
 
 "}}}
-"Syntax {{{
-
+" Section: Syntax {{{
+"==============================================================================
+" Custom Syntax
+"==============================================================================
 "Use nxlog syntax when opening log files
 "au BufRead *.log set filetype=nxlog
 
@@ -299,29 +354,32 @@ au BufRead,BufNewFile *.log set syntax=log
 
 "}}}
 " Section: Plugins {{{
-
+"==============================================================================
+" Enable Plugins
+"==============================================================================
 "Enable filetype plugins
 filetype plugin on
 filetype indent on
 
 "}}}
-" Section: Text/Tab/Indent {{{
-
-
+" Section: Text {{{
+"==============================================================================
+" Text Config
+"==============================================================================
 " Linebreak on 500 characters
 set lbr
 set tw=500
+set wrap 
 
-set wrap "Wrap lines
-
+"==============================================================================
+" Notes/Tips
+"==============================================================================
 " Clear till end of line
 " c$
-
 " Delete till end of line
 " d$
 
 " }}}
-
 " Section: Search {{{
 "==============================================================================
 " Search
@@ -438,9 +496,9 @@ endtry
 " Navigation
 "==============================================================================
 " Bash like keys for the command line
-cnoremap <C-A>		<Home>
-cnoremap <C-E>		<End>
-cnoremap <C-K>		<C-U>
+cnoremap <C-A> <Home>
+cnoremap <C-E> <End>
+cnoremap <C-K> <C-U>
 
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
@@ -475,12 +533,51 @@ iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
 " NerdTree
 "==============================================================================
 let g:NERDTreeWinPos = "left"
-let NERDTreeShowHidden=0
-let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 let g:NERDTreeWinSize=35
+
+" Prevent fluff from appearing in the file drawer
+let NERDTreeIgnore=['\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$', '\.DS_Store$', '\.meta$']
+
+" Show hidden files in NERDTree
+let NERDTreeShowHidden=1
+
+" Ignore the help-instructions at the top of NERDTree
+let NERDTreeMinimalUI=1
+
+" Delete the NERDTree buffer when it's the only one left
+let NERDTreeAutoDeleteBuffer=1
+
 map <leader>nn :NERDTreeToggle %<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
+
+"==============================================================================
+" Fugitive
+"==============================================================================
+nmap <leader>gb :Gblame<cr>
+nmap <leader>gc :Gcommit<cr>
+nmap <leader>gd :Gdiff<cr>
+nmap <leader>gg :Ggrep
+nmap <leader>gl :Glog<cr>
+nmap <leader>gp :Git pull<cr>
+nmap <leader>gP :Git push<cr>
+nmap <leader>gs :Gstatus<cr>
+nmap <leader>gw :Gbrowse<cr>
+nmap <leader>g? :map <leader>g<cr>
+
+"==============================================================================
+" Tabularize
+"==============================================================================
+" NOTE: a = align
+if exists(":Tabularize")
+  nmap <leader>a= :Tabularize /=<CR>
+  vmap <leader>a= :Tabularize /=<CR>
+  nmap <leader>a: :Tabularize /:\zs<CR>
+  vmap <leader>a: :Tabularize /:\zs<CR>
+  nmap <leader>a\| :Tabularize /\|<CR>
+  vmap <leader>a\| :Tabularize /\|<CR>
+  nmap <leader>a? :map <leader>a<cr>
+endif
 
 " }}}
 " Section: Functions {{{
@@ -504,8 +601,9 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
+
 "==============================================================================
-" Mode Checks
+" Mode
 "==============================================================================
 " Returns true if paste mode is enabled
 function! HasPaste()
@@ -514,6 +612,7 @@ function! HasPaste()
     endif
     return ''
 endfunction
+
 " }}}
 
 "This line closes all folds in this file on start.
