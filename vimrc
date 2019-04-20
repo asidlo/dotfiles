@@ -2,39 +2,38 @@
 " Author:  Andrew Sidlo
 " Updated: April 14, 2019
 "==============================================================================
-
-" Set to auto read when a file is changed from the outside
-set autoread
-
-" Movement
-" Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
-
-" Configure backspace so it acts as it should act
-set backspace=eol,start,indent
-set whichwrap+=<,>,h,l
-
-" For regular expressions turn magic on
-set magic
-
-" Disable the netrw history file which is otherwise added to ~/.vim/.netrwhist
-let g:netrw_dirhistmax = 0
-
-" How to represent non-printable characters
-" In general, don't want tabs, so have them show up as special characters
-set listchars=tab:>-,trail:·,extends:>,precedes:<
-set list "turn the above on
-
-" Make merging lines smarter when using <shift-j>
-if v:version > 703 || v:version == 703 && has('patch541')
-  set formatoptions+=j
-endif
-
 " Section: Leader {{{
 "==============================================================================
 " Leader Mapping
 "==============================================================================
 let mapleader=","
+
+"}}}
+" Section: Vimrc {{{
+"==============================================================================
+" Vimrc
+"==============================================================================
+"Reload vimrc
+nnoremap confr :source $MYVIMRC<cr>
+
+"Edit vimrc
+nnoremap confe :e ~/.vimrc<cr>
+
+"}}}
+" Section: Escape {{{
+
+"Map jj to exit edit mode while in edit mode
+inoremap jj <Esc>
+
+"<Ctrl+c> also exits insert mode
+
+"}}}
+" Section: Terminal {{{
+"==============================================================================
+" Open Terminal
+"==============================================================================
+"Open terminal on the bottom
+nnoremap <leader>t :wincmd b \| bel terminal<cr>
 
 "}}}
 " Section: UI {{{
@@ -61,6 +60,9 @@ set ruler
 "==============================================================================
 " Height of the command bar
 set cmdheight=1
+
+" Hide mode indicator in command bar, since its covered via lightline
+set noshowmode
 
 "==============================================================================
 " Margins
@@ -90,7 +92,7 @@ set mat=2
 set laststatus=2
 
 " Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+"set statusline=\%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
 "==============================================================================
 " Sound
@@ -148,23 +150,16 @@ set ffs=unix,dos,mac
 "cmd,0
 
 "}}}
-" Section: Vimrc {{{
+" Section: Syntax {{{
 "==============================================================================
-" Vimrc
+" Custom Syntax
 "==============================================================================
-"Reload vimrc
-nnoremap confr :source $MYVIMRC<cr>
+"Use nxlog syntax when opening log files
+"au BufRead *.log set filetype=nxlog
 
-"Edit vimrc
-nnoremap confe :e ~/.vimrc<cr>
-
-"}}}
-" Section: Escape {{{
-
-"Map jj to exit edit mode while in edit mode
-inoremap jj <Esc>
-
-"<Ctrl+c> also exits insert mode
+"https://github.com/tetsuo13/vim-log4j
+"autocmd BufRead,BufNewFile *.log set syntax=log4j
+au BufRead,BufNewFile *.log set syntax=log
 
 "}}}
 " Section: Buffers {{{
@@ -291,14 +286,10 @@ else
   vmap <A-k> :m'<-2<cr>`>my`<mzgv`yo`z
 endif
 
-
-"}}}
-" Section: Terminal {{{
-"==============================================================================
-" Open Terminal
-"==============================================================================
-"Open terminal on the bottom
-nnoremap <leader>t :wincmd b \| bel terminal<cr>
+" Make merging lines smarter when using <shift-j>
+if v:version > 703 || v:version == 703 && has('patch541')
+  set formatoptions+=j
+endif
 
 "}}}
 " Section: Navigation {{{
@@ -315,6 +306,9 @@ map <C-l> <C-W>l
 map H ^
 map L $
 
+" Set 7 lines to the cursor - when moving vertically using j/k
+set so=7
+
 "}}}
 " Section: Saving/Backups {{{
 "==============================================================================
@@ -326,6 +320,9 @@ nmap <leader>w :w<cr>
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
 command W w !sudo tee % > /dev/null
+
+" Set to auto read when a file is changed from the outside
+set autoread
 
 "==============================================================================
 " Backups
@@ -339,18 +336,6 @@ set noswapfile
 " Notes/Tips
 "==============================================================================
 " ZZ saves and quits
-
-"}}}
-" Section: Syntax {{{
-"==============================================================================
-" Custom Syntax
-"==============================================================================
-"Use nxlog syntax when opening log files
-"au BufRead *.log set filetype=nxlog
-
-"https://github.com/tetsuo13/vim-log4j
-"autocmd BufRead,BufNewFile *.log set syntax=log4j
-au BufRead,BufNewFile *.log set syntax=log
 
 "}}}
 " Section: Plugins {{{
@@ -370,6 +355,18 @@ filetype indent on
 set lbr
 set tw=500
 set wrap 
+
+" How to represent non-printable characters
+" In general, don't want tabs, so have them show up as special characters
+set listchars=tab:>-,trail:·,extends:>,precedes:<
+set list "turn the above on
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+" For regular expressions turn magic on
+set magic
 
 "==============================================================================
 " Notes/Tips
@@ -480,6 +477,9 @@ map <leader>s? z=
 " Sets how many lines of history VIM has to remember
 set history=500
 
+" Disable the netrw history file which is otherwise added to ~/.vim/.netrwhist
+let g:netrw_dirhistmax = 0
+
 "==============================================================================
 " Undo
 "==============================================================================
@@ -550,6 +550,7 @@ let NERDTreeAutoDeleteBuffer=1
 map <leader>nn :NERDTreeToggle %<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
+nmap <leader>n? :map <leader>n<cr>
 
 "==============================================================================
 " Fugitive
@@ -581,6 +582,46 @@ if exists(":Tabularize")
   nmap <leader>a? :map <leader>a<cr>
 endif
 
+"==============================================================================
+" Lightline
+"==============================================================================
+let g:lightline = {
+      \ 'colorscheme': 'jellybeans',
+      \ 'active': {
+      \   'left': [ ['mode', 'paste'],
+      \             ['fugitive', 'readonly', 'filename', 'modified'] ],
+      \   'right': [[ 'lineinfo' ], ['percent'], ['fileformat', 'fileencoding', 'filetype' ]]
+      \ },
+      \ 'component': {
+      \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
+      \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
+      \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
+      \ },
+      \ 'component_visible_condition': {
+      \   'readonly': '(&filetype!="help"&& &readonly)',
+      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
+      \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
+      \ },
+      \ 'separator': { 'left': ' ', 'right': ' ' },
+      \ 'subseparator': { 'left': ' ', 'right': '|' }
+\ }
+
+" TODO:
+"   - Statusbar plugin
+"   - Markdown plugin
+"   - Go plugin
+"   - linting?
+"   - Tags
+"   - Search plugin (fzf)...cope?
+"   - bufexplorer?
+"   - comments (nerd/commentary)
+"   - surround
+"   - autopairs
+"   - yankstack
+"   - multiple-cursors
+"   - gundo
+"   - goyo/zenroom
+
 " }}}
 " Section: Functions {{{
 "==============================================================================
@@ -603,20 +644,7 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
-
-"==============================================================================
-" Mode
-"==============================================================================
-" Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    endif
-    return ''
-endfunction
-
 " }}}
-
-"This line closes all folds in this file on start.
-"Preceding space is important, removing will make it not work.
+" This line closes all folds in this file on start.
+" Preceding space is important, removing will make it not work.
 " vim:foldmethod=marker:foldlevel=0

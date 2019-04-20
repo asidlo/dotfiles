@@ -13,3 +13,6 @@
 [submodule "vim/pack/asidlo/start/tabular"]
 	path = vim/pack/asidlo/start/tabular
 	url = https://github.com/godlygeek/tabular
+[submodule "vim/pack/asidlo/start/lightline"]
+	path = vim/pack/asidlo/start/lightline
+	url = https://github.com/itchyny/lightline.vim
