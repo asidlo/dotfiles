@@ -24,6 +24,9 @@
   sm = submodule
   sma = submodule add
 
+  d = diff
+  dh = diff HEAD
+
   a = add
   # Update all tracked files
   au = add -u
