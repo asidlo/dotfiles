@@ -677,10 +677,10 @@ endfunction
 function! LightlineFilename()
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let modified = &modified ? ' +' : ''
-  let ro = &readonly ? '🔒' : ''
+  let ro = &readonly ? ' 🔒' : ''
 
   if filename =~# 'NERD_tree'
-    return 'NerdTree'
+    return 'NerdTree' . ro
   else
     if &readonly
       return filename . ro
@@ -695,11 +695,11 @@ function! LightlineFileformat()
 endfunction
 
 function! LightlineFileencoding()
-  return winwidth(0) > 70 ? (&fileencoding !=# '' ? &fileencoding : 'no fe'): ''
+  return winwidth(0) > 70 ? (&fileencoding !=# '' ? &fileencoding : ''): ''
 endfunction
 
 function! LightlineFiletype()
-  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : '') : ''
 endfunction
 
 "\ @% =~# 'NERD_tree' ? 'NerdTree' :
