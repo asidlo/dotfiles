@@ -631,6 +631,11 @@ let g:lightline = {
 \ }
 
 "==============================================================================
+" Tagbar 
+"==============================================================================
+map <leader>tb :TagbarToggle<cr>
+
+"==============================================================================
 " Vim-EasyMotion
 "==============================================================================
 " <leader><leader>w -> word search
@@ -679,15 +684,20 @@ function! LightlineFilename()
   let modified = &modified ? ' +' : ''
   let ro = &readonly ? ' 🔒' : ''
 
+  if filename =~# '__Tagbar__'
+    return 'Tagbar' . ro
+  endif
+
   if filename =~# 'NERD_tree'
     return 'NerdTree' . ro
-  else
-    if &readonly
-      return filename . ro
-    else
-      return filename . modified
-    endif
   endif
+
+  if &readonly
+    return filename . ro
+  else
+    return filename . modified
+  endif
+
 endfunction
 
 function! LightlineFileformat()

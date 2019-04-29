@@ -25,3 +25,6 @@
 [submodule "vim/pack/asidlo/start/vim-easymotion"]
 	path = vim/pack/asidlo/start/vim-easymotion
 	url = https://github.com/easymotion/vim-easymotion
+[submodule "vim/pack/asidlo/start/tagbar"]
+	path = vim/pack/asidlo/start/tagbar
+	url = https://github.com/majutsushi/tagbar
