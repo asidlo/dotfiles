@@ -638,8 +638,13 @@ map <leader>tb :TagbarToggle<cr>
 "==============================================================================
 " Vim-EasyMotion
 "==============================================================================
-" <leader><leader>w -> word search
+" <Leader>f{char} to move to {char}
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
 
+" Move to word
+map  <Leader>fw <Plug>(easymotion-bd-w)
+nmap <Leader>fw <Plug>(easymotion-overwin-w)
 
 " TODO:
 "   - Markdown plugin
