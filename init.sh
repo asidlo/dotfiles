@@ -19,11 +19,11 @@ yel=$'\e[1;33m'
 nc=$'\e[0m'
 
 warn="${yel}WARN :${nc}"
-error="${yel}ERROR:${nc}"
+error="${red}ERROR:${nc}"
 info="INFO :"
 
 # Files in dotfiles dir to be symlinked
-files=(vimrc vim gitconfig)
+files=(vimrc vim gitconfig zshrc)
 
 for file in ${files[@]}; do
 
@@ -35,7 +35,7 @@ for file in ${files[@]}; do
 
   # Check if file exists and is a regular file
   elif [ -f $dest ]; then
-    printf "$warn $dest already exists, backup original before symlinking! --> skipping\n"
+    printf "$error $dest already exists, backup original before symlinking! --> skipping\n"
 
   # File does not exist, so we can proceed with symlink
   else

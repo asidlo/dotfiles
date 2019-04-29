@@ -4,14 +4,11 @@
 "==============================================================================
 " Section: Leader {{{
 "==============================================================================
-" Leader Mapping
-"==============================================================================
 let mapleader=","
 
 "}}}
-" Section: Vimrc {{{
 "==============================================================================
-" Vimrc
+" Section: Vimrc {{{
 "==============================================================================
 "Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
@@ -20,22 +17,23 @@ nnoremap confr :source $MYVIMRC<cr>
 nnoremap confe :e ~/.vimrc<cr>
 
 "}}}
+"==============================================================================
 " Section: Escape {{{
-
+"==============================================================================
 "Map jj to exit edit mode while in edit mode
 inoremap jj <Esc>
 
 "<Ctrl+c> also exits insert mode
 
 "}}}
-" Section: Terminal {{{
 "==============================================================================
-" Open Terminal
+" Section: Terminal {{{
 "==============================================================================
 "Open terminal on the bottom
 nnoremap <leader>t :wincmd b \| bel terminal<cr>
 
 "}}}
+"==============================================================================
 " Section: UI {{{
 "==============================================================================
 " Lines
@@ -44,7 +42,7 @@ nnoremap <leader>t :wincmd b \| bel terminal<cr>
 set number
 
 "Linenumbers are relative to current line
-set relativenumber 
+"set relativenumber 
 
 " Disable line wrapping
 set nowrap
@@ -68,7 +66,7 @@ set noshowmode
 " Margins
 "==============================================================================
 " Add a bit extra margin to the left
-set foldcolumn=2
+set foldcolumn=0
 
 "==============================================================================
 " Misc
@@ -150,9 +148,8 @@ set ffs=unix,dos,mac
 "cmd,0
 
 "}}}
-" Section: Syntax {{{
 "==============================================================================
-" Custom Syntax
+" Section: Syntax {{{
 "==============================================================================
 "Use nxlog syntax when opening log files
 "au BufRead *.log set filetype=nxlog
@@ -162,6 +159,7 @@ set ffs=unix,dos,mac
 au BufRead,BufNewFile *.log set syntax=log
 
 "}}}
+"==============================================================================
 " Section: Buffers {{{
 "==============================================================================
 " Management 
@@ -203,8 +201,8 @@ endif
 
 "Alt + Shift + > increases buffer width +1
 "Alt + Shift + < decreases buffer width -1
-nmap > :vertical res +1<Enter>
-nmap < :vertical res -1<Enter>
+nmap < :vertical res +1<Enter>
+nmap > :vertical res -1<Enter>
 
 "==============================================================================
 " Splits
@@ -235,8 +233,9 @@ endtry
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 "}}}
+"==============================================================================
 " Section: Folds {{{
-
+"==============================================================================
 " https://vim.fandom.com/wiki/Make_views_automatic
 " Save folds in between buffer sessions
 " au BufWinLeave * mkview
@@ -258,8 +257,8 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " | zi      | Toggle all folds |
 
 "}}}
+"==============================================================================
 " Section: Refactoring {{{
-
 "==============================================================================
 " Shift Text Block
 "==============================================================================
@@ -292,6 +291,7 @@ if v:version > 703 || v:version == 703 && has('patch541')
 endif
 
 "}}}
+"==============================================================================
 " Section: Navigation {{{
 "==============================================================================
 " Window Navigation
@@ -310,6 +310,7 @@ map L $
 set so=7
 
 "}}}
+"==============================================================================
 " Section: Saving/Backups {{{
 "==============================================================================
 " Saving
@@ -338,6 +339,7 @@ set noswapfile
 " ZZ saves and quits
 
 "}}}
+"==============================================================================
 " Section: Plugins {{{
 "==============================================================================
 " Enable Plugins
@@ -347,14 +349,15 @@ filetype plugin on
 filetype indent on
 
 "}}}
+"==============================================================================
 " Section: Text {{{
 "==============================================================================
 " Text Config
 "==============================================================================
-" Linebreak on 500 characters
+" Linebreak on 500 characters if set wrap
 set lbr
 set tw=500
-set wrap 
+set nowrap 
 
 " How to represent non-printable characters
 " In general, don't want tabs, so have them show up as special characters
@@ -377,6 +380,7 @@ set magic
 " d$
 
 " }}}
+"==============================================================================
 " Section: Search {{{
 "==============================================================================
 " Search
@@ -411,6 +415,7 @@ endif
 map <silent> <leader><cr> :noh<cr>
 
 " }}}
+"==============================================================================
 " Section: Tabs {{{
 "==============================================================================
 " Tabs
@@ -450,6 +455,7 @@ set stal=1
 " TODO - Make a GoToTab function and create a command for tg
 
 " }}}
+"==============================================================================
 " Section: Spellcheck {{{
 "==============================================================================
 " Spellcheck
@@ -470,6 +476,7 @@ map <leader>sa zg
 map <leader>s? z=
 
 " }}}
+"==============================================================================
 " Section: History {{{
 "==============================================================================
 " History
@@ -491,6 +498,7 @@ catch
 endtry
 
 " }}}
+"==============================================================================
 " Section: Commandline {{{
 "==============================================================================
 " Navigation
@@ -509,7 +517,7 @@ cnoremap <C-N> <Down>
 " Turn on the Wild menu
 "https://stackoverflow.com/questions/9511253/how-to-effectively-use-vim-wildmenu
 set wildmenu
-set wildmode=longest:full,full
+"set wildmode=longest:full,full
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
@@ -520,6 +528,7 @@ else
 endif
 
 " }}}
+"==============================================================================
 " Section: Autocomplete {{{
 "==============================================================================
 " Date
@@ -528,6 +537,7 @@ endif
 iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
 
 " }}}
+"==============================================================================
 " Section: Plugins {{{
 "==============================================================================
 " NerdTree
@@ -546,6 +556,9 @@ let NERDTreeMinimalUI=1
 
 " Delete the NERDTree buffer when it's the only one left
 let NERDTreeAutoDeleteBuffer=1
+
+" Close automatically if nerd tree is only buffer open
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 map <leader>nn :NERDTreeToggle %<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
@@ -588,26 +601,42 @@ endif
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
       \ 'active': {
-      \   'left': [ ['mode', 'paste'],
-      \             ['fugitive', 'readonly', 'filename', 'modified'] ],
-      \   'right': [[ 'lineinfo' ], ['percent'], ['fileformat', 'fileencoding', 'filetype' ]]
+      \   'left': [ ['mode'],
+      \             [ 'filename','fugitive' ]],
+      \ 'right': [[ 'lineinfo' ], ['percent'], ['fileformat', 'fileencoding', 'filetype' ]]
+      \ },
+      \ 'inactive': {
+      \   'left': [['filename']],
+      \   'right': [[ 'lineinfo' ], ['percent']]
+      \ },
+      \ 'component_function': {
+      \   'filename': 'LightlineFilename',
+      \   'fileformat': 'LightlineFileformat',
+      \   'filetype': 'LightlineFiletype',
+      \   'fileencoding': 'LightlineFileencoding',
+      \   'mode': 'LightlineMode',
       \ },
       \ 'component': {
       \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
-      \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
-      \   'fugitive': '%{exists("*fugitive#head")?fugitive#head():""}'
+      \   'modified': '%{&filetype=="help" ? "" : &modified ? "+" : &modifiable ? "" : "-"}',
+      \   'fugitive': '%{exists("*fugitive#head") ? winwidth(0) > 70 ? fugitive#head(): "" : "" }'
       \ },
       \ 'component_visible_condition': {
-      \   'readonly': '(&filetype!="help"&& &readonly)',
-      \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
-      \   'fugitive': '(exists("*fugitive#head") && ""!=fugitive#head())'
+      \   'readonly': '(winwidth(0) > 70 && &filetype!="help"&& &readonly)',
+      \   'modified': '(winwidth(0) > 70 && &filetype!="help"&&(&modified||!&modifiable))',
+      \   'fugitive': '(winwidth(0) > 70 && exists("*fugitive#head") && ""!=fugitive#head())'
       \ },
       \ 'separator': { 'left': ' ', 'right': ' ' },
-      \ 'subseparator': { 'left': ' ', 'right': '|' }
+      \ 'subseparator': { 'left': '|', 'right': '|' }
 \ }
 
+"==============================================================================
+" Vim-EasyMotion
+"==============================================================================
+" <leader><leader>w -> word search
+
+
 " TODO:
-"   - Statusbar plugin
 "   - Markdown plugin
 "   - Go plugin
 "   - linting?
@@ -623,6 +652,7 @@ let g:lightline = {
 "   - goyo/zenroom
 
 " }}}
+"==============================================================================
 " Section: Functions {{{
 "==============================================================================
 " Selection
@@ -644,7 +674,42 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' +' : ''
+  let ro = &readonly ? '🔒' : ''
+
+  if filename =~# 'NERD_tree'
+    return 'NerdTree'
+  else
+    if &readonly
+      return filename . ro
+    else
+      return filename . modified
+    endif
+  endif
+endfunction
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
+endfunction
+
+function! LightlineFileencoding()
+  return winwidth(0) > 70 ? (&fileencoding !=# '' ? &fileencoding : 'no fe'): ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+"\ @% =~# 'NERD_tree' ? 'NerdTree' :
+function! LightlineMode()
+  return winwidth(0) > 70 ? &paste ? lightline#mode() . ' (PASTE)' : lightline#mode() : ''
+endfunction
+
 " }}}
+"==============================================================================
+
 " This line closes all folds in this file on start.
 " Preceding space is important, removing will make it not work.
 " vim:foldmethod=marker:foldlevel=0

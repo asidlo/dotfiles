@@ -16,3 +16,12 @@
 [submodule "vim/pack/asidlo/start/lightline"]
 	path = vim/pack/asidlo/start/lightline
 	url = https://github.com/itchyny/lightline.vim
+[submodule "vim/pack/asidlo/start/vim-markdown"]
+	path = vim/pack/asidlo/start/vim-markdown
+	url = https://github.com/plasticboy/vim-markdown
+[submodule "vim/pack/asidlo/start/vim-go"]
+	path = vim/pack/asidlo/start/vim-go
+	url = https://github.com/fatih/vim-go.git
+[submodule "vim/pack/asidlo/start/vim-easymotion"]
+	path = vim/pack/asidlo/start/vim-easymotion
+	url = https://github.com/easymotion/vim-easymotion
