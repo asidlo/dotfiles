@@ -151,6 +151,7 @@ export LESS="-F -X $LESS"
 export SCRIPTS_HOME="/Users/asidlo/Documents/Workspace/scripts"
 export VISUAL=vim
 export EDITOR="$VISUAL"
+export PATH=$PATH:$GOPATH/bin
 
 # }}}
 #==============================================================================
