@@ -30,7 +30,8 @@ inoremap jj <Esc>
 " Section: Terminal {{{
 "==============================================================================
 "Open terminal on the bottom
-nnoremap <leader>t :wincmd b \| bel terminal<cr>
+"nnoremap <leader>t :wincmd b \| bel terminal<cr>
+"nnoremap <leader>t :term<cr>
 
 "}}}
 "==============================================================================
@@ -57,7 +58,7 @@ set ruler
 " Command Bar
 "==============================================================================
 " Height of the command bar
-set cmdheight=1
+set cmdheight=2
 
 " Hide mode indicator in command bar, since its covered via lightline
 set noshowmode
@@ -201,8 +202,10 @@ endif
 
 "Alt + Shift + > increases buffer width +1
 "Alt + Shift + < decreases buffer width -1
-nmap < :vertical res +1<Enter>
-nmap > :vertical res -1<Enter>
+"nmap < :vertical res +1<Enter>
+"nmap < :vertical res +1<Enter>
+nmap > <C-w>>
+nmap < <C-w><
 
 "==============================================================================
 " Splits
@@ -232,14 +235,17 @@ endtry
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
+" Quit a buffer
+nmap <leader>q :q<cr>
+
 "}}}
 "==============================================================================
 " Section: Folds {{{
 "==============================================================================
 " https://vim.fandom.com/wiki/Make_views_automatic
 " Save folds in between buffer sessions
-" au BufWinLeave * mkview
-" au BufWinEnter * silent loadview
+au BufWinLeave *.* mkview
+au BufWinEnter *.* silent loadview
 " TODO - Figure out how to make this work when closing all buffers, and opening
 "	new one from no name buffer via confe
 
@@ -309,6 +315,13 @@ map L $
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 
+" allows incsearch highlighting for range commands
+cnoremap $t <CR>:t''<CR>
+cnoremap $T <CR>:T''<CR>
+cnoremap $m <CR>:m''<CR>
+cnoremap $M <CR>:M''<CR>
+cnoremap $d <CR>:d<CR>``
+
 "}}}
 "==============================================================================
 " Section: Saving/Backups {{{
@@ -324,6 +337,10 @@ command W w !sudo tee % > /dev/null
 
 " Set to auto read when a file is changed from the outside
 set autoread
+
+" Automatically saves a file when calling :make, such as is done
+" in go commands
+set autowrite
 
 "==============================================================================
 " Backups
@@ -357,12 +374,17 @@ filetype indent on
 " Linebreak on 500 characters if set wrap
 set lbr
 set tw=500
-set nowrap 
+set nowrap
 
 " How to represent non-printable characters
 " In general, don't want tabs, so have them show up as special characters
-set listchars=tab:>-,trail:·,extends:>,precedes:<
+set listchars=tab:>-,trail:_,extends:>,precedes:<,nbsp:~
+set showbreak=\\ "
 set list "turn the above on
+
+" Shortcut to rapidly toggle `set list`
+nmap <leader>l :set list!<CR>
+
 
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
@@ -371,6 +393,9 @@ set whichwrap+=<,>,h,l
 " For regular expressions turn magic on
 set magic
 
+" Quickly insert an empty new line without entering insert mode
+nnoremap <Leader>o o<Esc>k
+nnoremap <Leader>O O<Esc>j
 "==============================================================================
 " Notes/Tips
 "==============================================================================
@@ -426,9 +451,9 @@ set expandtab
 " Be smart when using tabs ;)
 set smarttab
 
-" 1 tab == 4 spaces
-set shiftwidth=2
-set tabstop=2
+" 1 tab == 4 spaces (tabstop)
+set shiftwidth=4
+set tabstop=4
 
 set ai "Auto indent
 set si "Smart indent
@@ -540,7 +565,17 @@ iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
-" NerdTree
+" Comfortable-Motion {{{
+"==============================================================================
+let g:comfortable_motion_no_default_key_mappings = 1
+
+" I want to keep the default mappings for d/u, but not for f/b
+nnoremap <silent> <C-d> :call comfortable_motion#flick(100)<CR>
+nnoremap <silent> <C-u> :call comfortable_motion#flick(-100)<CR>
+
+" }}}
+"==============================================================================
+" NerdTree {{{
 "==============================================================================
 let g:NERDTreeWinPos = "left"
 let g:NERDTreeWinSize=35
@@ -565,8 +600,9 @@ map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
 nmap <leader>n? :map <leader>n<cr>
 
+" }}}
 "==============================================================================
-" Fugitive
+" Fugitive {{{
 "==============================================================================
 nmap <leader>gb :Gblame<cr>
 nmap <leader>gc :Gcommit<cr>
@@ -579,24 +615,26 @@ nmap <leader>gs :Gstatus<cr>
 nmap <leader>gw :Gbrowse<cr>
 nmap <leader>g? :map <leader>g<cr>
 
+" }}}
 "==============================================================================
-" Tabularize
+" Tabularize {{{
 "==============================================================================
 " NOTE:
-"   - a = align
+"   - f = format
 "   - t = table
 if exists(":Tabularize")
-  nmap <leader>a= :Tabularize /=<CR>
-  vmap <leader>a= :Tabularize /=<CR>
-  nmap <leader>a: :Tabularize /:\zs<CR>
-  vmap <leader>a: :Tabularize /:\zs<CR>
-  nmap <leader>at :Tabularize /\|<CR>
-  vmap <leader>at :Tabularize /\|<CR>
-  nmap <leader>a? :map <leader>a<cr>
+  nmap <leader>f= :Tabularize /=<CR>
+  vmap <leader>f= :Tabularize /=<CR>
+  nmap <leader>f: :Tabularize /:\zs<CR>
+  vmap <leader>f: :Tabularize /:\zs<CR>
+  nmap <leader>ft :Tabularize /\|<CR>
+  vmap <leader>ft :Tabularize /\|<CR>
+  nmap <leader>f? :map <leader>f<cr>
 endif
 
+" }}}
 "==============================================================================
-" Lightline
+" Lightline {{{
 "==============================================================================
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
@@ -630,37 +668,184 @@ let g:lightline = {
       \ 'subseparator': { 'left': '|', 'right': '|' }
 \ }
 
+" }}}
 "==============================================================================
-" Tagbar 
+" Tagbar {{{
 "==============================================================================
 map <leader>tb :TagbarToggle<cr>
 
+" }}}
 "==============================================================================
-" Vim-EasyMotion
+" Vim-EasyMotion {{{
 "==============================================================================
-" <Leader>f{char} to move to {char}
-map  <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
+" Disable default mappings
+let g:EasyMotion_do_mapping = 0 
 
-" Move to word
-map  <Leader>fw <Plug>(easymotion-bd-w)
-nmap <Leader>fw <Plug>(easymotion-overwin-w)
+" Turn on case-insensitive feature
+let g:EasyMotion_smartcase = 1
 
-" TODO:
-"   - Markdown plugin
-"   - Go plugin
-"   - linting?
-"   - Tags
-"   - Search plugin (fzf)...cope?
-"   - bufexplorer?
-"   - comments (nerd/commentary)
-"   - surround
-"   - autopairs
-"   - yankstack
-"   - multiple-cursors
-"   - gundo
-"   - goyo/zenroom
+" JK motions: Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
 
+map  / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+
+
+" }}} 
+"==============================================================================
+" Vim-Go {{{
+"==============================================================================
+" For walkthrough, use the following github repo as example:
+" - https://github.com/fatih/vim-go-tutorial#quick-setup
+"
+" Makes all popup buffers quickfix type buffers
+let g:go_list_type = "quickfix"
+
+" Automatically format and also rewrite your import declarations
+" If it is too slow, you can use the manual :GoImports command
+let g:go_fmt_command = "goimports"
+
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+
+" Run current file
+map <leader>gr :GoRun %<cr>
+map <leader>gb :GoBuild<cr>
+autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
+autocmd FileType go nmap <leader>r  <Plug>(go-run)
+
+" Go to next/previous (quickfix) error
+map <C-n> :cnext<CR>
+map <C-m> :cprevious<CR>
+
+" Close quickfix(error) buffer
+autocmd FileType go nmap <leader>a :cclose<CR>
+
+" Run all tests
+map <leader>gt :GoTest<cr>
+
+" Run test for func
+map <leader>gtf :GoTestFunc<cr>
+autocmd FileType go nmap <leader>t  <Plug>(go-test)
+autocmd FileType go nmap <leader>tf  <Plug>(go-test-func)
+
+" Code coverage
+autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
+
+" Dont show nonvisible chars with go files since gofmt removes eol spaces
+autocmd Filetype go set nolist
+
+" View the go def stack
+" Clear by calling :GoDefStackClear
+nmap <leader>gds :GoDefStack<cr>
+
+" Run linting on save
+let g:go_metalinter_autosave = 1
+
+" Toggle between test and source code files
+nmap <leader>ga :GoAlternate<cr>
+
+" Add new commands for opening alternate files via splits or tabs
+autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+
+nmap <leader>gas :AS<cr>
+nmap <leader>gav :AV<cr>
+nmap <leader>gat :AT<cr>
+
+" If you don't know what your next destination is?
+" Or you just partially know the name of a function?
+" Think (methods)
+autocmd Filetype go nmap <leader>m :GoDecls<cr>
+
+" Think (more methods)
+autocmd Filetype go nmap <leader>mm :GoDeclsDir
+
+" Show documentation
+" Think (method docs)
+autocmd Filetype go nmap <leader>d :GoDoc<cr>
+
+" Show method info/params
+autocmd FileType go nmap <Leader>i <Plug>(go-info)
+
+" Automatically show when cursor on method
+let g:go_auto_type_info = 1
+
+" Make show time faster than default 800 ms
+set updatetime=300
+
+"==============================================================================
+" Tips/Tricks
+"==============================================================================
+" | command     | description                                      |
+" | vaf         | select whole function (including comments)       |
+" | vif         | select function body only                        |
+" | dif         | delete function body                             |
+" | yif         | copy function body                               |
+" | <C-]> or gd | go to declaration                                |
+" | <C-t>       | go back a definition                             |
+" | ]]          | jump to next function (accepts v]], y]], d]]...) |
+" | [[          | jump to previous function                        |
+
+" }}} 
+"==============================================================================
+" UltiSnips {{{
+"==============================================================================
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<leader><tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+
+" Go Snippets List
+" - https://github.com/fatih/vim-go/blob/master/gosnippets/UltiSnips/go.snippets
+"
+" | Shortcut | Snippet                        |
+" | -------- | -------------------------------|
+" | fn       | fmt.Println()                  |
+" | ff       | fmt.Printf()                   |
+" | ln       | log.Println()                  |
+" | lf       | log.Printf()                   |
+" | errp     | if != nil...panic()            |
+" | json     | adds json serializer to struct |
+
+" }}}
+"==============================================================================
+" Ctrlp {{{
+"==============================================================================
+" Assign <C-f> to start Ctrlp, opens mru by default
+let g:ctrlp_map = '<c-f>'
+
+" View open buffers
+noremap <c-b> :CtrlPBuffer<cr>
+
+let g:ctrlp_max_height = 20
+let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git'
+
+" | Mapping                        | Description                                                                                                    |
+" | <F5>                           | purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
+" | <c-f> / <c-b>                  | to cycle between modes.
+" | <c-d>                          | to switch to filename only search instead of full path.
+" | <c-r>                          | to switch to regexp mode.
+" | <c-j>, <c-k> or the arrow keys | to navigate the result list.
+" | <c-t> or <c-v>, <c-x>          | to open the selected entry in a new tab or in a new split.
+" | <c-n>, <c-p>                   | to select the next/previous string in the prompt's history.
+" | <c-y>                          | to create a new file and its parent directories.
+" | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
+
+
+" }}}
+"==============================================================================
 " }}}
 "==============================================================================
 " Section: Functions {{{
@@ -722,9 +907,19 @@ function! LightlineMode()
   return winwidth(0) > 70 ? &paste ? lightline#mode() . ' (PASTE)' : lightline#mode() : ''
 endfunction
 
+" run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
 " }}}
 "==============================================================================
 
 " This line closes all folds in this file on start.
 " Preceding space is important, removing will make it not work.
-" vim:foldmethod=marker:foldlevel=0
+" vim:foldmethod=marker

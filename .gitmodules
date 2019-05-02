@@ -28,3 +28,9 @@
 [submodule "vim/pack/asidlo/start/tagbar"]
 	path = vim/pack/asidlo/start/tagbar
 	url = https://github.com/majutsushi/tagbar
+[submodule "vim/pack/asidlo/start/ultisnips"]
+	path = vim/pack/asidlo/start/ultisnips
+	url = https://github.com/SirVer/ultisnips
+[submodule "vim/pack/asidlo/start/ctrlp"]
+	path = vim/pack/asidlo/start/ctrlp
+	url = https://github.com/ctrlpvim/ctrlp.vim
