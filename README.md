@@ -29,12 +29,15 @@ go get golang.org/x/tools/cmd/guru
 Plugins
 
 - comments (nerd/commentary)
-- Search plugin (fzf)...cope? / bufexplorer
+- YouCompleteMe (autocompletion)
+- cope? for ctrlp / bufexplorer
 - yankstack
 - gundo
-- cscope (find all usages)
-- linting?
+- cscope (find all usages, for non go files)
+- linting? (for non go files)
 - surround
 - autopairs
 - multiple-cursors
 - goyo/zenroom
+- lightline vs powerline?
+- vimdevicons for tricked out statusbar/plugins
