@@ -42,3 +42,7 @@ Plugins
 - lightline vs powerline?
 - vimdevicons for tricked out statusbar/plugins
 
+Misc
+
+- Rearrange vimrc to make it more simple w/less sections
+
