@@ -23,7 +23,7 @@ error="${red}ERROR:${nc}"
 info="INFO :"
 
 # Files in dotfiles dir to be symlinked
-files=(vimrc vim gitconfig zshrc)
+files=(vimrc gitconfig zshrc)
 
 for file in ${files[@]}; do
 

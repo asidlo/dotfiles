@@ -2,6 +2,33 @@
 " Author:  Andrew Sidlo
 " Updated: April 14, 2019
 "==============================================================================
+"
+" Automatically download the plug.vim plugin manager vimscript
+" Run :PlugInstall to install all plugins
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.vim/bundle')
+Plug 'nanotech/jellybeans.vim'
+Plug 'fatih/vim-go'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'SirVer/ultisnips'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'yuttie/comfortable-motion.vim'
+Plug 'godlygeek/tabular'
+Plug 'itchyny/lightline.vim'
+Plug 'plasticboy/vim-markdown'
+Plug 'easymotion/vim-easymotion'
+Plug 'majutsushi/tagbar'
+call plug#end()
+"
+"==============================================================================
 " Section: Leader {{{
 "==============================================================================
 let mapleader=","
@@ -58,7 +85,7 @@ set ruler
 " Command Bar
 "==============================================================================
 " Height of the command bar
-set cmdheight=2
+set cmdheight=1
 
 " Hide mode indicator in command bar, since its covered via lightline
 set noshowmode
@@ -622,15 +649,13 @@ nmap <leader>g? :map <leader>g<cr>
 " NOTE:
 "   - f = format
 "   - t = table
-if exists(":Tabularize")
-  nmap <leader>f= :Tabularize /=<CR>
-  vmap <leader>f= :Tabularize /=<CR>
-  nmap <leader>f: :Tabularize /:\zs<CR>
-  vmap <leader>f: :Tabularize /:\zs<CR>
-  nmap <leader>ft :Tabularize /\|<CR>
-  vmap <leader>ft :Tabularize /\|<CR>
-  nmap <leader>f? :map <leader>f<cr>
-endif
+nmap <leader>f= :Tabularize /=<CR>
+vmap <leader>f= :Tabularize /=<CR>
+nmap <leader>f: :Tabularize /:\zs<CR>
+vmap <leader>f: :Tabularize /:\zs<CR>
+nmap <leader>ft :Tabularize /\|<CR>
+vmap <leader>ft :Tabularize /\|<CR>
+nmap <leader>f? :map <leader>f<cr>
 
 " }}}
 "==============================================================================
@@ -714,9 +739,7 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
 
-" Run current file
-map <leader>gr :GoRun %<cr>
-map <leader>gb :GoBuild<cr>
+" Run current file (:GoBuild / :GoRun)
 autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 autocmd FileType go nmap <leader>r  <Plug>(go-run)
 
@@ -727,11 +750,7 @@ map <C-m> :cprevious<CR>
 " Close quickfix(error) buffer
 autocmd FileType go nmap <leader>a :cclose<CR>
 
-" Run all tests
-map <leader>gt :GoTest<cr>
-
-" Run test for func
-map <leader>gtf :GoTestFunc<cr>
+" Run test for func (:GoTest)
 autocmd FileType go nmap <leader>t  <Plug>(go-test)
 autocmd FileType go nmap <leader>tf  <Plug>(go-test-func)
 
@@ -744,6 +763,9 @@ autocmd Filetype go set nolist
 " View the go def stack
 " Clear by calling :GoDefStackClear
 nmap <leader>gds :GoDefStack<cr>
+
+" Change the underlying go def tool from guru to 'godef'
+"let g:go_def_mode = 'godef'
 
 " Run linting on save
 let g:go_metalinter_autosave = 1
@@ -761,40 +783,75 @@ nmap <leader>gas :AS<cr>
 nmap <leader>gav :AV<cr>
 nmap <leader>gat :AT<cr>
 
-" If you don't know what your next destination is?
-" Or you just partially know the name of a function?
+" Show all methods in current file
 " Think (methods)
 autocmd Filetype go nmap <leader>m :GoDecls<cr>
 
+" Show all methods in a package directory
 " Think (more methods)
 autocmd Filetype go nmap <leader>mm :GoDeclsDir
 
-" Show documentation
+" Show documentation for particular method/identifier
 " Think (method docs)
 autocmd Filetype go nmap <leader>d :GoDoc<cr>
 
 " Show method info/params
 autocmd FileType go nmap <Leader>i <Plug>(go-info)
 
-" Automatically show when cursor on method
-let g:go_auto_type_info = 1
+" Show methods for a given class / interface
+autocmd FileType go nmap <Leader>ii :GoDescribe<cr>
+
+" Automatically show info when cursor on method
+" let g:go_auto_type_info = 1
 
 " Make show time faster than default 800 ms
 set updatetime=300
 
+" Automatically highlight matching identifiers (methods, variables...)
+let g:go_auto_sameids = 1
+
+" Show all files in current package
+autocmd Filetype go nmap ls :GoFiles<cr>
+
+" Show all dependencies of current file
+autocmd Filetype go nmap deps :GoDeps<cr>
+
+" Find usages
+autocmd Filetype go nmap refs :GoReferrers<cr>
+
+" Shows all interfaces current type/struct implements
+autocmd Filetype go nmap <C-i> :GoImplements<cr>
+
+" Cant get :GoChannelPeers or :GoWhicherrs to work :/... basically all guru
+" functionality isnt working, which stinks since I need it for find all usages
+" capability
+
 "==============================================================================
 " Tips/Tricks
 "==============================================================================
-" | command     | description                                      |
-" | vaf         | select whole function (including comments)       |
-" | vif         | select function body only                        |
-" | dif         | delete function body                             |
-" | yif         | copy function body                               |
-" | <C-]> or gd | go to declaration                                |
-" | <C-t>       | go back a definition                             |
-" | ]]          | jump to next function (accepts v]], y]], d]]...) |
-" | [[          | jump to previous function                        |
+" | command         | description                                                                                         |
+" | vaf             | select whole function (including comments)                                                          |
+" | vif             | select function body only                                                                           |
+" | dif             | delete function body                                                                                |
+" | yif             | copy function body                                                                                  |
+" | <C-]> or gd     | go to declaration                                                                                   |
+" | <C-t>           | go back a definition                                                                                |
+" | ]]              | jump to next function (accepts v]], y]], d]]...)                                                    |
+" | [[              | jump to previous function                                                                           |
+" | :GoWhicherrs    | Shows which types of errors can occur from error return type                                        |
+" | :GoChannelPeers | Shows information about a selected channel                                                          |
+" | :GoCallees      | Shows all possible targets for the current function                                                 |
+" | :GoCallers      | Shows which functions call the current function and navigates to the usage, similar to GoReferrers  |
+" | :GoRename       | refactor renames current identifier                                                                 |
+" | :GoFreevars     | shows variables that are referenced but not defined within a given selection, helps for refactoring |
+" | :GoGenerate|runs go generate|
+" |:GoImpl|generates methods for a given interface|
+"
+" Can also do GoImpl anywhere in file, just specify which type to attach it to
+" :GoImpl b *B fmt.Stringer
 
+" TODO - figure out what callees and callers do and how they differ from
+"      - referrers
 " }}} 
 "==============================================================================
 " UltiSnips {{{
@@ -842,6 +899,21 @@ let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git'
 " | <c-n>, <c-p>                   | to select the next/previous string in the prompt's history.
 " | <c-y>                          | to create a new file and its parent directories.
 " | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
+
+
+" }}}
+"==============================================================================
+" Markdown {{{
+"==============================================================================
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_math = 1
+let g:vim_markdown_strikethrough = 1
+
+let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_new_list_item_indent = 0
+
+autocmd FileType markdown nmap tf :TableFormat<cr>
+autocmd FileType markdown nmap toc :Toc<cr>
 
 
 " }}}

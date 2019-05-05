@@ -1,6 +1,28 @@
 # Author  : Andrew Sidlo
 # Modified: Apr 23, 2019
 
+# Printing colors
+
+#-----------------------------------------
+# Black        0;30     Dark Gray     1;30
+# Red          0;31     Light Red     1;31
+# Green        0;32     Light Green   1;32
+# Brown/Orange 0;33     Yellow        1;33
+# Blue         0;34     Light Blue    1;34
+# Purple       0;35     Light Purple  1;35
+# Cyan         0;36     Light Cyan    1;36
+# Light Gray   0;37     White         1;37
+#-----------------------------------------
+
+red=$'\e[1;31m'
+grn=$'\e[1;32m'
+yel=$'\e[1;33m'
+nc=$'\e[0m'
+
+warn="${yel}WARN :${nc}"
+error="${red}ERROR:${nc}"
+info="INFO :"
+
 #==============================================================================
 # Zsh Setting {{{
 #==============================================================================
@@ -134,6 +156,14 @@ function set_java_home {
     fi
 }
 
+function get_go_version {
+    if [ -x "$(command -v go)" ]; then
+        go version | cut -d' ' -f3 | sed 's/go//g'
+    else
+        printf "$error go executable not found in path, cannot determine version for GOROOT" >&2
+    fi
+}
+
 # }}}
 #==============================================================================
 # Environment Variables {{{
@@ -147,6 +177,7 @@ export JAVA12="12"
 export JAVA_HOME=$(/usr/libexec/java_home -v $JAVA12)
 export PIP_REQUIRE_VIRTUALENV=true
 export GOPATH=~/Documents/workspace/go
+export GOROOT=/usr/local/Cellar/go/$(get_go_version)/libexec
 export LESS="-F -X $LESS"
 export SCRIPTS_HOME="/Users/asidlo/Documents/Workspace/scripts"
 export VISUAL=vim
