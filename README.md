@@ -29,6 +29,7 @@ go get golang.org/x/tools/cmd/guru
 Plugins
 
 - comments (nerd/commentary)
+- syntax highlighting for other langs
 - YouCompleteMe (autocompletion)
 - cope? for ctrlp / bufexplorer
 - yankstack
