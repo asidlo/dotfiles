@@ -41,3 +41,4 @@ Plugins
 - goyo/zenroom
 - lightline vs powerline?
 - vimdevicons for tricked out statusbar/plugins
+

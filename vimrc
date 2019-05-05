@@ -544,7 +544,7 @@ let g:netrw_dirhistmax = 0
 "==============================================================================
 " Persistant undo, allowing you to undo even after closing a buffer
 try
-    set undodir=~/.vim/tmp/undodir
+    set undodir=~/.vim/tmp/undo
     set undofile
 catch
 endtry
