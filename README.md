@@ -46,4 +46,5 @@ Plugins
 Misc
 
 - Rearrange vimrc to make it more simple w/less sections
+- Fix persistent undo
 
