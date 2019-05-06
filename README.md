@@ -47,6 +47,5 @@ Misc
 
 - Remove unused vimrc settings
 - Add Note/Tips section
-- Tidy up zshrc, make single alias section
 - Add check for .vim/ and undodir in init.sh
 
