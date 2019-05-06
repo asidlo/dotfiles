@@ -23,6 +23,7 @@ error="${red}ERROR:${nc}"
 info="INFO :"
 
 # TODO - check if .vim/ is created, if not create & create undodir
+# TODO - add create symlink for venv_hook.sh
 
 # Files in dotfiles dir to be symlinked
 files=(vimrc gitconfig zshrc)
@@ -50,5 +51,4 @@ for file in ${files[@]}; do
       printf "$info ${grn}$log${nc}\n"
     fi
   fi
-
 done

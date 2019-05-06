@@ -58,7 +58,8 @@ POWERLEVEL9K_DOCKERMACHINE_FOREGROUND='red'
 POWERLEVEL9K_DOCKERMACHINE_BACKGROUND='clear'
 POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="%F{blue}\u256D\u2500%F{white}"
 POWERLEVEL9K_MULTILINE_SECOND_PROMPT_PREFIX="%F{blue}\u2570\uf460%F{white} "
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir dir_writable_joined docker_machine anaconda virtualenv vcs)
+# Figure out how to use anaconda if active, otherwise use virtualenv
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir dir_writable_joined docker_machine virtualenv  vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(command_execution_time background_jobs_joined)
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
@@ -132,6 +133,7 @@ POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND='green'
 # HIST_STAMPS="mm/dd/yyyy"
 
 plugins=(
+    pip
   # common-aliases brew gitfast git-flow gradle history jsontools pip tig z osx docker docker-compose vagrant
 )
 
@@ -143,8 +145,9 @@ source $ZSH/oh-my-zsh.sh
 #==============================================================================
 # Load pyenv automatically by appending
 # the following to ~/.zshrc:
+# . /Users/asidlo/.pyenv/versions/anaconda3-2018.12/etc/profile.d/conda.sh
 eval "$(pyenv init -)"
-. /Users/asidlo/.pyenv/versions/anaconda3-2018.12/etc/profile.d/conda.sh
+eval "$(pyenv virtualenv-init -)"
 
 # }}}
 #==============================================================================
@@ -168,14 +171,15 @@ function get_go_version {
 #==============================================================================
 # Environment Variables {{{
 #==============================================================================
-export PIP_REQUIRE_VIRTUALENV=true
+# Useful, but is setup now to always be in some sort of virtualenv via pyenv
+# and also is buggy when using conda based environments
+export PIP_REQUIRE_VIRTUALENV=false
 export HISTFILESIZE=1000000000
 export HISTSIZE=1000000
 export GRADLE_OPTS=-Xmx4096m
 export JAVA8="1.8.0_202"
 export JAVA12="12"
 export JAVA_HOME=$(/usr/libexec/java_home -v $JAVA12)
-export PIP_REQUIRE_VIRTUALENV=true
 export GOPATH=~/Documents/workspace/go
 export GOROOT=/usr/local/Cellar/go/$(get_go_version)/libexec
 export LESS="-F -X $LESS"
