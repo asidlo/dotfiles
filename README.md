@@ -28,20 +28,18 @@ go get golang.org/x/tools/cmd/guru
 
 Plugins
 
-- comments (nerd/commentary)
-- syntax highlighting for other langs
 - YouCompleteMe (autocompletion)
-- cope? for ctrlp / bufexplorer
 - yankstack
 - gundo
+- goyo/zenroom
+
+- syntax highlighting for other langs
 - cscope (find all usages, for non go files)
 - linting? (for non go files)
 - surround
 - autopairs
 - multiple-cursors
-- goyo/zenroom
 - lightline vs powerline?
-- vimdevicons for tricked out statusbar/plugins
 
 Misc
 

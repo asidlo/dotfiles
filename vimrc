@@ -28,6 +28,8 @@ Plug 'itchyny/lightline.vim'
 Plug 'plasticboy/vim-markdown'
 Plug 'easymotion/vim-easymotion'
 Plug 'majutsushi/tagbar'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-commentary'
 call plug#end()
 
 " }}}
