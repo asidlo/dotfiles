@@ -45,6 +45,8 @@ Plugins
 
 Misc
 
-- Rearrange vimrc to make it more simple w/less sections
-- Fix persistent undo
+- Remove unused vimrc settings
+- Add Note/Tips section
+- Tidy up zshrc, make single alias section
+- Add check for .vim/ and undodir in init.sh
 

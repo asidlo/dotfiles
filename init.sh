@@ -22,6 +22,8 @@ warn="${yel}WARN :${nc}"
 error="${red}ERROR:${nc}"
 info="INFO :"
 
+# TODO - check if .vim/ is created, if not create & create undodir
+
 # Files in dotfiles dir to be symlinked
 files=(vimrc gitconfig zshrc)
 
