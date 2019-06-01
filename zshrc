@@ -23,6 +23,9 @@ warn="${yel}WARN :${nc}"
 error="${red}ERROR:${nc}"
 info="INFO :"
 
+# Powerlevel colors
+# https://github.com/bhilburn/powerlevel9k/blob/master/functions/colors.zsh
+
 #==============================================================================
 # Zsh Setting {{{
 #==============================================================================
@@ -69,7 +72,7 @@ POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir anaconda pyenv java_version go_version vc
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(command_execution_time background_jobs_joined)
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
-POWERLEVEL9K_VCS_CLEAN_FOREGROUND='green'
+POWERLEVEL9K_VCS_CLEAN_FOREGROUND='white'
 POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND="clear"
 POWERLEVEL9K_VCS_MODIFIED_FOREGROUND="yellow"
 POWERLEVEL9K_HIDE_BRANCH_ICON=true
