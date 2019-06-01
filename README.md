@@ -46,4 +46,40 @@ Misc
 - Remove unused vimrc settings
 - Add Note/Tips section
 - Add check for .vim/ and undodir in init.sh
+- Have dotfiles init.sh also install brew packages/choco
+- Visual line shifting does not include comments
+- Figure out how bash support could work with local .vim/templates instead
+  may get rid of it...?
+
+Install sdkman
+
+```bash
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk install java
+sdk install gradle
+sdk install maven
+sdk install kotlin
+sdk install kscript
+sdk install springboot
+```
+
+- https://sdkman.io/usage
+
+
+Show Hidden Files in Finder: `CMD + SHIFT + .`
+
+- https://ianlunn.co.uk/articles/quickly-showhide-hidden-files-mac-os-x-mavericks/
+
+Npm Install Packages:
+
+```
+$ npm list -g --depth=0
+/usr/local/lib
+├── @vue/cli@3.8.2
+├── bash-language-server@1.5.5
+├── electron@4.0.6
+├── npm@6.7.0
+└── prettier@1.17.0
+```
 

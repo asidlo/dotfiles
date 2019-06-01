@@ -26,15 +26,12 @@ info="INFO :"
 #==============================================================================
 # Zsh Setting {{{
 #==============================================================================
-# Path to your oh-my-zsh installation.
-export ZSH="/Users/asidlo/.oh-my-zsh"
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
 
 POWERLEVEL9K_MODE="nerdfont-complete"
-ZSH_THEME="powerlevel9k/powerlevel9k"
-#POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-#POWERLEVEL9K_SHORTEN_STRATEGY="NONE"
-#POWERLEVEL9K_SHORTEN_DELIMITER="."
-#POWERLEVEL9K_DISABLE_RPROMPT=true
 
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 POWERLEVEL9K_SHORTEN_DELIMITER=""
@@ -44,22 +41,31 @@ POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=''
 POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=''
 POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR='|'
 POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=''
+POWERLEVEL9K_PYTHON_ICON="(.py)"
+POWERLEVEL9K_JAVA_ICON="(.java)"
+POWERLEVEL9K_GO_ICON="(.go)"
+POWERLEVEL9K_HOME_ICON=''
+POWERLEVEL9K_HOME_SUB_ICON=''
+POWERLEVEL9K_FOLDER_ICON=''
+POWERLEVEL9K_ETC_ICON=''
+POWERLEVEL9K_DIR_SHOW_WRITABLE=true
+POWERLEVEL9K_DIR_NOT_WRITABLE_BACKGROUND='clear'
+POWERLEVEL9K_DIR_NOT_WRITABLE_FOREGROUND='magenta'
 POWERLEVEL9K_ANACONDA_BACKGROUND='clear'
 POWERLEVEL9K_ANACONDA_FOREGROUND='green'
+POWERLEVEL9K_ANACONDA_RIGHT_DELIMITER=""
+POWERLEVEL9K_ANACONDA_LEFT_DELIMITER=""
+POWERLEVEL9K_PYENV_BACKGROUND='clear'
+POWERLEVEL9K_PYENV_FOREGROUND='green'
 POWERLEVEL9K_VIRTUALENV_BACKGROUND='clear'
 POWERLEVEL9K_VIRTUALENV_FOREGROUND='magenta'
-POWERLEVEL9K_GO_FOREGROUND='clear'
-POWERLEVEL9K_GO_BACKGROUND='clear'
-POWERLEVEL9K_NODE_VERSION_FOREGROUND='green'
-POWERLEVEL9K_NODE_VERSION_BACKGROUND='clear'
-POWERLEVEL9K_KUBECONTEXT_FOREGROUND='cyan'
-POWERLEVEL9K_KUBECONTEXT_BACKGROUND='clear'
-POWERLEVEL9K_DOCKERMACHINE_FOREGROUND='red'
-POWERLEVEL9K_DOCKERMACHINE_BACKGROUND='clear'
-POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX="%F{blue}\u256D\u2500%F{white}"
-POWERLEVEL9K_MULTILINE_SECOND_PROMPT_PREFIX="%F{blue}\u2570\uf460%F{white} "
-# Figure out how to use anaconda if active, otherwise use virtualenv
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(root_indicator dir dir_writable_joined docker_machine virtualenv  vcs)
+POWERLEVEL9K_JAVA_VERSION_FOREGROUND='red'
+POWERLEVEL9K_JAVA_VERSION_BACKGROUND='clear'
+POWERLEVEL9K_GO_VERSION_FOREGROUND='cyan'
+POWERLEVEL9K_GO_VERSION_BACKGROUND='clear'
+POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=""
+POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="$ "
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir anaconda pyenv java_version go_version vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(command_execution_time background_jobs_joined)
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
@@ -88,57 +94,6 @@ POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND='magenta'
 POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='clear'
 POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND='green'
 
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-plugins=(
-    pip
-  # common-aliases brew gitfast git-flow gradle history jsontools pip tig z osx docker docker-compose vagrant
-)
-
-source $ZSH/oh-my-zsh.sh
-
 # }}}
 #==============================================================================
 # Pyenv {{{
@@ -153,12 +108,6 @@ eval "$(pyenv virtualenv-init -)"
 #==============================================================================
 # Functions {{{
 #==============================================================================
-function set_java_home {
-    if [ ! -z "$1" ]; then 
-        export JAVA_HOME=$(/usr/libexec/java_home -v $1)
-    fi
-}
-
 function get_go_version {
     if [ -x "$(command -v go)" ]; then
         go version | cut -d' ' -f3 | sed 's/go//g'
@@ -177,15 +126,13 @@ export PIP_REQUIRE_VIRTUALENV=false
 export HISTFILESIZE=1000000000
 export HISTSIZE=1000000
 export GRADLE_OPTS=-Xmx4096m
-export JAVA8="1.8.0_202"
-export JAVA12="12"
-export JAVA_HOME=$(/usr/libexec/java_home -v $JAVA12)
 export GOPATH=~/Documents/workspace/go
 export GOROOT=/usr/local/Cellar/go/$(get_go_version)/libexec
 export LESS="-F -X $LESS"
 export SCRIPTS_HOME="/Users/asidlo/Documents/Workspace/scripts"
 export VISUAL=vim
 export EDITOR="$VISUAL"
+export PYTHON_CONFIGURE_OPTS="--enable-framework"
 export PATH=$PATH:$GOPATH/bin
 
 # }}}
@@ -201,6 +148,7 @@ alias csv="column -t -s,"
 alias javas="$SCRIPTS_HOME/java-home.sh"
 alias zshrc='${=EDITOR} ~/.zshrc'
 alias grep='grep  --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}'
+alias tree="tree -C"
 
 
 # }}}
@@ -456,4 +404,19 @@ alias gal="extract_git_aliases | column -t -s,"
 # gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify -m "--wip-- [skip ci]"'
 # }}}
 # =============================================================================
+
+if [ ! -d ~/.nvm ]; then
+    echo "Creating directory for nvm at: ~/.nvm"
+    mkdir ~/.nvm
+fi
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+
+# This loads nvm bash_completion
+# [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"
+
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/asidlo/.sdkman"
+[[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"
+
 # vim:foldmethod=marker

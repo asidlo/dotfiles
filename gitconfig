@@ -1,52 +1,55 @@
 [user]
-  name = asidlo
-  email = sidlo.andrew@gmail.com
+    name = asidlo
+    email = sidlo.andrew@gmail.com
 [core]
-  preloadindex = true
-  fscache = true
-  editor = vim
+    preloadindex = true
+    fscache = true
+    editor = vim
 [log]
-  # 2019-02-05 11:53:12 -0500
-  date = iso
+    # 2019-02-05 11:53:12 -0500
+    date = iso
 [branch]
-  # Automatically rebase to remove merged commit message on pull
-  autosetuprebase = always
+    # Automatically rebase to remove merged commit message on pull
+    autosetuprebase = always
 [commit]
-  verbose = true
+    verbose = true
 [diff]
-  tool = vimdiff
+    tool = vimdiff
 [difftool]
-  prompt = 0
+    prompt = 0
 [alias]
-  s = status
-  ss = status -s
+    b = branch
 
-  sm = submodule
-  sma = submodule add
+    s = status
+    ss = status -s
 
-  d = diff
-  dh = diff HEAD
+    sm = submodule
+    sma = submodule add
 
-  a = add
-  # Update all tracked files
-  au = add -u
-  # Add all files to staging
-  aa = add -A
+    d = diff
+    dh = diff HEAD
 
-  ca = commit --amend
-  can = commit --amend --no-edit
-  cmsg = commit -m
+    co = checkout
+    cob = checkout -b
 
-  l = log
-  lo = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-  lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
-  lods = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
+    a = add
+    au = add -u # Update all tracked files
+    aa = add -A # Add all files to staging
 
-  lg = log --graph
-  lgo = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
-  lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
-  lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
+    ca = commit --amend
+    can = commit --amend --no-edit
+    cmsg = commit -m
 
-  # standup - last 1 week written by me
-  sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week' --author sidlo.andrew@gmail.com 
+    l = log
+    lo = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+    lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
+    lods = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
+
+    lg = log --graph
+    lgo = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
+    lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
+    lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
+
+    # standup - last 1 week written by me
+    sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week' --author sidlo.andrew@gmail.com 
 

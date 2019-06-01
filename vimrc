@@ -1,6 +1,6 @@
 "==============================================================================
-" Author:  Andrew Sidlo
-" Updated: April 14, 2019
+" Author:   Andrew Sidlo
+" Updated:  April 14, 2019
 "==============================================================================
 " Section: Plugin Manager {{{
 "==============================================================================
@@ -15,6 +15,7 @@ endif
 
 call plug#begin('~/.vim/bundle')
 Plug 'nanotech/jellybeans.vim'
+Plug 'sheerun/vim-polyglot'
 Plug 'fatih/vim-go'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'SirVer/ultisnips'
@@ -30,6 +31,9 @@ Plug 'easymotion/vim-easymotion'
 Plug 'majutsushi/tagbar'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-commentary'
+Plug 'vim-scripts/bash-support.vim'
+Plug 'Valloric/YouCompleteMe'
+Plug 'ervandew/supertab'
 call plug#end()
 
 " }}}
@@ -240,8 +244,8 @@ map <leader>ba :bufdo bd<cr>
 "<C-w>c -> closes current buffer
 
 "Open scratch buffer
-map <leader> bn :e ~/buffer<cr>
-map <leader> bm :e ~/buffer.md<cr>
+map <leader>bn :e ~/buffer<cr>
+map <leader>bm :e ~/buffer.md<cr>
 
 "https://stackoverflow.com/questions/1269603/to-switch-from-vertical-split-to-horizontal-split-fast-in-vim
 "Changed tv and th for **To Vertical** and **To Horizontal**
@@ -419,6 +423,12 @@ cnoremap <C-N> <Down>
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
 
+" =============================================================================
+" Notes/Tips
+" =============================================================================
+" | Mapping | Description       |
+" | gg=G    | indent whole file |
+
 " }}}
 "==============================================================================
 " Section: Plugins {{{
@@ -453,7 +463,7 @@ let NERDTreeAutoDeleteBuffer=1
 " Close automatically if nerd tree is only buffer open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-map <leader>nn :NERDTreeToggle %<cr>
+map <leader>nn :NERDTreeToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
 nmap <leader>n? :map <leader>n<cr>
@@ -679,7 +689,10 @@ autocmd Filetype go nmap <leader>d :GoDoc<cr>
 autocmd FileType go nmap <Leader>i <Plug>(go-info)
 
 " Show methods for a given class / interface
+" TODO - doesnt working outside of GOPATH
 autocmd FileType go nmap <Leader>ii :GoDescribe<cr>
+
+let g:go_autodetect_gopath = 0
 
 " Automatically show info when cursor on method
 " let g:go_auto_type_info = 1
@@ -733,13 +746,13 @@ autocmd Filetype go nmap <C-i> :GoImplements<cr>
 "==============================================================================
 " UltiSnips {{{
 "==============================================================================
-" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
-let g:UltiSnipsExpandTrigger="<leader><tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" Better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
 " If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
+" let g:UltiSnipsEditSplit="vertical"
 
 " Go Snippets List
 " - https://github.com/fatih/vim-go/blob/master/gosnippets/UltiSnips/go.snippets
@@ -752,6 +765,15 @@ let g:UltiSnipsEditSplit="vertical"
 " | lf       | log.Printf()                   |
 " | errp     | if != nil...panic()            |
 " | json     | adds json serializer to struct |
+
+" }}}
+"==============================================================================
+" YouCompleteMe {{{
+"==============================================================================
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " }}}
 "==============================================================================
@@ -798,6 +820,14 @@ autocmd FileType markdown nmap toc :Toc<cr>
 " Commentary {{{
 "==============================================================================
 autocmd FileType text setlocal commentstring=#\ %s
+
+" }}}
+"==============================================================================
+" Bash-Support {{{
+"==============================================================================
+" https://www.tecmint.com/use-vim-as-bash-ide-using-bash-support-in-linux/
+" https://wolfgangmehner.github.io/vim-plugins/bashsupport/bash-hotkeys.pdf
+let g:BASH_MapLeader  = '\'
 
 " }}}
 "==============================================================================

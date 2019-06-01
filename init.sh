@@ -30,25 +30,25 @@ files=(vimrc gitconfig zshrc)
 
 for file in ${files[@]}; do
 
-  dest=~/.$file
+    dest=~/.$file
 
-  # Check if file exists and is a regular file
-  if [ -L $dest ]; then
-    printf "$info $dest is already symlinked --> skipping\n"
+    # Check if file exists and is a regular file
+    if [ -L $dest ]; then
+      printf "$info $dest is already symlinked --> skipping\n"
 
-  # Check if file exists and is a regular file
-  elif [ -f $dest ]; then
-    printf "$error $dest already exists, backup original before symlinking! --> skipping\n"
+    # Check if file exists and is a regular file
+    elif [ -f $dest ]; then
+        printf "$error $dest already exists, backup original before symlinking! --> skipping\n"
 
-  # File does not exist, so we can proceed with symlink
-  else
-    log=$(ln -sv $PWD/$file ~/.$file 2>&1)
-    retval=$?
-    if [ $retval -ne 0 ]; then
-      printf "$error unable to symlink: $file"
-      printf "${red}$log${nc}"
+    # File does not exist, so we can proceed with symlink
     else
-      printf "$info ${grn}$log${nc}\n"
-    fi
-  fi
+        log=$(ln -sv $PWD/$file ~/.$file 2>&1)
+        retval=$?
+        if [ $retval -ne 0 ]; then
+            printf "$error unable to symlink: $file"
+            printf "${red}$log${nc}"
+        else
+            printf "$info ${grn}$log${nc}\n"
+        fi
+      fi
 done
