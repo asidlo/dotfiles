@@ -26,6 +26,10 @@
     sm = submodule
     sma = submodule add
 
+    # git reset HEAD fileName --> removes file from stages, keeps modifications
+    # if you want to remove all changes use git checkout fileName instead
+    rh = reset HEAD
+
     d = diff
     dh = diff HEAD
 
