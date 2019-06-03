@@ -36,6 +36,7 @@
     au = add -u # Update all tracked files
     aa = add -A # Add all files to staging
 
+    c = commit
     ca = commit --amend
     can = commit --amend --no-edit
     cmsg = commit -m
