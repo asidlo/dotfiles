@@ -31,12 +31,9 @@ Plugins
 - yankstack
 - gundo
 - goyo/zenroom
-
-- cscope (find all usages, for non go files)
 - surround
+- ack/silver/fzf
 - autopairs
-- multiple-cursors
-- lightline vs powerline?
 
 Misc
 
