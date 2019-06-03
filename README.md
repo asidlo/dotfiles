@@ -28,14 +28,11 @@ go get golang.org/x/tools/cmd/guru
 
 Plugins
 
-- YouCompleteMe (autocompletion)
 - yankstack
 - gundo
 - goyo/zenroom
 
-- syntax highlighting for other langs
 - cscope (find all usages, for non go files)
-- linting? (for non go files)
 - surround
 - autopairs
 - multiple-cursors
@@ -48,8 +45,10 @@ Misc
 - Add check for .vim/ and undodir in init.sh
 - Have dotfiles init.sh also install brew packages/choco
 - Visual line shifting does not include comments
-- Figure out how bash support could work with local .vim/templates instead
-  may get rid of it...?
+- Remove stuff from vimrc dealing with languages besides go/rust?
+- Include instructions for running :GoInstallBinaries on first vim load
+- Include instructions for installing YouCompleteMe for go/rust
+- Include .z files for prezto / install prezto
 
 Install sdkman
 
