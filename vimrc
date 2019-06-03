@@ -32,6 +32,9 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-commentary'
 Plug 'Valloric/YouCompleteMe'
 Plug 'ervandew/supertab'
+Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-surround'
+Plug 'maxbrunsfeld/vim-yankstack'
 call plug#end()
 
 " }}}
@@ -480,7 +483,12 @@ nmap <leader>gs :Gstatus<cr>
 nmap <leader>gw :Gbrowse<cr>
 nmap <leader>g? :map <leader>g<cr>
 
+" Notes/Tips
+" - Type 'g?' while in GitStatus to see all command mappings
 " }}}
+
+set diffopt+=vertical
+
 "==============================================================================
 " Tabularize {{{
 "==============================================================================
@@ -799,6 +807,15 @@ autocmd FileType markdown nmap toc :Toc<cr>
 " Commentary {{{
 "==============================================================================
 autocmd FileType text setlocal commentstring=#\ %s
+
+" }}}
+"==============================================================================
+" YankStack {{{
+"==============================================================================
+let g:yankstack_yank_keys = ['y', 'd']
+
+nmap <c-p> <Plug>yankstack_substitute_older_paste
+nmap <c-n> <Plug>yankstack_substitute_newer_paste
 
 " }}}
 "==============================================================================
