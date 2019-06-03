@@ -30,11 +30,11 @@ Plug 'plasticboy/vim-markdown'
 Plug 'majutsushi/tagbar'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-commentary'
-Plug 'Valloric/YouCompleteMe'
-Plug 'ervandew/supertab'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'maxbrunsfeld/vim-yankstack'
+" Plug 'Valloric/YouCompleteMe'
+Plug 'ervandew/supertab'
 call plug#end()
 
 " }}}
@@ -47,7 +47,15 @@ syntax enable
 colorscheme jellybeans
 set background=dark
 
-" Enable mouse support for specific modes ('a' = all)
+" You can bind contents of the visual selection to system primary buffer
+" (* register in vim, usually referred as «mouse» buffer) by using
+set clipboard^=autoselect
+
+" Dont insert first suggestion from autocompletions (omnicomplete)
+" https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
+set completeopt=longest,menuone
+
+" Enable mouse support for specific modes
 set mouse=a
 
 "Enable filetype plugins
@@ -219,6 +227,12 @@ noremap <Up> gk
 noremap <Down> gj
 noremap j gj
 noremap k gk
+
+" Enter with autocomplete menu selects entry as it would with <C-Y>
+" https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
+  \ '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
 " search will center on the line it's found in.
 nnoremap n nzzzv
@@ -488,10 +502,10 @@ nmap <leader>g? :map <leader>g<cr>
 
 " Notes/Tips
 " - Type 'g?' while in GitStatus to see all command mappings
-" }}}
 
 set diffopt+=vertical
 
+" }}}
 "==============================================================================
 " Tabularize {{{
 "==============================================================================
@@ -646,6 +660,8 @@ nmap <leader>gds :GoDefStack<cr>
 
 " Change the underlying go def tool from guru to 'godef'
 "let g:go_def_mode = 'godef'
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
 
 " Run linting on save
 let g:go_metalinter_autosave = 1
@@ -705,6 +721,9 @@ autocmd Filetype go nmap refs :GoReferrers<cr>
 " Shows all interfaces current type/struct implements
 autocmd Filetype go nmap <C-i> :GoImplements<cr>
 
+" Autocomplete prompt to appear automatically whenever you press the dot
+au filetype go inoremap <buffer> . .<C-x><C-o>
+
 " Cant get :GoChannelPeers or :GoWhicherrs to work :/... basically all guru
 " functionality isnt working, which stinks since I need it for find all usages
 " capability
@@ -725,7 +744,7 @@ autocmd Filetype go nmap <C-i> :GoImplements<cr>
 " | :GoChannelPeers | Shows information about a selected channel                                                          |
 " | :GoCallees      | Shows all possible targets for the current function                                                 |
 " | :GoCallers      | Shows which functions call the current function and navigates to the usage, similar to GoReferrers  |
-" | :GoRename       | refactor renames current identifier                                                                 |
+" | :GoRename       | refactor renames current identifier(only works in GOPATH)                                           |
 " | :GoFreevars     | shows variables that are referenced but not defined within a given selection, helps for refactoring |
 " | :GoGenerate     | runs go generate                                                                                    |
 " | :GoImpl         | generates methods for a given interface                                                             |
@@ -761,9 +780,9 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 " YouCompleteMe {{{
 "==============================================================================
 " make YCM compatible with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
+" let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+" let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+" let g:SuperTabDefaultCompletionType = '<C-n>'
 
 " }}}
 "==============================================================================
