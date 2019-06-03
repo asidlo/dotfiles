@@ -16,7 +16,7 @@ endif
 call plug#begin('~/.vim/bundle')
 Plug 'nanotech/jellybeans.vim'
 Plug 'sheerun/vim-polyglot'
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'SirVer/ultisnips'
 Plug 'ctrlpvim/ctrlp.vim'
@@ -27,11 +27,9 @@ Plug 'yuttie/comfortable-motion.vim'
 Plug 'godlygeek/tabular'
 Plug 'itchyny/lightline.vim'
 Plug 'plasticboy/vim-markdown'
-Plug 'easymotion/vim-easymotion'
 Plug 'majutsushi/tagbar'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-commentary'
-Plug 'vim-scripts/bash-support.vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'ervandew/supertab'
 call plug#end()
@@ -78,10 +76,10 @@ set noshowmode
 set foldcolumn=0
 
 " Don't redraw while executing macros (good performance config)
-set lazyredraw 
+set lazyredraw
 
 " Show matching brackets when text indicator is over them
-set showmatch 
+set showmatch
 
 " How many tenths of a second to blink when matching brackets
 set mat=2
@@ -288,7 +286,6 @@ nmap <leader>q :q<cr>
 au BufWinLeave *.* mkview
 au BufWinEnter *.* silent loadview
 " TODO - Figure out how to make this work when closing all buffers, and opening
-"	new one from no name buffer via confe
 
 "https://vim.fandom.com/wiki/Folding
 
@@ -580,24 +577,6 @@ map <leader>tb :TagbarToggle<cr>
 
 " }}}
 "==============================================================================
-" Vim-EasyMotion {{{
-"==============================================================================
-" Disable default mappings
-let g:EasyMotion_do_mapping = 0 
-
-" Turn on case-insensitive feature
-let g:EasyMotion_smartcase = 1
-
-" JK motions: Line motions
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
-
-map  / <Plug>(easymotion-sn)
-omap / <Plug>(easymotion-tn)
-
-
-" }}} 
-"==============================================================================
 " Vim-Go {{{
 "==============================================================================
 " For walkthrough, use the following github repo as example:
@@ -820,14 +799,6 @@ autocmd FileType markdown nmap toc :Toc<cr>
 " Commentary {{{
 "==============================================================================
 autocmd FileType text setlocal commentstring=#\ %s
-
-" }}}
-"==============================================================================
-" Bash-Support {{{
-"==============================================================================
-" https://www.tecmint.com/use-vim-as-bash-ide-using-bash-support-in-linux/
-" https://wolfgangmehner.github.io/vim-plugins/bashsupport/bash-hotkeys.pdf
-let g:BASH_MapLeader  = '\'
 
 " }}}
 "==============================================================================
