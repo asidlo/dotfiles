@@ -47,6 +47,9 @@ syntax enable
 colorscheme jellybeans
 set background=dark
 
+" Enable mouse support for specific modes ('a' = all)
+set mouse=a
+
 "Enable filetype plugins
 filetype plugin on
 filetype indent on
