@@ -1,41 +1,27 @@
 # Author  : Andrew Sidlo
 # Modified: Apr 23, 2019
 
-# Printing colors
-
-#-----------------------------------------
-# Black        0;30     Dark Gray     1;30
-# Red          0;31     Light Red     1;31
-# Green        0;32     Light Green   1;32
-# Brown/Orange 0;33     Yellow        1;33
-# Blue         0;34     Light Blue    1;34
-# Purple       0;35     Light Purple  1;35
-# Cyan         0;36     Light Cyan    1;36
-# Light Gray   0;37     White         1;37
-#-----------------------------------------
-
-red=$'\e[1;31m'
-grn=$'\e[1;32m'
-yel=$'\e[1;33m'
-nc=$'\e[0m'
-
-warn="${yel}WARN :${nc}"
-error="${red}ERROR:${nc}"
-info="INFO :"
-
-# Powerlevel colors
-# https://github.com/bhilburn/powerlevel9k/blob/master/functions/colors.zsh
-
 #==============================================================================
-# Zsh Setting {{{
+# ZSH CONFIG {{{
 #==============================================================================
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-POWERLEVEL9K_MODE="menlo"
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
+# Powerlevel colors
+# https://github.com/bhilburn/powerlevel9k/blob/master/functions/colors.zsh
+POWERLEVEL9K_MODE="nerdfont-complete"
+
+# POWERLEVEL9K_PYTHON_ICON="(.py)"
+# POWERLEVEL9K_JAVA_ICON="(.java)"
+# POWERLEVEL9K_GO_ICON="(.go)"
+# POWERLEVEL9K_HOME_ICON=''
+# POWERLEVEL9K_HOME_SUB_ICON=''
+# POWERLEVEL9K_FOLDER_ICON=''
+# POWERLEVEL9K_ETC_ICON=''
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 POWERLEVEL9K_SHORTEN_DELIMITER=""
 POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
@@ -44,63 +30,54 @@ POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=''
 POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=''
 POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR='|'
 POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=''
-POWERLEVEL9K_PYTHON_ICON="(.py)"
-POWERLEVEL9K_JAVA_ICON="(.java)"
-POWERLEVEL9K_GO_ICON="(.go)"
-POWERLEVEL9K_HOME_ICON=''
-POWERLEVEL9K_HOME_SUB_ICON=''
-POWERLEVEL9K_FOLDER_ICON=''
-POWERLEVEL9K_ETC_ICON=''
+POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=""
+POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="$ "
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir go_version anaconda pyenv java_version vcs)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(command_execution_time background_jobs_joined)
+
 POWERLEVEL9K_DIR_SHOW_WRITABLE=true
 POWERLEVEL9K_DIR_NOT_WRITABLE_BACKGROUND='clear'
 POWERLEVEL9K_DIR_NOT_WRITABLE_FOREGROUND='magenta'
+
 POWERLEVEL9K_ANACONDA_BACKGROUND='clear'
 POWERLEVEL9K_ANACONDA_FOREGROUND='green'
 POWERLEVEL9K_ANACONDA_RIGHT_DELIMITER=""
 POWERLEVEL9K_ANACONDA_LEFT_DELIMITER=""
+
 POWERLEVEL9K_PYENV_BACKGROUND='clear'
 POWERLEVEL9K_PYENV_FOREGROUND='green'
+
 POWERLEVEL9K_VIRTUALENV_BACKGROUND='clear'
 POWERLEVEL9K_VIRTUALENV_FOREGROUND='magenta'
+
 POWERLEVEL9K_JAVA_VERSION_FOREGROUND='red'
 POWERLEVEL9K_JAVA_VERSION_BACKGROUND='clear'
+
 POWERLEVEL9K_GO_VERSION_FOREGROUND='cyan'
 POWERLEVEL9K_GO_VERSION_BACKGROUND='clear'
-POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=""
-POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="$ "
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir anaconda pyenv java_version go_version vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(command_execution_time background_jobs_joined)
+
 POWERLEVEL9K_VCS_MODIFIED_BACKGROUND="clear"
 POWERLEVEL9K_VCS_CLEAN_BACKGROUND="clear"
-POWERLEVEL9K_VCS_CLEAN_FOREGROUND='white'
+POWERLEVEL9K_VCS_CLEAN_FOREGROUND='orange1'
 POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND="clear"
+POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND="palevioletred1"
 POWERLEVEL9K_VCS_MODIFIED_FOREGROUND="yellow"
-POWERLEVEL9K_HIDE_BRANCH_ICON=true
-POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND="yellow"
+POWERLEVEL9K_HIDE_BRANCH_ICON=false
+
 POWERLEVEL9K_DIR_HOME_BACKGROUND="clear"
 POWERLEVEL9K_DIR_HOME_FOREGROUND="blue"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND="clear"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="blue"
-POWERLEVEL9K_DIR_WRITABLE_FORBIDDEN_BACKGROUND="clear"
-POWERLEVEL9K_DIR_WRITABLE_FORBIDDEN_FOREGROUND="red"
-POWERLEVEL9K_DIR_DEFAULT_BACKGROUND="clear"
-POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
-POWERLEVEL9K_ROOT_INDICATOR_BACKGROUND="red"
-POWERLEVEL9K_ROOT_INDICATOR_FOREGROUND="white"
-POWERLEVEL9K_STATUS_OK_BACKGROUND="clear"
-POWERLEVEL9K_STATUS_OK_FOREGROUND="green"
-POWERLEVEL9K_STATUS_ERROR_BACKGROUND="clear"
-POWERLEVEL9K_STATUS_ERROR_FOREGROUND="red"
-POWERLEVEL9K_TIME_BACKGROUND="clear"
-POWERLEVEL9K_TIME_FOREGROUND="cyan"
+
 POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND='clear'
 POWERLEVEL9K_COMMAND_EXECUTION_TIME_FOREGROUND='magenta'
+
 POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='clear'
 POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND='green'
 
 # }}}
 #==============================================================================
-# Pyenv {{{
+# PYENV LOAD {{{
 #==============================================================================
 # Load pyenv automatically by appending
 # the following to ~/.zshrc:
@@ -110,19 +87,38 @@ eval "$(pyenv virtualenv-init -)"
 
 # }}}
 #==============================================================================
-# Functions {{{
+# NVM LOAD {{{
+#==============================================================================
+if [ ! -d ~/.nvm ]; then
+    echo "Creating directory for nvm at: ~/.nvm"
+    mkdir ~/.nvm
+fi
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+
+# }}}
+#==============================================================================
+# SDKMAN LOAD {{{
+#==============================================================================
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/asidlo/.sdkman"
+[[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"
+
+# }}}
+#==============================================================================
+# FUNCTIONS {{{
 #==============================================================================
 function get_go_version {
     if [ -x "$(command -v go)" ]; then
         go version | cut -d' ' -f3 | sed 's/go//g'
     else
-        printf "$error go executable not found in path, cannot determine version for GOROOT" >&2
+        printf "Go executable not found in path, cannot determine version for GOROOT" >&2
     fi
 }
 
 # }}}
 #==============================================================================
-# Environment Variables {{{
+# ENV VARS {{{
 #==============================================================================
 # Useful, but is setup now to always be in some sort of virtualenv via pyenv
 # and also is buggy when using conda based environments
@@ -141,15 +137,14 @@ export PATH=$PATH:$GOPATH/bin
 
 # }}}
 #==============================================================================
-# Aliases {{{
+# ALIASES {{{
 #==============================================================================
-# Misc Aliases {{{
+# MISC {{{
 #==============================================================================
 alias cls=clear
 alias vi=vim
 alias copy=pbcopy
 alias csv="column -t -s,"
-alias javas="$SCRIPTS_HOME/java-home.sh"
 alias zshrc='${=EDITOR} ~/.zshrc'
 alias grep='grep  --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}'
 alias tree="tree -C"
@@ -157,7 +152,7 @@ alias tree="tree -C"
 
 # }}}
 #==============================================================================
-# Docker Aliases {{{
+# DOCKER {{{
 #==============================================================================
 alias dm="docker-machine"
 
@@ -179,7 +174,7 @@ alias dcupd='docker-compose up -d'
 
 # }}}
 #==============================================================================
-# Tig Aliases {{{
+# TIG {{{
 #==============================================================================
 alias tib='tig blame -C'
 alias til='tig log'
@@ -187,7 +182,7 @@ alias tis='tig status'
 
 # }}}
 #==============================================================================
-# File Aliases {{{
+# FILE {{{
 #==============================================================================
 alias md="mkdir -p"
 alias mv='mv -i'
@@ -217,7 +212,7 @@ alias ff='find . -type f -name'
 
 # }}}
 #==============================================================================
-# Git Aliases {{{
+# GIT {{{
 #==============================================================================
 for git_alias in $(git --list-cmds=alias); do
     alias g$git_alias="git $git_alias"
@@ -241,7 +236,7 @@ alias gal="extract_git_aliases | column -t -s,"
 #==============================================================================
 # }}}
 #==============================================================================
-# Other Useful Git Aliases {{{
+# UNUSED GIT ALIASES {{{
 #==============================================================================
 # g=git
 # ga='git add'
@@ -408,19 +403,5 @@ alias gal="extract_git_aliases | column -t -s,"
 # gwip='git add -A; git rm $(git ls-files --deleted) 2> /dev/null; git commit --no-verify -m "--wip-- [skip ci]"'
 # }}}
 # =============================================================================
-
-if [ ! -d ~/.nvm ]; then
-    echo "Creating directory for nvm at: ~/.nvm"
-    mkdir ~/.nvm
-fi
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-
-# This loads nvm bash_completion
-# [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"
-
-# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/asidlo/.sdkman"
-[[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"
 
 # vim:foldmethod=marker
