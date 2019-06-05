@@ -47,6 +47,8 @@ Misc
 - Include instructions for installing YouCompleteMe for go/rust
 - Include .z files for prezto / install prezto
 
+- Create test files in new buffers if they arent already present (go)
+
 Install sdkman
 
 ```bash
