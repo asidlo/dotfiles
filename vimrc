@@ -33,8 +33,9 @@ Plug 'tpope/vim-commentary'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'maxbrunsfeld/vim-yankstack'
-" Plug 'Valloric/YouCompleteMe'
 Plug 'ervandew/supertab'
+Plug 'editorconfig/editorconfig-vim'
+" Plug 'Valloric/YouCompleteMe', { 'do': '/usr/bin/python ./install.py --go-completer' }
 call plug#end()
 
 " }}}
@@ -230,9 +231,9 @@ noremap k gk
 
 " Enter with autocomplete menu selects entry as it would with <C-Y>
 " https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
-  \ '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
+" inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" inoremap <expr> <C-n> pumvisible() ? '<C-n>' :
+"   \ '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
 " search will center on the line it's found in.
 nnoremap n nzzzv
@@ -635,7 +636,7 @@ let g:go_highlight_extra_types = 1
 
 " Run current file (:GoBuild / :GoRun)
 autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
-autocmd FileType go nmap <leader>r  <Plug>(go-run)
+autocmd FileType go nmap <leader>r <Plug>(go-run)
 
 " Go to next/previous (quickfix) error
 map <C-n> :cnext<CR>
@@ -659,7 +660,13 @@ autocmd Filetype go set nolist
 nmap <leader>gds :GoDefStack<cr>
 
 " Change the underlying go def tool from guru to 'godef'
-"let g:go_def_mode = 'godef'
+" let g:go_def_mode = 'godef'
+" Note: Go modules are required to be in the project you are working on when using
+"       gopls for godef and goinfo commands
+"       Also note that while in GOPATH, gopls with start omnifunc after .
+"       Whereas outside of GOPATH <C-X><C-O> is required to activate it
+"       Another note: if directory is symlinked, where the source is in GOPATH
+"       gorename will work as expected
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
@@ -722,7 +729,7 @@ autocmd Filetype go nmap refs :GoReferrers<cr>
 autocmd Filetype go nmap <C-i> :GoImplements<cr>
 
 " Autocomplete prompt to appear automatically whenever you press the dot
-au filetype go inoremap <buffer> . .<C-x><C-o>
+" au filetype go inoremap <buffer> . .<C-x><C-o>
 
 " Cant get :GoChannelPeers or :GoWhicherrs to work :/... basically all guru
 " functionality isnt working, which stinks since I need it for find all usages
