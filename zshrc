@@ -150,6 +150,7 @@ alias csv="column -t -s,"
 alias zshrc='${=EDITOR} ~/.zshrc'
 alias grep='grep  --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}'
 alias tree="tree -C"
+alias cal='cal -3'
 
 
 # }}}
