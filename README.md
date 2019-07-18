@@ -81,3 +81,9 @@ $ npm list -g --depth=0
 └── prettier@1.17.0
 ```
 
+Install rust
+
+```bash
+curl https://sh.rustup.rs -sSf | sh
+```
+

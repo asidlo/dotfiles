@@ -18,7 +18,52 @@
 [difftool]
     prompt = 0
 [alias]
+    a = add
+    au = add -u # Update all tracked files
+    aa = add -A # Add all files to staging
+
     b = branch
+
+    co = checkout
+    cob = checkout -b
+
+    c = commit
+    ca = commit --amend
+    can = commit --amend --no-edit
+    cmsg = commit -m
+
+    d = diff
+    ds = diff --stat
+    dh = diff HEAD
+    dhs = diff HEAD --stat
+
+    # l = log
+    # o = oneline
+    # d = date [r = relative, s = short]
+    # a = author
+    l = log
+    lo = log --oneline
+    loa = log --oneline --decorate --pretty='* %C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+    lod = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
+    lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
+    lods = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
+    load = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+    loadr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
+    loads = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
+
+    # g = graph
+    lg = log --graph
+    lgo = log --graph --oneline
+    lgod = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)'
+    lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=short
+    lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=relative
+    lgoad = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
+    lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
+    lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
+
+    # git reset HEAD fileName --> removes file from stages, keeps modifications
+    # if you want to remove all changes use git checkout fileName instead
+    rh = reset HEAD
 
     s = status
     ss = status -s
@@ -26,35 +71,11 @@
     sm = submodule
     sma = submodule add
 
-    # git reset HEAD fileName --> removes file from stages, keeps modifications
-    # if you want to remove all changes use git checkout fileName instead
-    rh = reset HEAD
-
-    d = diff
-    dh = diff HEAD
-
-    co = checkout
-    cob = checkout -b
-
-    a = add
-    au = add -u # Update all tracked files
-    aa = add -A # Add all files to staging
-
-    c = commit
-    ca = commit --amend
-    can = commit --amend --no-edit
-    cmsg = commit -m
-
-    l = log
-    lo = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-    lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
-    lods = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
-
-    lg = log --graph
-    lgo = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
-    lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
-    lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
-
     # standup - last 1 week written by me
     sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week' --author sidlo.andrew@gmail.com 
 
+    # https://git-scm.com/docs/git-worktree
+    w = worktree
+    wl = worktree list
+    wa = worktree add
+    wrm = worktree remove

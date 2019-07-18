@@ -26,7 +26,7 @@ info="INFO :"
 # TODO - add create symlink for venv_hook.sh
 
 # Files in dotfiles dir to be symlinked
-files=(vimrc gitconfig zshrc)
+files=(vimrc gitconfig zshrc ycm_extra_conf.py)
 
 for file in ${files[@]}; do
 
