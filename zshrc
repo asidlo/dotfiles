@@ -17,6 +17,7 @@ fi
 export SDKMAN_DIR="/Users/asidlo/.sdkman"
 [[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"
 
+
 # }}}
 #==============================================================================
 # FUNCTIONS {{{
@@ -35,8 +36,8 @@ function get_go_version {
 #==============================================================================
 # Useful, but is setup now to always be in some sort of virtualenv via pyenv
 # and also is buggy when using conda based environments
-export PIP_REQUIRE_VIRTUALENV=true
-export VIRTUAL_ENV_DISABLE_PROMPT=1
+# export PIP_REQUIRE_VIRTUALENV=true
+# export VIRTUAL_ENV_DISABLE_PROMPT=1
 export HISTFILESIZE=100000
 export HISTSIZE=100000
 export HISTTIMEFORMAT="%h %d %H:%M:%S - "
@@ -127,3 +128,19 @@ alias gal="extract_git_aliases | column -t -s,"
 
 # }}}
 # vim:foldmethod=marker
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/asidlo/.pyenv/versions/anaconda3-2019.03/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/asidlo/.pyenv/versions/anaconda3-2019.03/etc/profile.d/conda.sh" ]; then
+        . "/Users/asidlo/.pyenv/versions/anaconda3-2019.03/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/asidlo/.pyenv/versions/anaconda3-2019.03/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

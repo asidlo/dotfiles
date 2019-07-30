@@ -87,3 +87,6 @@ Install rust
 curl https://sh.rustup.rs -sSf | sh
 ```
 
+Disable conda prompt change
+
+- https://stackoverflow.com/questions/36499220/anaconda-disable-prompt-change

@@ -4,49 +4,80 @@
 "==============================================================================
 " Section: Plugin Manager {{{
 "==============================================================================
-"
 " Automatically download the plug.vim plugin manager vimscript
 " Run :PlugInstall to install all plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-" coc-yank seems neat, but is causing a bunch of issues writing invalid json to
-" its config file
-let lang_servers='
-            \ coc-json coc-prettier coc-eslint coc-tsserver
-            \ coc-html coc-css coc-vetur coc-java coc-rls
-            \ coc-yaml coc-python coc-lists coc-git
-            \ coc-vimlsp coc-xml
-            \'
+if has('win32') || has('win32unix')
+  let $PYTHONPATH = "C:\\tools\\Anaconda3;C:\\tools\\Anaconda3\\Lib;C:\\tools\\Anaconda3\\DLLs"
+endif
+
+" function! InstallAndUpdateCoc(...)
+"   " info is a dictionary with 3 fields
+"   " - name:   name of the plugin
+"   " - status: 'installed', 'updated', or 'unchanged'
+"   " - force:  set on PlugInstall! or PlugUpdate!
+
+"   " Ones to look into:
+"   " - coc-texlab
+"   " - coc-java (once it gets better, right now just use intellij)
+"   let lang_servers=[
+"         \ 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tsserver',
+"         \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
+"         \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
+"         \ 'coc-powershell', 'coc-omnisharp', 'coc-marketplace'
+"         \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-ccls'
+"         \]
+
+"   :CocUpdate
+
+"   for ls in lang_servers
+"     exec ':CocInstall '.ls
+"   endfor
+" endfunction
+
 
 call plug#begin('~/.vim/bundle')
+
 Plug 'nanotech/jellybeans.vim'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
-Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
-Plug 'yuttie/comfortable-motion.vim'
 Plug 'godlygeek/tabular'
 Plug 'itchyny/lightline.vim'
 Plug 'plasticboy/vim-markdown'
 Plug 'majutsushi/tagbar'
-Plug 'ryanoasis/vim-devicons'
+
+" https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
+if has('unix') && !has('win32unix')
+  Plug 'ryanoasis/vim-devicons'
+endif
+
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
-Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'maxbrunsfeld/vim-yankstack'
+Plug 'jiangmiao/auto-pairs'
 Plug 'ervandew/supertab'
-Plug 'editorconfig/editorconfig-vim'
 Plug 'sheerun/vim-polyglot'
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': ':CocInstall '.lang_servers}
+Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release', 'do': ':CocUpdate'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'rhysd/vim-clang-format'
+" Plug 'rhysd/vim-clang-format'
+
+if has('win32') || has('win32unix')
+  Plug 'kien/ctrlp.vim'
+else
+  Plug '/usr/local/opt/fzf'
+  Plug 'junegunn/fzf.vim'
+endif
+
 call plug#end()
 
 " }}}
@@ -56,8 +87,38 @@ call plug#end()
 let mapleader=","
 
 syntax enable
-colorscheme jellybeans
+
+try
+  colorscheme jellybeans
+catch
+  colorscheme desert
+endtry
+
+" Remap all letters to not execute escape when using alt + letter 
+" https://stackoverflow.com/questions/6778961/alt-key-shortcuts-not-working-on-gnome-terminal-with-vim
+if has('win32unix')
+  let c='a'
+  while c <= 'z'
+    exec "set <A-".c.">=\e".c
+    exec "imap \e".c." <A-".c.">"
+    let c = nr2char(1+char2nr(c))
+  endw
+  set ttimeout ttimeoutlen=50
+endif
+
 set background=dark
+
+if has("gui_running")
+  " No toolbars, menu or scrollbars in the GUI
+  set guifont=Hack:h14
+  set clipboard+=unnamed
+  set guioptions-=m  "no menu
+  set guioptions-=T  "no toolbar
+  set guioptions-=l
+  set guioptions-=L
+  set guioptions-=r  "no scrollbar
+  set guioptions-=R
+endif
 
 " See vulnerability:
 " https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
@@ -67,10 +128,13 @@ set nomodeline
 " You can bind contents of the visual selection to system primary buffer
 " (* register in vim, usually referred as «mouse» buffer) by using
 if has('nvim')
-    vnoremap <LeftRelease> "*ygv
-else
-    set clipboard^=autoselect
+  vnoremap <LeftRelease> "*ygv
+elseif has('macunix')
+  set clipboard^=autoselect
+elseif has('win32') || has('win32unix')
+  set clipboard=unnamedplus
 endif
+
 
 " Dont insert first suggestion from autocompletions (omnicomplete)
 " https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
@@ -89,8 +153,16 @@ set nofoldenable
 " Add line numbers
 set number
 
-"Linenumbers are relative to current line
-"set relativenumber 
+set cursorline
+
+" You will have bad experience for diagnostic messages when it's default 4000.
+set updatetime=100
+
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+
+" always show signcolumns
+set signcolumn=yes
 
 " Disable line wrapping
 set nowrap
@@ -142,12 +214,6 @@ set splitbelow
 
 "New splits on the right, not left
 set splitright
-
-" Specify the behavior when switching between buffers
-" try
-"   set switchbuf=useopen,usetab,newtab
-" catch
-" endtry
 
 " Make merging lines smarter when using <shift-j>
 if v:version > 703 || v:version == 703 && has('patch541')
@@ -206,8 +272,8 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces (tabstop)
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 
 set ai "Auto indent
 set si "Smart indent
@@ -234,9 +300,9 @@ set wildmode=longest:full,full
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
 if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
+  set wildignore+=.git\*,.hg\*,.svn\*
 else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
 "}}}
 "==============================================================================
@@ -251,9 +317,8 @@ noremap k gk
 
 " Terminal settings
 if has('nvim')
-  " Leader q to exit terminal mode. Somehow it jumps to the end, so jump to
-  " the top again
-  tnoremap <Leader>q <C-\><C-n>gg<cr>
+  " Leader q to exit terminal mode
+  tnoremap <Leader>q <C-\><C-n>:bd!<cr>
 
   " mappings to move out from terminal to other views
   tnoremap <C-h> <C-\><C-n><C-w>h
@@ -261,28 +326,38 @@ if has('nvim')
   tnoremap <C-k> <C-\><C-n><C-w>k
   tnoremap <C-l> <C-\><C-n><C-w>l
 
-  tnoremap <C-b> <C-\><C-n>:CtrlPBuffer<CR>
-  tnoremap <C-f> <C-\><C-n>:CtrlP<CR>
+  tnoremap <C-b> <C-\><C-n>:Buffers<CR>
+  tnoremap <C-f> <C-\><C-n>:Files<CR>
+  tnoremap <C-e> <C-\><C-n>:e#<CR>
 
   if bufwinnr(1)
     tnoremap + <C-W>+
     tnoremap - <C-W>-
   endif
-  
-  "Alt + Shift + > increases buffer width +1
-  "Alt + Shift + < decreases buffer width -1
-  "nmap < :vertical res +1<Enter>
-  "nmap < :vertical res +1<Enter>
+
   tnoremap > <C-w>>
   tnoremap < <C-w><
 
-  " Open terminal in vertical, horizontal and new tab
-  nnoremap <leader>tv :vsplit term://zsh<CR>
-  nnoremap <leader>ts :split term://zsh<CR>
-  nnoremap <leader>tt :e term://zsh<CR>
+  " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
+  if has('win32') || has('win32unix')
+    " Open terminal in vertical, horizontal and new tab
+    nnoremap <leader>tv :vsplit term://powershell -nologo<CR>
+    nnoremap <leader>ts :split term://powershell -nologo<CR>
+    nnoremap <leader>tt :e term://powershell -nologo<CR>
+  else
+    " Open terminal in vertical, horizontal and new tab
+    nnoremap <leader>tv :vsplit term://fish<CR>
+    nnoremap <leader>ts :split term://fish<CR>
+    nnoremap <leader>tt :e term://fish<CR>
+  endif
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
+
+elseif has('win32') || has('win32unix')
+  " https://stackoverflow.com/questions/94382/vim-with-powershell
+  set shell=powershell
+
 endif
 
 " Enter key will simply select the highlighted menu item, just as <C-Y> does
@@ -300,76 +375,54 @@ nnoremap Y y$
 nnoremap confr :source $MYVIMRC<cr>
 
 " Edit vimrc
-nnoremap confe :e ~/.vimrc<cr>
+if has('nvim')
+  if has('win32') || has('win32unix')
+    nnoremap confe :e ~\_vimrc<cr>
+  else
+    nnoremap confe :e ~/.vimrc<cr>
+  endif
+else
+  nnoremap confe :e $MYVIMRC<cr>
+endif
 
 " Map jj to exit edit mode while in edit mode
-" <Ctrl+c> also exits insert mode
+" <Ctrl+c> or <C-[> also exits insert mode
 inoremap jj <Esc>
 
-"Close the current buffer
-map <leader>bd :bd<cr>
+" Switch to last buffer
+nnoremap <C-e> :e#<CR>
+
+" save using <C-s> in every mode
+" when in operator-pending or insert, takes you to normal mode
+nnoremap <C-s> :write<Cr>
+vnoremap <C-s> <C-c>:write<Cr>
+inoremap <C-s> <Esc>:write<Cr>
+onoremap <C-s> <Esc>:write<Cr>
+
+" use `u` to undo, use `U` to redo, mind = blown
+nnoremap U <C-r>
 
 "Close all the buffers
-map <leader>ba :bufdo bd<cr>
-
-"Closing buffers
-"<C-w>c -> closes current buffer
-
-"Open scratch buffer
-map <leader>bn :e ~/buffer<cr>
-map <leader>bm :e ~/buffer.md<cr>
-
-"https://stackoverflow.com/questions/1269603/to-switch-from-vertical-split-to-horizontal-split-fast-in-vim
-"Changed tv and th for **To Vertical** and **To Horizontal**
-"Horizontal buffer to vertical
-nmap <leader>bv <c-w>t<c-w>H
-
-"Vertical buffer to horizontal
-nmap <leader>bs <c-w>t<c-w>K
+nnoremap <C-Q> :bufdo bd<cr>
 
 "https://vim.fandom.com/wiki/Fast_window_resizing_with_plus/minus_keys
 "+ increases vertical buffer, - decreases
 if bufwinnr(1)
-  map + <C-W>+
-  map - <C-W>-
+  nnoremap + <C-W>+
+  nnoremap - <C-W>-
 endif
 
-"Alt + Shift + > increases buffer width +1
-"Alt + Shift + < decreases buffer width -1
-"nmap < :vertical res +1<Enter>
-"nmap < :vertical res +1<Enter>
-nmap > <C-w>>
-nmap < <C-w><
-
-"https://vim.fandom.com/wiki/Buffers
-"<C-w>s -> Horizontal split
-"<C-w>v -> Vertical split
+nnoremap > <C-w>>
+nnoremap < <C-w><
 
 " Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
-
+nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " Quit a buffer
-nmap <leader>q :q<cr>
-
-" https://vim.fandom.com/wiki/Make_views_automatic
-" Save folds in between buffer sessions
-" au BufWinLeave *.* mkview
-" au BufWinEnter *.* silent loadview
-" TODO - Figure out how to make this work when closing all buffers, and opening
-
-"https://vim.fandom.com/wiki/Folding
-
-" | Command | Description      |
-" | za      | Toggle fold      |
-" | zo      | Open fold        |
-" | zc      | Close fold       |
-" | zR      | Open all folds   |
-" | zM      | Close all folds  |
-" | zi      | Toggle all folds |
+nnoremap <leader>q :bd<cr>
 
 "Go back to visual mode after indenting
 vnoremap < <gv
@@ -379,146 +432,92 @@ vnoremap > >gv
 " https://vim.fandom.com/wiki/Moving_lines_up_or_down
 " https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
-if has("mac") || has("macunix")
-  nmap ∆ mz:m+<cr>`z
-  nmap ˚ mz:m-2<cr>`z
-  vmap ∆ :m'>+<cr>`<my`>mzgv`yo`z
-  vmap ˚ :m'<-2<cr>`>my`<mzgv`yo`z
+if has("macunix")
+  nnoremap ∆ mz:m+<cr>`z
+  nnoremap ˚ mz:m-2<cr>`z
+  vnoremap ∆ :m'>+<cr>`<my`>mzgv`yo`z
+  vnoremap ˚ :m'<-2<cr>`>my`<mzgv`yo`z
 else
-  nmap <A-j> mz:m+<cr>`z
-  nmap <A-k> mz:m-2<cr>`z
-  vmap <A-j> :m'>+<cr>`<my`>mzgv`yo`z
-  vmap <A-k> :m'<-2<cr>`>my`<mzgv`yo`z
+  nnoremap <A-j> :m .+1<CR>==
+  nnoremap <A-k> :m .-2<CR>==
+  inoremap <A-j> <Esc>:m .+1<CR>==gi
+  inoremap <A-k> <Esc>:m .-2<CR>==gi
+  vnoremap <A-j> :m '>+1<CR>gv=gv
+  vnoremap <A-k> :m '<-2<CR>gv=gv
 endif
 
 "Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+nnoremap <C-j> <C-W>j
+nnoremap <C-k> <C-W>k
+nnoremap <C-h> <C-W>h
+nnoremap <C-l> <C-W>l
 
 " Move to the first/last non-blank character on this line
-map H ^
-map L $
-
-
-" allows incsearch highlighting for range commands
-cnoremap $t <CR>:t''<CR>
-cnoremap $T <CR>:T''<CR>
-cnoremap $m <CR>:m''<CR>
-cnoremap $M <CR>:M''<CR>
-cnoremap $d <CR>:d<CR>``
+nnoremap H ^
+nnoremap L $
 
 " Quick Saving
 nmap <leader>w :w<cr>
 
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
-" command W w !sudo tee % > /dev/null
-
-"==============================================================================
-" Notes/Tips
-"==============================================================================
-" ZZ saves and quits
-
-" Shortcut to rapidly toggle `set list` for showing misc eol chars, tabs, etc
-nmap <leader>l :set list!<CR>
-
-" Quickly insert an empty new line without entering insert mode
-nnoremap <Leader>o o<Esc>k
-nnoremap <Leader>O O<Esc>j
-"==============================================================================
-" Notes/Tips
-"==============================================================================
-" Clear till end of line
-" c$
-" Delete till end of line
-" d$
+" neovim has by default
+if !has('nvim') && !has('win32unix') && !has('win32')
+  command W w !sudo tee % > /dev/null
+endif
 
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
 vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 
+function! VisualSelection(direction, extra_filter) range
+  let l:saved_reg = @"
+  execute "normal! vgvy"
+
+  let l:pattern = escape(@", "\\/.*'$^~[]")
+  let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+  if a:direction == 'gv'
+    call CmdLine("Ack '" . l:pattern . "' " )
+  elseif a:direction == 'replace'
+    call CmdLine("%s" . '/'. l:pattern . '/')
+  endif
+
+  let @/ = l:pattern
+  let @" = l:saved_reg
+endfunction
+
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <space> /
-
-" if has('mac') || has('macunix')
-"   map <c-@> ?
-" else
-"   map <c-space> ?
-" endif
-
-" Disable highlight when <leader><cr> is pressed
-map <silent> <leader><cr> :noh<cr>
-
-" Useful mappings for managing tabs
-" map <leader>tn :tabnew<cr>
-" map <leader>to :tabonly<cr>
-" map <leader>tc :tabclose<cr>
-" map <leader>tm :tabmove
-" map <leader>t<leader> :tabnext
-
-" Let 'tl' toggle between this and the last accessed tab
-" let g:lasttab = 1
-" nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
-" au TabLeave * let g:lasttab = tabpagenr()
-
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
-" map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
-" Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
-
-" Navigate to Next spell error
-map <leader>sn ]s
-
-" Naviate to previous spell error
-map <leader>sp [s
-
-" Toggle spell error highlight
-map <leader>sa zg
-
-" Make suggestions
-map <leader>s? z=
 
 " Bash like keys for the command line
 cnoremap <C-A> <Home>
 cnoremap <C-E> <End>
 cnoremap <C-K> <C-U>
-
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
 
 " Add date -> type XDATE lowercase followed by a char will autofill the date
-iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
+iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 
-" Navigate quickfix buffers
-nnoremap <leader>cc :cclose<CR>
-nnoremap <leader>co :copen<CR>
-nnoremap <leader>cn :cnext<CR>
-nnoremap <leader>cp :cprevious<CR>
+nnoremap [oq :copen<CR>
+nnoremap ]oq :cclose<CR>
+nnoremap yoq :call ToggleQuickfix()<CR>
 
-" =============================================================================
-" Notes/Tips
-" =============================================================================
-" | Mapping | Description       |
-" | gg=G    | indent whole file |
+function! s:ToggleQuickfix()
+  for winnr in range(1, winnr('$'))
+    if getwinvar(winnr, '&syntax') == 'qf'
+      cclose
+      return
+    endif
+  endfor
+  copen
+endfunction
 
 " }}}
 "==============================================================================
 " Section: Plugins {{{
-"==============================================================================
-" Comfortable-Motion {{{
-"==============================================================================
-let g:comfortable_motion_no_default_key_mappings = 1
-
-" I want to keep the default mappings for d/u, but not for f/b
-nnoremap <silent> <C-d> :call comfortable_motion#flick(100)<CR>
-nnoremap <silent> <C-u> :call comfortable_motion#flick(-100)<CR>
-
-" }}}
 "==============================================================================
 " NerdTree {{{
 "==============================================================================
@@ -537,67 +536,59 @@ let NERDTreeMinimalUI=1
 " Delete the NERDTree buffer when it's the only one left
 let NERDTreeAutoDeleteBuffer=1
 
+" Auto close nerdtree after opening a buffer
+let NERDTreeQuitOnOpen=1
+
 " Close automatically if nerd tree is only buffer open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-map <leader>nn :NERDTreeToggle<cr>
-map <leader>nb :NERDTreeFromBookmark<Space>
-map <leader>nf :NERDTreeFind<cr>
-nmap <leader>n? :map <leader>n<cr>
+nnoremap yoe :NERDTreeToggle<cr>
+nnoremap [oe :NERDTree<cr>
+nnoremap ]oe :NERDTreeClose<cr>
 
-" }}}
-"==============================================================================
-" Fugitive {{{
-"==============================================================================
-nmap <leader>gb :Gblame<cr>
-nmap <leader>gc :Gcommit<cr>
-nmap <leader>gd :Gvdiff<cr>
-nmap <leader>gg :Ggrep
-nmap <leader>gl :Glog<cr>
-nmap <leader>gs :Gstatus<cr>
-nmap <leader>gw :Gbrowse<cr>
-nmap <leader>g? :map <leader>g<cr>
-
-" Notes/Tips
-" - Type 'g?' while in GitStatus to see all command mappings
-
-" https://github.com/tpope/vim-fugitive/issues/582
-" - Just use Gvdiff instead
-" set diffopt+=vertical
-"
 " }}}
 "==============================================================================
 " GitGutter {{{
 "==============================================================================
-" let g:gitgutter_map_keys= 0
-" let g:gitgutter_enabled = 0
+let g:gitgutter_map_keys = 0
 
-nmap ]h <Plug>GitGutterNextHunk
-nmap [h <Plug>GitGutterPrevHunk
+nnoremap ]h :GitGutterNextHunk<cr>
+nnoremap [h :GitGutterPrevHunk<cr>
+
+" }}}
+"==============================================================================
+" TagBar {{{
+"==============================================================================
+nnoremap yot :TagbarToggle<cr>
+nnoremap [ot :TagbarOpen<cr>
+nnoremap ]ot :TagbarClose<cr>
 
 " }}}
 "==============================================================================
 " Tabularize {{{
 "==============================================================================
 " NOTE:
+"   - t = Tabularize
 "   - f = format
-"   - t = table
-nmap <leader>f= :Tabularize /=<CR>
-vmap <leader>f= :Tabularize /=<CR>
-nmap <leader>f: :Tabularize /:\zs<CR>
-vmap <leader>f: :Tabularize /:\zs<CR>
-nmap <leader>ft :Tabularize /\|<CR>
-vmap <leader>ft :Tabularize /\|<CR>
-nmap <leader>f? :map <leader>f<cr>
+"   - p = pipes
+nnoremap tf= :Tabularize /=<CR>
+vnoremap tf= :Tabularize /=<CR>
+nnoremap tfp :Tabularize /\|<CR>
+vnoremap tfp :Tabularize /\|<CR>
 
-" }}}
+"}}}
 "==============================================================================
 " Lightline {{{
 "==============================================================================
 function! LightlineFilename()
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let modified = &modified ? ' +' : ''
-  let ro = &readonly ? ' 🔒' : ''
+
+  if has('mac')
+    let ro = &readonly ? ' 🔒' : ''
+  else
+    let ro = &readonly ? ' [ro]' : ''
+  endif
 
   if filename =~# '__Tagbar__'
     return 'Tagbar' . ro
@@ -662,13 +653,7 @@ let g:lightline = {
       \ },
       \ 'separator': { 'left': ' ', 'right': ' ' },
       \ 'subseparator': { 'left': '|', 'right': '|' }
-\ }
-
-" }}}
-"==============================================================================
-" Tagbar {{{
-"==============================================================================
-map <leader>tb :TagbarToggle<cr>
+      \ }
 
 " }}}
 "==============================================================================
@@ -676,32 +661,24 @@ map <leader>tb :TagbarToggle<cr>
 "==============================================================================
 " For walkthrough, use the following github repo as example:
 " - https://github.com/fatih/vim-go-tutorial#quick-setup
-"
-" Change the underlying go def tool from guru to 'godef'
-" let g:go_def_mode = 'godef'
-" Note: Go modules are required to be in the project you are working on when using
-"       gopls for godef and goinfo commands
-"       Also note that while in GOPATH, gopls with start omnifunc after .
-"       Whereas outside of GOPATH <C-X><C-O> is required to activate it
-"       Another note: if directory is symlinked, where the source is in GOPATH
-"       gorename will work as expected
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
+" Disable go def mapping so we can delegate it to the coc lsp
+let g:go_def_mapping_enabled=0
+
 " Run linting on save
 let g:go_metalinter_autosave = 1
-
-" Make show time faster than default 800 ms
-" set updatetime=300
 
 " Automatically highlight matching identifiers (methods, variables...)
 let g:go_auto_sameids = 1
 
 " Automatically show info when cursor on method
-" let g:go_auto_type_info = 1
+" Has an issue when putting cursor over lib imports
+let g:go_auto_type_info = 1
 
 " Makes all popup buffers quickfix type buffers
-let g:go_list_type = "quickfix"
+" let g:go_list_type = "quickfix"
 
 " Automatically format and also rewrite your import declarations
 " If it is too slow, you can use the manual :GoImports command
@@ -724,61 +701,68 @@ let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
-" If you want :UltiSnipsEdit to split your window.
-" let g:UltiSnipsEditSplit="vertical"
-
-" Go Snippets List
-" - https://github.com/fatih/vim-go/blob/master/gosnippets/UltiSnips/go.snippets
-"
-" | Shortcut | Snippet                        |
-" | -------- | -------------------------------|
-" | fn       | fmt.Println()                  |
-" | ff       | fmt.Printf()                   |
-" | ln       | log.Println()                  |
-" | lf       | log.Printf()                   |
-" | errp     | if != nil...panic()            |
-" | json     | adds json serializer to struct |
-
 " }}}
 "==============================================================================
-" YouCompleteMe {{{
+" FZF {{{
 "==============================================================================
-" make YCM compatible with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
+if !has('win32') && !has('win32unix')
+  nnoremap <C-F> :Files<CR>
+  nnoremap <C-G> :GFiles<CR>
+  nnoremap <C-B> :Buffers<CR>
+  nnoremap <C-space> :History<CR>
 
-let g:ycm_global_ycm_extra_conf = "~/.ycm_extra_conf.py"
+  let g:fzf_colors =
+        \ { 'fg':      ['fg', 'Normal'],
+        \ 'bg':      ['bg', 'Normal'],
+        \ 'hl':      ['fg', 'Comment'],
+        \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+        \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+        \ 'hl+':     ['fg', 'Statement'],
+        \ 'info':    ['fg', 'PreProc'],
+        \ 'border':  ['fg', 'Ignore'],
+        \ 'prompt':  ['fg', 'Conditional'],
+        \ 'pointer': ['fg', 'Exception'],
+        \ 'marker':  ['fg', 'Keyword'],
+        \ 'spinner': ['fg', 'Label'],
+        \ 'header':  ['fg', 'Comment'] }
 
+endif
 " }}}
 "==============================================================================
 " Ctrlp {{{
 "==============================================================================
-" Assign <C-f> to start Ctrlp, opens mru by default
-let g:ctrlp_map = '<c-f>'
+if has('win32') || has('win32unix')
+  " Assign <C-f> to start Ctrlp, opens mru by default
+  let g:ctrlp_map = '<c-f>'
 
-" View open buffers
-noremap <c-b> :CtrlPBuffer<cr>
+  if has('nvim')
+    nnoremap <c-m> :CtrlPMRUFiles<cr>
+  else
+    nnoremap <c-space> :CtrlPMRUFiles<cr>
+  endif
 
-let g:ctrlp_max_height = 20
-" let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git)'
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  'node_modules\|\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll|class|DS_Store|jar)$',
-  \ 'link': 'some_bad_symbolic_links',
-  \ }
+  " View open buffers
+  nnoremap <c-b> :CtrlPBuffer<cr>
 
-" | Mapping                        | Description                                                                                                    |
-" | <F5>                           | purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
-" | <c-f> / <c-b>                  | to cycle between modes.
-" | <c-d>                          | to switch to filename only search instead of full path.
-" | <c-r>                          | to switch to regexp mode.
-" | <c-j>, <c-k> or the arrow keys | to navigate the result list.
-" | <c-t> or <c-v>, <c-x>          | to open the selected entry in a new tab or in a new split.
-" | <c-n>, <c-p>                   | to select the next/previous string in the prompt's history.
-" | <c-y>                          | to create a new file and its parent directories.
-" | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
+  let g:ctrlp_max_height = 20
+  let g:ctrlp_custom_ignore = {
+        \ 'dir':  '\v[\/](node_modules|venv)|\.(git|hg|svn)$',
+        \ 'file': '\v\.(exe|so|dll|class|DS_Store|jar)$',
+        \ 'link': 'some_bad_symbolic_links',
+        \ }
 
+  " | Mapping                        | Description                                                                                                    |
+  " | <F5>                           | purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
+  " | <c-f> / <c-b>                  | to cycle between modes.
+  " | <c-d>                          | to switch to filename only search instead of full path.
+  " | <c-r>                          | to switch to regexp mode.
+  " | <c-j>, <c-k> or the arrow keys | to navigate the result list.
+  " | <c-t> or <c-v>, <c-x>          | to open the selected entry in a new tab or in a new split.
+  " | <c-n>, <c-p>                   | to select the next/previous string in the prompt's history.
+  " | <c-y>                          | to create a new file and its parent directories.
+  " | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
+
+endif
 
 " }}}
 "==============================================================================
@@ -790,10 +774,10 @@ let g:vim_markdown_strikethrough = 1
 
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_no_default_key_mappings = 1
 
 autocmd FileType markdown nmap tf :TableFormat<cr>
 autocmd FileType markdown nmap toc :Toc<cr>
-
 
 " }}}
 "==============================================================================
@@ -804,26 +788,17 @@ autocmd FileType json setlocal commentstring=//\ %s
 
 " }}}
 "==============================================================================
-" YankStack {{{
-"==============================================================================
-let g:yankstack_yank_keys = ['y', 'd']
-
-nmap <c-P> <Plug>yankstack_substitute_older_paste
-nmap <c-p> <Plug>yankstack_substitute_newer_paste
-
-" }}}
-"==============================================================================
 " Clang-Format {{{
 "==============================================================================
-autocmd FileType c ClangFormatAutoEnable
-set path+=/usr/include
+" autocmd FileType c ClangFormatAutoEnable
+" set path+=/usr/include
 
-let g:clang_format#style_options = {
-            \ "AccessModifierOffset" : -4,
-            \ "AllowShortIfStatementsOnASingleLine" : "true",
-            \ "AlwaysBreakTemplateDeclarations" : "true",
-            \ "Standard" : "C++11",
-            \ "BreakBeforeBraces" : "Stroustrup"}
+" let g:clang_format#style_options = {
+"       \ "AccessModifierOffset" : -4,
+"       \ "AllowShortIfStatementsOnASingleLine" : "true",
+"       \ "AlwaysBreakTemplateDeclarations" : "true",
+"       \ "Standard" : "C++11",
+"       \ "BreakBeforeBraces" : "Stroustrup"}
 " }}}
 "==============================================================================
 " Supertab {{{
@@ -834,6 +809,23 @@ let g:SuperTabDefaultCompletionType = "<c-n>"
 "==============================================================================
 " Section: Coc Mappings {{{
 "==============================================================================
+let g:coc_global_extensions=[
+      \ 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tsserver',
+      \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
+      \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
+      \ 'coc-powershell', 'coc-omnisharp', 'coc-marketplace',
+      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-ccls',
+      \]
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-@> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
 " Use `[c` and `]c` to navigate diagnostics
 nmap <silent> [c <Plug>(coc-diagnostic-prev)
 nmap <silent> ]c <Plug>(coc-diagnostic-next)
@@ -849,28 +841,14 @@ function! s:show_documentation()
   endif
 endfunction
 
-
 " Use `:Format` to format current buffer
 command! -nargs=0 Format :call CocAction('format')
 
 " Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
 
 " use `:OR` for organize import of current buffer
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-" Remap for rename current word
-nmap <F6> <Plug>(coc-rename)
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-@> coc#refresh()
-
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
-" Highlight symbol under cursor on CursorHold
-" autocmd CursorHold * silent call CocActionAsync('highlight')
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
@@ -878,26 +856,34 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-" }}}
-"==============================================================================
-" }}}
-"==============================================================================
-" Section: C Mappings {{{
-"==============================================================================
-" Ideas:
-"  - Could add a directory to path and build executable into specified dir
-"  - Then could just run executable by name from dir (similar to go)
-"
-" Need to separate this out into a function for the execution and a cmd group
-" for eventual more c mappings
-"
-autocmd FileType c nmap <leader>r :call RunCExe()<CR>
+" Remap for rename current word
+nmap <F6> <Plug>(coc-rename)
+
+" Using CocList
+" Show all diagnostics
+nnoremap <silent> <leader>z  :<C-u>CocList diagnostics<cr>
+" Show all actions
+nnoremap <silent> <leader>a  :<C-u>CocList actions<cr>
+" Manage extensions
+nnoremap <silent> <leader>e  :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent> <leader>x  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nmap <silent> <leader>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent> <leader>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent> <leader>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent> <leader>k  :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent> <leader>p  :<C-u>CocListResume<CR>
 
 " }}}
 "==============================================================================
-" Section: Go Mappings {{{
+" }}}
 "==============================================================================
-
+" Section: Language Specific Mappings {{{
 "==============================================================================
 " Tips/Tricks
 "==============================================================================
@@ -924,112 +910,101 @@ autocmd FileType c nmap <leader>r :call RunCExe()<CR>
 " Can be custom impl also: :GoImpl github.com/asidlo/algorithms/collections.Stack
 
 augroup go
-    autocmd!
+  autocmd!
 
-    " Show by default 4 spaces for a tab
-    autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
+  " Show by default 4 spaces for a tab
+  autocmd BufNewFile,BufRead,BufEnter *.go setlocal noexpandtab tabstop=4 shiftwidth=4
 
-    " :GoBuild and :GoTestCompile
-    autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
+  " :GoBuild and :GoTestCompile
+  autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
 
-    " :GoTest
-    autocmd FileType go nmap <leader>t  <Plug>(go-test)
-    autocmd FileType go nmap <leader>tf  <Plug>(go-test-func)
+  " :GoTest
+  autocmd FileType go nmap <leader>tt  <Plug>(go-test)
+  autocmd FileType go nmap <leader>tf  <Plug>(go-test-func)
 
-    " :GoRun
-    autocmd FileType go nmap <leader>r  <Plug>(go-run)
+  " :GoRun
+  autocmd FileType go nmap <leader>r  <Plug>(go-run)
 
-    " :GoDoc
-    autocmd FileType go nmap <Leader>d <Plug>(go-doc)
+  " :GoCoverageToggle
+  " autocmd FileType go nmap <leader>c <Plug>(go-coverage-toggle)
 
-    " :GoCoverageToggle
-    autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
+  " :GoDescribe - Show methods for a given class / interface
+  autocmd FileType go nmap <C-K> <Plug>(go-describe)
 
-    " :GoInfo
-    autocmd FileType go nmap <Leader>i <Plug>(go-info)
+  " :GoMetaLinter
+  autocmd FileType go nmap <leader>l <Plug>(go-metalinter)
 
-    " :GoDescribe - Show methods for a given class / interface
-    autocmd FileType go nmap <Leader>ii <Plug>(go-describe)
+  " :GoDef but opens in a vertical split
+  autocmd FileType go nmap <leader>dv <Plug>(go-def-vertical)
 
-    " :GoMetaLinter
-    autocmd FileType go nmap <Leader>l <Plug>(go-metalinter)
+  " :GoDef but opens in a horizontal split
+  autocmd FileType go nmap <leader>ds <Plug>(go-def-split)
 
-    " :GoDef but opens in a vertical split
-    autocmd FileType go nmap <Leader>v <Plug>(go-def-vertical)
+  " :GoDecls - Show all methods in current file (Methods)
+  autocmd Filetype go nmap <leader>o :GoDecls<cr>
 
-    " :GoDef but opens in a horizontal split
-    autocmd FileType go nmap <Leader>s <Plug>(go-def-split)
+  " Show all files in current package
+  autocmd Filetype go nmap ls :GoFiles<cr>
 
-    " :GoDecls - Show all methods in current file (Methods)
-    autocmd Filetype go nmap <leader>m :GoDecls<cr>
+  " Show all dependencies of current file
+  autocmd Filetype go nmap deps :GoDeps<cr>
 
-    " Open :GoDeclsDir with ctrl-g
-    autocmd Filetype go nmap <C-g> :GoDeclsDir<cr>
-    autocmd Filetype go imap <C-g> <esc>:<C-u>GoDeclsDir<cr>
-    " Intellij mapping
-    autocmd Filetype go nmap <F12> :GoDeclsDir<cr>
-    autocmd Filetype go imap <F12> <esc>:<C-u>:GoDeclsDir<cr>
+  " Find usages
+  autocmd Filetype go nmap refs :GoReferrers<cr>
 
-    " Show all files in current package
-    autocmd Filetype go nmap ls :GoFiles<cr>
+  " Shows all interfaces current type/struct implements
+  autocmd Filetype go nmap <C-i> :GoImplements<cr>
 
-    " Show all dependencies of current file
-    autocmd Filetype go nmap deps :GoDeps<cr>
+  " :GoAlternate  commands :A, :AV, :AS and :AT
+  autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+  autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+  autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+  autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
 
-    " Find usages
-    autocmd Filetype go nmap refs :GoReferrers<cr>
+  " Dont show nonvisible chars with go files since gofmt removes eol spaces
+  autocmd Filetype go set nolist
 
-    " Shows all interfaces current type/struct implements
-    autocmd Filetype go nmap <C-i> :GoImplements<cr>
+  " Run :GoBuild or :GoTestCompile based on the go file
+  function! s:build_go_files()
+    let l:file = expand('%')
+    if l:file =~# '^\f\+_test\.go$'
+      call go#test#Test(0, 1)
+    elseif l:file =~# '^\f\+\.go$'
+      call go#cmd#Build(0)
+    endif
+  endfunction
 
-    " :GoAlternate  commands :A, :AV, :AS and :AT
-    autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
-    autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
-    autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
-    autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
-
-    " Dont show nonvisible chars with go files since gofmt removes eol spaces
-    autocmd Filetype go set nolist
 augroup END
 
-" }}}
-"==============================================================================
-" Section: JSON Mappings {{{
-"==============================================================================
+augroup c
+  autocmd!
+  autocmd FileType c nmap <leader>r :call RunCExe()<CR>
+  " https://vim.fandom.com/wiki/Get_the_name_of_the_current_file
+  function! BuildCExe()
+    execute "!gcc -Wall -o %:p:h/a.out %:p"
+  endfunction
+
+  function! RunCExe()
+    silent execute BuildCExe()
+    execute "!%:p:h/a.out"
+    silent execute RmCExe()
+  endfunction
+
+  function! RmCExe()
+    execute "!rm %:p:h/a.out"
+  endfunction
+augroup END
+
 autocmd FileType json syntax match Comment +\/\/.\+$+
+autocmd FileType vim set foldmethod=marker 
 
 " }}}
 "==============================================================================
 " Section: Functions {{{
-"==============================================================================
-function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", "\\/.*'$^~[]")
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'gv'
-        call CmdLine("Ack '" . l:pattern . "' " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
-
-" Run :GoBuild or :GoTestCompile based on the go file
-function! s:build_go_files()
-  let l:file = expand('%')
-  if l:file =~# '^\f\+_test\.go$'
-    call go#test#Test(0, 1)
-  elseif l:file =~# '^\f\+\.go$'
-    call go#cmd#Build(0)
-  endif
-endfunction
-
-command! -complete=file -nargs=* Vig call s:RunGitShellCommand('git '.<q-args>)
+"=============================================================================
+command! -complete=file -nargs=* ShellGitCmd call s:RunGitShellCommand('git '.<q-args>)
+command! -complete=shellcmd -nargs=+ ShellCmd call s:RunShellCommand(<q-args>)
+command! -complete=file -nargs=* Gradle call s:RunShellCommand('gradle '.<q-args>)
 
 function! s:RunGitShellCommand(cmdline)
   let isfirst = 1
@@ -1055,12 +1030,6 @@ function! s:RunGitShellCommand(cmdline)
   1
 endfunction
 
-command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
-command! -complete=file -nargs=* Gradle call s:RunShellCommand('gradle '.<q-args>)
-command! -complete=file -nargs=* Ls call s:RunShellCommand('ls '.<q-args>)
-command! -complete=file -nargs=* Rm call s:RunShellCommand('rm '.<q-args>)
-command! -complete=file -nargs=* Mv call s:RunShellCommand('mv '.<q-args>)
-
 " https://vim.fandom.com/wiki/Display_output_of_shell_commands_in_new_window
 function! s:RunShellCommand(cmdline)
   let isfirst = 1
@@ -1069,7 +1038,7 @@ function! s:RunShellCommand(cmdline)
     if isfirst
       let isfirst = 0  " don't change first word (shell command)
     else
-        let word = substitute(word, '\v[%$<]', expand('%'), '')
+      let word = substitute(word, '\v[%$<]', expand('%'), '')
     endif
     call add(words, word)
   endfor
@@ -1083,22 +1052,5 @@ function! s:RunShellCommand(cmdline)
   1
 endfunction
 
-" https://vim.fandom.com/wiki/Get_the_name_of_the_current_file
-function! BuildCExe()
-    execute "!gcc -Wall -o %:p:h/a.out %:p"
-endfunction
-
-function! RunCExe()
-    silent execute BuildCExe()
-    execute "!%:p:h/a.out"
-    silent execute RmCExe()
-endfunction
-
-function! RmCExe()
-    execute "!rm %:p:h/a.out"
-endfunction
 " }}}
 "==============================================================================
-" This line closes all folds in this file on start.
-" Preceding space is important, removing will make it not work.
-" vim:foldmethod=marker
