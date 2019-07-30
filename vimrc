@@ -129,6 +129,7 @@ set nomodeline
 " (* register in vim, usually referred as «mouse» buffer) by using
 if has('nvim')
   vnoremap <LeftRelease> "*ygv
+  set clipboard=unnamed
 elseif has('macunix')
   set clipboard^=autoselect
 elseif has('win32') || has('win32unix')
@@ -421,9 +422,6 @@ nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-" Quit a buffer
-nnoremap <leader>q :bd<cr>
-
 "Go back to visual mode after indenting
 vnoremap < <gv
 vnoremap > >gv
@@ -458,6 +456,9 @@ nnoremap L $
 
 " Quick Saving
 nmap <leader>w :w<cr>
+
+" Quick quit
+nmap <leader>q :q<cr>
 
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
@@ -584,7 +585,7 @@ function! LightlineFilename()
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let modified = &modified ? ' +' : ''
 
-  if has('mac')
+  if has('unix') && !has('win32unix')
     let ro = &readonly ? ' 🔒' : ''
   else
     let ro = &readonly ? ' [ro]' : ''
@@ -705,7 +706,7 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 "==============================================================================
 " FZF {{{
 "==============================================================================
-if !has('win32') && !has('win32unix')
+if exists('g:loaded_fzf')
   nnoremap <C-F> :Files<CR>
   nnoremap <C-G> :GFiles<CR>
   nnoremap <C-B> :Buffers<CR>
@@ -726,12 +727,23 @@ if !has('win32') && !has('win32unix')
         \ 'spinner': ['fg', 'Label'],
         \ 'header':  ['fg', 'Comment'] }
 
+  " Only search in the files, do not include file names in the search results
+  " https://sidneyliebrand.io/blog/how-fzf-and-ripgrep-improved-my-workflow?source=post_page---------------------------
+  command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --hidden --ignore-case --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
+  \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%:hidden', '?'),
+  \   <bang>0)
+
+  nnoremap <c-x> :Rg<cr>
+
 endif
 " }}}
 "==============================================================================
 " Ctrlp {{{
 "==============================================================================
-if has('win32') || has('win32unix')
+if exists('g:loaded_ctrlp')
   " Assign <C-f> to start Ctrlp, opens mru by default
   let g:ctrlp_map = '<c-f>'
 
@@ -804,6 +816,41 @@ autocmd FileType json setlocal commentstring=//\ %s
 " Supertab {{{
 "==============================================================================
 let g:SuperTabDefaultCompletionType = "<c-n>"
+
+" }}}
+"==============================================================================
+" Vim-devicons {{{
+"==============================================================================
+"https://github.com/ryanoasis/vim-devicons/wiki/FAQ-&-Troubleshooting#how-do-i-solve-issues-after-re-sourcing-my-vimrc
+if exists("g:loaded_webdevicons")
+  call webdevicons#refresh()
+endif
+
+" NERDTrees File highlighting
+function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+ exec 'autocmd FileType nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+ exec 'autocmd FileType nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
+endfunction
+
+call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
+call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('yaml', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
+call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
+call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#151515')
+call NERDTreeHighlightFile('bat', 'green', 'none', 'green', '#151515')
+call NERDTreeHighlightFile('Vagrantfile', 'cyan', 'none', 'cyan', '#151515')
 
 " }}}
 "==============================================================================
