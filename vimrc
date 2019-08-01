@@ -4,6 +4,7 @@
 "==============================================================================
 " Section: Plugin Manager {{{
 "==============================================================================
+
 " Automatically download the plug.vim plugin manager vimscript
 " Run :PlugInstall to install all plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -11,34 +12,6 @@ if empty(glob('~/.vim/autoload/plug.vim'))
         \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-
-if has('win32') || has('win32unix')
-  let $PYTHONPATH = "C:\\tools\\Anaconda3;C:\\tools\\Anaconda3\\Lib;C:\\tools\\Anaconda3\\DLLs"
-endif
-
-" function! InstallAndUpdateCoc(...)
-"   " info is a dictionary with 3 fields
-"   " - name:   name of the plugin
-"   " - status: 'installed', 'updated', or 'unchanged'
-"   " - force:  set on PlugInstall! or PlugUpdate!
-
-"   " Ones to look into:
-"   " - coc-texlab
-"   " - coc-java (once it gets better, right now just use intellij)
-"   let lang_servers=[
-"         \ 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tsserver',
-"         \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
-"         \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
-"         \ 'coc-powershell', 'coc-omnisharp', 'coc-marketplace'
-"         \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-ccls'
-"         \]
-
-"   :CocUpdate
-
-"   for ls in lang_servers
-"     exec ':CocInstall '.ls
-"   endfor
-" endfunction
 
 
 call plug#begin('~/.vim/bundle')
@@ -52,12 +25,9 @@ Plug 'godlygeek/tabular'
 Plug 'itchyny/lightline.vim'
 Plug 'plasticboy/vim-markdown'
 Plug 'majutsushi/tagbar'
-
-" https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
-if has('unix') && !has('win32unix')
-  Plug 'ryanoasis/vim-devicons'
-endif
-
+Plug 'mileszs/ack.vim'
+Plug 'airblade/vim-rooter'
+Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
@@ -72,8 +42,10 @@ Plug 'AndrewRadev/splitjoin.vim'
 " Plug 'rhysd/vim-clang-format'
 
 if has('win32') || has('win32unix')
+  let g:__using_fzf = 0
   Plug 'kien/ctrlp.vim'
 else
+  let g:__using_fzf = 1
   Plug '/usr/local/opt/fzf'
   Plug 'junegunn/fzf.vim'
 endif
@@ -106,6 +78,7 @@ if has('win32unix')
   set ttimeout ttimeoutlen=50
 endif
 
+set t_Co=256
 set background=dark
 
 if has("gui_running")
@@ -133,7 +106,7 @@ if has('nvim')
 elseif has('macunix')
   set clipboard^=autoselect
 elseif has('win32') || has('win32unix')
-  set clipboard=unnamedplus
+  set clipboard=unnamed
 endif
 
 
@@ -317,6 +290,18 @@ noremap j gj
 noremap k gk
 
 " Terminal settings
+if has('win32')
+  set shell=powershell
+elseif has('win32unix')
+  if executable('fish')
+    set shell=fish
+  else
+    set shell=bash
+  endif
+else
+  set shell=fish
+endif
+
 if has('nvim')
   " Leader q to exit terminal mode
   tnoremap <Leader>q <C-\><C-n>:bd!<cr>
@@ -340,16 +325,23 @@ if has('nvim')
   tnoremap < <C-w><
 
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
-  if has('win32') || has('win32unix')
+  " Also, Alt + - should be used instead of just -
+  if has('win32')
     " Open terminal in vertical, horizontal and new tab
     nnoremap <leader>tv :vsplit term://powershell -nologo<CR>
     nnoremap <leader>ts :split term://powershell -nologo<CR>
     nnoremap <leader>tt :e term://powershell -nologo<CR>
   else
     " Open terminal in vertical, horizontal and new tab
-    nnoremap <leader>tv :vsplit term://fish<CR>
-    nnoremap <leader>ts :split term://fish<CR>
-    nnoremap <leader>tt :e term://fish<CR>
+    if executable('fish')
+      nnoremap <leader>tv :vsplit term://fish<CR>
+      nnoremap <leader>ts :split term://fish<CR>
+      nnoremap <leader>tt :e term://fish<CR>
+    else
+      nnoremap <leader>tv :vsplit term://bash<CR>
+      nnoremap <leader>ts :split term://bash<CR>
+      nnoremap <leader>tt :e term://bash<CR>
+    endif
   endif
 
   " always start terminal in insert mode
@@ -380,7 +372,11 @@ if has('nvim')
   if has('win32') || has('win32unix')
     nnoremap confe :e ~\_vimrc<cr>
   else
-    nnoremap confe :e ~/.vimrc<cr>
+    if empty(glob('~/.vimrc'))
+      nnoremap confe :e $MYVIMRC<cr>
+    else
+      nnoremap confe :e ~/.vimrc<cr>
+    endif
   endif
 else
   nnoremap confe :e $MYVIMRC<cr>
@@ -706,11 +702,12 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 "==============================================================================
 " FZF {{{
 "==============================================================================
-if exists('g:loaded_fzf')
+if __using_fzf
+" if exists('g:loaded_fzf')
   nnoremap <C-F> :Files<CR>
   nnoremap <C-G> :GFiles<CR>
   nnoremap <C-B> :Buffers<CR>
-  nnoremap <C-space> :History<CR>
+  nnoremap <leader><leader> :History<CR>
 
   let g:fzf_colors =
         \ { 'fg':      ['fg', 'Normal'],
@@ -727,36 +724,48 @@ if exists('g:loaded_fzf')
         \ 'spinner': ['fg', 'Label'],
         \ 'header':  ['fg', 'Comment'] }
 
-  " Only search in the files, do not include file names in the search results
-  " https://sidneyliebrand.io/blog/how-fzf-and-ripgrep-improved-my-workflow?source=post_page---------------------------
-  command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --hidden --ignore-case --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
-  \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%:hidden', '?'),
-  \   <bang>0)
+  if executable('rg')
+    " Only search in the files, do not include file names in the search results
+    " https://sidneyliebrand.io/blog/how-fzf-and-ripgrep-improved-my-workflow?source=post_page---------------------------
+    command! -bang -nargs=* Rg
+    \ call fzf#vim#grep(
+    \   'rg --column --line-number --hidden --ignore-case --no-heading --color=always '.shellescape(<q-args>), 1,
+    \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
+    \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%:hidden', '?'),
+    \   <bang>0)
 
-  nnoremap <c-x> :Rg<cr>
-
+    nnoremap <c-x> :Rg<cr>
+  endif
 endif
+" }}}
+"==============================================================================
+" Ack {{{
+"==============================================================================
+" Prefer rg > ag > ack
+if executable('rg')
+  set grepprg=rg\ --color=never
+  let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep'
+elseif executable('ag')
+  set grepprg=ag\ --nogroup\ --nocolor
+  let g:ackprg = 'ag --vimgrep'
+endif
+
+nnoremap \ :Ack<space>
 " }}}
 "==============================================================================
 " Ctrlp {{{
 "==============================================================================
-if exists('g:loaded_ctrlp')
+if !__using_fzf
   " Assign <C-f> to start Ctrlp, opens mru by default
   let g:ctrlp_map = '<c-f>'
 
-  if has('nvim')
-    nnoremap <c-m> :CtrlPMRUFiles<cr>
-  else
-    nnoremap <c-space> :CtrlPMRUFiles<cr>
-  endif
+  nnoremap <leader><leader> :CtrlPMRUFiles<cr>
 
   " View open buffers
   nnoremap <c-b> :CtrlPBuffer<cr>
 
   let g:ctrlp_max_height = 20
+  let g:ctrlp_match_window = 'results:100'
   let g:ctrlp_custom_ignore = {
         \ 'dir':  '\v[\/](node_modules|venv)|\.(git|hg|svn)$',
         \ 'file': '\v\.(exe|so|dll|class|DS_Store|jar)$',
@@ -774,6 +783,15 @@ if exists('g:loaded_ctrlp')
   " | <c-y>                          | to create a new file and its parent directories.
   " | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
 
+  if executable('rg')
+    let g:ctrlp_user_command = 'rg %s --files --no-ignore-vcs --hidden --glob ""'
+    let g:ctrlp_use_caching = 0
+  elseif executable('ag')
+    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+    let g:ctrlp_use_caching = 0
+  else
+    let g:ctrlp_clear_cache_on_exit = 0
+  endif
 endif
 
 " }}}
@@ -870,8 +888,10 @@ inoremap <silent><expr> <c-@> coc#refresh()
 " Coc only does snippet and additional edit on confirm.
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-" Highlight symbol under cursor on CursorHold
-autocmd CursorHold * silent call CocActionAsync('highlight')
+if exists('*CocActionAsync')
+  " Highlight symbol under cursor on CursorHold
+  autocmd CursorHold * silent call CocActionAsync('highlight')
+endif
 
 " Use `[c` and `]c` to navigate diagnostics
 nmap <silent> [c <Plug>(coc-diagnostic-prev)
