@@ -36,10 +36,13 @@ Plug 'tpope/vim-surround'
 Plug 'jiangmiao/auto-pairs'
 Plug 'ervandew/supertab'
 Plug 'sheerun/vim-polyglot'
-Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release', 'do': ':CocUpdate'}
+Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
-" Plug 'rhysd/vim-clang-format'
+Plug 'rhysd/vim-clang-format'
+Plug 'tmhedberg/SimpylFold'
+Plug 'vim-scripts/indentpython.vim'
+" Plug 'ashisha/image.vim'
 
 if has('win32') || has('win32unix')
   let g:__using_fzf = 0
@@ -83,7 +86,7 @@ set background=dark
 
 if has("gui_running")
   " No toolbars, menu or scrollbars in the GUI
-  set guifont=Hack:h14
+  " set guifont=Hack:h14
   set clipboard+=unnamed
   set guioptions-=m  "no menu
   set guioptions-=T  "no toolbar
@@ -313,16 +316,7 @@ if has('nvim')
   tnoremap <C-l> <C-\><C-n><C-w>l
 
   tnoremap <C-b> <C-\><C-n>:Buffers<CR>
-  tnoremap <C-f> <C-\><C-n>:Files<CR>
   tnoremap <C-e> <C-\><C-n>:e#<CR>
-
-  if bufwinnr(1)
-    tnoremap + <C-W>+
-    tnoremap - <C-W>-
-  endif
-
-  tnoremap > <C-w>>
-  tnoremap < <C-w><
 
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Alt + - should be used instead of just -
@@ -346,11 +340,6 @@ if has('nvim')
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
-
-elseif has('win32') || has('win32unix')
-  " https://stackoverflow.com/questions/94382/vim-with-powershell
-  set shell=powershell
-
 endif
 
 " Enter key will simply select the highlighted menu item, just as <C-Y> does
@@ -458,9 +447,10 @@ nmap <leader>q :q<cr>
 
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
-" neovim has by default
-if !has('nvim') && !has('win32unix') && !has('win32')
-  command W w !sudo tee % > /dev/null
+if !exists(':W')
+  if !has('win32unix') && !has('win32')
+    command W w !sudo tee % > /dev/null
+  endif
 endif
 
 " Visual mode pressing * or # searches for the current selection
@@ -624,8 +614,13 @@ let g:lightline = {
       \ 'colorscheme': 'jellybeans',
       \ 'active': {
       \   'left': [ ['mode'],
-      \             [ 'filename','fugitive' ]],
-      \ 'right': [[ 'lineinfo' ], ['percent'], ['fileformat', 'fileencoding', 'filetype' ]]
+      \             [ 'filename','fugitive'],
+      \             ['cocstatus']
+      \    ],
+      \ 'right': [
+      \           [ 'lineinfo' ], ['percent'],
+      \           ['fileformat', 'fileencoding', 'filetype' ],
+      \  ]
       \ },
       \ 'inactive': {
       \   'left': [['filename']],
@@ -637,6 +632,7 @@ let g:lightline = {
       \   'filetype': 'LightlineFiletype',
       \   'fileencoding': 'LightlineFileencoding',
       \   'mode': 'LightlineMode',
+      \   'cocstatus': 'coc#status',
       \ },
       \ 'component': {
       \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
@@ -707,7 +703,9 @@ if __using_fzf
   nnoremap <C-F> :Files<CR>
   nnoremap <C-G> :GFiles<CR>
   nnoremap <C-B> :Buffers<CR>
-  nnoremap <leader><leader> :History<CR>
+  nnoremap <C-Y> :History<CR>
+  nnoremap <C-X> :Maps<CR>
+
 
   let g:fzf_colors =
         \ { 'fg':      ['fg', 'Normal'],
@@ -724,18 +722,6 @@ if __using_fzf
         \ 'spinner': ['fg', 'Label'],
         \ 'header':  ['fg', 'Comment'] }
 
-  if executable('rg')
-    " Only search in the files, do not include file names in the search results
-    " https://sidneyliebrand.io/blog/how-fzf-and-ripgrep-improved-my-workflow?source=post_page---------------------------
-    command! -bang -nargs=* Rg
-    \ call fzf#vim#grep(
-    \   'rg --column --line-number --hidden --ignore-case --no-heading --color=always '.shellescape(<q-args>), 1,
-    \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
-    \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'right:50%:hidden', '?'),
-    \   <bang>0)
-
-    nnoremap <c-x> :Rg<cr>
-  endif
 endif
 " }}}
 "==============================================================================
@@ -743,7 +729,7 @@ endif
 "==============================================================================
 " Prefer rg > ag > ack
 if executable('rg')
-  set grepprg=rg\ --color=never
+  set grepprg=rg\ --vimgrep
   let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep'
 elseif executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
@@ -756,13 +742,14 @@ nnoremap \ :Ack<space>
 " Ctrlp {{{
 "==============================================================================
 if !__using_fzf
-  " Assign <C-f> to start Ctrlp, opens mru by default
-  let g:ctrlp_map = '<c-f>'
 
-  nnoremap <leader><leader> :CtrlPMRUFiles<cr>
+  " Assign <C-f> to start Ctrlp, opens mru by default
+  let g:ctrlp_map = '<C-F>'
+
+  nnoremap <C-Y> :CtrlPMRUFiles<CR>
 
   " View open buffers
-  nnoremap <c-b> :CtrlPBuffer<cr>
+  nnoremap <C-B> :CtrlPBuffer<CR>
 
   let g:ctrlp_max_height = 20
   let g:ctrlp_match_window = 'results:100'
@@ -784,7 +771,12 @@ if !__using_fzf
   " | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
 
   if executable('rg')
-    let g:ctrlp_user_command = 'rg %s --files --no-ignore-vcs --hidden --glob ""'
+    " Ignores files not included in version control since ctrl fuzzy search has
+    " issues using rg and doing incremental searches in that way, better to just
+    " use ack with rg and type regex and then perform search.
+    " For example: (find all log files)
+    " :Ack --files -g "*.log"
+    let g:ctrlp_user_command = 'rg %s --files --hidden --glob ""'
     let g:ctrlp_use_caching = 0
   elseif executable('ag')
     let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
@@ -804,7 +796,7 @@ let g:vim_markdown_strikethrough = 1
 
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
-let g:vim_markdown_no_default_key_mappings = 1
+" let g:vim_markdown_no_default_key_mappings = 1
 
 autocmd FileType markdown nmap tf :TableFormat<cr>
 autocmd FileType markdown nmap toc :Toc<cr>
@@ -818,17 +810,24 @@ autocmd FileType json setlocal commentstring=//\ %s
 
 " }}}
 "==============================================================================
+" SimpylFold {{{
+"==============================================================================
+let g:SimpylFold_docstring_preview = 1
+
+" }}}
+"==============================================================================
 " Clang-Format {{{
 "==============================================================================
-" autocmd FileType c ClangFormatAutoEnable
+autocmd FileType c ClangFormatAutoEnable
 " set path+=/usr/include
 
-" let g:clang_format#style_options = {
-"       \ "AccessModifierOffset" : -4,
-"       \ "AllowShortIfStatementsOnASingleLine" : "true",
-"       \ "AlwaysBreakTemplateDeclarations" : "true",
-"       \ "Standard" : "C++11",
-"       \ "BreakBeforeBraces" : "Stroustrup"}
+let g:clang_format#style_options = {
+      \ "AccessModifierOffset" : -4,
+      \ "AllowShortIfStatementsOnASingleLine" : "true",
+      \ "AlwaysBreakTemplateDeclarations" : "true",
+      \ "Standard" : "C++11",
+      \ "BreakBeforeBraces" : "Stroustrup"}
+
 " }}}
 "==============================================================================
 " Supertab {{{
@@ -880,6 +879,7 @@ let g:coc_global_extensions=[
       \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
       \ 'coc-powershell', 'coc-omnisharp', 'coc-marketplace',
       \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-ccls',
+      \ 'coc-java'
       \]
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-@> coc#refresh()
@@ -1064,6 +1064,18 @@ augroup END
 
 autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vim set foldmethod=marker 
+autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
+autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
+autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!open ".expand("%:p") | :bw!
+
+au BufNewFile,BufRead *.py
+    \ set tabstop=4
+    \ set softtabstop=4
+    \ set shiftwidth=4
+    \ set textwidth=79
+    \ set expandtab
+    \ set autoindent
+    \ set fileformat=unix
 
 " }}}
 "==============================================================================
