@@ -14,7 +14,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 
-call plug#begin('~/.vim/bundle')
+call plug#begin('~/.vim/plugged')
 
 Plug 'nanotech/jellybeans.vim'
 Plug 'SirVer/ultisnips'
@@ -221,7 +221,7 @@ set nowrap
 " In general, don't want tabs, so have them show up as special characters
 set listchars=tab:>-,trail:_,extends:>,precedes:<,nbsp:~
 set showbreak=\\ "
-set list "turn the above on
+setlocal list "turn the above on
 
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
@@ -395,7 +395,7 @@ nnoremap <C-Q> :bufdo bd<cr>
 "+ increases vertical buffer, - decreases
 if bufwinnr(1)
   nnoremap + <C-W>+
-  nnoremap - <C-W>-
+  nnoremap _ <C-W>-
 endif
 
 nnoremap > <C-w>>
@@ -492,7 +492,7 @@ nnoremap [oq :copen<CR>
 nnoremap ]oq :cclose<CR>
 nnoremap yoq :call ToggleQuickfix()<CR>
 
-function! s:ToggleQuickfix()
+function! g:ToggleQuickfix()
   for winnr in range(1, winnr('$'))
     if getwinvar(winnr, '&syntax') == 'qf'
       cclose
@@ -699,7 +699,6 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 " FZF {{{
 "==============================================================================
 if __using_fzf
-" if exists('g:loaded_fzf')
   nnoremap <C-F> :Files<CR>
   nnoremap <C-G> :GFiles<CR>
   nnoremap <C-B> :Buffers<CR>
@@ -878,7 +877,7 @@ let g:coc_global_extensions=[
       \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
       \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
       \ 'coc-powershell', 'coc-omnisharp', 'coc-marketplace',
-      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-ccls',
+      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips',
       \ 'coc-java'
       \]
 " Use <c-space> to trigger completion.
@@ -1064,9 +1063,21 @@ augroup END
 
 autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vim set foldmethod=marker 
-autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
+autocmd BufNewFile,BufRead *.txt set filetype=markdown
 autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
-autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!open ".expand("%:p") | :bw!
+autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p") | :bw!
+" autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!~/.iterm2/imgcat ".expand("%:p") | :bw!
+
+au BufNewFile,BufRead *.java
+    \ set tabstop=4
+    \ set softtabstop=4
+    \ set shiftwidth=4
+    \ set textwidth=79
+    \ set expandtab
+    \ set autoindent
+    \ set nosmartindent
+    \ setlocal nolist
+    \ set fileformat=unix
 
 au BufNewFile,BufRead *.py
     \ set tabstop=4
@@ -1083,6 +1094,10 @@ au BufNewFile,BufRead *.py
 "=============================================================================
 command! -complete=file -nargs=* ShellGitCmd call s:RunGitShellCommand('git '.<q-args>)
 command! -complete=shellcmd -nargs=+ ShellCmd call s:RunShellCommand(<q-args>)
+
+" Could also use the built in compiler command
+" :compiler gradle // Or gradlew if using wrapper
+" :make gradle-task-here // :make run 
 command! -complete=file -nargs=* Gradle call s:RunShellCommand('gradle '.<q-args>)
 
 function! s:RunGitShellCommand(cmdline)
