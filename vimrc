@@ -13,12 +13,31 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+" Windows has issues locating python installations if using anaconda
+if has('win32') || has('win32unix')
+  if !has('nvim')
+    " Installed python2 via `choco install python2`, this will auto install
+    " a dll file with the name pythonX.dll and add it to your path
+    set pythonthreedll=C:\\tools\\Anaconda3\\python37.dll
+    set pythonthreehome=C:\\tools\\Anaconda3
+    set pythondll=python27.dll
+  else
+    let g:python3_host_prog = "C:\\tools\\Anaconda3\\python"
+
+    " Disable python2 support
+    let g:loaded_python_provider = 1
+  endif
+endif
 
 call plug#begin('~/.vim/plugged')
 
+" Getting some strange UltiSnips Manager errors on mingw32 terms
+if !has('win32unix')
+  Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
+endif
+
 Plug 'nanotech/jellybeans.vim'
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
 Plug 'godlygeek/tabular'
@@ -33,6 +52,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-eunuch'
 Plug 'jiangmiao/auto-pairs'
 Plug 'ervandew/supertab'
 Plug 'sheerun/vim-polyglot'
@@ -42,6 +62,7 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'rhysd/vim-clang-format'
 Plug 'tmhedberg/SimpylFold'
 Plug 'vim-scripts/indentpython.vim'
+Plug 'segeljakt/vim-silicon'
 " Plug 'ashisha/image.vim'
 
 if has('win32') || has('win32unix')
@@ -294,15 +315,17 @@ noremap k gk
 
 " Terminal settings
 if has('win32')
-  set shell=powershell
+  " Would switch to powershell or anything else, but it breaks vim-plug and
+  " other cli tools such as ctrlp/fzf/rg
+  set shell=C:\WINDOWS\system32\cmd.exe
 elseif has('win32unix')
-  if executable('fish')
-    set shell=fish
-  else
-    set shell=bash
-  endif
+  set shell=/usr/bin/bash
 else
-  set shell=fish
+  if executable('fish')
+    set shell=/usr/local/bin/fish
+  else
+    set shell=/bin/bash
+  endif
 endif
 
 if has('nvim')
@@ -699,6 +722,12 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 " FZF {{{
 "==============================================================================
 if __using_fzf
+  if executable('fd')
+    let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never"
+  elseif executable('rg')
+    let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
+  endif
+
   nnoremap <C-F> :Files<CR>
   nnoremap <C-G> :GFiles<CR>
   nnoremap <C-B> :Buffers<CR>
@@ -769,13 +798,16 @@ if !__using_fzf
   " | <c-y>                          | to create a new file and its parent directories.
   " | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
 
-  if executable('rg')
+  if executable('fd')
     " Ignores files not included in version control since ctrl fuzzy search has
     " issues using rg and doing incremental searches in that way, better to just
     " use ack with rg and type regex and then perform search.
     " For example: (find all log files)
     " :Ack --files -g "*.log"
-    let g:ctrlp_user_command = 'rg %s --files --hidden --glob ""'
+    let g:ctrlp_user_command = 'fd --type -f --no-ignore-vcs --hidden --color=never "" %s'
+    let g:ctrlp_use_caching = 0
+  elseif executable('rg')
+    let g:ctrlp_user_command = 'rg %s --files --no-ignore-vcs --color=never --hidden -g ""'
     let g:ctrlp_use_caching = 0
   elseif executable('ag')
     let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
