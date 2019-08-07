@@ -1,0 +1,10 @@
+# Eclipse jdt specific files
+.classpath
+.project
+org.eclipse.buildship.core.prefs
+
+# Java class files
+*.class
+
+# Model generator templates
+*.vm

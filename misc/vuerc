@@ -1,0 +1,21 @@
+{
+  "useTaobaoRegistry": false,
+  "presets": {
+    "Router-Prettier": {
+      "useConfigFiles": false,
+      "plugins": {
+        "@vue/cli-plugin-babel": {},
+        "@vue/cli-plugin-eslint": {
+          "config": "prettier",
+          "lintOn": [
+            "save"
+          ]
+        }
+      },
+      "router": true,
+      "routerHistoryMode": true
+    }
+  },
+  "latestVersion": "3.10.0",
+  "lastChecked": 1564929863187
+}

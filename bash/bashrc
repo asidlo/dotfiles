@@ -1,0 +1,6 @@
+alias ls="ls -G"
+alias ll="ls -l"
+alias la="ls -al"
+
+export PS1="$ "
+export PATH=$PATH:/usr/local/bin
