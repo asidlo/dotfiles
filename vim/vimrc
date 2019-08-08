@@ -4,7 +4,6 @@
 "==============================================================================
 " Section: Plugin Manager {{{
 "==============================================================================
-
 " Automatically download the plug.vim plugin manager vimscript
 " Run :PlugInstall to install all plugins
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -13,30 +12,10 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-" Windows has issues locating python installations if using anaconda
-if has('win32') || has('win32unix')
-  if !has('nvim')
-    " Installed python2 via `choco install python2`, this will auto install
-    " a dll file with the name pythonX.dll and add it to your path
-    set pythonthreedll=C:\\tools\\Anaconda3\\python37.dll
-    set pythonthreehome=C:\\tools\\Anaconda3
-    set pythondll=python27.dll
-  else
-    let g:python3_host_prog = "C:\\tools\\Anaconda3\\python"
-
-    " Disable python2 support
-    let g:loaded_python_provider = 1
-  endif
-endif
-
 call plug#begin('~/.vim/plugged')
 
-" Getting some strange UltiSnips Manager errors on mingw32 terms
-if !has('win32unix')
-  Plug 'SirVer/ultisnips'
-  Plug 'honza/vim-snippets'
-endif
-
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 Plug 'nanotech/jellybeans.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
@@ -63,16 +42,8 @@ Plug 'rhysd/vim-clang-format'
 Plug 'tmhedberg/SimpylFold'
 Plug 'vim-scripts/indentpython.vim'
 Plug 'segeljakt/vim-silicon'
-" Plug 'ashisha/image.vim'
-
-if has('win32') || has('win32unix')
-  let g:__using_fzf = 0
-  Plug 'kien/ctrlp.vim'
-else
-  let g:__using_fzf = 1
-  Plug '/usr/local/opt/fzf'
-  Plug 'junegunn/fzf.vim'
-endif
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 
@@ -83,39 +54,9 @@ call plug#end()
 let mapleader=","
 
 syntax enable
-
-try
-  colorscheme jellybeans
-catch
-  colorscheme desert
-endtry
-
-" Remap all letters to not execute escape when using alt + letter 
-" https://stackoverflow.com/questions/6778961/alt-key-shortcuts-not-working-on-gnome-terminal-with-vim
-if has('win32unix')
-  let c='a'
-  while c <= 'z'
-    exec "set <A-".c.">=\e".c
-    exec "imap \e".c." <A-".c.">"
-    let c = nr2char(1+char2nr(c))
-  endw
-  set ttimeout ttimeoutlen=50
-endif
-
+colorscheme jellybeans
 set t_Co=256
 set background=dark
-
-if has("gui_running")
-  " No toolbars, menu or scrollbars in the GUI
-  " set guifont=Hack:h14
-  set clipboard+=unnamed
-  set guioptions-=m  "no menu
-  set guioptions-=T  "no toolbar
-  set guioptions-=l
-  set guioptions-=L
-  set guioptions-=r  "no scrollbar
-  set guioptions-=R
-endif
 
 " See vulnerability:
 " https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
@@ -129,10 +70,9 @@ if has('nvim')
   set clipboard=unnamed
 elseif has('macunix')
   set clipboard^=autoselect
-elseif has('win32') || has('win32unix')
+else
   set clipboard=unnamed
 endif
-
 
 " Dont insert first suggestion from autocompletions (omnicomplete)
 " https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
@@ -297,11 +237,7 @@ set wildmode=longest:full,full
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
-if has("win16") || has("win32")
-  set wildignore+=.git\*,.hg\*,.svn\*
-else
-  set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-endif
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 "}}}
 "==============================================================================
 " Section: Mappings {{{
@@ -312,21 +248,6 @@ noremap <Up> gk
 noremap <Down> gj
 noremap j gj
 noremap k gk
-
-" Terminal settings
-if has('win32')
-  " Would switch to powershell or anything else, but it breaks vim-plug and
-  " other cli tools such as ctrlp/fzf/rg
-  set shell=C:\WINDOWS\system32\cmd.exe
-elseif has('win32unix')
-  set shell=/usr/bin/bash
-else
-  if executable('fish')
-    set shell=/usr/local/bin/fish
-  else
-    set shell=/bin/bash
-  endif
-endif
 
 if has('nvim')
   " Leader q to exit terminal mode
@@ -339,26 +260,20 @@ if has('nvim')
   tnoremap <C-l> <C-\><C-n><C-w>l
 
   tnoremap <C-b> <C-\><C-n>:Buffers<CR>
+  tnoremap <C-y> <C-\><C-n>:History<CR>
   tnoremap <C-e> <C-\><C-n>:e#<CR>
 
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Alt + - should be used instead of just -
-  if has('win32')
-    " Open terminal in vertical, horizontal and new tab
-    nnoremap <leader>tv :vsplit term://powershell -nologo<CR>
-    nnoremap <leader>ts :split term://powershell -nologo<CR>
-    nnoremap <leader>tt :e term://powershell -nologo<CR>
+  " Open terminal in vertical, horizontal and new tab
+  if executable('fish')
+    nnoremap <leader>tv :vsplit term://fish<CR>
+    nnoremap <leader>ts :split term://fish<CR>
+    nnoremap <leader>tt :e term://fish<CR>
   else
-    " Open terminal in vertical, horizontal and new tab
-    if executable('fish')
-      nnoremap <leader>tv :vsplit term://fish<CR>
-      nnoremap <leader>ts :split term://fish<CR>
-      nnoremap <leader>tt :e term://fish<CR>
-    else
-      nnoremap <leader>tv :vsplit term://bash<CR>
-      nnoremap <leader>ts :split term://bash<CR>
-      nnoremap <leader>tt :e term://bash<CR>
-    endif
+    nnoremap <leader>tv :vsplit term://bash<CR>
+    nnoremap <leader>ts :split term://bash<CR>
+    nnoremap <leader>tt :e term://bash<CR>
   endif
 
   " always start terminal in insert mode
@@ -381,14 +296,10 @@ nnoremap confr :source $MYVIMRC<cr>
 
 " Edit vimrc
 if has('nvim')
-  if has('win32') || has('win32unix')
-    nnoremap confe :e ~\_vimrc<cr>
+  if empty(glob('~/.vimrc'))
+    nnoremap confe :e $MYVIMRC<cr>
   else
-    if empty(glob('~/.vimrc'))
-      nnoremap confe :e $MYVIMRC<cr>
-    else
-      nnoremap confe :e ~/.vimrc<cr>
-    endif
+    nnoremap confe :e ~/.vimrc<cr>
   endif
 else
   nnoremap confe :e $MYVIMRC<cr>
@@ -467,14 +378,6 @@ nmap <leader>w :w<cr>
 
 " Quick quit
 nmap <leader>q :q<cr>
-
-" :W sudo saves the file 
-" (useful for handling the permission-denied error)
-if !exists(':W')
-  if !has('win32unix') && !has('win32')
-    command W w !sudo tee % > /dev/null
-  endif
-endif
 
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
@@ -594,11 +497,7 @@ function! LightlineFilename()
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let modified = &modified ? ' +' : ''
 
-  if has('unix') && !has('win32unix')
-    let ro = &readonly ? ' 🔒' : ''
-  else
-    let ro = &readonly ? ' [ro]' : ''
-  endif
+  let ro = &readonly ? ' [RO]' : ''
 
   if filename =~# '__Tagbar__'
     return 'Tagbar' . ro
@@ -658,7 +557,7 @@ let g:lightline = {
       \   'cocstatus': 'coc#status',
       \ },
       \ 'component': {
-      \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
+      \   'readonly': '%{&filetype=="help"?"":&readonly?"RO":""}',
       \   'modified': '%{&filetype=="help" ? "" : &modified ? "+" : &modifiable ? "" : "-"}',
       \   'fugitive': '%{exists("*fugitive#head") ? winwidth(0) > 70 ? fugitive#head(): "" : "" }'
       \ },
@@ -721,36 +620,37 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 "==============================================================================
 " FZF {{{
 "==============================================================================
-if __using_fzf
-  if executable('fd')
-    let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never"
-  elseif executable('rg')
-    let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
-  endif
-
-  nnoremap <C-F> :Files<CR>
-  nnoremap <C-G> :GFiles<CR>
-  nnoremap <C-B> :Buffers<CR>
-  nnoremap <C-Y> :History<CR>
-  nnoremap <C-X> :Maps<CR>
-
-
-  let g:fzf_colors =
-        \ { 'fg':      ['fg', 'Normal'],
-        \ 'bg':      ['bg', 'Normal'],
-        \ 'hl':      ['fg', 'Comment'],
-        \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-        \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-        \ 'hl+':     ['fg', 'Statement'],
-        \ 'info':    ['fg', 'PreProc'],
-        \ 'border':  ['fg', 'Ignore'],
-        \ 'prompt':  ['fg', 'Conditional'],
-        \ 'pointer': ['fg', 'Exception'],
-        \ 'marker':  ['fg', 'Keyword'],
-        \ 'spinner': ['fg', 'Label'],
-        \ 'header':  ['fg', 'Comment'] }
-
+if executable('fd')
+  let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never"
+elseif executable('rg')
+  let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
 endif
+
+nnoremap <C-F> :Files<CR>
+nnoremap <C-G> :GFiles<CR>
+nnoremap <C-B> :Buffers<CR>
+nnoremap <C-Y> :History<CR>
+nnoremap <C-X> :Maps<CR>
+
+let g:fzf_colors =
+      \ { 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Comment'],
+      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'border':  ['fg', 'Ignore'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment'] }
+
+" https://github.com/junegunn/fzf.vim/issues/221
+autocmd FileType fzf tnoremap <buffer> <C-j> <Down>
+autocmd FileType fzf tnoremap <buffer> <C-k> <Up>
+
 " }}}
 "==============================================================================
 " Ack {{{
@@ -765,58 +665,6 @@ elseif executable('ag')
 endif
 
 nnoremap \ :Ack<space>
-" }}}
-"==============================================================================
-" Ctrlp {{{
-"==============================================================================
-if !__using_fzf
-
-  " Assign <C-f> to start Ctrlp, opens mru by default
-  let g:ctrlp_map = '<C-F>'
-
-  nnoremap <C-Y> :CtrlPMRUFiles<CR>
-
-  " View open buffers
-  nnoremap <C-B> :CtrlPBuffer<CR>
-
-  let g:ctrlp_max_height = 20
-  let g:ctrlp_match_window = 'results:100'
-  let g:ctrlp_custom_ignore = {
-        \ 'dir':  '\v[\/](node_modules|venv)|\.(git|hg|svn)$',
-        \ 'file': '\v\.(exe|so|dll|class|DS_Store|jar)$',
-        \ 'link': 'some_bad_symbolic_links',
-        \ }
-
-  " | Mapping                        | Description                                                                                                    |
-  " | <F5>                           | purge the cache for the current directory to get new files, remove deleted files and apply new ignore options.
-  " | <c-f> / <c-b>                  | to cycle between modes.
-  " | <c-d>                          | to switch to filename only search instead of full path.
-  " | <c-r>                          | to switch to regexp mode.
-  " | <c-j>, <c-k> or the arrow keys | to navigate the result list.
-  " | <c-t> or <c-v>, <c-x>          | to open the selected entry in a new tab or in a new split.
-  " | <c-n>, <c-p>                   | to select the next/previous string in the prompt's history.
-  " | <c-y>                          | to create a new file and its parent directories.
-  " | <c-z>                          | to mark/unmark multiple files and <c-o> to open them.
-
-  if executable('fd')
-    " Ignores files not included in version control since ctrl fuzzy search has
-    " issues using rg and doing incremental searches in that way, better to just
-    " use ack with rg and type regex and then perform search.
-    " For example: (find all log files)
-    " :Ack --files -g "*.log"
-    let g:ctrlp_user_command = 'fd --type -f --no-ignore-vcs --hidden --color=never "" %s'
-    let g:ctrlp_use_caching = 0
-  elseif executable('rg')
-    let g:ctrlp_user_command = 'rg %s --files --no-ignore-vcs --color=never --hidden -g ""'
-    let g:ctrlp_use_caching = 0
-  elseif executable('ag')
-    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    let g:ctrlp_use_caching = 0
-  else
-    let g:ctrlp_clear_cache_on_exit = 0
-  endif
-endif
-
 " }}}
 "==============================================================================
 " Markdown {{{

@@ -10,7 +10,7 @@
 " Looks for 7 digit hash at beginning of line that may or may not be prefaced
 " with an '*' character
 " syntax match gitLgOnelineHash /^[\* ]*[a-zA-Z0-9]\{7}/ nextgroup=gitLgOnelineDate 
-syntax match gitLgOnelineHash /^[\* ]*[a-zA-Z0-9]\{7}/ 
+syntax match gitLgOnelineHash /^[\* ]*[a-zA-Z0-9]\{7,40}/ 
 hi def link gitLgOnelineHash gitReference
 
 syntax match gitLgOnelineDate /([a-zA-Z0-9\:\- ]*)/
