@@ -29,8 +29,8 @@ set -gx ANACONDA_HOME          /usr/local/anaconda3
 set -gx PIP_REQUIRE_VIRTUALENV true
 
 # Add global go bin and local bin to path
-# set -x PATH "$LLVM_HOME/bin" $PATH "$GOROOT/bin" "$GOPATH/bin" "$CARGO_HOME/bin"
-set -x PATH  $PATH "$GOROOT/bin" "$GOPATH/bin" "$CARGO_HOME/bin"
+set -x PATH "$LLVM_HOME/bin" $PATH "$GOROOT/bin" "$GOPATH/bin" "$CARGO_HOME/bin"
+# set -x PATH  $PATH "$GOROOT/bin" "$GOPATH/bin" "$CARGO_HOME/bin"
 
 # Aliases (-s write function to file...makes it have a more globa scope)
 alias cls "clear"

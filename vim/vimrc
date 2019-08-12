@@ -32,6 +32,16 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
+
+" Automatically clear search highlights after you move your cursor.
+Plug 'haya14busa/is.vim'
+
+" Automatically set 'shiftwidth' + 'expandtab' (indention) based on file type.
+Plug 'tpope/vim-sleuth'
+
+" Handle multi-file find and replace.
+Plug 'mhinz/vim-grepper'
+
 Plug 'jiangmiao/auto-pairs'
 Plug 'ervandew/supertab'
 Plug 'sheerun/vim-polyglot'
@@ -73,6 +83,9 @@ elseif has('macunix')
 else
   set clipboard=unnamed
 endif
+
+" Unset paste on InsertLeave.
+autocmd InsertLeave * silent! set nopaste
 
 " Dont insert first suggestion from autocompletions (omnicomplete)
 " https://vim.fandom.com/wiki/Make_Vim_completion_popup_menu_work_just_like_in_an_IDE
@@ -251,7 +264,7 @@ noremap k gk
 
 if has('nvim')
   " Leader q to exit terminal mode
-  tnoremap <Leader>q <C-\><C-n>:bd!<cr>
+  tnoremap <Leader>q <C-\><C-n>:q<cr>
 
   " mappings to move out from terminal to other views
   tnoremap <C-h> <C-\><C-n><C-w>h
@@ -282,6 +295,20 @@ endif
 
 " Enter key will simply select the highlighted menu item, just as <C-Y> does
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Format paragraph (selected or not) to 80 character lines.
+nnoremap <Leader>g gqap
+xnoremap <Leader>g gqa
+
+" Prevent selecting and pasting from overwriting what you originally copied.
+xnoremap p pgvy
+
+" Keep cursor at the bottom of the visual selection after you yank it.
+vmap y ygv<Esc>
+
+" Prevent x from overriding what's in the clipboard.
+noremap x "_x
+noremap X "_x
 
 " search will center on the line it's found in.
 nnoremap n nzzzv
@@ -381,6 +408,7 @@ nmap <leader>q :q<cr>
 
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
+" Could replace with visual-star-search plugin
 vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 
@@ -400,6 +428,23 @@ function! VisualSelection(direction, extra_filter) range
   let @/ = l:pattern
   let @" = l:saved_reg
 endfunction
+
+" Press * to search for the term under the cursor or a visual selection and
+" then press a key below to replace all instances of it in the current file.
+nnoremap <Leader>r :%s///g<Left><Left>
+nnoremap <Leader>rc :%s///gc<Left><Left><Left>
+
+" The same as above but instead of acting on the whole file it will be
+" restricted to the previously visually selected range. You can do that by
+" pressing *, visually selecting the range you want it to apply to and then
+" press a key below to replace all instances of it in the current selection.
+xnoremap <Leader>r :s///g<Left><Left>
+xnoremap <Leader>rc :s///gc<Left><Left><Left>
+
+" Type a replacement term and press . to repeat the replacement again. Useful
+" for replacing a few instances of the term (comparable to multiple cursors).
+nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<CR>cgn
+xnoremap <silent> s* "sy:let @/=@s<CR>cgn
 
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <space> /
@@ -432,6 +477,30 @@ endfunction
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
+" Vim-grepper {{{
+"==============================================================================
+let g:grepper={}
+let g:grepper.tools=["rg"]
+
+xmap gr <plug>(GrepperOperator)
+
+" After searching for text, press this mapping to do a project wide find and
+" replace. It's similar to <leader>r except this one applies to all matches
+" across all files instead of just the current file.
+nnoremap <Leader>R
+  \ :let @s='\<'.expand('<cword>').'\>'<CR>
+  \ :Grepper -cword -noprompt<CR>
+  \ :cfdo %s/<C-r>s//g \| update
+  \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+
+" The same as above except it works with a visual selection.
+xmap <Leader>R
+    \ "sy
+    \ gvgr
+    \ :cfdo %s/<C-r>s//g \| update
+     \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+
+"==============================================================================
 " NerdTree {{{
 "==============================================================================
 let g:NERDTreeWinPos = "left"
@@ -450,7 +519,7 @@ let NERDTreeMinimalUI=1
 let NERDTreeAutoDeleteBuffer=1
 
 " Auto close nerdtree after opening a buffer
-let NERDTreeQuitOnOpen=1
+" let NERDTreeQuitOnOpen=1
 
 " Close automatically if nerd tree is only buffer open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -593,7 +662,7 @@ let g:go_auto_sameids = 1
 let g:go_auto_type_info = 1
 
 " Makes all popup buffers quickfix type buffers
-" let g:go_list_type = "quickfix"
+let g:go_list_type = "quickfix"
 
 " Automatically format and also rewrite your import declarations
 " If it is too slow, you can use the manual :GoImports command
@@ -620,10 +689,21 @@ let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 "==============================================================================
 " FZF {{{
 "==============================================================================
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-s': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
 if executable('fd')
   let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never"
 elseif executable('rg')
   let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
+
+  " Allow passing optional flags into the Rg command.
+  " Example: :Rg myterm -g '*.md'
+  command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . <q-args>, 1, <bang>0)
 endif
 
 nnoremap <C-F> :Files<CR>
@@ -730,16 +810,17 @@ endfunction
 
 call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
+call NERDTreeHighlightFile('go', 'cyan', 'none', '#3366FF', '#151515')
 call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('yaml', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
 call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('html', 'red', 'none', 'yellow', '#151515')
+call NERDTreeHighlightFile('styl', 'red', 'none', 'cyan', '#151515')
+call NERDTreeHighlightFile('css', 'red', 'none', 'cyan', '#151515')
 call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
-call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
+call NERDTreeHighlightFile('php', 'magenta', 'none', '#ff00ff', '#151515')
 call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
 call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
 call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
@@ -859,7 +940,11 @@ augroup go
   autocmd!
 
   " Show by default 4 spaces for a tab
-  autocmd BufNewFile,BufRead,BufEnter *.go setlocal noexpandtab tabstop=4 shiftwidth=4
+  autocmd BufNewFile,BufRead,BufEnter *.go
+    \ setlocal noexpandtab |
+    \ set tabstop=4 |
+    \ set shiftwidth=4 |
+    \ setlocal nolist
 
   " :GoBuild and :GoTestCompile
   autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
@@ -869,7 +954,11 @@ augroup go
   autocmd FileType go nmap <leader>tf  <Plug>(go-test-func)
 
   " :GoRun
-  autocmd FileType go nmap <leader>r  <Plug>(go-run)
+  if has('nvim')
+    autocmd FileType go nmap <F10> <Plug>(go-run-split)
+  else
+    autocmd FileType go nmap <F10> <Plug>(go-run)
+  endif
 
   " :GoCoverageToggle
   " autocmd FileType go nmap <leader>c <Plug>(go-coverage-toggle)
@@ -943,30 +1032,32 @@ augroup END
 
 autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vim set foldmethod=marker 
-autocmd BufNewFile,BufRead *.txt set filetype=markdown
+autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
 autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p") | :bw!
 " autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!~/.iterm2/imgcat ".expand("%:p") | :bw!
+autocmd FileType java nmap ]] ]m
+autocmd FileType java nmap [[ [m
 
-au BufNewFile,BufRead *.java
-    \ set tabstop=4
-    \ set softtabstop=4
-    \ set shiftwidth=4
-    \ set textwidth=79
-    \ set expandtab
-    \ set autoindent
-    \ set nosmartindent
-    \ setlocal nolist
-    \ set fileformat=unix
+" au BufNewFile,BufRead,BufEnter *.java 
+"     \ set tabstop=4 |
+"     \ set softtabstop=4 |
+"     \ set shiftwidth=4 |
+"     \ set textwidth=79 |
+"     \ set expandtab |
+"     \ set autoindent |
+"     \ set nosmartindent |
+"     \ setlocal nolist |
+"     \ set fileformat=unix
 
-au BufNewFile,BufRead *.py
-    \ set tabstop=4
-    \ set softtabstop=4
-    \ set shiftwidth=4
-    \ set textwidth=79
-    \ set expandtab
-    \ set autoindent
-    \ set fileformat=unix
+" au BufNewFile,BufRead *.py
+"     \ set tabstop=4 |
+"     \ set softtabstop=4 |
+"     \ set shiftwidth=4 |
+"     \ set textwidth=79 |
+"     \ set expandtab |
+"     \ set autoindent |
+"     \ set fileformat=unix
 
 " }}}
 "==============================================================================

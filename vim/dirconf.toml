@@ -1,0 +1,20 @@
+[[file]]
+name = "vimrc"
+type = "file"
+targets = [
+  "~/.vimrc"
+]
+
+[[file]]
+name = "after"
+type = "directory"
+targets = [
+  "~/.vim/after"
+]
+
+[[file]]
+name = "syntax"
+type = "directory"
+targets = [
+  "~/.vim/syntax"
+]

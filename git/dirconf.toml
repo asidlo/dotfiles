@@ -1,0 +1,13 @@
+[[file]]
+name = "gitconfig"
+type = "file"
+targets = [
+  "~/.gitconfig"
+]
+
+[[file]]
+name = "ignore"
+type = "file"
+targets = [
+  "~/.config/git/ignore"
+]

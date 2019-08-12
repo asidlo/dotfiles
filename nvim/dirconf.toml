@@ -1,0 +1,28 @@
+[[file]]
+name = "coc-settings.json"
+type = "file"
+targets = [
+  "~/.config/nvim/coc-settings.json",
+  "~/.vim/coc-settings.json"
+]
+
+[[file]]
+name = "init.vim"
+type = "file"
+targets = [
+  "~/.config/nvim/init.vim"
+]
+
+[[file]]
+name = "config.fish"
+type = "file"
+targets = [
+  "~/.config/fish/config.fish"
+]
+
+[[file]]
+name = "functions"
+type = "directory"
+targets = [
+  "~/.config/fish/functions"
+]

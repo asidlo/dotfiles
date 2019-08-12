@@ -1,6 +1,7 @@
 # Eclipse jdt specific files
 .classpath
 .project
+.settings/
 org.eclipse.buildship.core.prefs
 
 # Java class files

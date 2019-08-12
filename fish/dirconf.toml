@@ -1,0 +1,27 @@
+[[file]]
+name = "fishfile"
+type = "file"
+targets = [
+  "~/.config/fish/fishfile"
+]
+
+[[file]]
+name = "fish_variables"
+type = "file"
+targets = [
+  "~/.config/fish/fish_variables"
+]
+
+[[file]]
+name = "config.fish"
+type = "file"
+targets = [
+  "~/.config/fish/config.fish"
+]
+
+[[file]]
+name = "functions"
+type = "directory"
+targets = [
+  "~/.config/fish/functions"
+]
