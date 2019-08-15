@@ -292,6 +292,16 @@ if has('nvim')
     nnoremap <leader>tt :e term://bash<CR>
   endif
 
+  if executable('powershell.exe')
+    nnoremap <leader>tpv :vsplit term://powershell.exe<CR>
+    nnoremap <leader>tps :split term://powershell.exe<CR>
+    nnoremap <leader>tpt :e term://powershell.exe<CR>
+  elseif executable('cmd.exe')
+    nnoremap <leader>tcv :vsplit term://cmd.exe<CR>
+    nnoremap <leader>tcs :split term://cmd.exeCR>
+    nnoremap <leader>tct :e term://cmd.exe<CR>
+  endif
+
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
 endif
