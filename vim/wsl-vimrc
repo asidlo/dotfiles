@@ -292,6 +292,8 @@ if has('nvim')
     nnoremap <leader>tt :e term://bash<CR>
   endif
 
+  " Note: if you have a bunch open you can rename a buffer using :file {name}
+  " For convention, preface terminal buffers with term:{name}
   if executable('powershell.exe')
     nnoremap <leader>tpv :vsplit term://powershell.exe<CR>
     nnoremap <leader>tps :split term://powershell.exe<CR>
