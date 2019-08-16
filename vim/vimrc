@@ -376,7 +376,7 @@ nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Print the directory of the current buffer
 " Helpful since :pwd will print the project root dir when vim-rooter is applied
-command! -nargs=? Dirname :echo expand('%:p')
+command! Dirname :echo expand('%:p:h')
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -526,7 +526,10 @@ let g:NERDTreeWinPos = "left"
 let g:NERDTreeWinSize=35
 
 " Prevent fluff from appearing in the file drawer
-let NERDTreeIgnore=['\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$', '\.DS_Store$', '\.meta$']
+let NERDTreeIgnore=[
+            \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
+            \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project'
+            \]
 
 " Show hidden files in NERDTree
 let NERDTreeShowHidden=1
@@ -1055,19 +1058,72 @@ autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
 autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 " autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!~/.iterm2/imgcat ".expand("%:p") | :bw!
-autocmd FileType java nmap ]] ]m
-autocmd FileType java nmap [[ [m
 
-au BufNewFile,BufRead,BufEnter *.java 
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-    \ set textwidth=79 |
-    \ set expandtab |
-    \ set autoindent |
-    \ set nosmartindent |
-    \ setlocal nolist |
-    \ set fileformat=unix
+augroup java
+  autocmd!
+
+  " Navigate functions using [ and ] instead of ]m
+  autocmd FileType java nmap ]] ]m
+  autocmd FileType java nmap [[ [m
+
+  " Run gradle based projects using built in make and gradle compiler
+  " Requires the build.gradle file to have the 'application' plugin applied
+  " and the following code to be added:
+  "
+  "```groovy
+  " application {
+  "     mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+  " }
+  "```
+  autocmd FileType java execute "compiler gradlew"
+  autocmd FileType java nmap <F10> :make run -PmainClass="%:p"<cr>
+
+  " If you have gradle modules, you need to specify module name that gradle
+  " needs to search for the specified test, else it will look in each and fail
+  " if not found in one.
+  autocmd FileType java nmap <leader>tt :make -q ::test --tests "%:t:r"
+              \<LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT>
+
+  autocmd BufNewFile,BufRead,BufEnter *.java
+      \ set tabstop=4 |
+      \ set softtabstop=4 |
+      \ set shiftwidth=4 |
+      \ set textwidth=79 |
+      \ set expandtab |
+      \ set autoindent |
+      \ set nosmartindent |
+      \ setlocal nolist |
+      \ set fileformat=unix
+
+  command! A :call FindJavaAlternate(':e')
+  command! AS :call FindJavaAlternate(':split')
+  command! AV :call FindJavaAlternate(':vsplit')
+
+  " open_command can be any valid vim command used to open a buffer
+  " usage: call FindJavaAlternate(':e')
+  " see commands above for other examples
+  function! FindJavaAlternate(open_command)
+    let file_path = expand('%:p:h')
+    let file_name = expand('%:t')
+    let test_path = substitute(file_path, 'main', 'test', '')
+    let java_path = substitute(file_path, 'test', 'main', '')
+    if file_path ==# test_path
+      let java_file = java_path . '/' . substitute(file_name, '\.*Test\.java', '\.java', '')
+      echon "Alternate = java_file " . java_file
+      execute a:open_command . ' ' . java_file
+    elseif file_path ==# java_path
+      let test_file = test_path . '/' . substitute(file_name, '\.*\.java', 'Test\.java', '')
+      echon "Alternate = test_file " . test_file
+      execute a:open_command . ' ' . test_file
+    else
+      echoerr "Unable to find alternate for: " . file_path |
+            \ echoerr "Tried the following:" |
+            \ echoerr "- test_file: ". test_file |
+            \ echoerr "- java_file: ". java_file
+    end
+  endfunction
+augroup END
+
 
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |

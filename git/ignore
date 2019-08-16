@@ -9,3 +9,7 @@ org.eclipse.buildship.core.prefs
 
 # Model generator templates
 *.vm
+
+# MacOS
+.DS_Store
+
