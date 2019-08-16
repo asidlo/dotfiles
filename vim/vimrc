@@ -36,11 +36,10 @@ Plug 'tpope/vim-eunuch'
 " Automatically clear search highlights after you move your cursor.
 Plug 'haya14busa/is.vim'
 
-" Automatically set 'shiftwidth' + 'expandtab' (indention) based on file type.
-Plug 'tpope/vim-sleuth'
-
 " Handle multi-file find and replace.
 Plug 'mhinz/vim-grepper'
+
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'ervandew/supertab'
@@ -318,6 +317,9 @@ nnoremap N Nzzzv
 " yank from current position till end of line
 nnoremap Y y$
 
+" Edit global todo.md
+nnoremap <leader>td :e ~/Documents/todo.md<cr>
+
 " Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
 
@@ -476,6 +478,12 @@ endfunction
 " }}}
 "==============================================================================
 " Section: Plugins {{{
+"==============================================================================
+" markdown-preview {{{
+"==============================================================================
+" use a custom markdown style must be absolute path
+" let g:mkdp_markdown_css = '/Users/asidlo/.vim/syntax/github.css'
+
 "==============================================================================
 " Vim-grepper {{{
 "==============================================================================
@@ -1013,7 +1021,7 @@ augroup END
 
 augroup c
   autocmd!
-  autocmd FileType c nmap <leader>r :call RunCExe()<CR>
+  autocmd FileType c nmap <F10> :call RunCExe()<CR>
   " https://vim.fandom.com/wiki/Get_the_name_of_the_current_file
   function! BuildCExe()
     execute "!gcc -Wall -o %:p:h/a.out %:p"
@@ -1034,30 +1042,30 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vim set foldmethod=marker 
 autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
 autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
-autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p") | :bw!
+autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 " autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!~/.iterm2/imgcat ".expand("%:p") | :bw!
 autocmd FileType java nmap ]] ]m
 autocmd FileType java nmap [[ [m
 
-" au BufNewFile,BufRead,BufEnter *.java 
-"     \ set tabstop=4 |
-"     \ set softtabstop=4 |
-"     \ set shiftwidth=4 |
-"     \ set textwidth=79 |
-"     \ set expandtab |
-"     \ set autoindent |
-"     \ set nosmartindent |
-"     \ setlocal nolist |
-"     \ set fileformat=unix
+au BufNewFile,BufRead,BufEnter *.java 
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set nosmartindent |
+    \ setlocal nolist |
+    \ set fileformat=unix
 
-" au BufNewFile,BufRead *.py
-"     \ set tabstop=4 |
-"     \ set softtabstop=4 |
-"     \ set shiftwidth=4 |
-"     \ set textwidth=79 |
-"     \ set expandtab |
-"     \ set autoindent |
-"     \ set fileformat=unix
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
 
 " }}}
 "==============================================================================
@@ -1117,5 +1125,7 @@ function! s:RunShellCommand(cmdline)
   1
 endfunction
 
+" }}}
+"==============================================================================
 " }}}
 "==============================================================================
