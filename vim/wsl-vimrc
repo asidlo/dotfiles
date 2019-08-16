@@ -333,6 +333,9 @@ nnoremap N Nzzzv
 " yank from current position till end of line
 nnoremap Y y$
 
+" Edit global todo.md
+nnoremap <leader>td :e ~/documents/todo.md<cr>
+
 " Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
 

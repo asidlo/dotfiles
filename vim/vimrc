@@ -63,7 +63,14 @@ call plug#end()
 let mapleader=","
 
 syntax enable
-colorscheme jellybeans
+
+try
+  " try catch, since there is an initial lag when first loading all plugins
+  colorscheme jellybeans
+catch
+  colorscheme desert
+endtry
+
 set t_Co=256
 set background=dark
 
@@ -366,6 +373,10 @@ nnoremap < <C-w><
 
 " Switch CWD to the directory of the open buffer
 nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+" Print the directory of the current buffer
+" Helpful since :pwd will print the project root dir when vim-rooter is applied
+command! -nargs=? Dirname :echo expand('%:p')
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
