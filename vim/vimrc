@@ -36,11 +36,10 @@ Plug 'tpope/vim-eunuch'
 " Automatically clear search highlights after you move your cursor.
 Plug 'haya14busa/is.vim'
 
-" Automatically set 'shiftwidth' + 'expandtab' (indention) based on file type.
-Plug 'tpope/vim-sleuth'
-
 " Handle multi-file find and replace.
 Plug 'mhinz/vim-grepper'
+
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'ervandew/supertab'
@@ -64,7 +63,14 @@ call plug#end()
 let mapleader=","
 
 syntax enable
-colorscheme jellybeans
+
+try
+  " try catch, since there is an initial lag when first loading all plugins
+  colorscheme jellybeans
+catch
+  colorscheme desert
+endtry
+
 set t_Co=256
 set background=dark
 
@@ -318,6 +324,9 @@ nnoremap N Nzzzv
 " yank from current position till end of line
 nnoremap Y y$
 
+" Edit global todo.md
+nnoremap <leader>td :e ~/Documents/todo.md<cr>
+
 " Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
 
@@ -364,6 +373,10 @@ nnoremap < <C-w><
 
 " Switch CWD to the directory of the open buffer
 nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+" Print the directory of the current buffer
+" Helpful since :pwd will print the project root dir when vim-rooter is applied
+command! Dirname :echo expand('%:p:h')
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -477,6 +490,12 @@ endfunction
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
+" markdown-preview {{{
+"==============================================================================
+" use a custom markdown style must be absolute path
+" let g:mkdp_markdown_css = '/Users/asidlo/.vim/syntax/github.css'
+
+"==============================================================================
 " Vim-grepper {{{
 "==============================================================================
 let g:grepper={}
@@ -507,7 +526,10 @@ let g:NERDTreeWinPos = "left"
 let g:NERDTreeWinSize=35
 
 " Prevent fluff from appearing in the file drawer
-let NERDTreeIgnore=['\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$', '\.DS_Store$', '\.meta$']
+let NERDTreeIgnore=[
+            \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
+            \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project'
+            \]
 
 " Show hidden files in NERDTree
 let NERDTreeShowHidden=1
@@ -1013,7 +1035,7 @@ augroup END
 
 augroup c
   autocmd!
-  autocmd FileType c nmap <leader>r :call RunCExe()<CR>
+  autocmd FileType c nmap <F10> :call RunCExe()<CR>
   " https://vim.fandom.com/wiki/Get_the_name_of_the_current_file
   function! BuildCExe()
     execute "!gcc -Wall -o %:p:h/a.out %:p"
@@ -1034,30 +1056,83 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vim set foldmethod=marker 
 autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
 autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
-autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p") | :bw!
+autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 " autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!~/.iterm2/imgcat ".expand("%:p") | :bw!
-autocmd FileType java nmap ]] ]m
-autocmd FileType java nmap [[ [m
 
-" au BufNewFile,BufRead,BufEnter *.java 
-"     \ set tabstop=4 |
-"     \ set softtabstop=4 |
-"     \ set shiftwidth=4 |
-"     \ set textwidth=79 |
-"     \ set expandtab |
-"     \ set autoindent |
-"     \ set nosmartindent |
-"     \ setlocal nolist |
-"     \ set fileformat=unix
+augroup java
+  autocmd!
 
-" au BufNewFile,BufRead *.py
-"     \ set tabstop=4 |
-"     \ set softtabstop=4 |
-"     \ set shiftwidth=4 |
-"     \ set textwidth=79 |
-"     \ set expandtab |
-"     \ set autoindent |
-"     \ set fileformat=unix
+  " Navigate functions using [ and ] instead of ]m
+  autocmd FileType java nmap ]] ]m
+  autocmd FileType java nmap [[ [m
+
+  " Run gradle based projects using built in make and gradle compiler
+  " Requires the build.gradle file to have the 'application' plugin applied
+  " and the following code to be added:
+  "
+  "```groovy
+  " application {
+  "     mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+  " }
+  "```
+  autocmd FileType java execute "compiler gradlew"
+  autocmd FileType java nmap <F10> :make run -PmainClass="%:p"<cr>
+
+  " If you have gradle modules, you need to specify module name that gradle
+  " needs to search for the specified test, else it will look in each and fail
+  " if not found in one.
+  autocmd FileType java nmap <leader>tt :make -q ::test --tests "%:t:r"
+              \<LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT>
+
+  autocmd BufNewFile,BufRead,BufEnter *.java
+      \ set tabstop=4 |
+      \ set softtabstop=4 |
+      \ set shiftwidth=4 |
+      \ set textwidth=79 |
+      \ set expandtab |
+      \ set autoindent |
+      \ set nosmartindent |
+      \ setlocal nolist |
+      \ set fileformat=unix
+
+  command! A :call FindJavaAlternate(':e')
+  command! AS :call FindJavaAlternate(':split')
+  command! AV :call FindJavaAlternate(':vsplit')
+
+  " open_command can be any valid vim command used to open a buffer
+  " usage: call FindJavaAlternate(':e')
+  " see commands above for other examples
+  function! FindJavaAlternate(open_command)
+    let file_path = expand('%:p:h')
+    let file_name = expand('%:t')
+    let test_path = substitute(file_path, 'main', 'test', '')
+    let java_path = substitute(file_path, 'test', 'main', '')
+    if file_path ==# test_path
+      let java_file = java_path . '/' . substitute(file_name, '\.*Test\.java', '\.java', '')
+      echon "Alternate = java_file " . java_file
+      execute a:open_command . ' ' . java_file
+    elseif file_path ==# java_path
+      let test_file = test_path . '/' . substitute(file_name, '\.*\.java', 'Test\.java', '')
+      echon "Alternate = test_file " . test_file
+      execute a:open_command . ' ' . test_file
+    else
+      echoerr "Unable to find alternate for: " . file_path |
+            \ echoerr "Tried the following:" |
+            \ echoerr "- test_file: ". test_file |
+            \ echoerr "- java_file: ". java_file
+    end
+  endfunction
+augroup END
+
+
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
 
 " }}}
 "==============================================================================
@@ -1117,5 +1192,7 @@ function! s:RunShellCommand(cmdline)
   1
 endfunction
 
+" }}}
+"==============================================================================
 " }}}
 "==============================================================================
