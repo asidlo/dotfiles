@@ -1,0 +1,58 @@
+bind 'set completion-ignore-case on'
+bind 'set show-all-if-ambiguous on'
+bind 'set menu-complete-display-prefix on'
+bind 'TAB: menu-complete'
+
+stty -ixon
+
+#==============================================================================
+# Environment Variables 
+#==============================================================================
+# export PIP_REQUIRE_VIRTUALENV=true
+export HISTFILESIZE=1000000000
+export HISTSIZE=1000000
+export GRADLE_OPTS=-Xmx4096m
+export EDITOR=vim
+
+#==============================================================================
+# Misc Aliases
+#==============================================================================
+alias vi=vim
+alias grep="grep --color"
+alias cls=clear
+alias tree="tree -L 2"
+alias copy="clip"
+alias python="winpty.exe python"
+
+#==============================================================================
+# File Aliases
+#==============================================================================
+alias ls="ls --color=auto"
+alias la="ls -al"
+alias ll="ls -l"
+alias lh="ls -Ad .*"
+alias ldir="ls -d */"
+alias md="mkdir -p"
+
+#==============================================================================
+# Git Aliases
+#==============================================================================
+# https://gist.github.com/mwhite/6887990
+for git_alias in $(git --list-cmds=alias); do
+    # Alias each command
+    alias g$git_alias="git $git_alias"
+done
+
+function extract_git_aliases() {
+    output=$(git config -l | grep "alias" | sed 's/=/,/' | column -t -s, | cut -c 1-80)
+    echo "$output" | column -t -s,
+}
+
+alias gla="extract_git_aliases"
+alias gal="extract_git_aliases"
+
+#==============================================================================
+# Docker Aliases
+#==============================================================================
+# Docker Machine
+alias dm="docker-machine"
