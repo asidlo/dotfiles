@@ -271,6 +271,7 @@ noremap k gk
 if has('nvim')
   " Leader q to exit terminal mode
   tnoremap <leader>q <c-\><c-n>:q<cr>
+  tnoremap <c-w> <c-\><c-n>:bd!<cr>
 
   " mappings to move out from terminal to other views
   tnoremap <c-h> <c-\><c-n><c-w>h
@@ -283,11 +284,11 @@ if has('nvim')
   tnoremap <c-e> <c-\><c-n>:e#<cr>
 
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
-  " Also, Alt + - should be used instead of just -
+  " Also, Altc+ - should be used instead of just -
   " Open terminal in vertical, horizontal and new tab
   nnoremap <leader>vterm :vsplit term://fish<cr>
   nnoremap <leader>sterm :split term://fish<cr>
-  nnoremap <leader>eterm :e term://fish<cr>
+  nnoremap <leader>term :e term://fish<cr>
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
@@ -316,9 +317,9 @@ nnoremap N Nzzzv
 nnoremap Y y$
 
 " Edit global todo.md
-nnoremap <leader>etd :e ~/Documents/todo.md<cr>
+nnoremap <leader>td :e ~/Documents/todo.md<cr>
 nnoremap <leader>std :split ~/Documents/todo.md<cr>
-nnoremap <leader>vtd :vsplit ~/Documents/todo.md<cr>
+nnoremap <leader>ctd :vsplit ~/Documents/todo.md<cr>
 
 " Reload vimrc
 nnoremap <leader>rcfg :source $MYVIMRC<cr>
@@ -326,16 +327,16 @@ nnoremap <leader>rcfg :source $MYVIMRC<cr>
 " Edit vimrc
 if has('nvim')
   if empty(glob('~/.vimrc'))
-    nnoremap <leader>ecfg :e $MYVIMRC<cr>
+    nnoremap <leader>cfg :e $MYVIMRC<cr>
     nnoremap <leader>vcfg :vsplit $MYVIMRC<cr>
     nnoremap <leader>scfg :split $MYVIMRC<cr>
   else
-    nnoremap <leader>ecfg :e ~/.vimrc<cr>
+    nnoremap <leader>cfg :e ~/.vimrc<cr>
     nnoremap <leader>vcfg :vsplit ~/.vimrc<cr>
     nnoremap <leader>scfg :split ~/.vimrc<cr>
   endif
 else
-  nnoremap <leader>ecfg :e $MYVIMRC<cr>
+  nnoremap <leader>cfg :e $MYVIMRC<cr>
   nnoremap <leader>vcfg :vsplit $MYVIMRC<cr>
   nnoremap <leader>scfg :split $MYVIMRC<cr>
 endif
@@ -355,7 +356,7 @@ nnoremap U <c-r>
 
 "Close all the buffers
 nnoremap <c-q> :bufdo bd<cr>
-nnoremap <c-w> :bd c<cr>
+nnoremap <c-w> :bd<cr>
 
 "https://vim.fandom.com/wiki/Fast_window_resizing_with_plus/minus_keys
 "+ increases vertical buffer, - decreases
