@@ -285,15 +285,9 @@ if has('nvim')
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Alt + - should be used instead of just -
   " Open terminal in vertical, horizontal and new tab
-  if executable('fish')
-    nnoremap <leader>tv :vsplit term://fish<cr>
-    nnoremap <leader>ts :split term://fish<cr>
-    nnoremap <leader>tt :e term://fish<cr>
-  else
-    nnoremap <leader>tv :vsplit term://bash<cr>
-    nnoremap <leader>ts :split term://bash<cr>
-    nnoremap <leader>tt :e term://bash<cr>
-  endif
+  nnoremap <leader>vterm :vsplit term://fish<cr>
+  nnoremap <leader>sterm :split term://fish<cr>
+  nnoremap <leader>eterm :e term://fish<cr>
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
@@ -1128,7 +1122,6 @@ augroup java
     end
   endfunction
 augroup END
-
 
 " }}}
 "==============================================================================
