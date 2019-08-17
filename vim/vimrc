@@ -263,54 +263,51 @@ set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 "==============================================================================
 " Visual linewise up and down by default (and use gj gk to go quicker)
 " Move cusor by display lines when wrapping
-noremap <Up> gk
-noremap <Down> gj
+noremap <up> gk
+noremap <down> gj
 noremap j gj
 noremap k gk
 
 if has('nvim')
   " Leader q to exit terminal mode
-  tnoremap <Leader>q <C-\><C-n>:q<cr>
+  tnoremap <leader>q <c-\><c-n>:q<cr>
 
   " mappings to move out from terminal to other views
-  tnoremap <C-h> <C-\><C-n><C-w>h
-  tnoremap <C-j> <C-\><C-n><C-w>j
-  tnoremap <C-k> <C-\><C-n><C-w>k
-  tnoremap <C-l> <C-\><C-n><C-w>l
+  tnoremap <c-h> <c-\><c-n><c-w>h
+  tnoremap <c-j> <c-\><c-n><c-w>j
+  tnoremap <c-k> <c-\><c-n><c-w>k
+  tnoremap <c-l> <c-\><c-n><c-w>l
 
-  tnoremap <C-b> <C-\><C-n>:Buffers<CR>
-  tnoremap <C-y> <C-\><C-n>:History<CR>
-  tnoremap <C-e> <C-\><C-n>:e#<CR>
+  tnoremap <c-b> <c-\><c-n>:Buffers<cr>
+  tnoremap <c-y> <c-\><c-n>:History<cr>
+  tnoremap <c-e> <c-\><c-n>:e#<cr>
 
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Alt + - should be used instead of just -
   " Open terminal in vertical, horizontal and new tab
   if executable('fish')
-    nnoremap <leader>tv :vsplit term://fish<CR>
-    nnoremap <leader>ts :split term://fish<CR>
-    nnoremap <leader>tt :e term://fish<CR>
+    nnoremap <leader>tv :vsplit term://fish<cr>
+    nnoremap <leader>ts :split term://fish<cr>
+    nnoremap <leader>tt :e term://fish<cr>
   else
-    nnoremap <leader>tv :vsplit term://bash<CR>
-    nnoremap <leader>ts :split term://bash<CR>
-    nnoremap <leader>tt :e term://bash<CR>
+    nnoremap <leader>tv :vsplit term://bash<cr>
+    nnoremap <leader>ts :split term://bash<cr>
+    nnoremap <leader>tt :e term://bash<cr>
   endif
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
 endif
 
-" Enter key will simply select the highlighted menu item, just as <C-Y> does
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
 " Format paragraph (selected or not) to 80 character lines.
-nnoremap <Leader>g gqap
-xnoremap <Leader>g gqa
+nnoremap <leader>fp gqap
+xnoremap <leader>fp gqa
 
 " Prevent selecting and pasting from overwriting what you originally copied.
 xnoremap p pgvy
 
 " Keep cursor at the bottom of the visual selection after you yank it.
-vmap y ygv<Esc>
+vmap y ygv<esc>
 
 " Prevent x from overriding what's in the clipboard.
 noremap x "_x
@@ -325,51 +322,56 @@ nnoremap N Nzzzv
 nnoremap Y y$
 
 " Edit global todo.md
-nnoremap <leader>td :e ~/Documents/todo.md<cr>
+nnoremap <leader>etd :e ~/Documents/todo.md<cr>
+nnoremap <leader>std :split ~/Documents/todo.md<cr>
+nnoremap <leader>vtd :vsplit ~/Documents/todo.md<cr>
 
 " Reload vimrc
-nnoremap confr :source $MYVIMRC<cr>
+nnoremap <leader>rcfg :source $MYVIMRC<cr>
 
 " Edit vimrc
 if has('nvim')
   if empty(glob('~/.vimrc'))
-    nnoremap confe :e $MYVIMRC<cr>
+    nnoremap <leader>ecfg :e $MYVIMRC<cr>
+    nnoremap <leader>vcfg :vsplit $MYVIMRC<cr>
+    nnoremap <leader>scfg :split $MYVIMRC<cr>
   else
-    nnoremap confe :e ~/.vimrc<cr>
+    nnoremap <leader>ecfg :e ~/.vimrc<cr>
+    nnoremap <leader>vcfg :vsplit ~/.vimrc<cr>
+    nnoremap <leader>scfg :split ~/.vimrc<cr>
   endif
 else
-  nnoremap confe :e $MYVIMRC<cr>
+  nnoremap <leader>ecfg :e $MYVIMRC<cr>
+  nnoremap <leader>vcfg :vsplit $MYVIMRC<cr>
+  nnoremap <leader>scfg :split $MYVIMRC<cr>
 endif
 
-" Map jj to exit edit mode while in edit mode
-" <Ctrl+c> or <C-[> also exits insert mode
-inoremap jj <Esc>
-
 " Switch to last buffer
-nnoremap <C-e> :e#<CR>
+nnoremap <c-e> :e#<cr>
 
 " save using <C-s> in every mode
 " when in operator-pending or insert, takes you to normal mode
-nnoremap <C-s> :write<Cr>
-vnoremap <C-s> <C-c>:write<Cr>
-inoremap <C-s> <Esc>:write<Cr>
-onoremap <C-s> <Esc>:write<Cr>
+nnoremap <c-s> :write<Cr>
+vnoremap <c-s> <c-c>:write<Cr>
+inoremap <c-s> <esc>:write<Cr>
+onoremap <c-s> <esc>:write<Cr>
 
 " use `u` to undo, use `U` to redo, mind = blown
-nnoremap U <C-r>
+nnoremap U <c-r>
 
 "Close all the buffers
-nnoremap <C-Q> :bufdo bd<cr>
+nnoremap <c-q> :bufdo bd<cr>
+nnoremap <c-w> :bd c<cr>
 
 "https://vim.fandom.com/wiki/Fast_window_resizing_with_plus/minus_keys
 "+ increases vertical buffer, - decreases
 if bufwinnr(1)
-  nnoremap + <C-W>+
-  nnoremap _ <C-W>-
+  nnoremap + <c-w>+
+  nnoremap _ <c-w>-
 endif
 
-nnoremap > <C-w>>
-nnoremap < <C-w><
+nnoremap > <c-w>>
+nnoremap < <c-w><
 
 " Switch CWD to the directory of the open buffer
 nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
@@ -395,19 +397,19 @@ if has("macunix")
   vnoremap ∆ :m'>+<cr>`<my`>mzgv`yo`z
   vnoremap ˚ :m'<-2<cr>`>my`<mzgv`yo`z
 else
-  nnoremap <A-j> :m .+1<CR>==
-  nnoremap <A-k> :m .-2<CR>==
-  inoremap <A-j> <Esc>:m .+1<CR>==gi
-  inoremap <A-k> <Esc>:m .-2<CR>==gi
-  vnoremap <A-j> :m '>+1<CR>gv=gv
-  vnoremap <A-k> :m '<-2<CR>gv=gv
+  nnoremap <A-j> :m .+1<cr>==
+  nnoremap <A-k> :m .-2<cr>==
+  inoremap <A-j> <esc>:m .+1<cr>==gi
+  inoremap <A-k> <esc>:m .-2<cr>==gi
+  vnoremap <A-j> :m '>+1<cr>gv=gv
+  vnoremap <A-k> :m '<-2<cr>gv=gv
 endif
 
 "Smart way to move between windows
-nnoremap <C-j> <C-W>j
-nnoremap <C-k> <C-W>k
-nnoremap <C-h> <C-W>h
-nnoremap <C-l> <C-W>l
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
 
 " Move to the first/last non-blank character on this line
 nnoremap H ^
@@ -422,8 +424,8 @@ nmap <leader>q :q<cr>
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
 " Could replace with visual-star-search plugin
-vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+vnoremap <silent> * :<c-u>call VisualSelection('', '')<cr>/<c-r>=@/<cr><cr>
+vnoremap <silent> # :<c-u>call VisualSelection('', '')<cr>?<c-r>=@/<cr><cr>
 
 function! VisualSelection(direction, extra_filter) range
   let l:saved_reg = @"
@@ -444,37 +446,42 @@ endfunction
 
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
-nnoremap <Leader>r :%s///g<Left><Left>
-nnoremap <Leader>rc :%s///gc<Left><Left><Left>
+nnoremap <leader>rf :%s///g<left><left>
+nnoremap <leader>crf :%s///gc<left><left><left>
 
 " The same as above but instead of acting on the whole file it will be
 " restricted to the previously visually selected range. You can do that by
 " pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
-xnoremap <Leader>r :s///g<Left><Left>
-xnoremap <Leader>rc :s///gc<Left><Left><Left>
+xnoremap <leader>rf :s///g<left><left>
+xnoremap <leader>crf :s///gc<left><left><left>
 
 " Type a replacement term and press . to repeat the replacement again. Useful
 " for replacing a few instances of the term (comparable to multiple cursors).
-nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<CR>cgn
-xnoremap <silent> s* "sy:let @/=@s<CR>cgn
+nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<cr>cgn
+xnoremap <silent> s* "sy:let @/=@s<cr>cgn
 
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <space> /
 
-" Bash like keys for the command line
-cnoremap <C-A> <Home>
-cnoremap <C-E> <End>
-cnoremap <C-K> <C-U>
-cnoremap <C-P> <Up>
-cnoremap <C-N> <Down>
+" Vim like keys for the command line
+cnoremap <c-h> <home>
+cnoremap <c-l> <end>
+
+" Clear
+cnoremap <c-k> <c-u>
+cnoremap <c-e> <s-right>
+cnoremap <c-b> <s-left>
+cnoremap <c-w> <s-right><right>
+cnoremap <c-p> <up>
+cnoremap <c-n> <down>
 
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 
-nnoremap [oq :copen<CR>
-nnoremap ]oq :cclose<CR>
-nnoremap yoq :call ToggleQuickfix()<CR>
+nnoremap [oq :copen<cr>
+nnoremap ]oq :cclose<cr>
+nnoremap yoq :call ToggleQuickfix()<cr>
 
 function! g:ToggleQuickfix()
   for winnr in range(1, winnr('$'))
@@ -490,12 +497,6 @@ endfunction
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
-" markdown-preview {{{
-"==============================================================================
-" use a custom markdown style must be absolute path
-" let g:mkdp_markdown_css = '/Users/asidlo/.vim/syntax/github.css'
-
-"==============================================================================
 " Vim-grepper {{{
 "==============================================================================
 let g:grepper={}
@@ -504,21 +505,22 @@ let g:grepper.tools=["rg"]
 xmap gr <plug>(GrepperOperator)
 
 " After searching for text, press this mapping to do a project wide find and
-" replace. It's similar to <leader>r except this one applies to all matches
+" replace. It's similar to <leader>rf except this one applies to all matches
 " across all files instead of just the current file.
-nnoremap <Leader>R
-  \ :let @s='\<'.expand('<cword>').'\>'<CR>
-  \ :Grepper -cword -noprompt<CR>
-  \ :cfdo %s/<C-r>s//g \| update
-  \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+nnoremap <leader>rpg
+  \ :let @s='\<'.expand('<cword>').'\>'<cr>
+  \ :Grepper -cword -noprompt<cr>
+  \ :cfdo %s/<c-r>s//g \| update
+  \<left><left><left><left><left><left><left><left><left><left><left>
 
 " The same as above except it works with a visual selection.
-xmap <Leader>R
+xmap <leader>rpg
     \ "sy
     \ gvgr
-    \ :cfdo %s/<C-r>s//g \| update
-     \<Left><Left><Left><Left><Left><Left><Left><Left><Left><Left><Left>
+    \ :cfdo %s/<c-r>s//g \| update
+     \<left><left><left><left><left><left><left><left><left><left><left>
 
+" }}}
 "==============================================================================
 " NerdTree {{{
 "==============================================================================
@@ -539,9 +541,6 @@ let NERDTreeMinimalUI=1
 
 " Delete the NERDTree buffer when it's the only one left
 let NERDTreeAutoDeleteBuffer=1
-
-" Auto close nerdtree after opening a buffer
-" let NERDTreeQuitOnOpen=1
 
 " Close automatically if nerd tree is only buffer open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -574,11 +573,11 @@ nnoremap ]ot :TagbarClose<cr>
 " NOTE:
 "   - t = Tabularize
 "   - f = format
-"   - p = pipes
-nnoremap tf= :Tabularize /=<CR>
-vnoremap tf= :Tabularize /=<CR>
-nnoremap tfp :Tabularize /\|<CR>
-vnoremap tfp :Tabularize /\|<CR>
+"   - m = markdown
+nnoremap <leader>ft= :Tabularize /=<cr>
+vnoremap <leader>ft= :Tabularize /=<cr>
+nnoremap <leader>ftm :Tabularize /\|<cr>
+vnoremap <leader>ftm :Tabularize /\|<cr>
 
 "}}}
 "==============================================================================
@@ -728,11 +727,11 @@ elseif executable('rg')
   command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . <q-args>, 1, <bang>0)
 endif
 
-nnoremap <C-F> :Files<CR>
-nnoremap <C-G> :GFiles<CR>
-nnoremap <C-B> :Buffers<CR>
-nnoremap <C-Y> :History<CR>
-nnoremap <C-X> :Maps<CR>
+nnoremap <c-f> :Files<cR>
+nnoremap <c-g> :GFiles<cr>
+nnoremap <c-b> :Buffers<cr>
+nnoremap <c-y> :History<cr>
+nnoremap <c-x> :Maps<cr>
 
 let g:fzf_colors =
       \ { 'fg':      ['fg', 'Normal'],
@@ -750,8 +749,8 @@ let g:fzf_colors =
       \ 'header':  ['fg', 'Comment'] }
 
 " https://github.com/junegunn/fzf.vim/issues/221
-autocmd FileType fzf tnoremap <buffer> <C-j> <Down>
-autocmd FileType fzf tnoremap <buffer> <C-k> <Up>
+autocmd FileType fzf tnoremap <buffer> <c-j> <down>
+autocmd FileType fzf tnoremap <buffer> <c-k> <up>
 
 " }}}
 "==============================================================================
@@ -778,9 +777,6 @@ let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
 " let g:vim_markdown_no_default_key_mappings = 1
-
-autocmd FileType markdown nmap tf :TableFormat<cr>
-autocmd FileType markdown nmap toc :Toc<cr>
 
 " }}}
 "==============================================================================
@@ -866,9 +862,9 @@ let g:coc_global_extensions=[
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-@> coc#refresh()
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Use <cr> to confirm completion, `<c-g>u` means break undo chain at current position.
 " Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<c-g>u\<cr>"
 
 if exists('*CocActionAsync')
   " Highlight symbol under cursor on CursorHold
@@ -880,7 +876,7 @@ nmap <silent> [c <Plug>(coc-diagnostic-prev)
 nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
 " Use K to see documentation in a popup preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> K :call <SID>show_documentation()<cr>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -892,41 +888,42 @@ endfunction
 
 " Use `:Format` to format current buffer
 command! -nargs=0 Format :call CocAction('format')
+nnoremap <leader>fmt :Format<cr>
 
 " Use `:Fold` to fold current buffer
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
+nnoremap <leader>fld :Fold<cr>
 
 " use `:OR` for organize import of current buffer
-command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 OI :call CocAction('runCommand', 'editor.action.organizeImport')
+nnoremap <leader>oi :OI<cr>
 
 " Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nmap <silent> <leader>gd <Plug>(coc-definition)
+nmap <silent> <leader>gy <Plug>(coc-type-definition)
+nmap <silent> <leader>gi <Plug>(coc-implementation)
+nmap <silent> <leader>gr <Plug>(coc-references)
 
 " Remap for rename current word
 nmap <F6> <Plug>(coc-rename)
 
 " Using CocList
-" Show all diagnostics
-nnoremap <silent> <leader>z  :<C-u>CocList diagnostics<cr>
+" Show all diagnostics/linting
+nnoremap <silent> <leader>le  :<c-u>CocList diagnostics<cr>
 " Show all actions
-nnoremap <silent> <leader>a  :<C-u>CocList actions<cr>
+nnoremap <silent> <leader>la  :<c-u>CocList actions<cr>
 " Manage extensions
-nnoremap <silent> <leader>e  :<C-u>CocList extensions<cr>
+nnoremap <silent> <leader>lx  :<c-u>CocList extensions<cr>
 " Show commands
-nnoremap <silent> <leader>x  :<C-u>CocList commands<cr>
+nnoremap <silent> <leader>lc  :<c-u>CocList commands<cr>
 " Find symbol of current document
-nmap <silent> <leader>o  :<C-u>CocList outline<cr>
-" Search workspace symbols
-nnoremap <silent> <leader>s  :<C-u>CocList -I symbols<cr>
+nmap <silent> <leader>lo  :<c-u>CocList outline<cr>
 " Do default action for next item.
-nnoremap <silent> <leader>j  :<C-u>CocNext<CR>
+nnoremap <silent> <leader>fj  :<c-u>CocNext<cr>
 " Do default action for previous item.
-nnoremap <silent> <leader>k  :<C-u>CocPrev<CR>
+nnoremap <silent> <leader>fk :<c-u>CocPrev<cr>
 " Resume latest coc list
-nnoremap <silent> <leader>p  :<C-u>CocListResume<CR>
+nnoremap <silent> <leader>lr  :<c-u>CocListResume<cr>
 
 " }}}
 "==============================================================================
@@ -934,15 +931,15 @@ nnoremap <silent> <leader>p  :<C-u>CocListResume<CR>
 "==============================================================================
 " Section: Language Specific Mappings {{{
 "==============================================================================
-" Tips/Tricks
+" Go {{{
 "==============================================================================
 " | command         | description                                                                                         |
 " | vaf             | select whole function (including comments)                                                          |
 " | vif             | select function body only                                                                           |
 " | dif             | delete function body                                                                                |
 " | yif             | copy function body                                                                                  |
-" | <C-]> or gd     | go to declaration                                                                                   |
-" | <C-t>           | go back a definition                                                                                |
+" | <c-]> or gd     | go to declaration                                                                                   |
+" | <c-t>           | go back a definition                                                                                |
 " | ]]              | jump to next function (accepts v]], y]], d]]...)                                                    |
 " | [[              | jump to previous function                                                                           |
 " | :GoWhicherrs    | Shows which types of errors can occur from error return type                                        |
@@ -969,27 +966,28 @@ augroup go
     \ setlocal nolist
 
   " :GoBuild and :GoTestCompile
-  autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
+  autocmd FileType go nmap <leader>rb :<c-u>call <SID>build_go_files()<cr>
 
   " :GoTest
-  autocmd FileType go nmap <leader>tt  <Plug>(go-test)
-  autocmd FileType go nmap <leader>tf  <Plug>(go-test-func)
+  autocmd FileType go nmap <leader>rtt  <Plug>(go-test)
+  autocmd FileType go nmap <leader>rtf  <Plug>(go-test-func)
 
   " :GoRun
   if has('nvim')
-    autocmd FileType go nmap <F10> <Plug>(go-run-split)
+    autocmd FileType go nmap <leader>rr <Plug>(go-run-split)
   else
-    autocmd FileType go nmap <F10> <Plug>(go-run)
+    autocmd FileType go nmap <leader>rr <Plug>(go-run)
   endif
 
   " :GoCoverageToggle
-  " autocmd FileType go nmap <leader>c <Plug>(go-coverage-toggle)
+  autocmd FileType go nmap <leader>rc <Plug>(go-coverage-toggle)
 
   " :GoDescribe - Show methods for a given class / interface
-  autocmd FileType go nmap <C-K> <Plug>(go-describe)
+  " <leader>k mapping chosen to reflect <s-k> for coc mapping show doc
+  autocmd FileType go nmap <leader>k <Plug>(go-describe)
 
   " :GoMetaLinter
-  autocmd FileType go nmap <leader>l <Plug>(go-metalinter)
+  autocmd FileType go nmap <leader>rl <Plug>(go-metalinter)
 
   " :GoDef but opens in a vertical split
   autocmd FileType go nmap <leader>dv <Plug>(go-def-vertical)
@@ -998,28 +996,26 @@ augroup go
   autocmd FileType go nmap <leader>ds <Plug>(go-def-split)
 
   " :GoDecls - Show all methods in current file (Methods)
-  autocmd Filetype go nmap <leader>o :GoDecls<cr>
+  " Think (list methods/members)
+  autocmd Filetype go nmap <leader>lm :GoDecls<cr>
 
   " Show all files in current package
-  autocmd Filetype go nmap ls :GoFiles<cr>
+  autocmd Filetype go nmap <leader>ls :GoFiles<cr>
 
   " Show all dependencies of current file
-  autocmd Filetype go nmap deps :GoDeps<cr>
+  autocmd Filetype go nmap <leader>ld :GoDeps<cr>
 
   " Find usages
-  autocmd Filetype go nmap refs :GoReferrers<cr>
+  autocmd Filetype go nmap <leader>lu :GoReferrers<cr>
 
   " Shows all interfaces current type/struct implements
-  autocmd Filetype go nmap <C-i> :GoImplements<cr>
+  autocmd Filetype go nmap <leader>li :GoImplements<cr>
 
   " :GoAlternate  commands :A, :AV, :AS and :AT
   autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
   autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
   autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
   autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
-
-  " Dont show nonvisible chars with go files since gofmt removes eol spaces
-  autocmd Filetype go set nolist
 
   " Run :GoBuild or :GoTestCompile based on the go file
   function! s:build_go_files()
@@ -1033,9 +1029,13 @@ augroup go
 
 augroup END
 
+" }}}
+"==============================================================================
+" C {{{
+"==============================================================================
 augroup c
   autocmd!
-  autocmd FileType c nmap <F10> :call RunCExe()<CR>
+  autocmd FileType c nmap <F10> :call RunCExe()<cr>
   " https://vim.fandom.com/wiki/Get_the_name_of_the_current_file
   function! BuildCExe()
     execute "!gcc -Wall -o %:p:h/a.out %:p"
@@ -1052,13 +1052,20 @@ augroup c
   endfunction
 augroup END
 
+" }}}
+"==============================================================================
+" Misc {{{
+"==============================================================================
 autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vim set foldmethod=marker 
 autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
 autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
-" autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "!~/.iterm2/imgcat ".expand("%:p") | :bw!
 
+" }}}
+"==============================================================================
+" Java {{{
+"==============================================================================
 augroup java
   autocmd!
 
@@ -1076,22 +1083,20 @@ augroup java
   " }
   "```
   autocmd FileType java execute "compiler gradlew"
-  autocmd FileType java nmap <F10> :make run -PmainClass="%:p"<cr>
+  autocmd FileType java nmap <leader>rr :make run -PmainClass="%:p"<cr>
 
   " If you have gradle modules, you need to specify module name that gradle
   " needs to search for the specified test, else it will look in each and fail
   " if not found in one.
-  autocmd FileType java nmap <leader>tt :make -q ::test --tests "%:t:r"
-              \<LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT>
+  autocmd FileType java nmap <leader>rtt :make -qi project:test --tests "%:t:r"
 
-  autocmd BufNewFile,BufRead,BufEnter *.java
+  autocmd FileType java,groovy
       \ set tabstop=4 |
       \ set softtabstop=4 |
       \ set shiftwidth=4 |
       \ set textwidth=79 |
       \ set expandtab |
       \ set autoindent |
-      \ set nosmartindent |
       \ setlocal nolist |
       \ set fileformat=unix
 
@@ -1125,6 +1130,10 @@ augroup java
 augroup END
 
 
+" }}}
+"==============================================================================
+" Python {{{
+"=============================================================================
 au BufNewFile,BufRead *.py
     \ set tabstop=4 |
     \ set softtabstop=4 |
@@ -1134,6 +1143,8 @@ au BufNewFile,BufRead *.py
     \ set autoindent |
     \ set fileformat=unix
 
+" }}}
+"==============================================================================
 " }}}
 "==============================================================================
 " Section: Functions {{{
@@ -1192,7 +1203,5 @@ function! s:RunShellCommand(cmdline)
   1
 endfunction
 
-" }}}
-"==============================================================================
 " }}}
 "==============================================================================
