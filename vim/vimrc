@@ -110,6 +110,8 @@ set nofoldenable
 " Add line numbers
 set number
 
+set textwidth=79
+
 set cursorline
 
 " You will have bad experience for diagnostic messages when it's default 4000.
@@ -286,9 +288,9 @@ if has('nvim')
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Altc+ - should be used instead of just -
   " Open terminal in vertical, horizontal and new tab
-  nnoremap <leader>vterm :vsplit term://fish<cr>
-  nnoremap <leader>sterm :split term://fish<cr>
-  nnoremap <leader>term :e term://fish<cr>
+  nnoremap <leader>tv :vsplit term://fish<cr>
+  nnoremap <leader>ts :split term://fish<cr>
+  nnoremap <leader>tt :e term://fish<cr>
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
@@ -318,27 +320,19 @@ nnoremap Y y$
 
 " Edit global todo.md
 nnoremap <leader>td :e ~/Documents/todo.md<cr>
-nnoremap <leader>std :split ~/Documents/todo.md<cr>
-nnoremap <leader>ctd :vsplit ~/Documents/todo.md<cr>
 
 " Reload vimrc
-nnoremap <leader>rcfg :source $MYVIMRC<cr>
+nnoremap <leader><leader>r :source $MYVIMRC<cr>
 
 " Edit vimrc
 if has('nvim')
   if empty(glob('~/.vimrc'))
-    nnoremap <leader>cfg :e $MYVIMRC<cr>
-    nnoremap <leader>vcfg :vsplit $MYVIMRC<cr>
-    nnoremap <leader>scfg :split $MYVIMRC<cr>
+    nnoremap <leader><leader> :e $MYVIMRC<cr>
   else
-    nnoremap <leader>cfg :e ~/.vimrc<cr>
-    nnoremap <leader>vcfg :vsplit ~/.vimrc<cr>
-    nnoremap <leader>scfg :split ~/.vimrc<cr>
+    nnoremap <leader><leader> :e ~/.vimrc<cr>
   endif
 else
-  nnoremap <leader>cfg :e $MYVIMRC<cr>
-  nnoremap <leader>vcfg :vsplit $MYVIMRC<cr>
-  nnoremap <leader>scfg :split $MYVIMRC<cr>
+  nnoremap <leader><leader>:e $MYVIMRC<cr>
 endif
 
 " Switch to last buffer
@@ -386,19 +380,13 @@ vnoremap > >gv
 " https://vim.fandom.com/wiki/Moving_lines_up_or_down
 " https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
-if has("macunix")
-  nnoremap ∆ mz:m+<cr>`z
-  nnoremap ˚ mz:m-2<cr>`z
-  vnoremap ∆ :m'>+<cr>`<my`>mzgv`yo`z
-  vnoremap ˚ :m'<-2<cr>`>my`<mzgv`yo`z
-else
-  nnoremap <A-j> :m .+1<cr>==
-  nnoremap <A-k> :m .-2<cr>==
-  inoremap <A-j> <esc>:m .+1<cr>==gi
-  inoremap <A-k> <esc>:m .-2<cr>==gi
-  vnoremap <A-j> :m '>+1<cr>gv=gv
-  vnoremap <A-k> :m '<-2<cr>gv=gv
-endif
+" Note: requires remapping of option/alt key in iterm term profile for macos to +esc
+nnoremap <A-j> :m .+1<cr>==
+nnoremap <A-k> :m .-2<cr>==
+inoremap <A-j> <esc>:m .+1<cr>==gi
+inoremap <A-k> <esc>:m .-2<cr>==gi
+vnoremap <A-j> :m '>+1<cr>gv=gv
+vnoremap <A-k> :m '<-2<cr>gv=gv
 
 "Smart way to move between windows
 nnoremap <c-j> <c-w>j
@@ -411,10 +399,13 @@ nnoremap H ^
 nnoremap L $
 
 " Quick Saving
-nmap <leader>w :w<cr>
+nnoremap <leader>w :w<cr>
 
 " Quick quit
-nmap <leader>q :q<cr>
+nnoremap <leader>q :q<cr>
+
+" Quick esc
+inoremap jj <esc>
 
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
@@ -525,7 +516,8 @@ let g:NERDTreeWinSize=35
 " Prevent fluff from appearing in the file drawer
 let NERDTreeIgnore=[
             \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
-            \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project'
+            \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project',
+            \ '^\.gradle$', '^\.idea$'
             \]
 
 " Show hidden files in NERDTree
@@ -728,12 +720,13 @@ nnoremap <c-b> :Buffers<cr>
 nnoremap <c-y> :History<cr>
 nnoremap <c-x> :Maps<cr>
 
+" Match color scheme
 let g:fzf_colors =
       \ { 'fg':      ['fg', 'Normal'],
       \ 'bg':      ['bg', 'Normal'],
       \ 'hl':      ['fg', 'Comment'],
       \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn', 'Normal'],
       \ 'hl+':     ['fg', 'Statement'],
       \ 'info':    ['fg', 'PreProc'],
       \ 'border':  ['fg', 'Ignore'],
@@ -975,7 +968,7 @@ augroup go
   endif
 
   " :GoCoverageToggle
-  autocmd FileType go nmap <leader>rc <Plug>(go-coverage-toggle)
+  autocmd FileType go nmap yog <Plug>(go-coverage-toggle)
 
   " :GoDescribe - Show methods for a given class / interface
   " <leader>k mapping chosen to reflect <s-k> for coc mapping show doc
@@ -1065,8 +1058,8 @@ augroup java
   autocmd!
 
   " Navigate functions using [ and ] instead of ]m
-  autocmd FileType java nmap ]] ]m
-  autocmd FileType java nmap [[ [m
+  autocmd FileType java nmap ]] ]m]m^
+  autocmd FileType java nmap [[ [m^
 
   " Run gradle based projects using built in make and gradle compiler
   " Requires the build.gradle file to have the 'application' plugin applied
