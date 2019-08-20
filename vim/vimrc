@@ -967,9 +967,6 @@ augroup go
     autocmd FileType go nmap <leader>rr <Plug>(go-run)
   endif
 
-  " :GoCoverageToggle
-  autocmd FileType go nmap yog <Plug>(go-coverage-toggle)
-
   " :GoDescribe - Show methods for a given class / interface
   " <leader>k mapping chosen to reflect <s-k> for coc mapping show doc
   autocmd FileType go nmap <leader>k <Plug>(go-describe)
