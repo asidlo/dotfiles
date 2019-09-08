@@ -11,7 +11,10 @@ set fish_greeting
 
 # Show all hidden files and files that are being ignored by vcs
 # https://sidneyliebrand.io/blog/how-fzf-and-ripgrep-improved-my-workflow?source=post_page---------------------------
-set -gx FZF_DEFAULT_COMMAND    'fd --type f'
+set -l FD_OPTS                 "--follow --exclude .git --exclude node_modules"
+
+# For large git projects, use git ls-files for everything else use fd
+set -gx FZF_DEFAULT_COMMAND    "git ls-files --cached --others --exclude-standard | fd --type f --type l $FD_OPTS"
 set -gx FZF_CTRL_T_COMMAND     $FZF_DEFAULT_COMMAND
 
 # https://github.com/dracula/dracula-theme
