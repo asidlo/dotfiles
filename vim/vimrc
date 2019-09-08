@@ -110,8 +110,6 @@ set nofoldenable
 " Add line numbers
 set number
 
-set textwidth=79
-
 set cursorline
 
 " You will have bad experience for diagnostic messages when it's default 4000.
@@ -221,6 +219,9 @@ set smartcase
 " Highlight search results
 set hlsearch
 
+" Remove previous highlight, but keep in register
+noh
+
 " Makes search act like search in modern browsers
 set incsearch 
 
@@ -270,20 +271,19 @@ noremap <down> gj
 noremap j gj
 noremap k gk
 
+" Rename a buffer (only useful for terminal / buffer list)
+nnoremap <leader>br :file 
+
 if has('nvim')
   " Leader q to exit terminal mode
-  tnoremap <leader>q <c-\><c-n>:q<cr>
-  tnoremap <c-w> <c-\><c-n>:bd!<cr>
+  tnoremap <leader>q <c-\><c-n>
+  tnoremap <leader>qq <c-\><c-n>:q<cr>
 
   " mappings to move out from terminal to other views
   tnoremap <c-h> <c-\><c-n><c-w>h
   tnoremap <c-j> <c-\><c-n><c-w>j
   tnoremap <c-k> <c-\><c-n><c-w>k
   tnoremap <c-l> <c-\><c-n><c-w>l
-
-  tnoremap <c-b> <c-\><c-n>:Buffers<cr>
-  tnoremap <c-y> <c-\><c-n>:History<cr>
-  tnoremap <c-e> <c-\><c-n>:e#<cr>
 
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Altc+ - should be used instead of just -
@@ -322,17 +322,17 @@ nnoremap Y y$
 nnoremap <leader>td :e ~/Documents/todo.md<cr>
 
 " Reload vimrc
-nnoremap <leader><leader>r :source $MYVIMRC<cr>
+nnoremap confr :source $MYVIMRC<cr>
 
 " Edit vimrc
 if has('nvim')
   if empty(glob('~/.vimrc'))
-    nnoremap <leader><leader> :e $MYVIMRC<cr>
+    nnoremap confe :e $MYVIMRC<cr>
   else
-    nnoremap <leader><leader> :e ~/.vimrc<cr>
+    nnoremap confe :e ~/.vimrc<cr>
   endif
 else
-  nnoremap <leader><leader>:e $MYVIMRC<cr>
+  nnoremap confe :e $MYVIMRC<cr>
 endif
 
 " Switch to last buffer
@@ -349,8 +349,10 @@ onoremap <c-s> <esc>:write<Cr>
 nnoremap U <c-r>
 
 "Close all the buffers
-nnoremap <c-q> :bufdo bd<cr>
-nnoremap <c-w> :bd<cr>
+" nnoremap <c-q> :bufdo bd<cr>
+" nnoremap <c-w> :bd<cr>
+nnoremap <leader>bdd :bd!<cr>
+nnoremap <leader>bd :bd
 
 "https://vim.fandom.com/wiki/Fast_window_resizing_with_plus/minus_keys
 "+ increases vertical buffer, - decreases
@@ -368,6 +370,8 @@ nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
 " Print the directory of the current buffer
 " Helpful since :pwd will print the project root dir when vim-rooter is applied
 command! Dirname :echo expand('%:p:h')
+nnoremap <leader>dn :Dirname<cr>
+nnoremap <leader>fn :file<cr>
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -413,6 +417,12 @@ inoremap jj <esc>
 vnoremap <silent> * :<c-u>call VisualSelection('', '')<cr>/<c-r>=@/<cr><cr>
 vnoremap <silent> # :<c-u>call VisualSelection('', '')<cr>?<c-r>=@/<cr><cr>
 
+" clear highlighting
+nnoremap <leader>nh :noh<cr>
+
+" * highlights current word without navigating to first occurance
+nnoremap * :let @/='\<<c-r>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
+
 function! VisualSelection(direction, extra_filter) range
   let l:saved_reg = @"
   execute "normal! vgvy"
@@ -453,17 +463,15 @@ map <space> /
 " Vim like keys for the command line
 cnoremap <c-h> <home>
 cnoremap <c-l> <end>
-
-" Clear
 cnoremap <c-k> <c-u>
-cnoremap <c-e> <s-right>
-cnoremap <c-b> <s-left>
-cnoremap <c-w> <s-right><right>
 cnoremap <c-p> <up>
 cnoremap <c-n> <down>
 
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
+
+nmap ]<space> o<esc>
+nmap [<space> O<esc>
 
 nnoremap [oq :copen<cr>
 nnoremap ]oq :cclose<cr>
@@ -531,6 +539,11 @@ let NERDTreeAutoDeleteBuffer=1
 
 " Close automatically if nerd tree is only buffer open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" Dont focus Nerdtree on enter
+autocmd! VimEnter * NERDTree | wincmd w
+
+let g:NERDTreeQuitOnOpen = 0
 
 nnoremap yoe :NERDTreeToggle<cr>
 nnoremap [oe :NERDTree<cr>
@@ -708,7 +721,9 @@ if executable('fd')
   let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never"
 elseif executable('rg')
   let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
+endif
 
+if executable('rg')
   " Allow passing optional flags into the Rg command.
   " Example: :Rg myterm -g '*.md'
   command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . <q-args>, 1, <bang>0)
@@ -765,6 +780,13 @@ let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
 " let g:vim_markdown_no_default_key_mappings = 1
+
+augroup markdown
+  autocmd!
+  autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
+  autocmd BufRead,BufEnter markdown set textwidth=79
+  autocmd FileType markdown set textwidth=79
+augroup END
 
 " }}}
 "==============================================================================
@@ -913,6 +935,15 @@ nnoremap <silent> <leader>fk :<c-u>CocPrev<cr>
 " Resume latest coc list
 nnoremap <silent> <leader>lr  :<c-u>CocListResume<cr>
 
+function! SetupCommandAbbrs(from, to)
+  exec 'cnoreabbrev <expr> '.a:from
+        \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
+        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+endfunction
+
+" Use C to open coc config
+call SetupCommandAbbrs('C', 'CocConfig')
+
 " }}}
 "==============================================================================
 " }}}
@@ -951,6 +982,7 @@ augroup go
     \ setlocal noexpandtab |
     \ set tabstop=4 |
     \ set shiftwidth=4 |
+    \ set tw=79 |
     \ setlocal nolist
 
   " :GoBuild and :GoTestCompile
@@ -1042,9 +1074,8 @@ augroup END
 " Misc {{{
 "==============================================================================
 autocmd FileType json syntax match Comment +\/\/.\+$+
-autocmd FileType vim set foldmethod=marker 
-autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
-autocmd BufRead,BufNewFile agent-service.log,base-service.log,gateway-service.log,compute-service.log,control-service.log set syntax=nxlog
+autocmd FileType vim set foldmethod=marker
+autocmd BufRead,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 
 " }}}

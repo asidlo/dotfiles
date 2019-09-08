@@ -60,9 +60,9 @@ function fish_prompt --description "$USER - User defined prompt for fish shell"
   printf '%s\n' (__fish_git_prompt)
   if test "$last_status" != 0
     set_color red
-    printf '$ '
+    printf '> '
     set_color normal
   else
-    printf '$ '
+    printf '> '
   end
 end

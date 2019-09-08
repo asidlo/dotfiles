@@ -1,146 +1,74 @@
-# Author  : Andrew Sidlo
-# Modified: 2019-07-09
+# https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
+setopt prompt_subst
+autoload -U colors && colors # Enable colors in prompt
 
-#==============================================================================
-# ZSH CONFIG {{{
-#==============================================================================
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-    source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
-
-# }}}
-#==============================================================================
-# SDKMAN {{{
-#==============================================================================
-# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/asidlo/.sdkman"
-[[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"
-
-
-# }}}
-#==============================================================================
-# FUNCTIONS {{{
-#==============================================================================
-function get_go_version {
-    if [ -x "$(command -v go)" ]; then
-        go version | cut -d' ' -f3 | sed 's/go//g'
-    else
-        printf "Go executable not found in path, cannot determine version for GOROOT" >&2
-    fi
+# Echoes a username/host string when connected over SSH (empty otherwise)
+ssh_info() {
+  [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
 }
 
-# }}}
-#==============================================================================
-# ENV VARS {{{
-#==============================================================================
-# Useful, but is setup now to always be in some sort of virtualenv via pyenv
-# and also is buggy when using conda based environments
-# export PIP_REQUIRE_VIRTUALENV=true
-# export VIRTUAL_ENV_DISABLE_PROMPT=1
-export HISTFILESIZE=100000
-export HISTSIZE=100000
-export HISTTIMEFORMAT="%h %d %H:%M:%S - "
-export GRADLE_OPTS=-Xmx4096m
-export GOPATH=~/Documents/workspace/go
-export GOROOT=/usr/local/Cellar/go/$(get_go_version)/libexec
-export LESS="-F -X $LESS"
-export SCRIPTS_HOME="/Users/asidlo/Documents/Workspace/scripts"
-export VISUAL=nvim
-export EDITOR="$VISUAL"
-export LLVM_HOME=/usr/local/Cellar/llvm/8.0.0_1
-export PATH=$PATH:$GOPATH/bin:$LLVM_HOME/bin
+# Echoes information about Git repository status when inside a Git repository
+git_info() {
 
-# }}}
-#==============================================================================
-# ALIASES {{{
-#==============================================================================
-# MISC {{{
-#==============================================================================
-alias cls=clear
-alias vi=vim
-alias copy=pbcopy
-alias csv="column -t -s,"
-alias zshrc='${=EDITOR} ~/.zshrc'
-alias grep='grep  --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn}'
-alias tree="tree -C"
-alias cal='cal -3'
+  # Exit if not inside a Git repository
+  ! git rev-parse --is-inside-work-tree > /dev/null 2>&1 && return
 
+  # Git branch/tag, or name-rev if on detached head
+  local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
 
-# }}}
-#==============================================================================
-# DOCKER {{{
-#==============================================================================
-alias dm="docker-machine"
-alias dc='docker-compose'
+  local AHEAD="%{$fg[red]%}⇡NUM%{$reset_color%}"
+  local BEHIND="%{$fg[cyan]%}⇣NUM%{$reset_color%}"
+  local MERGING="%{$fg[magenta]%}⚡︎%{$reset_color%}"
+  local UNTRACKED="%{$fg[red]%}●%{$reset_color%}"
+  local MODIFIED="%{$fg[yellow]%}●%{$reset_color%}"
+  local STAGED="%{$fg[green]%}●%{$reset_color%}"
 
-# }}}
-#==============================================================================
-# FILE {{{
-#==============================================================================
-alias md="mkdir -p"
-alias mv='mv -i'
+  local -a DIVERGENCES
+  local -a FLAGS
 
-alias rd=rmdir
-alias rm='rm -i'
+  local NUM_AHEAD="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_AHEAD" -gt 0 ]; then
+    DIVERGENCES+=( "${AHEAD//NUM/$NUM_AHEAD}" )
+  fi
 
-alias cp='cp -i'
+  local NUM_BEHIND="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
+  if [ "$NUM_BEHIND" -gt 0 ]; then
+    DIVERGENCES+=( "${BEHIND//NUM/$NUM_BEHIND}" )
+  fi
 
-alias l='ls -lFh'
-alias lS='ls -1FSsh'
-alias la='ls -lAFh'
-alias lart='ls -1Fcart'
-alias ldot='ls -ld .*'
-alias ll='ls -l'
-alias lr='ls -tRFh'
-alias lrt='ls -1Fcrt'
-alias ls='ls -G'
-alias lsa='ls -lah'
-alias lt='ls -ltFh'
-alias ldir="ls -d */"
+  local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
+  if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
+    FLAGS+=( "$MERGING" )
+  fi
 
-alias d='dirs -v | head -10'
+  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+    FLAGS+=( "$UNTRACKED" )
+  fi
 
-alias fd='find . -type d -name'
-alias ff='find . -type f -name'
+  if ! git diff --quiet 2> /dev/null; then
+    FLAGS+=( "$MODIFIED" )
+  fi
 
-# }}}
-#==============================================================================
-# GIT {{{
-#==============================================================================
-for git_alias in $(git --list-cmds=alias); do
-    alias g$git_alias="git $git_alias"
-done
+  if ! git diff --cached --quiet 2> /dev/null; then
+    FLAGS+=( "$STAGED" )
+  fi
 
-function extract_git_aliases() {
-    local git_aliases=(`git --list-cmds=alias`)
-    echo "Alias,Command"
-    echo "-----,--------------------------------------------------------------------------------"
-    for a in $git_aliases; do
-        # Trim the desc for pretty output print
-        local cmd=$(git config -l | grep "alias.$a=" | cut -d= -f2- | cut -c 1-80)
-        echo "$a,$cmd"
-    done
+  local -a GIT_INFO
+  GIT_INFO+=( "\033[38;5;15m±" )
+  [ -n "$GIT_STATUS" ] && GIT_INFO+=( "$GIT_STATUS" )
+  [[ ${#DIVERGENCES[@]} -ne 0 ]] && GIT_INFO+=( "${(j::)DIVERGENCES}" )
+  [[ ${#FLAGS[@]} -ne 0 ]] && GIT_INFO+=( "${(j::)FLAGS}" )
+  GIT_INFO+=( "\033[38;5;15m$GIT_LOCATION%{$reset_color%}" )
+  echo "${(j: :)GIT_INFO}"
+
 }
 
-alias gla="extract_git_aliases | column -t -s,"
-alias gal="extract_git_aliases | column -t -s,"
+# Use % as the non-root prompt character; # for root
+# Change the prompt character color if the last command had a nonzero exit code
+PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u $(git_info)
+%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
 
-# }}}
-# vim:foldmethod=marker
+source <(antibody init)
+antibody bundle < ~/.zsh_plugins.txt
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/asidlo/.pyenv/versions/anaconda3-2019.03/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/asidlo/.pyenv/versions/anaconda3-2019.03/etc/profile.d/conda.sh" ]; then
-        . "/Users/asidlo/.pyenv/versions/anaconda3-2019.03/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/asidlo/.pyenv/versions/anaconda3-2019.03/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

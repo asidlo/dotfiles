@@ -11,10 +11,16 @@ set fish_greeting
 
 # Show all hidden files and files that are being ignored by vcs
 # https://sidneyliebrand.io/blog/how-fzf-and-ripgrep-improved-my-workflow?source=post_page---------------------------
-# set -gx FZF_DEFAULT_COMMAND    'rg --files --no-ignore-vcs --hidden'
-set -gx FZF_DEFAULT_COMMAND    'fd --type f --color=never'
-set -gx FZF_DEFAULT_OPTS       '--color fg:188,bg:233,hl:103,fg+:222,bg+:234,hl+:104' \
-                               '--color info:183,prompt:110,spinner:107,pointer:167,marker:215'
+set -gx FZF_DEFAULT_COMMAND    'fd --type f'
+set -gx FZF_CTRL_T_COMMAND     $FZF_DEFAULT_COMMAND
+
+# https://github.com/dracula/dracula-theme
+# https://minsw.github.io/fzf-color-picker/
+set -gx FZF_DEFAULT_OPTS       '--color=fg:#c2bebe,bg:#282a36,hl:#8be9fd' \
+                               '--color=fg+:#f8f8f2,bg+:#282a36,hl+:#ff79c6' \
+                               '--color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6' \
+                               '--color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c'
+
 set -gx LPS_DEFAULT_USERNAME   'sidlo.andrew@gmail.com'
 set -gx VISUAL                 nvim
 set -gx EDITOR                 nvim
@@ -30,19 +36,15 @@ set -gx ANACONDA_HOME          /usr/local/anaconda3
 set -gx DOTDIR                 ~/Documents/dotfiles
 set -gx PIP_REQUIRE_VIRTUALENV true
 
-# Add global go bin and local bin to path
-# set -x PATH "$LLVM_HOME/bin" $PATH "$GOROOT/bin" "$GOPATH/bin" "$CARGO_HOME/bin"
-set -Ux fish_user_paths "$GOPATH/bin" "$CARGO_HOME/bin"
-
-# Aliases (-s write function to file...makes it have a more globa scope)
+# Aliases (-s write function to file...makes it have a more global scope)
 alias cls "clear"
 alias copy "pbcopy"
 alias csv "column -t -s,"
 alias md "mkdir -p"
-alias mv 'mv -i'
+alias cpi 'cp -i'
+alias mvi 'mv -i'
+alias rmi 'rm -i'
 alias rd rmdir
-alias rm 'rm -i'
-alias cp 'cp -i'
 
 # Abbreviations
 abbr g 'git'
@@ -54,6 +56,10 @@ abbr tree "tree -C"
 
 if not set -q __FISH_CFG_INITIALIZED
   set -gx __FISH_CFG_INITIALIZED
+
+  # Set user paths, could just be set via cmd since it will be saved in
+  # fish_user_paths
+  set -Ux fish_user_paths "$GOPATH/bin" "$CARGO_HOME/bin"
 
   # Init conda
   eval /usr/local/anaconda3/bin/conda "shell.fish" "hook" $argv | source
