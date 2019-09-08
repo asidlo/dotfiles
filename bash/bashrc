@@ -54,4 +54,20 @@ alias la="ls -al"
 
 export PATH=$PATH:/usr/local/bin
 
+export FZF_DEFAULT_OPTS='
+    --color=fg:#c2bebe,bg:#282a36,hl:#8be9fd
+    --color=fg+:#f8f8f2,bg+:#282a36,hl+:#ff79c6
+    --color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
+    --color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
+    --height 50% -1 --reverse --multi --inline-info
+    --preview-window="right:hidden"
+    --preview="bat --style=numbers --color=always {}"
+    --bind="F1:execute($EDITOR {})"
+    --bind="F2:toggle-preview"
+    --bind="ctrl-d:half-page-down"
+    --bind="ctrl-u:half-page-up"
+    --bind="ctrl-a:select-all+accept"
+    --bind="ctrl-y:execute-silent(echo {+} | pbcopy)"
+'
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash

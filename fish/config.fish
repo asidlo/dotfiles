@@ -14,16 +14,27 @@ set fish_greeting
 set -l FD_OPTS                 "--follow --exclude .git --exclude node_modules"
 
 # For large git projects, use git ls-files for everything else use fd
-set -gx FZF_DEFAULT_COMMAND    "git ls-files --cached --others --exclude-standard | fd --type f --type l $FD_OPTS"
+set -gx FZF_DEFAULT_COMMAND    "git ls-files --cached --others --exclude-standard 2> /dev/null | fd --type f --type l $FD_OPTS"
 set -gx FZF_CTRL_T_COMMAND     $FZF_DEFAULT_COMMAND
+set -gx FZF_ALT_C_COMMAND      "fd --type d $FD_OPTS"
 
 # https://github.com/dracula/dracula-theme
 # https://minsw.github.io/fzf-color-picker/
 set -gx FZF_DEFAULT_OPTS       '--color=fg:#c2bebe,bg:#282a36,hl:#8be9fd' \
                                '--color=fg+:#f8f8f2,bg+:#282a36,hl+:#ff79c6' \
                                '--color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6' \
-                               '--color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c'
+                               '--color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c' \
+                               '--height 50% -1 --reverse --multi --inline-info' \
+                               '--preview="bat --color=always --style=numbers {}"' \
+                               "--preview-window='right:hidden'" \
+                               # "--preview-window='right:hidden:wrap'" \
+                               "--bind='F2:toggle-preview'" \
+                               "--bind='ctrl-d:half-page-down'" \
+                               "--bind='ctrl-u:half-page-up'" \
+                               "--bind='ctrl-a:select-all+accept'" \
+                               "--bind='ctrl-y:execute-silent(echo {+} | pbcopy)'"
 
+                               
 set -gx LPS_DEFAULT_USERNAME   'sidlo.andrew@gmail.com'
 set -gx VISUAL                 nvim
 set -gx EDITOR                 nvim
