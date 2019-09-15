@@ -34,7 +34,6 @@ set -gx FZF_DEFAULT_OPTS       '--color=fg:#c2bebe,bg:#282a36,hl:#8be9fd' \
                                "--bind='ctrl-a:select-all+accept'" \
                                "--bind='ctrl-y:execute-silent(echo {+} | pbcopy)'"
 
-                               
 set -gx LPS_DEFAULT_USERNAME   'sidlo.andrew@gmail.com'
 set -gx VISUAL                 nvim
 set -gx EDITOR                 nvim

@@ -541,7 +541,7 @@ let NERDTreeAutoDeleteBuffer=1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Dont focus Nerdtree on enter
-autocmd! VimEnter * NERDTree | wincmd w
+" autocmd! VimEnter * NERDTree | wincmd w
 
 let g:NERDTreeQuitOnOpen = 0
 
@@ -672,8 +672,8 @@ let g:go_info_mode='gopls'
 " Disable go def mapping so we can delegate it to the coc lsp
 let g:go_def_mapping_enabled=0
 
-" Run linting on save
-let g:go_metalinter_autosave = 1
+" Run linting on save = 1
+let g:go_metalinter_autosave = 0
 
 " Automatically highlight matching identifiers (methods, variables...)
 let g:go_auto_sameids = 1
