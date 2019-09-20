@@ -1,6 +1,7 @@
 function gll --description "$USER - Shows git commit logs and preview"
   set -l commits (
     git lo --color=always $argv | fzf --ansi --no-sort --height 100% \
+           --preview-window='right' \
            --preview "echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs -I@ sh -c 'git show --color=always @'" \
            -m --header="[git:log]"
   )
