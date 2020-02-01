@@ -39,18 +39,19 @@ Plug 'haya14busa/is.vim'
 " Handle multi-file find and replace.
 Plug 'mhinz/vim-grepper'
 
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
-
-Plug 'jiangmiao/auto-pairs'
+" Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
-" Plug 'ervandew/supertab'
+Plug 'ervandew/supertab'
 Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
+
+" Golang plugins
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'rhysd/vim-clang-format'
-Plug 'tmhedberg/SimpylFold'
-Plug 'vim-scripts/indentpython.vim'
+
+" Generate code snippets
 Plug 'segeljakt/vim-silicon'
+
+" Fuzzy searching
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 
@@ -277,8 +278,7 @@ nnoremap <leader>br :file
 
 if has('nvim')
   " Leader q to exit terminal mode
-  tnoremap <leader>q <c-\><c-n>
-  tnoremap <leader>qq <c-\><c-n>:q<cr>
+  tnoremap <leader>q <c-\><c-n>:q<cr>
 
   " mappings to move out from terminal to other views
   tnoremap <c-h> <c-\><c-n><c-w>h
@@ -348,12 +348,6 @@ onoremap <c-s> <esc>:write<Cr>
 
 " use `u` to undo, use `U` to redo, mind = blown
 nnoremap U <c-r>
-
-"Close all the buffers
-" nnoremap <c-q> :bufdo bd<cr>
-" nnoremap <c-w> :bd<cr>
-nnoremap <leader>bdd :bd!<cr>
-nnoremap <leader>bd :bd
 
 "https://vim.fandom.com/wiki/Fast_window_resizing_with_plus/minus_keys
 "+ increases vertical buffer, - decreases
@@ -517,6 +511,20 @@ xmap <leader>rpg
 
 " }}}
 "==============================================================================
+" Fugitive {{{
+"==============================================================================
+" This normally opens up a split buffer, to make full screen with <c-w>o
+nnoremap <leader>gs :Gstatus<cr>
+nnoremap <leader>gl :Glog -n 50<cr>
+
+" --paginate/-p runs the command via the terminal and captures its output
+" Retains color which is nice for git branch
+" Running -P/--no-pager or :Git! will output contents to a tmp file and add it
+" to a split buffer which is useful for lots of output
+nnoremap <leader>gb :Git --paginate branch<cr>
+
+" }}}
+"==============================================================================
 " NerdTree {{{
 "==============================================================================
 let g:NERDTreeWinPos = "left"
@@ -667,10 +675,13 @@ let g:lightline = {
 "==============================================================================
 " For walkthrough, use the following github repo as example:
 " - https://github.com/fatih/vim-go-tutorial#quick-setup
+" let g:go_def_mode='godef'
+" let g:go_info_mode='guru'
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 " Disable go def mapping so we can delegate it to the coc lsp = 0
+" let g:go_def_mapping_enabled = 0
 let g:go_def_mapping_enabled = 0
 
 " Fmt on save
@@ -678,7 +689,7 @@ let g:go_fmt_autosave = 1
 
 " Automatically format and also rewrite your import declarations
 " If it is too slow, you can use the manual :GoImports command
-let g:go_fmt_command = "goimports"
+let g:go_fmt_command = "gofmt"
 
 " Do not run linting on save
 let g:go_metalinter_autosave = 0
@@ -706,31 +717,28 @@ let g:go_highlight_extra_types = 1
 " UltiSnips {{{
 "==============================================================================
 " Better key bindings for UltiSnipsExpandTrigger
-let g:UltiSnipsExpandTrigger = "<tab>"
-let g:UltiSnipsJumpForwardTrigger = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+" let g:UltiSnipsExpandTrigger = "<tab>"
+" let g:UltiSnipsJumpForwardTrigger = "<tab>"
+" let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" Since we are already using Deoplete, and using tab with both doesn't work nice use <c-j> instead
+" let g:UltiSnipsExpandTrigger="<c-j>"
+" let g:UltiSnipsJumpForwardTrigger="<c-b>"
+" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 " }}}
 "==============================================================================
 " FZF {{{
 "==============================================================================
-let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
-
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
 
 if executable('fd')
-  let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never --exclude .git --exclude node_modules"
+  let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never -E .git -E node_modules -E .gradle -E '*.class' -E .idea -E .settings -E .project -E .classpath"
 elseif executable('rg')
   let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
-endif
-
-if executable('rg')
-  " Allow passing optional flags into the Rg command.
-  " Example: :Rg myterm -g '*.md'
-  command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case " . <q-args>, 1, <bang>0)
 endif
 
 nnoremap <c-f> :Files<cR>
@@ -738,6 +746,7 @@ nnoremap <c-g> :GFiles<cr>
 nnoremap <c-b> :Buffers<cr>
 nnoremap <c-y> :History<cr>
 nnoremap <c-x> :Maps<cr>
+nnoremap <c-m> :BTags<cr>
 
 " Match color scheme
 let g:fzf_colors =
@@ -755,24 +764,23 @@ let g:fzf_colors =
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
 
-" https://github.com/junegunn/fzf.vim/issues/221
-autocmd FileType fzf tnoremap <buffer> <c-j> <down>
-autocmd FileType fzf tnoremap <buffer> <c-k> <up>
+if has('nvim')
+  " https://github.com/junegunn/fzf.vim/issues/221
+  autocmd FileType fzf tnoremap <buffer> <c-j> <down>
+  autocmd FileType fzf tnoremap <buffer> <c-k> <up>
+endif
 
 " }}}
 "==============================================================================
 " Ack {{{
 "==============================================================================
-" Prefer rg > ag > ack
 if executable('rg')
-  set grepprg=rg\ --vimgrep
+  set grepformat=%f:%l:%c:%m
+  set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden
   let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep'
-elseif executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor
-  let g:ackprg = 'ag --vimgrep'
 endif
 
-nnoremap \ :Ack<space>
+nnoremap \ :LAck<space>
 " }}}
 "==============================================================================
 " Markdown {{{
@@ -788,7 +796,6 @@ let g:vim_markdown_new_list_item_indent = 0
 augroup markdown
   autocmd!
   autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
-  autocmd BufRead,BufEnter markdown set textwidth=79
   autocmd FileType markdown set textwidth=79
 augroup END
 
@@ -801,30 +808,9 @@ autocmd FileType json setlocal commentstring=//\ %s
 
 " }}}
 "==============================================================================
-" SimpylFold {{{
-"==============================================================================
-let g:SimpylFold_docstring_preview = 1
-
-" }}}
-"==============================================================================
-" Clang-Format {{{
-"==============================================================================
-autocmd FileType c ClangFormatAutoEnable
-" set path+=/usr/include
-
-let g:clang_format#style_options = {
-      \ "AccessModifierOffset" : -4,
-      \ "AllowShortIfStatementsOnASingleLine" : "true",
-      \ "AlwaysBreakTemplateDeclarations" : "true",
-      \ "Standard" : "C++11",
-      \ "BreakBeforeBraces" : "Stroustrup"}
-
-" }}}
-"==============================================================================
 " Supertab {{{
 "==============================================================================
-" let g:SuperTabDefaultCompletionType = "<c-n>"
-" let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
+let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
 
 " }}}
 "==============================================================================
@@ -867,26 +853,12 @@ call NERDTreeHighlightFile('Vagrantfile', 'cyan', 'none', 'cyan', '#151515')
 " Section: Coc Mappings {{{
 "==============================================================================
 let g:coc_global_extensions=[
-      \ 'coc-json', 'coc-prettier', 'coc-eslint', 'coc-tsserver',
+      \ 'coc-json', 'coc-eslint', 'coc-tsserver',
       \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
       \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
-      \ 'coc-powershell', 'coc-omnisharp', 'coc-marketplace',
-      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips',
-      \ 'coc-java'
+      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-snippets',
+      \ 'coc-java', 'coc-marketplace', 'coc-prettier',
       \]
-
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
 
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
@@ -915,44 +887,29 @@ function! s:show_documentation()
   endif
 endfunction
 
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
 " Use `:Format` to format current buffer
 command! -nargs=0 Format :call CocAction('format')
-nnoremap <leader>fmt :Format<cr>
-
-" Use `:Fold` to fold current buffer
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
-nnoremap <leader>fld :Fold<cr>
-
-" use `:OR` for organize import of current buffer
-command! -nargs=0 OI :call CocAction('runCommand', 'editor.action.organizeImport')
-nnoremap <leader>oi :OI<cr>
+command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Remap keys for gotos
 nmap <silent> <leader>gd <Plug>(coc-definition)
 nmap <silent> <leader>gy <Plug>(coc-type-definition)
 nmap <silent> <leader>gi <Plug>(coc-implementation)
-nmap <silent> <leader>gr <Plug>(coc-references)
+nmap <silent> <leader>gf <Plug>(coc-references)
 
-" Remap for rename current word
-nmap <F6> <Plug>(coc-rename)
+" Remap for do codeAction of current line
+nmap <leader>a  <Plug>(coc-codeaction)
 
-" Using CocList
-" Show all diagnostics/linting
-nnoremap <silent> <leader>le  :<c-u>CocList diagnostics<cr>
-" Show all actions
-nnoremap <silent> <leader>la  :<c-u>CocList actions<cr>
-" Manage extensions
-nnoremap <silent> <leader>lx  :<c-u>CocList extensions<cr>
-" Show commands
-nnoremap <silent> <leader>lc  :<c-u>CocList commands<cr>
-" Find symbol of current document
-nmap <silent> <leader>lo  :<c-u>CocList outline<cr>
-" Do default action for next item.
-nnoremap <silent> <leader>fj  :<c-u>CocNext<cr>
-" Do default action for previous item.
-nnoremap <silent> <leader>fk :<c-u>CocPrev<cr>
-" Resume latest coc list
-nnoremap <silent> <leader>lr  :<c-u>CocListResume<cr>
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
 
 function! SetupCommandAbbrs(from, to)
   exec 'cnoreabbrev <expr> '.a:from
@@ -961,10 +918,88 @@ function! SetupCommandAbbrs(from, to)
 endfunction
 
 " Use C to open coc config
-call SetupCommandAbbrs('C', 'CocConfig')
+call SetupCommandAbbrs('CC', 'CocConfig')
+call SetupCommandAbbrs('CL', 'CocList')
 
 " }}}
 "==============================================================================
+" }}}
+"==============================================================================
+" Section: Misc Functions {{{
+"=============================================================================
+function! Copy2Register(reg)
+  let hits = []
+  %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
+  let reg = empty(a:reg) ? '+' : a:reg
+  execute 'let @'.reg.' = join(hits, "") . "\n"'
+endfunction
+
+function! CopyMatches(regex)
+  " Clear the a register
+  normal! qaq
+
+  " Copy the result to the register 'A'
+  execute '/' . a:regex
+  call Copy2Register('A')
+
+  " Store the result from register 'A' to the clipboard
+  let @+ = trim(@a)
+endfunction
+
+command! -complete=file -nargs=* ShellGitCmd call s:RunGitShellCommand('git '.<q-args>)
+command! -complete=shellcmd -nargs=+ ShellCmd call s:RunShellCommand(<q-args>)
+
+" Could also use the built in compiler command
+" :compiler gradle // Or gradlew if using wrapper
+" :make gradle-task-here // :make run 
+command! -complete=file -nargs=* Gradle call s:RunShellCommand('gradle '.<q-args>)
+
+function! s:RunGitShellCommand(cmdline)
+  let isfirst = 1
+  let words = []
+  for word in split(a:cmdline)
+    if isfirst
+      let isfirst = 0  " don't change first word (shell command)
+    else
+      if word[0] =~ '\v[%#<]'
+        let word = expand(word)
+      endif
+      let word = shellescape(word, 1)
+    endif
+    call add(words, word)
+  endfor
+  let expanded_cmdline = join(words)
+  botright new
+  setlocal buftype=nofile syntax=fugitive bufhidden=wipe nobuflisted noswapfile nowrap
+  call setline(1, 'You entered:  ' . a:cmdline)
+  call setline(2, 'Expanded to:  ' . expanded_cmdline)
+  call append(line('$'), substitute(getline(2), '.', '=', 'g'))
+  silent execute '$read !'. expanded_cmdline
+  1
+endfunction
+
+" https://vim.fandom.com/wiki/Display_output_of_shell_commands_in_new_window
+function! s:RunShellCommand(cmdline)
+  let isfirst = 1
+  let words = []
+  for word in split(a:cmdline)
+    if isfirst
+      let isfirst = 0  " don't change first word (shell command)
+    else
+      let word = substitute(word, '\v[%$<]', expand('%'), '')
+    endif
+    call add(words, word)
+  endfor
+  let expanded_cmdline = join(words)
+  botright new
+  setlocal buftype=nofile syntax=sh bufhidden=wipe nobuflisted noswapfile nowrap
+  call setline(1, 'You entered:  ' . a:cmdline)
+  call setline(2, 'Expanded to:  ' . expanded_cmdline)
+  call append(line('$'), substitute(getline(2), '.', '=', 'g'))
+  silent execute '$read !'. expanded_cmdline
+  1
+endfunction
+
 " }}}
 "==============================================================================
 " Section: Language Specific Mappings {{{
@@ -1067,38 +1102,6 @@ augroup END
 
 " }}}
 "==============================================================================
-" C {{{
-"==============================================================================
-augroup c
-  autocmd!
-  autocmd FileType c nmap <F10> :call RunCExe()<cr>
-  " https://vim.fandom.com/wiki/Get_the_name_of_the_current_file
-  function! BuildCExe()
-    execute "!gcc -Wall -o %:p:h/a.out %:p"
-  endfunction
-
-  function! RunCExe()
-    silent execute BuildCExe()
-    execute "!%:p:h/a.out"
-    silent execute RmCExe()
-  endfunction
-
-  function! RmCExe()
-    execute "!rm %:p:h/a.out"
-  endfunction
-augroup END
-
-" }}}
-"==============================================================================
-" Misc {{{
-"==============================================================================
-autocmd FileType json syntax match Comment +\/\/.\+$+
-autocmd FileType vim set foldmethod=marker
-autocmd BufRead,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
-autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
-
-" }}}
-"==============================================================================
 " Java {{{
 "==============================================================================
 augroup java
@@ -1107,6 +1110,8 @@ augroup java
   " Navigate functions using [ and ] instead of ]m
   autocmd FileType java nmap ]] ]m]m^
   autocmd FileType java nmap [[ [m^
+  autocmd FileType java set makeprg=javac\ %
+  set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C.%#
 
   " Run gradle based projects using built in make and gradle compiler
   " Requires the build.gradle file to have the 'application' plugin applied
@@ -1117,13 +1122,13 @@ augroup java
   "     mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
   " }
   "```
-  autocmd FileType java execute "compiler gradlew"
-  autocmd FileType java nmap <leader>rr :make run -PmainClass="%:p"<cr>
+  " autocmd FileType java execute "compiler gradlew"
+  " autocmd FileType java nmap <leader>rr :make run -PmainClass="%:p"<cr>
 
   " If you have gradle modules, you need to specify module name that gradle
   " needs to search for the specified test, else it will look in each and fail
   " if not found in one.
-  autocmd FileType java nmap <leader>rtt :make -qi project:test --tests "%:t:r"
+  " autocmd FileType java nmap <leader>rtt :make -qi project:test --tests "%:t:r"
 
   autocmd FileType java,groovy
       \ set tabstop=4 |
@@ -1132,8 +1137,7 @@ augroup java
       \ set textwidth=79 |
       \ set expandtab |
       \ set autoindent |
-      \ setlocal nolist |
-      \ set fileformat=unix
+      \ setlocal nolist
 
   command! A :call FindJavaAlternate(':e')
   command! AS :call FindJavaAlternate(':split')
@@ -1162,80 +1166,30 @@ augroup java
             \ echoerr "- java_file: ". java_file
     end
   endfunction
+  function! CopyFullyQualifiedName()
+    call CopyMatches('\(package .*\)\@<=[^;]')
+    let filename = expand('%:t')
+    let @+ = @+ . '.' . substitute(filename, '.java', '', '')
+  endfunction
+
+
+  " Get the package for the current file (Think CopyPackage)
+  " Grabs all of the content between 'package' and ';' ex: 'package com.nexidia.db;'
+  " https://jbodah.github.io/blog/2016/11/01/positivenegative-lookaheadlookbehind-vim/
+  command! CpPkg call CopyMatches('\(package .*\)\@<=[^;]')
+  command! CpImport call CopyFullyQualifiedName()
 augroup END
 
 " }}}
 "==============================================================================
-" Python {{{
-"=============================================================================
-au BufNewFile,BufRead *.py
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-    \ set textwidth=79 |
-    \ set expandtab |
-    \ set autoindent |
-    \ set fileformat=unix
+" Misc {{{
+"==============================================================================
+autocmd FileType json syntax match Comment +\/\/.\+$+
+autocmd FileType vim set foldmethod=marker
+autocmd BufRead,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
+autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 
 " }}}
 "==============================================================================
-" }}}
-"==============================================================================
-" Section: Functions {{{
-"=============================================================================
-command! -complete=file -nargs=* ShellGitCmd call s:RunGitShellCommand('git '.<q-args>)
-command! -complete=shellcmd -nargs=+ ShellCmd call s:RunShellCommand(<q-args>)
-
-" Could also use the built in compiler command
-" :compiler gradle // Or gradlew if using wrapper
-" :make gradle-task-here // :make run 
-command! -complete=file -nargs=* Gradle call s:RunShellCommand('gradle '.<q-args>)
-
-function! s:RunGitShellCommand(cmdline)
-  let isfirst = 1
-  let words = []
-  for word in split(a:cmdline)
-    if isfirst
-      let isfirst = 0  " don't change first word (shell command)
-    else
-      if word[0] =~ '\v[%#<]'
-        let word = expand(word)
-      endif
-      let word = shellescape(word, 1)
-    endif
-    call add(words, word)
-  endfor
-  let expanded_cmdline = join(words)
-  botright new
-  setlocal buftype=nofile syntax=fugitive bufhidden=wipe nobuflisted noswapfile nowrap
-  call setline(1, 'You entered:  ' . a:cmdline)
-  call setline(2, 'Expanded to:  ' . expanded_cmdline)
-  call append(line('$'), substitute(getline(2), '.', '=', 'g'))
-  silent execute '$read !'. expanded_cmdline
-  1
-endfunction
-
-" https://vim.fandom.com/wiki/Display_output_of_shell_commands_in_new_window
-function! s:RunShellCommand(cmdline)
-  let isfirst = 1
-  let words = []
-  for word in split(a:cmdline)
-    if isfirst
-      let isfirst = 0  " don't change first word (shell command)
-    else
-      let word = substitute(word, '\v[%$<]', expand('%'), '')
-    endif
-    call add(words, word)
-  endfor
-  let expanded_cmdline = join(words)
-  botright new
-  setlocal buftype=nofile syntax=sh bufhidden=wipe nobuflisted noswapfile nowrap
-  call setline(1, 'You entered:  ' . a:cmdline)
-  call setline(2, 'Expanded to:  ' . expanded_cmdline)
-  call append(line('$'), substitute(getline(2), '.', '=', 'g'))
-  silent execute '$read !'. expanded_cmdline
-  1
-endfunction
-
 " }}}
 "==============================================================================
