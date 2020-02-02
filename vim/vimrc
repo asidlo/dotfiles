@@ -860,6 +860,10 @@ let g:coc_global_extensions=[
       \ 'coc-java', 'coc-marketplace', 'coc-prettier',
       \]
 
+if has('win32')
+  let g:coc_global_extensions = add(g:coc_global_extensions, 'coc-powershell')
+endif
+
 " Use <c-space> to trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 

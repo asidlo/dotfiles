@@ -27,6 +27,24 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadlineKeyHandler -Chord 'Shift+Tab' -Function Complete
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
+Set-PSReadLineOption -Colors @{
+  "ContinuationPrompt" = [ConsoleColor]:: Magenta
+  "Emphasis"           = [ConsoleColor]:: Gray
+  "Error"              = [ConsoleColor]:: Red
+  "Selection"          = [ConsoleColor]:: Cyan
+  "Default"            = [ConsoleColor]:: White
+  "Comment"            = [ConsoleColor]:: Gray
+  "Keyword"            = [ConsoleColor]:: Green
+  "String"             = [ConsoleColor]:: White
+  "Operator"           = [ConsoleColor]:: Gray
+  "Variable"           = [ConsoleColor]:: Blue
+  "Command"            = [ConsoleColor]:: Yellow
+  "Parameter"          = [ConsoleColor]:: Gray
+  "Type"               = [ConsoleColor]:: Yellow
+  "Number"             = [ConsoleColor]:: White
+  "Member"             = [ConsoleColor]:: Cyan
+}
+
 #--------------------------------------------------------------
 # Prompt Config
 #--------------------------------------------------------------
@@ -60,7 +78,13 @@ function prompt {
 
     Write-Host $curPath -NoNewline -ForegroundColor Blue
 
-    Write-VcsStatus
+    # Even takes too long to load branch smh
+    # Write-VcsStatus
+    $curBranch = git rev-parse --abbrev-ref HEAD
+
+    if ($curBranch) {
+        Write-Host " [$curBranch]" -NoNewline -ForegroundColor White
+    }
 
     $LastExitCode = $origLastExitCode
     "`n$('>' * ($nestedPromptLevel + 1)) "
@@ -73,8 +97,13 @@ $GitPromptSettings.BeforeForegroundColor = "White"
 $GitPromptSettings.AfterForegroundColor = "White"
 $GitPromptSettings.BranchGoneStatusForegroundColor = "Cyan"
 
+# Searchgrid repo takes too long to load file status, so disable for all
+# Could pick specific ones, but just for simplicity do all
+$GitPromptSettings.EnableFileStatus = $false
+
 # Console Color Settings
-# If ConEmu = Black, else DarkBlue
+$host.UI.RawUI.BackgroundColor = "Black"
+$host.UI.RawUI.ForegroundColor = "White"
 $BackgroundColor = $host.UI.RawUI.BackgroundColor
 
 $host.PrivateData.ErrorBackgroundColor = $BackgroundColor
@@ -88,6 +117,7 @@ $host.PrivateData.ProgressBackgroundColor = "DarkGray"
 $host.PrivateData.ProgressForegroundColor = "Gray"
 
 $GetChildItemColorTable['Directory'] = "Blue"
+$GetChildItemColorTable['Default'] = "White"
 $GetChildItemColorExtensions.CompressedList += @(".tgz")
 $GetChildItemColorExtensions.ImageList = @(".png", ".jpg", ".jfif")
 
@@ -97,10 +127,6 @@ ForEach ($Exe in $GetChildItemColorExtensions.ExecutableList) {
 
 ForEach ($Exe in $GetChildItemColorExtensions.ImageList) {
     $GetChildItemColorTable[$Exe] = "Magenta"
-}
-
-ForEach ($Exe in $GetChildItemColorExtensions.TextList) {
-    $GetChildItemColorTable[$Exe] = "White"
 }
 
 ForEach ($Exe in $GetChildItemColorExtensions.CompressedList) {
@@ -169,7 +195,7 @@ function Get-ConsoleColor {
         $data
     }  
 }
-	
+    
 Function Show-ConsoleColor {
     Param()
     $host.PrivateData.psobject.properties | 
@@ -216,7 +242,8 @@ Function Test-ConsoleColor {
 
 # Usage: . Reload-Profile
 # https://stackoverflow.com/questions/567650/how-to-reload-user-profile-from-script-file-in-powershell
-function Reload-Profile {
+# Note: Can get list of approved verbs for naming convention via (Get-Verb)
+function Update-Profile {
     @(
         $Profile.AllUsersAllHosts,
         $Profile.AllUsersCurrentHost,
@@ -230,7 +257,7 @@ function Reload-Profile {
     }    
 }
 
-function Kill-NxJavaProcesses {
+function Stop-NxJavaProcesses {
   jps -l | Select-String "nexidia" | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru} 
 }
 
@@ -240,13 +267,5 @@ function Kill-NxJavaProcesses {
 Set-Alias ll Get-ChildItemColor -option AllScope
 Set-Alias ls Get-ChildItemColorFormatWide -option AllScope
 Set-Alias la ShowAllFiles -option AllScope
-
 Set-Alias -Name cd -value cddash -Option AllScope
-
 Set-Alias g git.exe -option AllScope
-
-
-#region conda initialize
-# !! Contents within this block are managed by 'conda init' !!
-#(& "C:\tools\Anaconda3\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | Invoke-Expression
-#endregion
