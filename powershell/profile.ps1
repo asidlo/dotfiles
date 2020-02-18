@@ -195,7 +195,7 @@ function Get-ConsoleColor {
         $data
     }  
 }
-    
+
 Function Show-ConsoleColor {
     Param()
     $host.PrivateData.psobject.properties | 
@@ -240,7 +240,6 @@ Function Test-ConsoleColor {
     }
 }
 
-# Usage: . Reload-Profile
 # https://stackoverflow.com/questions/567650/how-to-reload-user-profile-from-script-file-in-powershell
 # Note: Can get list of approved verbs for naming convention via (Get-Verb)
 function Update-Profile {

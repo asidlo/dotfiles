@@ -2,27 +2,77 @@
 " Author:   Andrew Sidlo
 " Updated:  April 14, 2019
 "==============================================================================
+" Section: Variables {{{
+"==============================================================================
+let g:is_win = has('win32') || has('win64')
+let g:is_linux = has('unix') && !has('macunix')
+let g:is_mac = has('macunix')
+let g:is_gui = has('gui_running')
+let g:is_nvim = has('nvim')
+
+" Vim directory where all settings, plugins, syntax, etc stored
+" Note: expand vs glob = glob will return empty if file doesnt exist
+" also, expand has a list of special variables (see :h expand)
+if g:is_win
+  let g:vim_dir = expand('~/_vimfiles')
+  let g:rc_file = expand('~/_vimrc')
+else
+  let g:vim_dir = expand('~/.vim')
+  let g:rc_file = expand('~/.vimrc')
+endif
+
+" Disable python2, ruby, and node providers
+let g:loaded_python_provider = 1
+let g:loaded_ruby_provider = 1
+let g:loaded_node_provider = 1
+
+" Must have fzf installed
+if !executable('fzf')
+  echoerr 'fzf executable not found! Install and add to Path to perform fuzzy searching'
+endif
+let g:fzf_home = '/usr/local/opt/fzf'
+
+if !executable('fd')
+  echoerr 'fd executable not found! Install and add to Path to perform fuzzy searching'
+endif
+
+if !executable('rg')
+  echoerr 'Ripgrep executable not found! Install and add to Path to perform project searching'
+endif
+
+" Path to Python 3 interpreter (must be an absolute path), make startup
+" faster. See https://neovim.io/doc/user/provider.html.
+if executable('python') || executable('python3')
+  if g:is_win
+    let g:python3_host_prog=substitute(exepath('python'), '.exe$', '', 'g')
+  elseif g:is_linux || g:is_mac
+    let g:python3_host_prog=exepath('python3')
+  endif
+else
+  echoerr 'Python 3 executable not found! You must install Python 3 and set its PATH correctly!'
+endif
+
+" }}}
+"==============================================================================
 " Section: Plugin Manager {{{
 "==============================================================================
 " Automatically download the plug.vim plugin manager vimscript
 " Run :PlugInstall to install all plugins
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+if !g:is_win
+  if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
 endif
 
-call plug#begin('~/.vim/plugged')
+call plug#begin(g:vim_dir . '/plugged')
 
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
 Plug 'nanotech/jellybeans.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
-Plug 'godlygeek/tabular'
 Plug 'itchyny/lightline.vim'
 Plug 'plasticboy/vim-markdown'
-Plug 'majutsushi/tagbar'
 Plug 'mileszs/ack.vim'
 Plug 'airblade/vim-rooter'
 Plug 'ryanoasis/vim-devicons'
@@ -33,7 +83,24 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
 
+" Can be used to change case of word.
+" Ex: gsciw (changeToCamelCase), gs_iw (snake_case), gs-iw (kabob-case)
+Plug 'arthurxavierx/vim-caser'
+
+" Uses 'gr' to replace current selection with specified register contents
+" Ex: "ayiw (copies inner word to register a) -> "agriw (replaces inner word
+"     with content from register 'a')
+Plug 'vim-scripts/ReplaceWithRegister'
+
+" Targets indents
+" Ex: gcii (toggles comment for all adjacent inner indented lines)
+Plug 'michaeljsmith/vim-indent-object'
+
+" Show the current index count for search
+Plug 'henrik/vim-indexed-search'
+
 " Automatically clear search highlights after you move your cursor.
+" Doesnt seem to work with windows for some reason
 Plug 'haya14busa/is.vim'
 
 " Handle multi-file find and replace.
@@ -42,20 +109,30 @@ Plug 'mhinz/vim-grepper'
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
 Plug 'ervandew/supertab'
-Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'dense-analysis/ale'
 
 " Golang plugins
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
 
-" Generate code snippets
+" Symbol / Tag Plugins
+Plug 'majutsushi/tagbar'
+Plug 'ludovicchabant/vim-gutentags'
+
+" Snippets / Generate code snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 Plug 'segeljakt/vim-silicon'
 
 " Fuzzy searching
-Plug '/usr/local/opt/fzf'
+Plug g:fzf_home
 Plug 'junegunn/fzf.vim'
 
 call plug#end()
+
+ab PC PlugClean
+ab PI PlugInstall
 
 " }}}
 "==============================================================================
@@ -74,6 +151,18 @@ endtry
 
 set t_Co=256
 set background=dark
+set termguicolors
+
+if g:is_gui
+  " No toolbars, menu, or scrollbars in the GUI
+  set guifont=MesloLGM\ Nerd\ Font\ Mono:h12
+  set guioptions-=m " no menu
+  set guioptions-=T " no toolbar
+  set guioptions-=l
+  set guioptions-=L
+  set guioptions-=r " no scrollbar
+  set guioptions-=R
+endif
 
 " See vulnerability:
 " https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
@@ -82,10 +171,10 @@ set nomodeline
 
 " You can bind contents of the visual selection to system primary buffer
 " (* register in vim, usually referred as «mouse» buffer) by using
-if has('nvim')
+if g:is_nvim
   vnoremap <LeftRelease> "*ygv
   set clipboard=unnamed
-elseif has('macunix')
+elseif g:is_mac
   set clipboard^=autoselect
 else
   set clipboard=unnamed
@@ -111,6 +200,9 @@ set nofoldenable
 
 " Add line numbers
 set number
+
+" Turn on relative number
+set relativenumber
 
 set cursorline
 
@@ -157,7 +249,7 @@ set laststatus=2
 set noerrorbells
 set novisualbell
 set t_vb=
-set tm=500
+set timeoutlen=500
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf8
@@ -251,7 +343,7 @@ let g:netrw_dirhistmax = 0
 
 " This enables us to undo files even if you exit Vim.
 " Note: this dir needs to be made prior to working
-set undodir=~/.vim/tmp/undo
+let &undodir = g:vim_dir . '/undo'
 set undofile
 
 " Turn on the Wild menu
@@ -262,6 +354,7 @@ set wildmode=longest:full,full
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+
 "}}}
 "==============================================================================
 " Section: Mappings {{{
@@ -273,10 +366,7 @@ noremap <down> gj
 noremap j gj
 noremap k gk
 
-" Rename a buffer (only useful for terminal / buffer list)
-nnoremap <leader>br :file 
-
-if has('nvim')
+if g:is_nvim
   " Leader q to exit terminal mode
   tnoremap <leader>q <c-\><c-n>:q<cr>
 
@@ -298,8 +388,7 @@ if has('nvim')
 endif
 
 " Format paragraph (selected or not) to 80 character lines.
-nnoremap <leader>fp gqap
-xnoremap <leader>fp gqa
+" gqip
 
 " Prevent selecting and pasting from overwriting what you originally copied.
 xnoremap p pgvy
@@ -326,18 +415,12 @@ nnoremap <leader>td :e ~/Documents/todo.md<cr>
 nnoremap confr :source $MYVIMRC<cr>
 
 " Edit vimrc
-if has('nvim')
-  if empty(glob('~/.vimrc'))
-    nnoremap confe :e $MYVIMRC<cr>
-  else
-    nnoremap confe :e ~/.vimrc<cr>
-  endif
-else
-  nnoremap confe :e $MYVIMRC<cr>
-endif
+" Note: '<expr>' is required to using variable in mapping
+" See: h: map-expression
+nnoremap <expr> confe ':e ' . g:rc_file . '<cr>'
 
 " Switch to last buffer
-nnoremap <c-e> :e#<cr>
+nnoremap <leader>e :e#<cr>
 
 " save using <C-s> in every mode
 " when in operator-pending or insert, takes you to normal mode
@@ -356,17 +439,14 @@ if bufwinnr(1)
   nnoremap _ <c-w>-
 endif
 
-nnoremap > <c-w>>
-nnoremap < <c-w><
-
 " Switch CWD to the directory of the open buffer
 nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Print the directory of the current buffer
 " Helpful since :pwd will print the project root dir when vim-rooter is applied
 command! Dirname :echo expand('%:p:h')
-nnoremap <leader>dn :Dirname<cr>
-nnoremap <leader>fn :file<cr>
+" nnoremap <leader>dn :Dirname<cr>
+" nnoremap <leader>fn :file<cr>
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -412,8 +492,11 @@ inoremap jj <esc>
 vnoremap <silent> * :<c-u>call VisualSelection('', '')<cr>/<c-r>=@/<cr><cr>
 vnoremap <silent> # :<c-u>call VisualSelection('', '')<cr>?<c-r>=@/<cr><cr>
 
-" clear highlighting
-nnoremap <leader>nh :noh<cr>
+" Clear highlighting on escape in normal mode
+" https://stackoverflow.com/a/1037182
+" nnoremap <esc> :noh<return><esc>
+" nnoremap <esc>^[ <esc>^[
+nnoremap <leader><cr> :noh<cr>
 
 " * highlights current word without navigating to first occurance
 nnoremap * :let @/='\<<c-r>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
@@ -437,23 +520,23 @@ endfunction
 
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
-nnoremap <leader>rf :%s///g<left><left>
-nnoremap <leader>crf :%s///gc<left><left><left>
+" c = confirm each
+nnoremap <F6> :%s///gc<left><left><left>
 
 " The same as above but instead of acting on the whole file it will be
 " restricted to the previously visually selected range. You can do that by
 " pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
-xnoremap <leader>rf :s///g<left><left>
-xnoremap <leader>crf :s///gc<left><left><left>
+xnoremap <F6> :s///gc<left><left><left>
 
 " Type a replacement term and press . to repeat the replacement again. Useful
 " for replacing a few instances of the term (comparable to multiple cursors).
 nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<cr>cgn
 xnoremap <silent> s* "sy:let @/=@s<cr>cgn
 
-" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+" Map <Space> to / (search)
 map <space> /
+map <c-space> ?
 
 " Vim like keys for the command line
 cnoremap <c-h> <home>
@@ -464,9 +547,6 @@ cnoremap <c-n> <down>
 
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
-
-" nmap ]<space> o<esc>x
-" nmap [<space> O<esc>x
 
 nnoremap [oq :copen<cr>
 nnoremap ]oq :cclose<cr>
@@ -489,25 +569,28 @@ endfunction
 " Vim-grepper {{{
 "==============================================================================
 let g:grepper={}
+let g:grepper.rg = { 'grepprg': 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags' }
 let g:grepper.tools=["rg"]
 
-xmap gr <plug>(GrepperOperator)
+" Find all references in project
+xmap <leader>f <plug>(GrepperOperator)
+nmap <leader>f :Grepper -cword -noprompt<cr>
 
 " After searching for text, press this mapping to do a project wide find and
 " replace. It's similar to <leader>rf except this one applies to all matches
 " across all files instead of just the current file.
-nnoremap <leader>rpg
+nnoremap <S-F6>
   \ :let @s='\<'.expand('<cword>').'\>'<cr>
   \ :Grepper -cword -noprompt<cr>
-  \ :cfdo %s/<c-r>s//g \| update
-  \<left><left><left><left><left><left><left><left><left><left><left>
+  \ :cfdo %s/<c-r>s//gc \| update
+  \<left><left><left><left><left><left><left><left><left><left><left><left>
 
 " The same as above except it works with a visual selection.
-xmap <leader>rpg
+xmap <S-F6>
     \ "sy
     \ gvgr
-    \ :cfdo %s/<c-r>s//g \| update
-     \<left><left><left><left><left><left><left><left><left><left><left>
+    \ :cfdo %s/<c-r>s//gc \| update
+     \<left><left><left><left><left><left><left><left><left><left><left><left>
 
 " }}}
 "==============================================================================
@@ -577,19 +660,6 @@ nnoremap ]ot :TagbarClose<cr>
 
 " }}}
 "==============================================================================
-" Tabularize {{{
-"==============================================================================
-" NOTE:
-"   - t = Tabularize
-"   - f = format
-"   - m = markdown
-nnoremap <leader>ft= :Tabularize /=<cr>
-vnoremap <leader>ft= :Tabularize /=<cr>
-nnoremap <leader>ftm :Tabularize /\|<cr>
-vnoremap <leader>ftm :Tabularize /\|<cr>
-
-"}}}
-"==============================================================================
 " Lightline {{{
 "==============================================================================
 function! LightlineFilename()
@@ -645,7 +715,7 @@ let g:lightline = {
       \ },
       \ 'inactive': {
       \   'left': [['filename']],
-      \   'right': [[ 'lineinfo' ], ['percent']]
+      \   'right': [[]]
       \ },
       \ 'component_function': {
       \   'filename': 'LightlineFilename',
@@ -714,20 +784,6 @@ let g:go_highlight_extra_types = 1
 
 " }}}
 "==============================================================================
-" UltiSnips {{{
-"==============================================================================
-" Better key bindings for UltiSnipsExpandTrigger
-" let g:UltiSnipsExpandTrigger = "<tab>"
-" let g:UltiSnipsJumpForwardTrigger = "<tab>"
-" let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-
-" Since we are already using Deoplete, and using tab with both doesn't work nice use <c-j> instead
-" let g:UltiSnipsExpandTrigger="<c-j>"
-" let g:UltiSnipsJumpForwardTrigger="<c-b>"
-" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
-" }}}
-"==============================================================================
 " FZF {{{
 "==============================================================================
 let g:fzf_action = {
@@ -741,30 +797,36 @@ elseif executable('rg')
   let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
 endif
 
-nnoremap <c-f> :Files<cR>
-nnoremap <c-g> :GFiles<cr>
-nnoremap <c-b> :Buffers<cr>
-nnoremap <c-y> :History<cr>
-nnoremap <c-x> :Maps<cr>
-nnoremap <c-m> :BTags<cr>
+nnoremap <leader>N :Files<cR>
+nnoremap <leader>n :GFiles<cr>
+nnoremap <leader>b :Buffers<cr>
+nnoremap <leader>E :History<cr>
+nnoremap <leader>x :Maps<cr>
+nnoremap <leader>X :Commands<cr>
+nnoremap <leader>t :BTags<cr>
+nnoremap <leader>T :Tags<cr>
+nnoremap <leader>l :BCommits<cr>
+nnoremap <leader>L :Commits<cr>
 
 " Match color scheme
-let g:fzf_colors =
-      \ { 'fg':      ['fg', 'Normal'],
-      \ 'bg':      ['bg', 'Normal'],
-      \ 'hl':      ['fg', 'Comment'],
-      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn', 'Normal'],
-      \ 'hl+':     ['fg', 'Statement'],
-      \ 'info':    ['fg', 'PreProc'],
-      \ 'border':  ['fg', 'Ignore'],
-      \ 'prompt':  ['fg', 'Conditional'],
-      \ 'pointer': ['fg', 'Exception'],
-      \ 'marker':  ['fg', 'Keyword'],
-      \ 'spinner': ['fg', 'Label'],
-      \ 'header':  ['fg', 'Comment'] }
+if !g:is_win 
+  let g:fzf_colors =
+    \ { 'fg':      ['fg', 'Normal'],
+    \ 'bg':      ['bg', 'Normal'],
+    \ 'hl':      ['fg', 'Comment'],
+    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'hl+':     ['fg', 'Statement'],
+    \ 'info':    ['fg', 'PreProc'],
+    \ 'border':  ['fg', 'Ignore'],
+    \ 'prompt':  ['fg', 'Conditional'],
+    \ 'pointer': ['fg', 'Exception'],
+    \ 'marker':  ['fg', 'Keyword'],
+    \ 'spinner': ['fg', 'Label'],
+    \ 'header':  ['fg', 'Comment'] }
+endif
 
-if has('nvim')
+if g:is_nvim
   " https://github.com/junegunn/fzf.vim/issues/221
   autocmd FileType fzf tnoremap <buffer> <c-j> <down>
   autocmd FileType fzf tnoremap <buffer> <c-k> <up>
@@ -775,12 +837,14 @@ endif
 " Ack {{{
 "==============================================================================
 if executable('rg')
-  set grepformat=%f:%l:%c:%m
-  set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden
-  let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep'
+  set grepformat=%f:%l:%c:%m,%f:%l:%m
+  set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden\ -g\ !tags
+  " -g !tags = ignore tags file
+  let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags'
 endif
 
-nnoremap \ :LAck<space>
+" Search whole project
+nnoremap <leader>F :Grepper<cr>
 " }}}
 "==============================================================================
 " Markdown {{{
@@ -851,85 +915,88 @@ call NERDTreeHighlightFile('Vagrantfile', 'cyan', 'none', 'cyan', '#151515')
 " }}}
 "==============================================================================
 " Section: Coc Mappings {{{
+""==============================================================================
+"let g:coc_global_extensions=[
+"      \ 'coc-json', 'coc-eslint', 'coc-tsserver',
+"      \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
+"      \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
+"      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-snippets',
+"      \ 'coc-marketplace', 'coc-prettier', 
+"      \ 'coc-java',
+"      \]
+
+"if has('win32') || has('win32unix')
+"  let g:coc_global_extensions = add(g:coc_global_extensions, 'coc-powershell')
+"endif
+
+"" Use <m-space> to trigger completion.
+"inoremap <silent><expr> <m-space> coc#refresh()
+
+"" Use <cr> to confirm completion, `<c-g>u` means break undo chain at current position.
+"" Coc only does snippet and additional edit on confirm.
+"inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<c-g>u\<cr>"
+
+"if exists('*CocActionAsync')
+"  " Highlight symbol under cursor on CursorHold
+"  autocmd CursorHold * silent call CocActionAsync('highlight')
+"endif
+
+"" Use `[c` and `]c` to navigate diagnostics
+"nmap <silent> [g <Plug>(coc-diagnostic-prev)
+"nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+"" Use K to see documentation in a popup preview window
+"nnoremap <silent> K :call <SID>show_documentation()<cr>
+
+"function! s:show_documentation()
+"  if (index(['vim','help'], &filetype) >= 0)
+"    execute 'h '.expand('<cword>')
+"  else
+"    call CocAction('doHover')
+"  endif
+"endfunction
+
+"" Use `:Format` to format current buffer
+"command! -nargs=0 Format :call CocAction('format')
+"command! -nargs=? Fold :call CocAction('fold', <f-args>)
+"command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
+
+"" Remap for format selected region
+"" xmap <leader>f  <Plug>(coc-format-selected)
+"" nmap <leader>f  <Plug>(coc-format-selected)
+"xmap cgq <Plug>(coc-format-selected)
+"nmap cgq :Format<cr>
+
+"" Remap keys for gotos
+"nmap <silent> gd <Plug>(coc-definition)
+"nmap <silent> gt <Plug>(coc-type-definition)
+"nmap <silent> gi <Plug>(coc-implementation)
+"nmap <silent> fu <Plug>(coc-references)
+
+"" Rename symbol
+"nmap <silent> <F6> <Plug>(coc-rename)
+
+"" Remap for do codeAction of current line
+"nmap ga  <Plug>(coc-codeaction)
+
+"" Fix autofix problem of current line
+"nmap gx  <Plug>(coc-fix-current)
+
+"function! SetupCommandAbbrs(from, to)
+"  exec 'cnoreabbrev <expr> '.a:from
+"        \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
+"        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+"endfunction
+
+"" Use C to open coc config
+"call SetupCommandAbbrs('CC', 'CocConfig')
+"call SetupCommandAbbrs('CL', 'CocList')
+
+"" }}}
 "==============================================================================
-let g:coc_global_extensions=[
-      \ 'coc-json', 'coc-eslint', 'coc-tsserver',
-      \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
-      \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
-      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-snippets',
-      \ 'coc-java', 'coc-marketplace', 'coc-prettier',
-      \]
-
-if has('win32')
-  let g:coc_global_extensions = add(g:coc_global_extensions, 'coc-powershell')
-endif
-
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<c-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<c-g>u\<cr>"
-
-if exists('*CocActionAsync')
-  " Highlight symbol under cursor on CursorHold
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-endif
-
-" Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
-
-" Use K to see documentation in a popup preview window
-nnoremap <silent> K :call <SID>show_documentation()<cr>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
-
-" Remap for format selected region
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-" Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-command! -nargs=? Fold :call CocAction('fold', <f-args>)
-command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
-
-" Remap keys for gotos
-nmap <silent> <leader>gd <Plug>(coc-definition)
-nmap <silent> <leader>gy <Plug>(coc-type-definition)
-nmap <silent> <leader>gi <Plug>(coc-implementation)
-nmap <silent> <leader>gf <Plug>(coc-references)
-
-" Remap for do codeAction of current line
-nmap <leader>a  <Plug>(coc-codeaction)
-
-" Fix autofix problem of current line
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-function! SetupCommandAbbrs(from, to)
-  exec 'cnoreabbrev <expr> '.a:from
-        \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
-        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
-endfunction
-
-" Use C to open coc config
-call SetupCommandAbbrs('CC', 'CocConfig')
-call SetupCommandAbbrs('CL', 'CocList')
-
 " }}}
 "==============================================================================
-" }}}
-"==============================================================================
-" Section: Misc Functions {{{
+" Section: Misc Functions / Commands {{{
 "=============================================================================
 function! Copy2Register(reg)
   let hits = []
@@ -948,60 +1015,6 @@ function! CopyMatches(regex)
 
   " Store the result from register 'A' to the clipboard
   let @+ = trim(@a)
-endfunction
-
-command! -complete=file -nargs=* ShellGitCmd call s:RunGitShellCommand('git '.<q-args>)
-command! -complete=shellcmd -nargs=+ ShellCmd call s:RunShellCommand(<q-args>)
-
-" Could also use the built in compiler command
-" :compiler gradle // Or gradlew if using wrapper
-" :make gradle-task-here // :make run 
-command! -complete=file -nargs=* Gradle call s:RunShellCommand('gradle '.<q-args>)
-
-function! s:RunGitShellCommand(cmdline)
-  let isfirst = 1
-  let words = []
-  for word in split(a:cmdline)
-    if isfirst
-      let isfirst = 0  " don't change first word (shell command)
-    else
-      if word[0] =~ '\v[%#<]'
-        let word = expand(word)
-      endif
-      let word = shellescape(word, 1)
-    endif
-    call add(words, word)
-  endfor
-  let expanded_cmdline = join(words)
-  botright new
-  setlocal buftype=nofile syntax=fugitive bufhidden=wipe nobuflisted noswapfile nowrap
-  call setline(1, 'You entered:  ' . a:cmdline)
-  call setline(2, 'Expanded to:  ' . expanded_cmdline)
-  call append(line('$'), substitute(getline(2), '.', '=', 'g'))
-  silent execute '$read !'. expanded_cmdline
-  1
-endfunction
-
-" https://vim.fandom.com/wiki/Display_output_of_shell_commands_in_new_window
-function! s:RunShellCommand(cmdline)
-  let isfirst = 1
-  let words = []
-  for word in split(a:cmdline)
-    if isfirst
-      let isfirst = 0  " don't change first word (shell command)
-    else
-      let word = substitute(word, '\v[%$<]', expand('%'), '')
-    endif
-    call add(words, word)
-  endfor
-  let expanded_cmdline = join(words)
-  botright new
-  setlocal buftype=nofile syntax=sh bufhidden=wipe nobuflisted noswapfile nowrap
-  call setline(1, 'You entered:  ' . a:cmdline)
-  call setline(2, 'Expanded to:  ' . expanded_cmdline)
-  call append(line('$'), substitute(getline(2), '.', '=', 'g'))
-  silent execute '$read !'. expanded_cmdline
-  1
 endfunction
 
 " }}}
@@ -1112,27 +1125,10 @@ augroup java
   autocmd!
 
   " Navigate functions using [ and ] instead of ]m
-  autocmd FileType java nmap ]] ]m]m^
-  autocmd FileType java nmap [[ [m^
+  autocmd FileType java nmap [[ [m
+  autocmd FileType java nmap ]] ]m
   autocmd FileType java set makeprg=javac\ %
   set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C.%#
-
-  " Run gradle based projects using built in make and gradle compiler
-  " Requires the build.gradle file to have the 'application' plugin applied
-  " and the following code to be added:
-  "
-  "```groovy
-  " application {
-  "     mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
-  " }
-  "```
-  " autocmd FileType java execute "compiler gradlew"
-  " autocmd FileType java nmap <leader>rr :make run -PmainClass="%:p"<cr>
-
-  " If you have gradle modules, you need to specify module name that gradle
-  " needs to search for the specified test, else it will look in each and fail
-  " if not found in one.
-  " autocmd FileType java nmap <leader>rtt :make -qi project:test --tests "%:t:r"
 
   autocmd FileType java,groovy
       \ set tabstop=4 |
@@ -1143,45 +1139,35 @@ augroup java
       \ set autoindent |
       \ setlocal nolist
 
-  command! A :call FindJavaAlternate(':e')
-  command! AS :call FindJavaAlternate(':split')
-  command! AV :call FindJavaAlternate(':vsplit')
-
-  " open_command can be any valid vim command used to open a buffer
-  " usage: call FindJavaAlternate(':e')
-  " see commands above for other examples
-  function! FindJavaAlternate(open_command)
-    let file_path = expand('%:p:h')
-    let file_name = expand('%:t')
-    let test_path = substitute(file_path, 'main', 'test', '')
-    let java_path = substitute(file_path, 'test', 'main', '')
-    if file_path ==# test_path
-      let java_file = java_path . '/' . substitute(file_name, '\.*Test\.java', '\.java', '')
-      echon "Alternate = java_file " . java_file
-      execute a:open_command . ' ' . java_file
-    elseif file_path ==# java_path
-      let test_file = test_path . '/' . substitute(file_name, '\.*\.java', 'Test\.java', '')
-      echon "Alternate = test_file " . test_file
-      execute a:open_command . ' ' . test_file
-    else
-      echoerr "Unable to find alternate for: " . file_path |
-            \ echoerr "Tried the following:" |
-            \ echoerr "- test_file: ". test_file |
-            \ echoerr "- java_file: ". java_file
-    end
-  endfunction
   function! CopyFullyQualifiedName()
     call CopyMatches('\(package .*\)\@<=[^;]')
     let filename = expand('%:t')
     let @+ = @+ . '.' . substitute(filename, '.java', '', '')
   endfunction
 
-
   " Get the package for the current file (Think CopyPackage)
   " Grabs all of the content between 'package' and ';' ex: 'package com.nexidia.db;'
   " https://jbodah.github.io/blog/2016/11/01/positivenegative-lookaheadlookbehind-vim/
   command! CpPkg call CopyMatches('\(package .*\)\@<=[^;]')
   command! CpImport call CopyFullyQualifiedName()
+
+  command! FmtBuffer silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i %:p
+  command! FmtImports silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i --fix-imports-only %:p
+  command! BFmt execute ":FmtBuffer"
+  command! IFmt execute ":FmtBuffer"
+  ab FI FmtImports
+  ab FB FmtBuffer
+
+  " Need an import command to add an import for a particular library
+  " Need a fmt command to format file, range, and imports
+  " Could still use coc for completion, but make sure to use Rename when
+  " changing buffer file name
+
+  function! FmtRange() range
+    execute "silent !java -jar C:\\Users\\asidlo\\vimfiles\\google-java-format-1.7-all-deps.jar -a -i --lines " . a:firstline . ":" . a:lastline . " %:p"
+  endfunction
+
+  command! -range Fmt <line1>,<line2>call FmtRange()
 augroup END
 
 " }}}

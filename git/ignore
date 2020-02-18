@@ -4,6 +4,9 @@
 .settings/
 org.eclipse.buildship.core.prefs
 
+# exuberent ctags
+/tags*
+
 # Java class files
 *.class
 

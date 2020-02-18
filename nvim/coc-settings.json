@@ -9,5 +9,6 @@
   "java.format.enabled": true,
   "java.signatureHelp.enabled": true,
   "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
-  "java.format.settings.profile": "GoogleStyle"
+  "java.format.settings.profile": "GoogleStyle",
+  "java.import.gradle.wrapper.enabled": true
 }
