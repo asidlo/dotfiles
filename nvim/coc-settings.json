@@ -6,6 +6,15 @@
       "filetypes": ["go"]
     }
   },
+  "signature.target": "echo",
+  "diagnostic.displayByAle": true,
+  "suggest.echodocSupport": true,
+  "suggest.maxCompleteItemCount": 20,
+  "diagnostic.errorSign": "•",
+  "diagnostic.warningSign": "•",
+  "diagnostic.infoSign": "•",
+  "coc.source.buffer.enable": false,
+  "coc.preferences.useQuickfixForLocations": true,
   "java.format.enabled": true,
   "java.signatureHelp.enabled": true,
   "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",

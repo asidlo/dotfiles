@@ -68,10 +68,18 @@ endif
 
 call plug#begin(g:vim_dir . '/plugged')
 
+" Colorschemes
 Plug 'nanotech/jellybeans.vim'
+Plug 'morhetz/gruvbox'
+Plug 'dracula/vim', { 'as': 'dracula' }
+
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
-Plug 'itchyny/lightline.vim'
+Plug 'vim-airline/vim-airline'
+
+Plug 'jmcantrell/vim-virtualenv'
+
 Plug 'plasticboy/vim-markdown'
 Plug 'mileszs/ack.vim'
 Plug 'airblade/vim-rooter'
@@ -82,6 +90,9 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-dispatch'
+
+Plug '907th/vim-auto-save'
 
 " Can be used to change case of word.
 " Ex: gsciw (changeToCamelCase), gs_iw (snake_case), gs-iw (kabob-case)
@@ -108,8 +119,8 @@ Plug 'mhinz/vim-grepper'
 
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
-Plug 'ervandew/supertab'
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 Plug 'dense-analysis/ale'
 
 " Golang plugins
@@ -120,8 +131,7 @@ Plug 'AndrewRadev/splitjoin.vim'
 Plug 'majutsushi/tagbar'
 Plug 'ludovicchabant/vim-gutentags'
 
-" Snippets / Generate code snippets
-Plug 'SirVer/ultisnips'
+" Snippets (using coc-snippets so no need for Ultisnips)
 Plug 'honza/vim-snippets'
 Plug 'segeljakt/vim-silicon'
 
@@ -142,12 +152,10 @@ let mapleader=","
 
 syntax enable
 
-try
-  " try catch, since there is an initial lag when first loading all plugins
-  colorscheme jellybeans
-catch
-  colorscheme desert
-endtry
+colorscheme dracula
+
+" Makes highlighting not an eyesore
+let g:dracula_inverse = 0
 
 set t_Co=256
 set background=dark
@@ -197,6 +205,11 @@ filetype indent on
 
 " Disable autofolding
 set nofoldenable
+
+" Save local marks up to 100 files ('100) and global marks (f1)
+" Remove all marks for buffer :delm!
+" Remove all global marks :delm A-Z0-9
+set viminfo='100,f1
 
 " Add line numbers
 set number
@@ -278,8 +291,8 @@ set so=7
 set autoread
 
 " Automatically saves a file when calling :make, such as is done
-" in go commands
-set autowrite
+" in go commands and when exiting vim
+set autowriteall
 
 " Turn backup off, since most stuff is in SVN, git et.c anyway...
 set nobackup
@@ -307,7 +320,7 @@ set magic
 " Ignore case when searching
 set ignorecase
 
-" When searching try to be smart about cases 
+" When searching try to be smart about cases
 set smartcase
 
 " Highlight search results
@@ -317,7 +330,7 @@ set hlsearch
 noh
 
 " Makes search act like search in modern browsers
-set incsearch 
+set incsearch
 
 " Use spaces instead of tabs
 set expandtab
@@ -366,6 +379,8 @@ noremap <down> gj
 noremap j gj
 noremap k gk
 
+" If you want to kill all buffers matching regex, then you need to use <C-A>
+" after the regex to expand out the matches
 if g:is_nvim
   " Leader q to exit terminal mode
   tnoremap <leader>q <c-\><c-n>:q<cr>
@@ -409,7 +424,7 @@ nnoremap N Nzzzv
 nnoremap Y y$
 
 " Edit global todo.md
-nnoremap <leader>td :e ~/Documents/todo.md<cr>
+nnoremap <expr> <leader>td ':e ' . g:vim_dir . '/todo.md<cr>'
 
 " Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
@@ -521,13 +536,13 @@ endfunction
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
 " c = confirm each
-nnoremap <F6> :%s///gc<left><left><left>
+nnoremap <leader>r :%s///gc<left><left><left>
 
 " The same as above but instead of acting on the whole file it will be
 " restricted to the previously visually selected range. You can do that by
 " pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
-xnoremap <F6> :s///gc<left><left><left>
+xnoremap <leader>r :s///gc<left><left><left>
 
 " Type a replacement term and press . to repeat the replacement again. Useful
 " for replacing a few instances of the term (comparable to multiple cursors).
@@ -548,6 +563,11 @@ cnoremap <c-n> <down>
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 
+" Note can also use :lop / :lcl
+nnoremap [ok :lopen<cr>
+nnoremap ]ok :lclose<cr>
+
+" Note can also use :cope / :ccl
 nnoremap [oq :copen<cr>
 nnoremap ]oq :cclose<cr>
 nnoremap yoq :call ToggleQuickfix()<cr>
@@ -566,27 +586,49 @@ endfunction
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
+" Dispatch {{{
+"==============================================================================
+autocmd FileType java let b:dispatch = getcwd() . '/gradlew compileJava'
+
+" }}}
+"==============================================================================
+" ALE {{{
+"==============================================================================
+" let g:ale_set_loclist = 0
+" let g:ale_set_quickfix = 1
+
+" }}}
+"==============================================================================
+" Auto-Save {{{
+"==============================================================================
+let g:auto_save = 1  " enable AutoSave on Vim startup
+
+" }}}
+"==============================================================================
 " Vim-grepper {{{
 "==============================================================================
 let g:grepper={}
-let g:grepper.rg = { 'grepprg': 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags' }
+let g:grepper.rg = { 'grepprg': 'rg -S --no-heading --hidden --vimgrep' }
 let g:grepper.tools=["rg"]
 
 " Find all references in project
 xmap <leader>f <plug>(GrepperOperator)
 nmap <leader>f :Grepper -cword -noprompt<cr>
 
+" Search whole project
+nnoremap <leader>F :Grepper<cr>
+
 " After searching for text, press this mapping to do a project wide find and
 " replace. It's similar to <leader>rf except this one applies to all matches
 " across all files instead of just the current file.
-nnoremap <S-F6>
+nnoremap <leader>R
   \ :let @s='\<'.expand('<cword>').'\>'<cr>
   \ :Grepper -cword -noprompt<cr>
   \ :cfdo %s/<c-r>s//gc \| update
   \<left><left><left><left><left><left><left><left><left><left><left><left>
 
 " The same as above except it works with a visual selection.
-xmap <S-F6>
+xmap <leader>R
     \ "sy
     \ gvgr
     \ :cfdo %s/<c-r>s//gc \| update
@@ -630,7 +672,7 @@ let NERDTreeMinimalUI=1
 let NERDTreeAutoDeleteBuffer=1
 
 " Close automatically if nerd tree is only buffer open
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Dont focus Nerdtree on enter
 " autocmd! VimEnter * NERDTree | wincmd w
@@ -660,85 +702,44 @@ nnoremap ]ot :TagbarClose<cr>
 
 " }}}
 "==============================================================================
-" Lightline {{{
+" Airline {{{
 "==============================================================================
-function! LightlineFilename()
-  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
-  let modified = &modified ? ' +' : ''
+let g:airline_theme='dracula'
+let g:airline_powerline_fonts = 1
 
-  let ro = &readonly ? ' [RO]' : ''
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 
-  if filename =~# '__Tagbar__'
-    return 'Tagbar' . ro
-  endif
+" Disable tagbar for performance
+let g:airline#extensions#tagbar#enabled = 0
+let g:airline#extensions#coc#enabled = 1
 
-  if filename =~# 'NERD_tree'
-    return 'NerdTree' . ro
-  endif
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
 
-  if &readonly
-    return filename . ro
-  else
-    return filename . modified
-  endif
+let g:airline_symbols.space = "\ua0"
 
-endfunction
+" powerline symbols
+" https://www.nerdfonts.com/cheat-sheet
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = 'שׂ'
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.dirty=' ??'
 
-function! LightlineFileformat()
-  return winwidth(0) > 70 ? &fileformat : ''
-endfunction
+let airline#extensions#ale#show_line_numbers = 0
 
-function! LightlineFileencoding()
-  return winwidth(0) > 70 ? (&fileencoding !=# '' ? &fileencoding : ''): ''
-endfunction
+let g:airline#extensions#ale#warning_symbol = "\uf071 "
+let g:airline#extensions#ale#error_symbol = "\uf05e "
 
-function! LightlineFiletype()
-  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : '') : ''
-endfunction
-
-"\ @% =~# 'NERD_tree' ? 'NerdTree' :
-function! LightlineMode()
-  return winwidth(0) > 70 ? &paste ? lightline#mode() . ' (PASTE)' : lightline#mode() : ''
-endfunction
-
-let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
-      \ 'active': {
-      \   'left': [ ['mode'],
-      \             [ 'filename','fugitive'],
-      \             ['cocstatus']
-      \    ],
-      \ 'right': [
-      \           [ 'lineinfo' ], ['percent'],
-      \           ['fileformat', 'fileencoding', 'filetype' ],
-      \  ]
-      \ },
-      \ 'inactive': {
-      \   'left': [['filename']],
-      \   'right': [[]]
-      \ },
-      \ 'component_function': {
-      \   'filename': 'LightlineFilename',
-      \   'fileformat': 'LightlineFileformat',
-      \   'filetype': 'LightlineFiletype',
-      \   'fileencoding': 'LightlineFileencoding',
-      \   'mode': 'LightlineMode',
-      \   'cocstatus': 'coc#status',
-      \ },
-      \ 'component': {
-      \   'readonly': '%{&filetype=="help"?"":&readonly?"RO":""}',
-      \   'modified': '%{&filetype=="help" ? "" : &modified ? "+" : &modifiable ? "" : "-"}',
-      \   'fugitive': '%{exists("*fugitive#head") ? winwidth(0) > 70 ? fugitive#head(): "" : "" }'
-      \ },
-      \ 'component_visible_condition': {
-      \   'readonly': '(winwidth(0) > 70 && &filetype!="help"&& &readonly)',
-      \   'modified': '(winwidth(0) > 70 && &filetype!="help"&&(&modified||!&modifiable))',
-      \   'fugitive': '(winwidth(0) > 70 && exists("*fugitive#head") && ""!=fugitive#head())'
-      \ },
-      \ 'separator': { 'left': ' ', 'right': ' ' },
-      \ 'subseparator': { 'left': '|', 'right': '|' }
-      \ }
-
+let g:lightline#ale#indicator_checking = "\uf110"
+let g:lightline#ale#indicator_infos = "\uf129 "
+let g:lightline#ale#indicator_ok = "\uf00c"
 " }}}
 "==============================================================================
 " Vim-Go {{{
@@ -751,8 +752,7 @@ let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 " Disable go def mapping so we can delegate it to the coc lsp = 0
-" let g:go_def_mapping_enabled = 0
-let g:go_def_mapping_enabled = 0
+let g:go_def_mapping_enabled = 1
 
 " Fmt on save
 let g:go_fmt_autosave = 1
@@ -807,15 +807,17 @@ nnoremap <leader>t :BTags<cr>
 nnoremap <leader>T :Tags<cr>
 nnoremap <leader>l :BCommits<cr>
 nnoremap <leader>L :Commits<cr>
+nnoremap <leader>m :Marks<cr>
 
 " Match color scheme
-if !g:is_win 
+if !g:is_win
   let g:fzf_colors =
     \ { 'fg':      ['fg', 'Normal'],
     \ 'bg':      ['bg', 'Normal'],
     \ 'hl':      ['fg', 'Comment'],
     \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
     \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'gutter':  ['bg', 'Normal'],
     \ 'hl+':     ['fg', 'Statement'],
     \ 'info':    ['fg', 'PreProc'],
     \ 'border':  ['fg', 'Ignore'],
@@ -843,8 +845,9 @@ if executable('rg')
   let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags'
 endif
 
-" Search whole project
-nnoremap <leader>F :Grepper<cr>
+" Searches whole project, even through ignored files
+nnoremap \ :Ack<space>
+
 " }}}
 "==============================================================================
 " Markdown {{{
@@ -872,12 +875,6 @@ autocmd FileType json setlocal commentstring=//\ %s
 
 " }}}
 "==============================================================================
-" Supertab {{{
-"==============================================================================
-let g:SuperTabDefaultCompletionType = "<C-X><C-O>"
-
-" }}}
-"==============================================================================
 " Vim-devicons {{{
 "==============================================================================
 "https://github.com/ryanoasis/vim-devicons/wiki/FAQ-&-Troubleshooting#how-do-i-solve-issues-after-re-sourcing-my-vimrc
@@ -885,114 +882,95 @@ if exists("g:loaded_webdevicons")
   call webdevicons#refresh()
 endif
 
-" NERDTrees File highlighting
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
- exec 'autocmd FileType nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
- exec 'autocmd FileType nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
-
-call NERDTreeHighlightFile('ini', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('md', 'blue', 'none', '#3366FF', '#151515')
-call NERDTreeHighlightFile('go', 'cyan', 'none', '#3366FF', '#151515')
-call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('yaml', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('json', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('html', 'red', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('styl', 'red', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('css', 'red', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
-call NERDTreeHighlightFile('php', 'magenta', 'none', '#ff00ff', '#151515')
-call NERDTreeHighlightFile('ds_store', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('gitconfig', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('gitignore', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('bashrc', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('bashprofile', 'Gray', 'none', '#686868', '#151515')
-call NERDTreeHighlightFile('bat', 'green', 'none', 'green', '#151515')
-call NERDTreeHighlightFile('Vagrantfile', 'cyan', 'none', 'cyan', '#151515')
-
-" }}}
 "==============================================================================
 " Section: Coc Mappings {{{
-""==============================================================================
-"let g:coc_global_extensions=[
-"      \ 'coc-json', 'coc-eslint', 'coc-tsserver',
-"      \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
-"      \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
-"      \ 'coc-vimlsp', 'coc-xml', 'coc-ultisnips', 'coc-snippets',
-"      \ 'coc-marketplace', 'coc-prettier', 
-"      \ 'coc-java',
-"      \]
+"==============================================================================
+let g:coc_global_extensions=[
+      \ 'coc-json', 'coc-eslint', 'coc-tsserver',
+      \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
+      \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
+      \ 'coc-vimlsp', 'coc-xml', 'coc-snippets',
+      \ 'coc-marketplace', 'coc-prettier',
+      \ 'coc-java',
+      \]
 
-"if has('win32') || has('win32unix')
-"  let g:coc_global_extensions = add(g:coc_global_extensions, 'coc-powershell')
-"endif
+if g:is_win
+  let g:coc_global_extensions = add(g:coc_global_extensions, 'coc-powershell')
+endif
 
-"" Use <m-space> to trigger completion.
-"inoremap <silent><expr> <m-space> coc#refresh()
+" Close the preview window when completion is done.
+autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
-"" Use <cr> to confirm completion, `<c-g>u` means break undo chain at current position.
-"" Coc only does snippet and additional edit on confirm.
-"inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<c-g>u\<cr>"
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-"if exists('*CocActionAsync')
-"  " Highlight symbol under cursor on CursorHold
-"  autocmd CursorHold * silent call CocActionAsync('highlight')
-"endif
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
-"" Use `[c` and `]c` to navigate diagnostics
-"nmap <silent> [g <Plug>(coc-diagnostic-prev)
-"nmap <silent> ]g <Plug>(coc-diagnostic-next)
+" Use <m-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
 
-"" Use K to see documentation in a popup preview window
-"nnoremap <silent> K :call <SID>show_documentation()<cr>
+" Use <cr> to confirm completion, `<c-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<c-g>u\<cr>"
 
-"function! s:show_documentation()
-"  if (index(['vim','help'], &filetype) >= 0)
-"    execute 'h '.expand('<cword>')
-"  else
-"    call CocAction('doHover')
-"  endif
-"endfunction
+if exists('*CocActionAsync')
+  " Highlight symbol under cursor on CursorHold
+  autocmd CursorHold * silent call CocActionAsync('highlight')
+endif
 
-"" Use `:Format` to format current buffer
-"command! -nargs=0 Format :call CocAction('format')
-"command! -nargs=? Fold :call CocAction('fold', <f-args>)
-"command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
+" Use `[c` and `]c` to navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
-"" Remap for format selected region
-"" xmap <leader>f  <Plug>(coc-format-selected)
-"" nmap <leader>f  <Plug>(coc-format-selected)
-"xmap cgq <Plug>(coc-format-selected)
-"nmap cgq :Format<cr>
+" Use K to see documentation in a popup preview window
+nnoremap <silent> K :call <SID>show_documentation()<cr>
 
-"" Remap keys for gotos
-"nmap <silent> gd <Plug>(coc-definition)
-"nmap <silent> gt <Plug>(coc-type-definition)
-"nmap <silent> gi <Plug>(coc-implementation)
-"nmap <silent> fu <Plug>(coc-references)
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
 
-"" Rename symbol
-"nmap <silent> <F6> <Plug>(coc-rename)
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
 
-"" Remap for do codeAction of current line
-"nmap ga  <Plug>(coc-codeaction)
+" Remap for format selected region
+xmap <leader>gq <Plug>(coc-format-selected)
+nmap <leader>gq :Format<cr>
 
-"" Fix autofix problem of current line
-"nmap gx  <Plug>(coc-fix-current)
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gt <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> fu <Plug>(coc-references)
 
-"function! SetupCommandAbbrs(from, to)
-"  exec 'cnoreabbrev <expr> '.a:from
-"        \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
-"        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
-"endfunction
+" Rename symbol
+nmap <silent> <F6> <Plug>(coc-rename)
 
-"" Use C to open coc config
-"call SetupCommandAbbrs('CC', 'CocConfig')
-"call SetupCommandAbbrs('CL', 'CocList')
+function! SetupCommandAbbrs(from, to)
+  exec 'cnoreabbrev <expr> '.a:from
+        \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
+        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+endfunction
 
-"" }}}
+" Use C to open coc config
+call SetupCommandAbbrs('CC', 'CocConfig')
+call SetupCommandAbbrs('CL', 'CocList')
+
+" }}}
 "==============================================================================
 " }}}
 "==============================================================================
