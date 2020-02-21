@@ -26,12 +26,6 @@ let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
 let g:loaded_node_provider = 0
 
-" Must have fzf installed
-if !executable('fzf')
-  echoerr 'fzf executable not found! Install and add to Path to perform fuzzy searching'
-endif
-let g:fzf_home = '/usr/local/opt/fzf'
-
 if !executable('fd')
   echoerr 'fd executable not found! Install and add to Path to perform fuzzy searching'
 endif
@@ -133,8 +127,8 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'honza/vim-snippets'
 Plug 'segeljakt/vim-silicon'
 
-" Fuzzy searching
-Plug g:fzf_home
+" Fuzzy searching (will install if not already in path)
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 call plug#end()
@@ -804,23 +798,21 @@ nnoremap <leader>L :Commits<cr>
 nnoremap <leader>m :Marks<cr>
 
 " Match color scheme
-if !g:is_win
-  let g:fzf_colors =
-    \ { 'fg':      ['fg', 'Normal'],
-    \ 'bg':      ['bg', 'Normal'],
-    \ 'hl':      ['fg', 'Comment'],
-    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-    \ 'gutter':  ['bg', 'Normal'],
-    \ 'hl+':     ['fg', 'Statement'],
-    \ 'info':    ['fg', 'PreProc'],
-    \ 'border':  ['fg', 'Ignore'],
-    \ 'prompt':  ['fg', 'Conditional'],
-    \ 'pointer': ['fg', 'Exception'],
-    \ 'marker':  ['fg', 'Keyword'],
-    \ 'spinner': ['fg', 'Label'],
-    \ 'header':  ['fg', 'Comment'] }
-endif
+let g:fzf_colors =
+  \ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'gutter':  ['bg', 'Normal'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
 if g:is_nvim
   " https://github.com/junegunn/fzf.vim/issues/221
