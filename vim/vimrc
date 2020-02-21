@@ -22,9 +22,9 @@ else
 endif
 
 " Disable python2, ruby, and node providers
-let g:loaded_python_provider = 1
-let g:loaded_ruby_provider = 1
-let g:loaded_node_provider = 1
+let g:loaded_python_provider = 0
+let g:loaded_ruby_provider = 0
+let g:loaded_node_provider = 0
 
 " Must have fzf installed
 if !executable('fzf')
@@ -91,8 +91,6 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
-
-Plug '907th/vim-auto-save'
 
 " Can be used to change case of word.
 " Ex: gsciw (changeToCamelCase), gs_iw (snake_case), gs-iw (kabob-case)
@@ -427,7 +425,9 @@ nnoremap Y y$
 nnoremap <expr> <leader>td ':e ' . g:vim_dir . '/todo.md<cr>'
 
 " Reload vimrc
-nnoremap confr :source $MYVIMRC<cr>
+" Note: need to toggle airline twice to get top and bottom bars fixed after
+" refresh
+nnoremap confr :source $MYVIMRC<cr> :AirlineToggle<cr> :AirlineToggle<cr>
 
 " Edit vimrc
 " Note: '<expr>' is required to using variable in mapping
@@ -596,12 +596,6 @@ autocmd FileType java let b:dispatch = getcwd() . '/gradlew compileJava'
 "==============================================================================
 " let g:ale_set_loclist = 0
 " let g:ale_set_quickfix = 1
-
-" }}}
-"==============================================================================
-" Auto-Save {{{
-"==============================================================================
-let g:auto_save = 1  " enable AutoSave on Vim startup
 
 " }}}
 "==============================================================================
@@ -948,14 +942,14 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Remap for format selected region
-xmap <leader>gq <Plug>(coc-format-selected)
-nmap <leader>gq :Format<cr>
+xmap cgq <Plug>(coc-format-selected)
+nmap cgq :Format<cr>
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gt <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> fu <Plug>(coc-references)
+nmap <silent> gf <Plug>(coc-references)
 
 " Rename symbol
 nmap <silent> <F6> <Plug>(coc-rename)
@@ -1035,47 +1029,47 @@ augroup go
     \ setlocal nolist
 
   " :GoBuild and :GoTestCompile
-  autocmd FileType go nmap <leader>rb :<c-u>call <SID>build_go_files()<cr>
+  autocmd FileType go nmap gb :<c-u>call <SID>build_go_files()<cr>
 
   " :GoTest
-  autocmd FileType go nmap <leader>rtt  <Plug>(go-test)
-  autocmd FileType go nmap <leader>rtf  <Plug>(go-test-func)
+  autocmd FileType go nmap gT  <Plug>(go-test)
+  autocmd FileType go nmap gt <Plug>(go-test-func)
 
   " :GoRun
-  if has('nvim')
-    autocmd FileType go nmap <leader>rr <Plug>(go-run-split)
+  if g:is_nvim
+    autocmd FileType go nmap g<space> <Plug>(go-run-split)
   else
-    autocmd FileType go nmap <leader>rr <Plug>(go-run)
+    autocmd FileType go nmap g<space> <Plug>(go-run)
   endif
 
   " :GoDescribe - Show methods for a given class / interface
   " <leader>k mapping chosen to reflect <s-k> for coc mapping show doc
-  autocmd FileType go nmap <leader>k <Plug>(go-describe)
+  autocmd FileType go nmap gO <Plug>(go-describe)
 
   " :GoMetaLinter
-  autocmd FileType go nmap <leader>rl <Plug>(go-metalinter)
+  autocmd FileType go nmap gl <Plug>(go-metalinter)
 
   " :GoDef but opens in a vertical split
-  autocmd FileType go nmap <leader>dv <Plug>(go-def-vertical)
+  autocmd FileType go nmap kv <Plug>(go-def-vertical)
 
   " :GoDef but opens in a horizontal split
-  autocmd FileType go nmap <leader>ds <Plug>(go-def-split)
+  autocmd FileType go nmap ks <Plug>(go-def-split)
 
   " :GoDecls - Show all methods in current file (Methods)
   " Think (list methods/members)
-  autocmd Filetype go nmap <leader>lm :GoDecls<cr>
+  autocmd Filetype go nmap go :GoDecls<cr>
 
   " Show all files in current package
-  autocmd Filetype go nmap <leader>ls :GoFiles<cr>
+  autocmd Filetype go nmap ls :GoFiles<cr>
 
   " Show all dependencies of current file
-  autocmd Filetype go nmap <leader>ld :GoDeps<cr>
+  autocmd Filetype go nmap gI :GoDeps<cr>
 
   " Find usages
-  autocmd Filetype go nmap <leader>lu :GoReferrers<cr>
+  autocmd Filetype go nmap gf :GoReferrers<cr>
 
   " Shows all interfaces current type/struct implements
-  autocmd Filetype go nmap <leader>li :GoImplements<cr>
+  autocmd Filetype go nmap gi :GoImplements<cr>
 
   " :GoAlternate  commands :A, :AV, :AS and :AT
   autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
@@ -1129,23 +1123,23 @@ augroup java
   command! CpPkg call CopyMatches('\(package .*\)\@<=[^;]')
   command! CpImport call CopyFullyQualifiedName()
 
-  command! FmtBuffer silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i %:p
-  command! FmtImports silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i --fix-imports-only %:p
-  command! BFmt execute ":FmtBuffer"
-  command! IFmt execute ":FmtBuffer"
-  ab FI FmtImports
-  ab FB FmtBuffer
+  " command! FmtBuffer silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i %:p
+  " command! FmtImports silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i --fix-imports-only %:p
+  " command! BFmt execute ":FmtBuffer"
+  " command! IFmt execute ":FmtBuffer"
+  " ab FI FmtImports
+  " ab FB FmtBuffer
 
   " Need an import command to add an import for a particular library
   " Need a fmt command to format file, range, and imports
   " Could still use coc for completion, but make sure to use Rename when
   " changing buffer file name
 
-  function! FmtRange() range
-    execute "silent !java -jar C:\\Users\\asidlo\\vimfiles\\google-java-format-1.7-all-deps.jar -a -i --lines " . a:firstline . ":" . a:lastline . " %:p"
-  endfunction
+  " function! FmtRange() range
+  "   execute "silent !java -jar C:\\Users\\asidlo\\vimfiles\\google-java-format-1.7-all-deps.jar -a -i --lines " . a:firstline . ":" . a:lastline . " %:p"
+  " endfunction
 
-  command! -range Fmt <line1>,<line2>call FmtRange()
+  " command! -range Fmt <line1>,<line2>call FmtRange()
 augroup END
 
 " }}}
