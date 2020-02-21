@@ -6,9 +6,16 @@
       "filetypes": ["go"]
     }
   },
+  // Can use conda env, but must install jedi, a linter(pylint), and a
+  // formatter (yapf) in env, and specify the path to the python exe for env
+  "python.pythonPath": "python3",
+  "python.condaPath": "/usr/lociwcal/anaconda3/condabin/conda",
+  "python.venvPath": "./venv",
+  "python.analysis.logLevel": "Trace",
+  "python.linting.enabled": true,
   "signature.target": "echo",
-  "diagnostic.displayByAle": true,
   "suggest.echodocSupport": true,
+  "diagnostic.displayByAle": true,
   "suggest.maxCompleteItemCount": 20,
   "diagnostic.errorSign": "•",
   "diagnostic.warningSign": "•",
@@ -19,5 +26,6 @@
   "java.signatureHelp.enabled": true,
   "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
   "java.format.settings.profile": "GoogleStyle",
-  "java.import.gradle.wrapper.enabled": true
+  "java.format.comments.enabled": true,
+  "java.import.gradle.wrapper.enabled": true,
 }
