@@ -27,5 +27,10 @@
   "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
   "java.format.settings.profile": "GoogleStyle",
   "java.format.comments.enabled": true,
+  "java.import.gradle.enabled": true,
   "java.import.gradle.wrapper.enabled": true,
+
+  // For troubleshooting imports, use CocCommand java.cleanWorkspace
+  // followed by CocCommand java.projectConfiguration.update
+  "java.home": "/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/Contents/Home"
 }
