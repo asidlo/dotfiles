@@ -256,6 +256,17 @@ function Update-Profile {
     }    
 }
 
+function Clear-EclipseWorkspace {
+  $files = fd -I -H  '.project|.classpath|\.settings'
+  Write-Output $files
+  $remove = Read-Host -Prompt 'Do you want to remove all of the files? [y|N] '
+  if ($remove.ToUpper() -eq 'Y') {
+    foreach ($file in $files) {
+      Remove-Item $file 
+    }
+  }
+}
+
 function Stop-NxJavaProcesses {
   jps -l | Select-String "nexidia" | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru} 
 }
