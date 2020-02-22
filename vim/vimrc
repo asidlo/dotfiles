@@ -111,7 +111,7 @@ Plug 'mhinz/vim-grepper'
 
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
 
 Plug 'dense-analysis/ale'
 
@@ -744,14 +744,15 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 
 " Prepend the separator to the status
 function! AirlineCocStatus() abort
+  let l:status = coc#status()
+  if l:status != ''
     return '  ' . g:airline_left_alt_sep . ' ' . coc#status()
+  endif
+  return ''
 endfunction
 
 call airline#parts#define_function('coc_status', 'AirlineCocStatus')
 let g:airline_section_c = airline#section#create_right(['file', 'readonly', 'coc_status'])
-
-" Only display the status if its not empty
-call airline#parts#define_condition('coc_status', '!empty(coc#status())')
 
 let g:airline#extensions#default#section_truncate_width = {
     \ 'c': 50,
