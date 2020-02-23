@@ -67,6 +67,14 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'morhetz/gruvbox'
 Plug 'dracula/vim', { 'as': 'dracula' }
 
+" Golang plugins
+" Need to load before vim-polyglot in order to avoid getting errors like
+" Unknown function: go#config#GoplsMatcher
+" See: https://github.com/fatih/vim-go/issues/2272
+" See: https://github.com/fatih/vim-go/issues/2262
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'AndrewRadev/splitjoin.vim'
+
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
@@ -115,10 +123,6 @@ Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
 
 Plug 'dense-analysis/ale'
 
-" Golang plugins
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'AndrewRadev/splitjoin.vim'
-
 " Symbol / Tag Plugins
 Plug 'majutsushi/tagbar'
 Plug 'ludovicchabant/vim-gutentags'
@@ -134,6 +138,7 @@ Plug 'junegunn/fzf.vim'
 call plug#end()
 
 ab PC PlugClean
+ab PU PlugUpdate
 ab PI PlugInstall
 
 " }}}
@@ -535,13 +540,13 @@ endfunction
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
 " c = confirm each
-nnoremap <leader>r :%s///gc<left><left><left>
+nnoremap <leader>s :%s///gc<left><left><left>
 
 " The same as above but instead of acting on the whole file it will be
 " restricted to the previously visually selected range. You can do that by
 " pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
-xnoremap <leader>r :s///gc<left><left><left>
+xnoremap <leader>s :s///gc<left><left><left>
 
 " Type a replacement term and press . to repeat the replacement again. Useful
 " for replacing a few instances of the term (comparable to multiple cursors).
@@ -587,15 +592,6 @@ endfunction
 "==============================================================================
 " Dispatch {{{
 "==============================================================================
-if g:is_win
-  let s:gradle_exe = 'gradlew.bat'
-else
-  let s:gradle_exe = 'gradlew'
-endif
-
-" Note: using functions dont seem to resolve for autocmds
-" tried using getpwd() to get the abs path of the gradle script
-autocmd FileType java let b:dispatch = s:gradle_exe . ' compileJava'
 
 " }}}
 "==============================================================================
@@ -613,23 +609,23 @@ let g:grepper.rg = { 'grepprg': 'rg -S --no-heading --hidden --vimgrep' }
 let g:grepper.tools=["rg"]
 
 " Find all references in project
-xmap <leader>f <plug>(GrepperOperator)
-nmap <leader>f :Grepper -cword -noprompt<cr>
+xmap <leader>/ <plug>(GrepperOperator)
+nmap <leader>/ :Grepper -cword -noprompt<cr>
 
 " Search whole project
-nnoremap <leader>F :Grepper<cr>
+nnoremap \ :Grepper<cr>
 
 " After searching for text, press this mapping to do a project wide find and
 " replace. It's similar to <leader>rf except this one applies to all matches
 " across all files instead of just the current file.
-nnoremap <leader>R
+nnoremap <leader>S
   \ :let @s='\<'.expand('<cword>').'\>'<cr>
   \ :Grepper -cword -noprompt<cr>
   \ :cfdo %s/<c-r>s//gc \| update
   \<left><left><left><left><left><left><left><left><left><left><left><left>
 
 " The same as above except it works with a visual selection.
-xmap <leader>R
+xmap <leader>S
     \ "sy
     \ gvgr
     \ :cfdo %s/<c-r>s//gc \| update
@@ -745,14 +741,14 @@ let g:lightline#ale#indicator_ok = "\uf00c"
 " Prepend the separator to the status
 function! AirlineCocStatus() abort
   let l:status = coc#status()
-  if l:status != ''
+  if trim(l:status) != ''
     return '  ' . g:airline_left_alt_sep . ' ' . coc#status()
   endif
   return ''
 endfunction
 
 call airline#parts#define_function('coc_status', 'AirlineCocStatus')
-let g:airline_section_c = airline#section#create_right(['file', 'readonly', 'coc_status'])
+" let g:airline_section_c = airline#section#create_right(['file', 'readonly', 'coc_status'])
 
 let g:airline#extensions#default#section_truncate_width = {
     \ 'c': 50,
@@ -772,7 +768,7 @@ let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 " Disable go def mapping so we can delegate it to the coc lsp = 0
-let g:go_def_mapping_enabled = 1
+let g:go_def_mapping_enabled = 0
 
 " Fmt on save
 let g:go_fmt_autosave = 1
@@ -823,11 +819,11 @@ nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>E :History<cr>
 nnoremap <leader>x :Maps<cr>
 nnoremap <leader>X :Commands<cr>
-nnoremap <leader>t :BTags<cr>
-nnoremap <leader>T :Tags<cr>
-nnoremap <leader>l :BCommits<cr>
-nnoremap <leader>L :Commits<cr>
-nnoremap <leader>m :Marks<cr>
+nnoremap <leader>o :BTags<cr>
+nnoremap <leader>O :Tags<cr>
+nnoremap <leader>c :BCommits<cr>
+nnoremap <leader>C :Commits<cr>
+nnoremap <leader>M :Marks<cr>
 
 " Match color scheme
 let g:fzf_colors =
@@ -864,7 +860,7 @@ if executable('rg')
 endif
 
 " Searches whole project, even through ignored files
-nnoremap \ :Ack<space>
+nnoremap <leader>\ :Ack<space>
 
 " }}}
 "==============================================================================
@@ -900,6 +896,7 @@ if exists("g:loaded_webdevicons")
   call webdevicons#refresh()
 endif
 
+" }}}
 "==============================================================================
 " Section: Coc Mappings {{{
 "==============================================================================
@@ -915,6 +912,9 @@ let g:coc_global_extensions=[
 if g:is_win
   let g:coc_global_extensions = add(g:coc_global_extensions, 'coc-powershell')
 endif
+
+command! -nargs=0 CocStatus echo coc#status()
+ab CS CocStatus
 
 " Close the preview window when completion is done.
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
@@ -966,8 +966,10 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Remap for format selected region
-xmap cgq <Plug>(coc-format-selected)
-nmap cgq :Format<cr>
+xmap <leader>F <Plug>(coc-format-selected)
+nmap <leader>F :Format<cr>
+
+nmap <leader>I :Imports<cr>
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
@@ -1036,6 +1038,10 @@ endfunction
 " | :GoFreevars     | shows variables that are referenced but not defined within a given selection, helps for refactoring |
 " | :GoGenerate     | runs go generate                                                                                    |
 " | :GoImpl         | generates methods for a given interface                                                             |
+" | :GoDeps | Dependencies of current file|
+" | :GoFiles | Files in current package|
+" | :GoReferrers | Find usages|
+" | :GoImplements | Shows all interfaces current type/struct implements|
 "
 " Can also do GoImpl anywhere in file, just specify which type to attach it to
 " :GoImpl b *B fmt.Stringer
@@ -1053,47 +1059,34 @@ augroup go
     \ setlocal nolist
 
   " :GoBuild and :GoTestCompile
-  autocmd FileType go nmap gb :<c-u>call <SID>build_go_files()<cr>
+  autocmd FileType go nmap <leader>m :<c-u>call <SID>build_go_files()<cr>
+
+  autocmd FileType go nmap <leader>i :GoImport<space>
 
   " :GoTest
-  autocmd FileType go nmap gT  <Plug>(go-test)
-  autocmd FileType go nmap gt <Plug>(go-test-func)
+  autocmd FileType go nmap <leader>T  <Plug>(go-test)
+  autocmd FileType go nmap <leader>t <Plug>(go-test-func)
 
   " :GoRun
   if g:is_nvim
-    autocmd FileType go nmap g<space> <Plug>(go-run-split)
+    autocmd FileType go nmap <leader>r <Plug>(go-run-split)
   else
-    autocmd FileType go nmap g<space> <Plug>(go-run)
+    autocmd FileType go nmap <leader>r <Plug>(go-run)
   endif
 
-  " :GoDescribe - Show methods for a given class / interface
-  " <leader>k mapping chosen to reflect <s-k> for coc mapping show doc
-  autocmd FileType go nmap gO <Plug>(go-describe)
-
   " :GoMetaLinter
-  autocmd FileType go nmap gl <Plug>(go-metalinter)
+  autocmd FileType go nmap <leader>l <Plug>(go-metalinter)
 
   " :GoDef but opens in a vertical split
-  autocmd FileType go nmap kv <Plug>(go-def-vertical)
+  autocmd FileType go nmap <leader>K <Plug>(go-def-vertical)
 
   " :GoDef but opens in a horizontal split
-  autocmd FileType go nmap ks <Plug>(go-def-split)
+  autocmd FileType go nmap <leader>k <Plug>(go-def-split)
 
   " :GoDecls - Show all methods in current file (Methods)
   " Think (list methods/members)
-  autocmd Filetype go nmap go :GoDecls<cr>
-
-  " Show all files in current package
-  autocmd Filetype go nmap ls :GoFiles<cr>
-
-  " Show all dependencies of current file
-  autocmd Filetype go nmap gI :GoDeps<cr>
-
-  " Find usages
-  autocmd Filetype go nmap gf :GoReferrers<cr>
-
-  " Shows all interfaces current type/struct implements
-  autocmd Filetype go nmap gi :GoImplements<cr>
+  autocmd Filetype go nmap <leader>o :GoDecls<cr>
+  autocmd Filetype go nmap <leader>O :GoDeclsDir<cr>
 
   " :GoAlternate  commands :A, :AV, :AS and :AT
   autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
@@ -1126,6 +1119,15 @@ augroup java
   autocmd FileType java set makeprg=javac\ %
   set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C.%#
 
+  if g:is_win
+    let s:gradle_exe = 'gradlew.bat'
+  else
+    let s:gradle_exe = './gradlew'
+  endif
+
+  autocmd FileType java let b:dispatch = s:gradle_exe . ' compileJava'
+  autocmd FileType java nmap <leader>m :Dispatch!<cr>
+
   autocmd FileType java,groovy
       \ set tabstop=4 |
       \ set softtabstop=4 |
@@ -1146,24 +1148,6 @@ augroup java
   " https://jbodah.github.io/blog/2016/11/01/positivenegative-lookaheadlookbehind-vim/
   command! CpPkg call CopyMatches('\(package .*\)\@<=[^;]')
   command! CpImport call CopyFullyQualifiedName()
-
-  " command! FmtBuffer silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i %:p
-  " command! FmtImports silent !java -jar C:\Users\asidlo\vimfiles\google-java-format-1.7-all-deps.jar -a -i --fix-imports-only %:p
-  " command! BFmt execute ":FmtBuffer"
-  " command! IFmt execute ":FmtBuffer"
-  " ab FI FmtImports
-  " ab FB FmtBuffer
-
-  " Need an import command to add an import for a particular library
-  " Need a fmt command to format file, range, and imports
-  " Could still use coc for completion, but make sure to use Rename when
-  " changing buffer file name
-
-  " function! FmtRange() range
-  "   execute "silent !java -jar C:\\Users\\asidlo\\vimfiles\\google-java-format-1.7-all-deps.jar -a -i --lines " . a:firstline . ":" . a:lastline . " %:p"
-  " endfunction
-
-  " command! -range Fmt <line1>,<line2>call FmtRange()
 augroup END
 
 " }}}
