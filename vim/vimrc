@@ -82,7 +82,9 @@ Plug 'vim-airline/vim-airline'
 
 Plug 'jmcantrell/vim-virtualenv'
 
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'plasticboy/vim-markdown'
+
 Plug 'mileszs/ack.vim'
 Plug 'airblade/vim-rooter'
 Plug 'ryanoasis/vim-devicons'
@@ -798,6 +800,9 @@ let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
 
+" Default is 'func,type'
+let g:go_decls_includes = 'func'
+
 " }}}
 "==============================================================================
 " FZF {{{
@@ -1122,11 +1127,40 @@ augroup java
   if g:is_win
     let s:gradle_exe = 'gradlew.bat'
   else
-    let s:gradle_exe = './gradlew'
+    let s:gradle_exe = 'gradlew'
   endif
 
-  autocmd FileType java let b:dispatch = s:gradle_exe . ' compileJava'
-  autocmd FileType java nmap <leader>m :Dispatch!<cr>
+  let g:java_compile_gradle_task = 'compileJava'
+
+  " Determines whether the user is using gradle, mvn, or javac for compiling the
+  " java project by utilizing rooter to check for the executable wrappers and
+  " defaulting to javac if those arent present.
+  function! s:CompileJava() abort
+    let l:pwd = getcwd()
+    exec ':Dispatch! ' . l:pwd . '/' . s:gradle_exe . ' ' . g:java_compile_gradle_task
+  endfunction
+
+  " This function will look for a main method in the filename passed as an arg
+  " or the current file if not args passed and will execute it using gradle,
+  " mvn, or java utilizing rooter to check for the wrapper scripts and defaulting
+  " to java if none found.
+  function! s:RunJavaMain() abort
+    echo "TODO: implement RunJavaMain"
+  endfunction
+
+  " This function will run a linter over the entire project using 
+  function! s:LintJava() abort
+    echo "TODO: implement LintJava"
+  endfunction
+
+  " This function will run the current test, if no args provided or all tests
+  " matching a given regex using gradle, mvn, or java utilizing rooter to check
+  " for the wrapper scripts and defaulting to java if none found.
+  function! s:TestJava() abort
+    echo "TODO: implement TestJava"
+  endfunction
+
+  autocmd FileType java nmap <leader>m :call <SID>CompileJava()<cr>
 
   autocmd FileType java,groovy
       \ set tabstop=4 |
