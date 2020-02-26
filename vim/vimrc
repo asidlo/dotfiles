@@ -96,6 +96,9 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
 
+Plug 'jreybert/vimagit'
+Plug 'rhysd/git-messenger.vim'
+
 " Can be used to change case of word.
 " Ex: gsciw (changeToCamelCase), gs_iw (snake_case), gs-iw (kabob-case)
 Plug 'arthurxavierx/vim-caser'
@@ -136,6 +139,9 @@ Plug 'segeljakt/vim-silicon'
 " Fuzzy searching (will install if not already in path)
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+Plug 'moll/vim-bbye' " optional dependency
+Plug 'aymericbeaumet/vim-symlink'
 
 call plug#end()
 
@@ -591,6 +597,12 @@ endfunction
 " }}}
 "==============================================================================
 " Section: Plugins {{{
+"==============================================================================
+" Magit {{{
+"==============================================================================
+let g:magit_default_fold_level = 0
+
+" }}}
 "==============================================================================
 " Dispatch {{{
 "==============================================================================
