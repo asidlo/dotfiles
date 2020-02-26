@@ -14,7 +14,7 @@ let g:is_nvim = has('nvim')
 " Note: expand vs glob = glob will return empty if file doesnt exist
 " also, expand has a list of special variables (see :h expand)
 if g:is_win
-  let g:vim_dir = expand('~/_vimfiles')
+  let g:vim_dir = expand('~/vimfiles')
   let g:rc_file = expand('~/_vimrc')
 else
   let g:vim_dir = expand('~/.vim')
@@ -344,8 +344,10 @@ set tabstop=2
 set ai "Auto indent
 set si "Smart indent
 
+" When using airline with tabbuffers on, dont set this as reloading config file
+" causes the tabline to disappear.
 " Show tab number only if more than 1
-set stal=1
+" set stal=1
 
 " Sets how many lines of history VIM has to remember
 set history=500
@@ -431,9 +433,7 @@ nnoremap Y y$
 nnoremap <expr> <leader>td ':e ' . g:vim_dir . '/todo.md<cr>'
 
 " Reload vimrc
-" Note: need to toggle airline twice to get top and bottom bars fixed after
-" refresh
-nnoremap confr :source $MYVIMRC<cr> :AirlineToggle<cr> :AirlineToggle<cr>
+nnoremap confr :source $MYVIMRC<cr>
 
 " Edit vimrc
 " Note: '<expr>' is required to using variable in mapping
@@ -826,8 +826,6 @@ nnoremap <leader>x :Maps<cr>
 nnoremap <leader>X :Commands<cr>
 nnoremap <leader>o :BTags<cr>
 nnoremap <leader>O :Tags<cr>
-nnoremap <leader>c :BCommits<cr>
-nnoremap <leader>C :Commits<cr>
 nnoremap <leader>M :Marks<cr>
 
 " Match color scheme
@@ -911,7 +909,7 @@ let g:coc_global_extensions=[
       \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
       \ 'coc-vimlsp', 'coc-xml', 'coc-snippets',
       \ 'coc-marketplace', 'coc-prettier',
-      \ 'coc-java',
+      \ 'coc-java', 'coc-clangd'
       \]
 
 if g:is_win
@@ -1056,7 +1054,7 @@ augroup go
   autocmd!
 
   " Show by default 4 spaces for a tab
-  autocmd BufNewFile,BufRead,BufEnter *.go
+  autocmd FileType go
     \ setlocal noexpandtab |
     \ set tabstop=4 |
     \ set shiftwidth=4 |
@@ -1113,6 +1111,18 @@ augroup END
 
 " }}}
 "==============================================================================
+" C++ {{{
+"==============================================================================
+autocmd FileType c,cpp
+    \ set tabstop=4 |
+    \ set softtabstop=4 |
+    \ set shiftwidth=4 |
+    \ set expandtab |
+    \ set autoindent |
+    \ setlocal nolist
+
+" }}}
+"==============================================================================
 " Java {{{
 "==============================================================================
 augroup java
@@ -1148,7 +1158,7 @@ augroup java
     echo "TODO: implement RunJavaMain"
   endfunction
 
-  " This function will run a linter over the entire project using 
+  " This function will run a linter over the entire project using
   function! s:LintJava() abort
     echo "TODO: implement LintJava"
   endfunction

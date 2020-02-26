@@ -67,18 +67,17 @@ abbr conff "$EDITOR ~/.config/fish/config.fish"
 abbr confe "$EDITOR ~/.vimrc"
 abbr tree "tree -C"
 
-if not set -q __FISH_CFG_INITIALIZED
-  set -gx __FISH_CFG_INITIALIZED
+# Set user paths, could just be set via cmd since it will be saved in
+# fish_user_paths
+set -Ux fish_user_paths "$GOPATH/bin" "$CARGO_HOME/bin" "$LLVM_HOME/bin"
 
-  # Set user paths, could just be set via cmd since it will be saved in
-  # fish_user_paths
-  set -Ux fish_user_paths "$GOPATH/bin" "$CARGO_HOME/bin"
+###############################################################################
+# Commenting below out for now since sourcing the conda script adds to fish shell
+# init time and I am currently not using anaconda for python dev.
+###############################################################################
 
-  # Init conda
-  eval /usr/local/anaconda3/bin/conda "shell.fish" "hook" $argv | source
+# Init conda
+# eval /usr/local/anaconda3/bin/conda "shell.fish" "hook" $argv | source
 
-  # Removes (base) from prompt
-  conda deactivate
-end
-
-
+# Removes (base) from prompt
+# conda deactivate
