@@ -1,3 +1,34 @@
+###############################################################################
+# Git Notes
+###############################################################################
+; Grep the git messages for the following term and show the commit hash, adding
+; %s would also show the message.
+;
+; $ git log --pretty="format:%h" --reverse --grep=US17593 -i origin/FE2389
+;
+; Undo all of the commits and restage the changes to make different
+; micro-commits
+;
+; $ git reset --soft HEAD~2
+;
+; Change the git commit history (ordering, messages, squash, etc) Rebase the
+; commits onto the provided hash from HEAD.
+;
+; $ git rebase -i hash
+;
+; Commit using the same commit message from another commit
+;
+; $ git commit -C a45kj23bf
+;
+; View a file from a particular commit
+;
+; $ git show 23sdwjb4g4:source/share/java/com/.../NodeInventory.java > file
+;
+; Display commits since (and not including) another commit
+;
+; $ git log master-next..HEAD --pretty="format:%h" --reverse
+###############################################################################
+
 [user]
   name = asidlo
   email = sidlo.andrew@gmail.com
@@ -6,10 +37,10 @@
   fscache = true
   editor = nvim
 [log]
-    # 2019-02-05 11:53:12 -0500
+  # 2019-02-05 11:53:12 -0500
   date = iso
 [branch]
-    # Automatically rebase to remove merged commit message on pull
+  # Automatically rebase to remove merged commit message on pull
   autosetuprebase = always
 [commit]
   verbose = true
@@ -47,7 +78,6 @@
   # a = author
   l = log
   lo = log --oneline
-  ; lo = log --oneline --pretty='* %C(auto)%h%Creset -%C(auto)%d%Creset %s'
   loa = log --oneline --decorate --pretty='* %C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
   lod = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
   lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
@@ -77,10 +107,11 @@
   sma = submodule add
 
   # standup - last 1 week written by me
-  sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week' --author sidlo.andrew@gmail.com 
+  sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week' --author sidlo.andrew@gmail.com
 
   # https://git-scm.com/docs/git-worktree
   w = worktree
   wl = worktree list
   wa = worktree add
   wrm = worktree remove
+
