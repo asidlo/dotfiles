@@ -1,7 +1,7 @@
 set -x CONDA_LEFT_PROMPT
 
 # Options
-set __fish_git_prompt_show_informative_status
+set -e __fish_git_prompt_show_informative_status
 set __fish_git_prompt_showcolorhints
 set __fish_git_prompt_showupstream "informative"
 
@@ -24,18 +24,19 @@ set __fish_git_prompt_color_upstream_behind red
 
 
 # Icons
-set __fish_git_prompt_char_cleanstate '👍'
-set __fish_git_prompt_char_conflictedstate '⚠️ '
-set __fish_git_prompt_char_dirtystate '💩'
-set __fish_git_prompt_char_invalidstate '🤮 '
-set __fish_git_prompt_char_stagedstate '🚥'
-set __fish_git_prompt_char_stashstate '📦'
+# https://medium.com/@joshuacrass/git-fish-prompt-faa389fff07c
+set __fish_git_prompt_char_cleanstate ''
+set __fish_git_prompt_char_conflictedstate '!' 
+set __fish_git_prompt_char_dirtystate 'M'
+set __fish_git_prompt_char_invalidstate 'X'
+set __fish_git_prompt_char_stagedstate 'S'
+set __fish_git_prompt_char_stashstate '_'
 set __fish_git_prompt_char_stateseparator '|'
-set __fish_git_prompt_char_untrackedfiles '🔍'
-set __fish_git_prompt_char_upstream_ahead '☝️ '
-set __fish_git_prompt_char_upstream_behind '👇'
-set __fish_git_prompt_char_upstream_diverged '🚧'
-set __fish_git_prompt_char_upstream_equal '💯'
+set __fish_git_prompt_char_untrackedfiles '?'
+set __fish_git_prompt_char_upstream_ahead 'A'
+set __fish_git_prompt_char_upstream_behind 'B'
+set __fish_git_prompt_char_upstream_diverged 'D'
+set __fish_git_prompt_char_upstream_equal '=' 
 
 
 function fish_prompt --description "$USER - User defined prompt for fish shell"

@@ -1,13 +1,18 @@
-# Installs fisher on startup if not already installed
-if not functions -q fisher
-    set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
-    curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
-    fish -c fisher
-end
-
-
 # Remove fish greeting
 set fish_greeting
+
+if test umask = "0000"
+  umask 022
+end
+
+switch (uname)
+case Linux
+  set -g workspace_dir ~/workspace
+  set -g go_root /usr/local/go
+case Darwin
+  set -g workspace_dir ~/Documents/workspace
+  set -g go_root /usr/local/Cellar/go/*/libexec
+end
 
 # Show all hidden files and files that are being ignored by vcs
 # https://sidneyliebrand.io/blog/how-fzf-and-ripgrep-improved-my-workflow?source=post_page---------------------------
@@ -32,13 +37,13 @@ set -gx FZF_DEFAULT_OPTS       '--color=fg:#c2bebe,bg:#282a36,hl:#8be9fd' \
                                "--bind='ctrl-d:half-page-down'" \
                                "--bind='ctrl-u:half-page-up'" \
                                "--bind='ctrl-a:select-all+accept'" \
-                               "--bind='ctrl-y:execute-silent(echo {+} | pbcopy)'"
+                               "--bind='ctrl-y:execute-silent(echo {+} | copy)'"
 
 set -gx LPS_DEFAULT_USERNAME   'sidlo.andrew@gmail.com'
 set -gx VISUAL                 nvim
 set -gx EDITOR                 nvim
-set -gx GOPATH                 ~/Documents/workspace/go
-set -gx GOROOT                 /usr/local/Cellar/go/*/libexec
+set -gx GOPATH                 "$workspace_dir/go"
+set -gx GOROOT                 $go_root 
 set -gx FISH_HOME              ~/.config/fish
 set -gx FISH_FUNCS             $FISH_HOME/functions
 set -gx CARGO_HOME             ~/.cargo
@@ -46,18 +51,26 @@ set -gx LLVM_HOME              /usr/local/opt/llvm
 set -gx LDFLAGS                "-L/usr/local/opt/llvm/lib"
 set -gx CPPFLAGS               "-I/usr/local/opt/llvm/include"
 set -gx ANACONDA_HOME          /usr/local/anaconda3
-set -gx DOTDIR                 ~/Documents/dotfiles
-set -gx PIP_REQUIRE_VIRTUALENV true
+set -gx DOTDIR                 ~/documents/dotfiles
+set -gx PIP_REQUIRE_VIRTUALENV false
 
 # Aliases (-s write function to file...makes it have a more global scope)
 alias cls "clear"
-alias copy "pbcopy"
+
+if type -q xsel
+	alias copy "xsel -i -b"
+end
+if type -q xclip
+	alias copy "xclip -selection clipboard"
+end
+if type -q pbcopy
+	alias copy "pbcopy"
+end
+if type -q clip.exe
+	alias copy "clip.exe"
+end
+
 alias csv "column -t -s,"
-alias md "mkdir -p"
-alias cpi 'cp -i'
-alias mvi 'mv -i'
-alias rmi 'rm -i'
-alias rd rmdir
 
 # Abbreviations
 abbr g 'git'
@@ -69,8 +82,23 @@ abbr tree "tree -C"
 
 # Set user paths, could just be set via cmd since it will be saved in
 # fish_user_paths
-set -Ux fish_user_paths "$GOPATH/bin" "$CARGO_HOME/bin" "$LLVM_HOME/bin"
+if test -e "$GOPATH/bin"
+  set -Ux fish_user_paths "$GOPATH/bin" 
+end
+if test -e "$CARGO_HOME/bin"
+  set -Ux fish_user_paths "$CARGO_HOME/bin" 
+end
+if test -e "$LLVM_HOME/bin"
+  set -Ux fish_user_paths "$LLVM_HOME/bin"
+end
+if test -e "$GOROOT/bin"
+  set -Ux fish_user_paths "$GOROOT/bin"
+end
 
+type -q fd
+if test $status -ne 0
+  echoerr 'fd not found in PATH, fzf uses fd for default file find command'
+end
 ###############################################################################
 # Commenting below out for now since sourcing the conda script adds to fish shell
 # init time and I am currently not using anaconda for python dev.

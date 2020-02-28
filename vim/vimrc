@@ -10,6 +10,11 @@ let g:is_mac = has('macunix')
 let g:is_gui = has('gui_running')
 let g:is_nvim = has('nvim')
 
+" 1 = skip, 0 = dont skip
+let g:skip_coc_plugin = 1
+let g:skip_go_plugin = 1
+let g:skip_ctags_plugin = 1
+
 " Vim directory where all settings, plugins, syntax, etc stored
 " Note: expand vs glob = glob will return empty if file doesnt exist
 " also, expand has a list of special variables (see :h expand)
@@ -26,12 +31,27 @@ let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
 let g:loaded_node_provider = 0
 
-if !executable('fd')
-  echoerr 'fd executable not found! Install and add to Path to perform fuzzy searching'
+let s:undo_dir = g:vim_dir . '/undo'
+if empty(glob(s:undo_dir))
+  echoerr "Undo dir does not exist, please create it to ensure change history: " . s:undo_dir
 endif
 
 if !executable('rg')
   echoerr 'Ripgrep executable not found! Install and add to Path to perform project searching'
+endif
+
+if !executable('nodejs') && !executable('node')
+  echoerr 'Nodejs is required for coc.nvim, please install nodejs and npm and add to PATH'
+  let g:skip_coc_plugin = 1
+endif
+
+if !executable('fzf')
+  echoerr 'fzf is required for fuzzy searching, please install fzf and add to PATH'
+endif
+
+if !executable('ctags')
+  echoerr 'ctags is required for generating tags, please install ctags and add to PATH'
+  let g:skip_ctags_plugin = 1
 endif
 
 " Path to Python 3 interpreter (must be an absolute path), make startup
@@ -44,6 +64,21 @@ if executable('python') || executable('python3')
   endif
 else
   echoerr 'Python 3 executable not found! You must install Python 3 and set its PATH correctly!'
+  exit
+endif
+
+if !executable('java')
+  echoerr 'Java needs to be installed in order to have coc.nvim autocompletion'
+endif
+
+if !executable('go')
+  echoerr 'Go needs to be installed in order to run the vim-go plugin'
+  let g:skip_go_plugin = 1
+endif
+
+if !exists('$GOPATH') 
+  echoerr 'Please also set go env vars [GOPATH, GOROOT, GOBIN]'
+  let g:skip_go_plugin = 1
 endif
 
 " }}}
@@ -74,7 +109,9 @@ Plug 'godlygeek/tabular'
 " Unknown function: go#config#GoplsMatcher
 " See: https://github.com/fatih/vim-go/issues/2272
 " See: https://github.com/fatih/vim-go/issues/2262
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+if !g:skip_go_plugin
+  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+endif
 Plug 'AndrewRadev/splitjoin.vim'
 
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -126,20 +163,28 @@ Plug 'mhinz/vim-grepper'
 
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
-Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
+if !g:skip_coc_plugin
+  Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
+endif
 
 Plug 'dense-analysis/ale'
 
 " Symbol / Tag Plugins
-Plug 'majutsushi/tagbar'
-Plug 'ludovicchabant/vim-gutentags'
+if !g:skip_ctags_plugin
+  Plug 'majutsushi/tagbar'
+  Plug 'ludovicchabant/vim-gutentags'
+endif
 
 " Snippets (using coc-snippets so no need for Ultisnips)
 Plug 'honza/vim-snippets'
 Plug 'segeljakt/vim-silicon'
 
 " Fuzzy searching (will install if not already in path)
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+if g:is_mac
+  Plug '/usr/local/opt/fzf'
+else
+  Plug 'junegunn/fzf', { 'do': './install --bin' }
+endif
 Plug 'junegunn/fzf.vim'
 
 Plug 'moll/vim-bbye' " optional dependency
@@ -159,7 +204,11 @@ let mapleader=","
 
 syntax enable
 
-colorscheme dracula
+try
+  colorscheme dracula
+catch
+  colorscheme desert
+endtry
 
 " Makes highlighting not an eyesore
 let g:dracula_inverse = 0
@@ -365,11 +414,6 @@ let g:netrw_dirhistmax = 0
 
 " This enables us to undo files even if you exit Vim.
 " Note: this dir needs to be made prior to working
-let s:undo_dir = g:vim_dir . '/undo'
-if empty(glob(s:undo_dir))
-  echoerr "Undo dir does not exist, create it using :Mkdir " . s:undo_dir
-endif
-
 let &undodir = s:undo_dir
 set undofile
 
@@ -763,8 +807,10 @@ function! AirlineCocStatus() abort
   return ''
 endfunction
 
-call airline#parts#define_function('coc_status', 'AirlineCocStatus')
-" let g:airline_section_c = airline#section#create_right(['file', 'readonly', 'coc_status'])
+if exists('g:loaded_airline')
+  call airline#parts#define_function('coc_status', 'AirlineCocStatus')
+  " let g:airline_section_c = airline#section#create_right(['file', 'readonly', 'coc_status'])
+endif
 
 let g:airline#extensions#default#section_truncate_width = {
     \ 'c': 50,
@@ -829,7 +875,7 @@ let g:fzf_action = {
 if executable('fd')
   let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never -E .git -E node_modules -E .gradle -E '*.class' -E .idea -E .settings -E .project -E .classpath"
 elseif executable('rg')
-  let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden"
+  let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden -g !tags -g !.git -g !.gradle -g !*.class -g !node_modules -g !.idea -g !.settings -g !.project -g !.classpath"
 endif
 
 nnoremap <leader>N :Files<cR>
@@ -1217,10 +1263,12 @@ autocmd BufRead,BufNewFile agent-service*.log,base-service*.log,gateway-service*
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 
 " Open all folds = zR; Close all folds = zM
+" Close all folds = zM; Open all folds = zR
 augroup XML
     autocmd!
     autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
 augroup END
+
 " }}}
 "==============================================================================
 " }}}
