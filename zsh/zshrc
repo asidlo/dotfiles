@@ -1,10 +1,21 @@
 # https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
 setopt prompt_subst
+autoload -U colors && colors # Enable colors in prompt
+
+# Enable tab completion
+autoload -U compinit
+compinit
+
+# Highlight menu selection
+zstyle ':completion:*' menu select
+
+# Change background for highlight
+# https://stackoverflow.com/questions/23152157/how-does-the-zsh-list-colors-syntax-work
+# zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*==34=34}:${(s.:.)LS_COLORS}")'
+# zstyle ':completion:*:default' list-colors '=(#b)*(XX *)=32=31' '=*=32'
 
 # Turn off all beeps
 unsetopt BEEP
-
-autoload -U colors && colors # Enable colors in prompt
 
 # Echoes a username/host string when connected over SSH (empty otherwise)
 ssh_info() {
