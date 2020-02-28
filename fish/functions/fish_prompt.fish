@@ -33,9 +33,9 @@ set __fish_git_prompt_char_stagedstate 'S'
 set __fish_git_prompt_char_stashstate '_'
 set __fish_git_prompt_char_stateseparator '|'
 set __fish_git_prompt_char_untrackedfiles '?'
-set __fish_git_prompt_char_upstream_ahead 'A'
-set __fish_git_prompt_char_upstream_behind 'B'
-set __fish_git_prompt_char_upstream_diverged 'D'
+set __fish_git_prompt_char_upstream_ahead ' A'
+set __fish_git_prompt_char_upstream_behind ' B'
+set __fish_git_prompt_char_upstream_diverged ' D'
 set __fish_git_prompt_char_upstream_equal '=' 
 
 
