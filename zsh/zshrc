@@ -92,7 +92,11 @@ if test umask = '0000'; then
   umask 022
 fi
 
-alias ls='ls -G'
+if test uname = 'Darwin'; then
+  alias ls='ls -G'
+else
+  alias ls='ls --color=auto'
+fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias grep='grep --color=auto'
@@ -101,15 +105,13 @@ alias tree='tree -C'
 
 export VISUAL=nvim
 export EDITOR=nvim
-export GOPATH="$workspace_dir/go"
-export GOROOT=$go_root 
 export FD_OPTS='--follow --exclude .git --exclude node_modules'
 export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | fd --type f --type l $FD_OPTS"
 export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
 export FZF_ALT_C_COMMAND="fd --type d $FD_OPTS"
 export FZF_DEFAULT_OPTS='
-  --color=fg:#c2bebe,bg:#282a36,hl:#8be9fd
-  --color=fg+:#f8f8f2,bg+:#282a36,hl+:#ff79c6
+  --color=fg:#c2bebe,bg:0,hl:#8be9fd
+  --color=fg+:#f8f8f2,bg+:0,hl+:#ff79c6
   --color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
   --color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
   --height 50% -1 --reverse --multi --inline-info
@@ -131,3 +133,4 @@ abbrev-alias -g confe="$EDITOR ~/.vimrc"
 # Completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# Platform specific vars, exports, etc should be done via ~/.zshenv
