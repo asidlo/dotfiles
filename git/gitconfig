@@ -120,4 +120,5 @@
   wl = worktree list
   wa = worktree add
   wrm = worktree remove
+	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
