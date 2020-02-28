@@ -7,6 +7,20 @@ ssh_info() {
   [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
 }
 
+git_branch() {
+  # Exit if not inside a Git repository
+  ! git rev-parse --is-inside-work-tree > /dev/null 2>&1 && return
+
+  # Git branch/tag, or name-rev if on detached head
+  local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
+
+  # Add the branch icon and the branch name
+  local -a GIT_INFO
+  # GIT_INFO+=( "\033[38;5;15m(" )
+  GIT_INFO+=( "\033[38;5;15m($GIT_LOCATION)%{$reset_color%}" )
+  echo "${(j: :)GIT_INFO}"
+}
+
 # Echoes information about Git repository status when inside a Git repository
 git_info() {
 
@@ -65,10 +79,55 @@ git_info() {
 
 # Use % as the non-root prompt character; # for root
 # Change the prompt character color if the last command had a nonzero exit code
-PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u $(git_info)
+PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u $(git_branch)
 %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
+
+export PATH=$PATH:/usr/local/bin
 
 source <(antibody init)
 antibody bundle < ~/.zsh_plugins.txt
 
+# Fix for wsl setting umask to 0000
+if test umask = '0000'; then
+  umask 022
+fi
+
+alias ls='ls -G'
+alias ll='ls -alF'
+alias la='ls -A'
+alias grep='grep --color=auto'
+alias cls='clear'
+alias tree='tree -C'
+
+export VISUAL=nvim
+export EDITOR=nvim
+export GOPATH="$workspace_dir/go"
+export GOROOT=$go_root 
+export FD_OPTS='--follow --exclude .git --exclude node_modules'
+export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | fd --type f --type l $FD_OPTS"
+export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+export FZF_ALT_C_COMMAND="fd --type d $FD_OPTS"
+export FZF_DEFAULT_OPTS='
+  --color=fg:#c2bebe,bg:#282a36,hl:#8be9fd
+  --color=fg+:#f8f8f2,bg+:#282a36,hl+:#ff79c6
+  --color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
+  --color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
+  --height 50% -1 --reverse --multi --inline-info
+  --preview="bat --color=always --style=numbers {}"
+  --preview-window="right:hidden"
+  --bind="F2:toggle-preview"
+  --bind="ctrl-d:half-page-down"
+  --bind="ctrl-u:half-page-up"
+  --bind="ctrl-a:select-all+accept"
+  --bind="ctrl-y:execute-silent(echo {+} | copy)"
+'
+
+# Abbreviations using plugin 'momo-lab/zsh-abbrev-alias'
+abbrev-alias -g g='git'
+abbrev-alias -g py='python'
+abbrev-alias -g py3='python3'
+abbrev-alias -g confe="$EDITOR ~/.vimrc"
+
+# Completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
