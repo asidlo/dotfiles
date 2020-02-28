@@ -92,7 +92,7 @@ if test umask = '0000'; then
   umask 022
 fi
 
-if test uname = 'Darwin'; then
+if test $(uname) = 'Darwin'; then
   alias ls='ls -G'
 else
   alias ls='ls --color=auto'
