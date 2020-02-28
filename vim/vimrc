@@ -1,6 +1,6 @@
 "==============================================================================
-" Author:   Andrew Sidlo
-" Updated:  April 14, 2019
+" Author:  Andrew Sidlo
+" Updated: 2020/02/26 18:26:50
 "==============================================================================
 " Section: Variables {{{
 "==============================================================================
@@ -66,6 +66,8 @@ call plug#begin(g:vim_dir . '/plugged')
 Plug 'nanotech/jellybeans.vim'
 Plug 'morhetz/gruvbox'
 Plug 'dracula/vim', { 'as': 'dracula' }
+
+Plug 'godlygeek/tabular'
 
 " Golang plugins
 " Need to load before vim-polyglot in order to avoid getting errors like
@@ -838,7 +840,6 @@ nnoremap <leader>x :Maps<cr>
 nnoremap <leader>X :Commands<cr>
 nnoremap <leader>o :BTags<cr>
 nnoremap <leader>O :Tags<cr>
-nnoremap <leader>M :Marks<cr>
 
 " Match color scheme
 let g:fzf_colors =
@@ -1215,6 +1216,11 @@ autocmd FileType vim set foldmethod=marker
 autocmd BufRead,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 
+" Open all folds = zR; Close all folds = zM
+augroup XML
+    autocmd!
+    autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
+augroup END
 " }}}
 "==============================================================================
 " }}}

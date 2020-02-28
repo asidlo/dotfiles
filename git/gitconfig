@@ -27,6 +27,12 @@
 ; Display commits since (and not including) another commit
 ;
 ; $ git log master-next..HEAD --pretty="format:%h" --reverse
+;
+; Get all changed files in a commit
+;
+; (plumbing) $ git diff-tree --no-commit-id --name-only -r wefwjken3f3
+; (porcelain)$ git show --pretty="" --name-only wkejf3j2fj
+;   > Could use --no-pager so output isnt paged
 ###############################################################################
 
 [user]
