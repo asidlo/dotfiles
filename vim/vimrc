@@ -11,9 +11,9 @@ let g:is_gui = has('gui_running')
 let g:is_nvim = has('nvim')
 
 " 1 = skip, 0 = dont skip
-let g:skip_coc_plugin = 1
-let g:skip_go_plugin = 1
-let g:skip_ctags_plugin = 1
+let g:skip_coc_plugin = 0
+let g:skip_go_plugin = 0
+let g:skip_ctags_plugin = 0
 
 " Vim directory where all settings, plugins, syntax, etc stored
 " Note: expand vs glob = glob will return empty if file doesnt exist
@@ -76,7 +76,7 @@ if !executable('go')
   let g:skip_go_plugin = 1
 endif
 
-if !exists('$GOPATH') 
+if !exists('$GOPATH')
   echoerr 'Please also set go env vars [GOPATH, GOROOT, GOBIN]'
   let g:skip_go_plugin = 1
 endif
@@ -452,9 +452,9 @@ if g:is_nvim
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Altc+ - should be used instead of just -
   " Open terminal in vertical, horizontal and new tab
-  nnoremap <leader>tv :vsplit term://fish<cr>
-  nnoremap <leader>ts :split term://fish<cr>
-  nnoremap <leader>tt :e term://fish<cr>
+  nnoremap <leader>tv :vsplit term://zsh<cr>
+  nnoremap <leader>ts :split term://zsh<cr>
+  nnoremap <leader>tt :e term://zsh<cr>
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
@@ -515,11 +515,6 @@ endif
 " Switch CWD to the directory of the open buffer
 nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
 
-" Print the directory of the current buffer
-" Helpful since :pwd will print the project root dir when vim-rooter is applied
-command! Dirname :echo expand('%:p:h')
-" nnoremap <leader>dn :Dirname<cr>
-" nnoremap <leader>fn :file<cr>
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -794,9 +789,12 @@ let g:airline_right_sep = ''
 let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = 'שׂ'
 let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = '☰'
-let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ''
 let g:airline_symbols.dirty=' ??'
+let g:airline_symbols.whitespace='/s'
+let g:airline_symbols.crypt='0x'
+let g:airline_symbols.notexists=' ?'
 
 let airline#extensions#ale#show_line_numbers = 0
 
@@ -937,7 +935,8 @@ nnoremap <leader>\ :Ack<space>
 "==============================================================================
 " Markdown {{{
 "==============================================================================
-let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_folding_disabled = 0
+let g:vim_markdown_folding_style_pythonic = 1
 let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
 
@@ -1085,6 +1084,18 @@ function! CopyMatches(regex)
   " Store the result from register 'A' to the clipboard
   let @+ = trim(@a)
 endfunction
+
+" Print the directory of the current buffer
+" Helpful since :pwd will print the project root dir when vim-rooter is applied
+command! Dirname :echo expand('%:p:h')
+ab DN Dirname
+ab FN file
+
+command! SyncSyntax :syntax sync fromstart
+ab SS SyncSyntax
+
+command! Dos2Linux :%s///g
+ab D2L Dos2Linux
 
 " }}}
 "==============================================================================
