@@ -108,6 +108,7 @@ if test umask = '0000'; then
 fi
 
 if test $(uname) = 'Darwin'; then
+  bindkey "ç" fzf-cd-widget
   alias ls='ls -G'
 else
   alias ls='ls --color=auto'
@@ -125,8 +126,8 @@ export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2>
 export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
 export FZF_ALT_C_COMMAND="fd --type d $FD_OPTS"
 export FZF_DEFAULT_OPTS='
-  --color=fg:#c2bebe,bg:0,hl:#8be9fd
-  --color=fg+:#f8f8f2,bg+:0,hl+:#ff79c6
+  --color=fg:#c2bebe,hl:#8be9fd
+  --color=fg+:#f8f8f2,hl+:#ff79c6
   --color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
   --color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
   --height 50% -1 --reverse --multi --inline-info
@@ -148,4 +149,6 @@ abbrev-alias -g confe="$EDITOR ~/.vimrc"
 # Completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Platform specific vars, exports, etc should be done via ~/.zshenv
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/asidlo/.sdkman"
+[[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"

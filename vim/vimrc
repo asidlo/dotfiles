@@ -11,9 +11,9 @@ let g:is_gui = has('gui_running')
 let g:is_nvim = has('nvim')
 
 " 1 = skip, 0 = dont skip
-let g:skip_coc_plugin = 1
-let g:skip_go_plugin = 1
-let g:skip_ctags_plugin = 1
+let g:skip_coc_plugin = 0
+let g:skip_go_plugin = 0
+let g:skip_ctags_plugin = 0
 
 " Vim directory where all settings, plugins, syntax, etc stored
 " Note: expand vs glob = glob will return empty if file doesnt exist
@@ -656,6 +656,14 @@ endfunction
 " Magit {{{
 "==============================================================================
 let g:magit_default_fold_level = 0
+
+" }}}
+"==============================================================================
+" Gutentags {{{
+"==============================================================================
+if g:is_mac
+  let g:gutentags_ctags_executable='/usr/local/opt/universal-ctags/bin/ctags'
+endif
 
 " }}}
 "==============================================================================
