@@ -103,12 +103,13 @@ source <(antibody init)
 antibody bundle < ~/.zsh_plugins.txt
 
 # Fix for wsl setting umask to 0000
-if test umask = '0000'; then
+if test umask != '022'; then
   umask 022
 fi
 
 if test $(uname) = 'Darwin'; then
   bindkey "ç" fzf-cd-widget
+  alias copy='xclip -selection -c'
   alias ls='ls -G'
 else
   alias ls='ls --color=auto'
@@ -148,7 +149,3 @@ abbrev-alias -g confe="$EDITOR ~/.vimrc"
 
 # Completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/asidlo/.sdkman"
-[[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"

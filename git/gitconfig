@@ -42,6 +42,7 @@
   preloadindex = true
   fscache = true
   editor = nvim
+  excludesfile = ~/.gitignore
 [log]
   # 2019-02-05 11:53:12 -0500
   date = iso
@@ -120,5 +121,5 @@
   wl = worktree list
   wa = worktree add
   wrm = worktree remove
-	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+  alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
