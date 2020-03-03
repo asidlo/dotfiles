@@ -102,24 +102,26 @@ export PATH=$PATH:/usr/local/bin
 source <(antibody init)
 antibody bundle < ~/.zsh_plugins.txt
 
+# ['Darwin', 'Linux', '']
+local OS=$(uname)
+
+local MAC='Darwin'
+local LINUX='Linux'
+local WIN=''
+local IS_WIN=$(test $OS = '')
+local IS_MAC=$(test $OS = $MAC)
+local IS_LINUX=$(test $OS = $LINUX)
+
 # Fix for wsl setting umask to 0000
 if test umask != '022'; then
   umask 022
 fi
 
-if test $(uname) = 'Darwin'; then
-  bindkey "ç" fzf-cd-widget
-  alias copy='xclip -selection -c'
-  alias ls='ls -G'
-else
-  alias ls='ls --color=auto'
-fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias grep='grep --color=auto'
 alias cls='clear'
 alias tree='tree -C'
-
 export VISUAL=nvim
 export EDITOR=nvim
 export FD_OPTS='--follow --exclude .git --exclude node_modules'
@@ -146,6 +148,45 @@ abbrev-alias -g g='git'
 abbrev-alias -g py='python'
 abbrev-alias -g py3='python3'
 abbrev-alias -g confe="$EDITOR ~/.vimrc"
+
+case $OS in
+  $MAC)
+    bindkey "ç" fzf-cd-widget
+    alias ls='ls -G'
+    alias copy='pbcopy'
+    ;;
+  $LINUX)
+    alias copy='xclip -selection -c'
+    alias ls='ls --color=auto'
+    ;;
+  $WIN)
+    alias copy='clip.exe'
+    alias ls='ls --color=auto'
+esac
+
+# GOPATH and GOROOT
+if $IS_MAC; then
+  export GOROOT=/usr/local/Cellar/go/**/libexec
+  export GOPATH=~/Documents/workspace/go
+  export PATH=$PATH:"$GOPATH/bin"
+fi
+
+# JAVA_HOME
+if $IS_MAC; then
+  export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/Contents/Home
+fi
+
+# CTAGS
+if $IS_MAC; then
+  alias ctags=/usr/local/opt/universal-ctags/bin/ctags
+fi
+
+# SDKMAN
+if $IS_MAC; then
+  #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+  export SDKMAN_DIR="/Users/asidlo/.sdkman"
+  [[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"
+fi
 
 # Completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
