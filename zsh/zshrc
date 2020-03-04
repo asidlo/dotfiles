@@ -102,15 +102,25 @@ export PATH=$PATH:/usr/local/bin
 source <(antibody init)
 antibody bundle < ~/.zsh_plugins.txt
 
-# ['Darwin', 'Linux', '']
-local OS=$(uname)
+# Linux NXDEV181 4.4.0-17763-Microsoft #864-Microsoft Thu Nov 07 15:22:00 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
+local OS=$(uname -a)
 
 local MAC='Darwin'
 local LINUX='Linux'
-local WIN=''
-local IS_WIN=$(test $OS = '')
-local IS_MAC=$(test $OS = $MAC)
-local IS_LINUX=$(test $OS = $LINUX)
+local WIN='Microsoft'
+
+function is_mac() {
+  [[ $OS =~ $MAC ]] && return 0
+  return 1
+}
+function is_win() {
+  [[ $OS =~ $WIN ]] && return 0
+  return 1
+}
+function is_linux() {
+  [[ $OS =~ $LINUX ]] && return 0
+  return 1
+}
 
 # Fix for wsl setting umask to 0000
 if test umask != '022'; then
@@ -149,44 +159,53 @@ abbrev-alias -g py='python'
 abbrev-alias -g py3='python3'
 abbrev-alias -g confe="$EDITOR ~/.vimrc"
 
+# JAVA_HOME
+is_mac && export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/Contents/Home
+
+# CTAGS
+is_mac && alias ctags=/usr/local/opt/universal-ctags/bin/ctags
+
+# Note: windows pattern is before the linux pattern since wsl would require the
+# windows alias over the linux alias.
 case $OS in
-  $MAC)
+  *$MAC*)
     bindkey "ç" fzf-cd-widget
     alias ls='ls -G'
     alias copy='pbcopy'
     ;;
-  $LINUX)
+  *$WIN*)
+    alias copy='clip.exe'
+    alias ls='ls --color=auto'
+    ;;
+  *$LINUX*)
     alias copy='xclip -selection -c'
     alias ls='ls --color=auto'
     ;;
-  $WIN)
-    alias copy='clip.exe'
-    alias ls='ls --color=auto'
 esac
 
-# GOPATH and GOROOT
-if $IS_MAC; then
-  export GOROOT=/usr/local/Cellar/go/**/libexec
-  export GOPATH=~/Documents/workspace/go
-  export PATH=$PATH:"$GOPATH/bin"
-fi
+# Note: linux pattern is before the windows pattern since wsl would require the
+# linux location over the windows location. Same is true for sdkman below
+case $OS in
+  *$MAC*)
+    export GOROOT=/usr/local/Cellar/go/**/libexec
+    export GOPATH=~/Documents/workspace/go
+    export SDKMAN_DIR="/Users/asidlo/.sdkman"
+    ;;
+  *$LINUX*)
+    export GOROOT=/usr/local/go
+    export GOPATH=~/workspace/go
+    export SDKMAN_DIR="/home/asidlo/.sdkman"
+    ;;
+  *$WIN*)
+    export GOROOT=/c/Go
+    export GOPATH=/d/go
+    export SDKMAN_DIR="/c/Users/asidlo/.sdkman"
+    ;;
+esac
 
-# JAVA_HOME
-if $IS_MAC; then
-  export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/Contents/Home
-fi
+# Check if env vars are set, if so then add their bin to path
+[ ! -z $GOROOT ] && export PATH=$PATH:"$GOROOT/bin"
+[ ! -z $GOPATH ] && export PATH=$PATH:"$GOPATH/bin"
 
-# CTAGS
-if $IS_MAC; then
-  alias ctags=/usr/local/opt/universal-ctags/bin/ctags
-fi
-
-# SDKMAN
-if $IS_MAC; then
-  #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-  export SDKMAN_DIR="/Users/asidlo/.sdkman"
-  [[ -s "/Users/asidlo/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/asidlo/.sdkman/bin/sdkman-init.sh"
-fi
-
-# Completions
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# Note SDKMAN init should be last
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
