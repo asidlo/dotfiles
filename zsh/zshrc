@@ -1,29 +1,90 @@
+#==============================================================================
+# Colors
+#==============================================================================
 # https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
-setopt prompt_subst
+# https://dustri.org/b/my-zsh-configuration.html
 autoload -U colors && colors # Enable colors in prompt
 
+# zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+#==============================================================================
+# Completion
+#==============================================================================
 # Enable tab completion
-autoload -U compinit
-compinit
+autoload -U compinit && compinit
 
 # Highlight menu selection
 zstyle ':completion:*' menu select
 
-# Change background for highlight
-# https://stackoverflow.com/questions/23152157/how-does-the-zsh-list-colors-syntax-work
-# zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*==34=34}:${(s.:.)LS_COLORS}")'
-# zstyle ':completion:*:default' list-colors '=(#b)*(XX *)=32=31' '=*=32'
+#==============================================================================
+# Pushd
+#==============================================================================
+setopt auto_pushd               # make cd push old dir in dir stack
+setopt pushd_ignore_dups        # no duplicates in dir stack
+setopt pushd_silent             # no dir stack after pushd or popd
+setopt pushd_to_home            # `pushd` = `pushd $HOME`
 
-# Turn off all beeps
-unsetopt BEEP
+#==============================================================================
+# History
+#==============================================================================
+HISTFILE=~/.zsh_history         # where to store zsh config
+HISTSIZE=1024                   # big history
+SAVEHIST=1024                   # big history
+setopt append_history           # append
+setopt hist_ignore_all_dups     # no duplicate
+unsetopt hist_ignore_space      # ignore space prefixed commands
+setopt hist_reduce_blanks       # trim blanks
+setopt hist_verify              # show before executing history commands
+setopt inc_append_history       # add commands as they are typed, don't wait until shell exit 
+setopt share_history            # share hist between sessions
+setopt bang_hist                # !keyword
 
-# Linux NXDEV181 4.4.0-17763-Microsoft #864-Microsoft Thu Nov 07 15:22:00 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
+#==============================================================================
+# Misc
+#==============================================================================
+setopt chase_links              # resolve symlinks
+setopt correct                  # try to correct spelling of commands
+setopt extended_glob            # activate complex pattern globbing
+setopt glob_dots                # include dotfiles in globbing
+unsetopt rm_star_silent         # ask for confirmation for `rm *' or `rm path/*'
+unsetopt BEEP                   # Turn off all beeps
+
+#==============================================================================
+# VCS info
+#==============================================================================
+# autoload -Uz vcs_info
+# zstyle ':vcs_info:*' enable git svn hg
+# zstyle ':vcs_info:*' check-for-changes true
+# zstyle ':vcs_info:*' formats "%{$fg[yellow]%}%c%{$fg[green]%}%u%{$reset_color%} [%{$fg[blue]%}%b%{$reset_color%}] %{$fg[yellow]%}%s%{$reset_color%}:%r"
+# precmd() {  # run before each prompt
+#   vcs_info
+# }
+
+#==============================================================================
+# Prompt
+#==============================================================================
+setopt prompt_subst     # allow funky stuff in prompt
+
+# Use % as the non-root prompt character; # for root
+# Change the prompt character color if the last command had a nonzero exit code
+PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u $(git_branch)
+%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
+
+
+#==============================================================================
+# Variables
+#==============================================================================
+# Ex: Linux NXDEV181 4.4.0-17763-Microsoft #864-Microsoft Thu Nov 07 15:22:00 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
 local OS=$(uname -a)
 
 local MAC='Darwin'
 local LINUX='Linux'
 local WIN='Microsoft'
 
+#==============================================================================
+# Functions
+#==============================================================================
 function is_mac() {
   [[ $OS =~ $MAC ]] && return 0
   return 1
@@ -59,11 +120,9 @@ git_branch() {
   echo "${(j: :)GIT_INFO}"
 }
 
-# Use % as the non-root prompt character; # for root
-# Change the prompt character color if the last command had a nonzero exit code
-PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u $(git_branch)
-%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
-
+#==============================================================================
+# Misc
+#==============================================================================
 if is_mac || is_linux; then
   export PATH=$PATH:/usr/local/bin
 fi
@@ -73,15 +132,14 @@ if test umask != '022'; then
   umask 022
 fi
 
-alias ll='ls -alF'
-alias la='ls -A'
-alias grep='grep --color=auto'
-alias cls='clear'
-
-if (( $+commands[tree] )); then
-  alias tree='tree -C'
+if is_mac; then
+  bindkey "ç" fzf-cd-widget
 fi
+#==============================================================================
+# Exports
+#==============================================================================
 
+# Editor [nvim|vim]
 if (( $+commands[nvim] )); then
   export VISUAL=nvim
   export EDITOR=nvim
@@ -90,6 +148,7 @@ else
   export EDITOR=vim
 fi
 
+# Fd, bat, fzf
 if (( $+commands[fd] )) && (( $+commands[fzf] )) && (( $+commands[bat] )); then
   export FD_OPTS='--follow --exclude .git --exclude node_modules'
   export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | fd --type f --type l $FD_OPTS"
@@ -116,29 +175,8 @@ fi
 # JAVA_HOME
 is_mac && export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/Contents/Home
 
-# CTAGS
-is_mac && alias ctags=/usr/local/opt/universal-ctags/bin/ctags
-
-# Note: windows pattern is before the linux pattern since wsl would require the
-# windows alias over the linux alias.
-case $OS in
-  *$MAC*)
-    bindkey "ç" fzf-cd-widget
-    alias ls='ls -G'
-    alias copy='pbcopy'
-    ;;
-  *$WIN*)
-    alias copy='clip.exe'
-    alias ls='ls --color=auto'
-    ;;
-  *$LINUX*)
-    alias copy='xclip -selection -c'
-    alias ls='ls --color=auto'
-    ;;
-esac
-
 # Note: linux pattern is before the windows pattern since wsl would require the
-# linux location over the windows location. Same is true for sdkman below
+# linux location over the windows location.
 case $OS in
   *$MAC*)
     export GOROOT=/usr/local/Cellar/go/**/libexec
@@ -161,7 +199,39 @@ esac
 [ ! -z $GOROOT ] && export PATH=$PATH:"$GOROOT/bin"
 [ ! -z $GOPATH ] && export PATH=$PATH:"$GOPATH/bin"
 
+#==============================================================================
+# Aliases
+#==============================================================================
+alias ll='ls -alF'
+alias la='ls -A'
+alias grep='grep --color=auto'
+alias cls='clear'
+
+if (( $+commands[tree] )); then
+  alias tree='tree -C'
+fi
+
+# Note: windows pattern is before the linux pattern since wsl would require the
+# windows alias over the linux alias.
+case $OS in
+  *$MAC*)
+    alias ls='ls -G'
+    alias copy='pbcopy'
+    alias ctags=/usr/local/opt/universal-ctags/bin/ctags
+    ;;
+  *$WIN*)
+    alias copy='clip.exe'
+    alias ls='ls --color=auto'
+    ;;
+  *$LINUX*)
+    alias copy='xclip -selection -c'
+    alias ls='ls --color=auto'
+    ;;
+esac
+
+#==============================================================================
 # Plugins
+#==============================================================================
 if ! (( $+commands[antibody] )); then
   >&2 echo "Antibody not found. Install antibody and add it to PATH"
   return 1
@@ -174,7 +244,11 @@ antibody bundle < ~/.zsh_plugins.txt
 abbrev-alias -g g='git'
 abbrev-alias -g py='python'
 abbrev-alias -g py3='python3'
-abbrev-alias -g confe="$EDITOR ~/.vimrc"
+abbrev-alias -g confe="$EDITOR ~/.zshrc"
+abbrev-alias -g confr="source ~/.zshrc"
 
+#==============================================================================
+# SDKMAN
+#==============================================================================
 # Note SDKMAN init should be last
 [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
