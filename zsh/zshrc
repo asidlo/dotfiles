@@ -41,6 +41,12 @@ bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd '?' fzf-history-widget
 bindkey -M vicmd ' ' fzf-history-widget
 
+# Use C-F to complete recent command
+# Note: need to use -s if binding to non widget, in this case we are binding to
+# the right arrow key. You can discover key bindings by hitting <C-V><KEYCOMBO>
+# in the terminal.
+bindkey -s '^F' '^[[C' 
+
 # }}}
 #==============================================================================
 # Completion {{{
