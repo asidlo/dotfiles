@@ -1,5 +1,7 @@
 #==============================================================================
-# Colors
+# Author: Andrew Sidlo
+#==============================================================================
+# Colors {{{
 #==============================================================================
 # https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
 # https://dustri.org/b/my-zsh-configuration.html
@@ -8,8 +10,9 @@ autoload -U colors && colors # Enable colors in prompt
 # zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 
+# }}}
 #==============================================================================
-# Completion
+# Completion {{{
 #==============================================================================
 # Enable tab completion
 autoload -U compinit && compinit
@@ -17,16 +20,18 @@ autoload -U compinit && compinit
 # Highlight menu selection
 zstyle ':completion:*' menu select
 
+# }}}
 #==============================================================================
-# Pushd
+# Pushd {{{
 #==============================================================================
 setopt auto_pushd               # make cd push old dir in dir stack
 setopt pushd_ignore_dups        # no duplicates in dir stack
 setopt pushd_silent             # no dir stack after pushd or popd
 setopt pushd_to_home            # `pushd` = `pushd $HOME`
 
+# }}}
 #==============================================================================
-# History
+# History {{{
 #==============================================================================
 HISTFILE=~/.zsh_history         # where to store zsh config
 HISTSIZE=1024                   # big history
@@ -40,8 +45,9 @@ setopt inc_append_history       # add commands as they are typed, don't wait unt
 setopt share_history            # share hist between sessions
 setopt bang_hist                # !keyword
 
+# }}}
 #==============================================================================
-# Misc
+# Misc {{{
 #==============================================================================
 setopt chase_links              # resolve symlinks
 setopt correct                  # try to correct spelling of commands
@@ -50,8 +56,9 @@ setopt glob_dots                # include dotfiles in globbing
 unsetopt rm_star_silent         # ask for confirmation for `rm *' or `rm path/*'
 unsetopt BEEP                   # Turn off all beeps
 
+# }}}
 #==============================================================================
-# VCS info
+# VCS info {{{
 #==============================================================================
 # autoload -Uz vcs_info
 # zstyle ':vcs_info:*' enable git svn hg
@@ -61,8 +68,9 @@ unsetopt BEEP                   # Turn off all beeps
 #   vcs_info
 # }
 
+# }}}
 #==============================================================================
-# Prompt
+# Prompt {{{
 #==============================================================================
 setopt prompt_subst     # allow funky stuff in prompt
 
@@ -72,8 +80,9 @@ PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{
 %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
 
 
+# }}}
 #==============================================================================
-# Variables
+# Variables {{{
 #==============================================================================
 # Ex: Linux NXDEV181 4.4.0-17763-Microsoft #864-Microsoft Thu Nov 07 15:22:00 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
 local OS=$(uname -a)
@@ -82,8 +91,9 @@ local MAC='Darwin'
 local LINUX='Linux'
 local WIN='Microsoft'
 
+# }}}
 #==============================================================================
-# Functions
+# Functions {{{
 #==============================================================================
 function is_mac() {
   [[ $OS =~ $MAC ]] && return 0
@@ -120,8 +130,9 @@ git_branch() {
   echo "${(j: :)GIT_INFO}"
 }
 
+# }}}
 #==============================================================================
-# Misc
+# Misc {{{
 #==============================================================================
 if is_mac || is_linux; then
   export PATH=$PATH:/usr/local/bin
@@ -135,10 +146,11 @@ fi
 if is_mac; then
   bindkey "ç" fzf-cd-widget
 fi
-#==============================================================================
-# Exports
-#==============================================================================
 
+# }}}
+#==============================================================================
+# Exports {{{
+#==============================================================================
 # Editor [nvim|vim]
 if (( $+commands[nvim] )); then
   export VISUAL=nvim
@@ -199,8 +211,9 @@ esac
 [ ! -z $GOROOT ] && export PATH=$PATH:"$GOROOT/bin"
 [ ! -z $GOPATH ] && export PATH=$PATH:"$GOPATH/bin"
 
+# }}}
 #==============================================================================
-# Aliases
+# Aliases {{{
 #==============================================================================
 alias ll='ls -alF'
 alias la='ls -A'
@@ -229,8 +242,9 @@ case $OS in
     ;;
 esac
 
+# }}}
 #==============================================================================
-# Plugins
+# Plugins {{{
 #==============================================================================
 if ! (( $+commands[antibody] )); then
   >&2 echo "Antibody not found. Install antibody and add it to PATH"
@@ -247,8 +261,12 @@ abbrev-alias -g py3='python3'
 abbrev-alias -g confe="$EDITOR ~/.zshrc"
 abbrev-alias -g confr="source ~/.zshrc"
 
+# }}}
 #==============================================================================
-# SDKMAN
+# SDKMAN {{{
 #==============================================================================
 # Note SDKMAN init should be last
 [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+
+# }}}
+#==============================================================================

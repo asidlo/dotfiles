@@ -1287,6 +1287,7 @@ augroup END
 "==============================================================================
 autocmd FileType json syntax match Comment +\/\/.\+$+
 autocmd FileType vim set foldmethod=marker
+autocmd BufEnter *zshrc set foldmethod=marker
 autocmd BufRead,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 
