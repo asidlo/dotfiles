@@ -12,6 +12,37 @@ zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43
 
 # }}}
 #==============================================================================
+# Vim-Mode {{{
+#==============================================================================
+bindkey -v
+vim_ins_mode="%{$fg[yellow]%}[INS]%{$reset_color%}"
+vim_cmd_mode="%{$fg[cyan]%}[CMD]%{$reset_color%}"
+vim_mode=$vim_ins_mode
+
+function zle-keymap-select {
+    vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
+    zle reset-prompt
+}
+zle -N zle-keymap-select
+
+function zle-line-finish {
+    vim_mode=$vim_ins_mode
+}
+zle -N zle-line-finish
+
+# Make Vi mode transitions faster (KEYTIMEOUT is in hundredths of a second)
+export KEYTIMEOUT=0.7
+
+bindkey 'jj' vi-cmd-mode
+bindkey -M vicmd 'H' beginning-of-line
+bindkey -M vicmd 'L' end-of-line
+
+# Better searching in command mode
+bindkey -M vicmd '?' fzf-history-widget
+bindkey -M vicmd ' ' fzf-history-widget
+
+# }}}
+#==============================================================================
 # Completion {{{
 #==============================================================================
 # Enable tab completion
@@ -58,18 +89,6 @@ unsetopt BEEP                   # Turn off all beeps
 
 # }}}
 #==============================================================================
-# VCS info {{{
-#==============================================================================
-# autoload -Uz vcs_info
-# zstyle ':vcs_info:*' enable git svn hg
-# zstyle ':vcs_info:*' check-for-changes true
-# zstyle ':vcs_info:*' formats "%{$fg[yellow]%}%c%{$fg[green]%}%u%{$reset_color%} [%{$fg[blue]%}%b%{$reset_color%}] %{$fg[yellow]%}%s%{$reset_color%}:%r"
-# precmd() {  # run before each prompt
-#   vcs_info
-# }
-
-# }}}
-#==============================================================================
 # Prompt {{{
 #==============================================================================
 setopt prompt_subst     # allow funky stuff in prompt
@@ -77,7 +96,8 @@ setopt prompt_subst     # allow funky stuff in prompt
 # Use % as the non-root prompt character; # for root
 # Change the prompt character color if the last command had a nonzero exit code
 PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u $(git_branch)
-%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
+$vim_mode %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
+# %(?.%{$fg[white]%}.%{$fg[red]%})[$vim_mode%(?.%{$fg[white]%}.%{$fg[red]%})]%{$reset_color%} '
 
 
 # }}}
