@@ -189,6 +189,7 @@ fi
 # Fd, bat, fzf
 if (( $+commands[fd] )) && (( $+commands[fzf] )) && (( $+commands[bat] )); then
   export FD_OPTS='--follow --exclude .git --exclude node_modules'
+  export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
   export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | fd --type f --type l $FD_OPTS"
   export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
   export FZF_ALT_C_COMMAND="fd --type d $FD_OPTS"
