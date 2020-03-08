@@ -6,7 +6,9 @@
 "==============================================================================
 let g:is_win = has('win32') || has('win64')
 let g:is_linux = has('unix') && !has('macunix')
-let g:is_mac = has('macunix')
+
+" Has some issues with vim detecting macunix/mac
+let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
 let g:is_gui = has('gui_running')
 let g:is_nvim = has('nvim')
 
@@ -205,13 +207,18 @@ let mapleader=","
 syntax enable
 
 try
-  colorscheme dracula
+  if g:is_nvim
+    colorscheme dracula
+  else
+    colorscheme gruvbox
+  endif
 catch
   colorscheme desert
 endtry
 
 " Makes highlighting not an eyesore
 let g:dracula_inverse = 0
+let g:gruvbox_inverse = 0
 
 set t_Co=256
 set background=dark
@@ -495,13 +502,6 @@ nnoremap <expr> confe ':e ' . g:rc_file . '<cr>'
 " Switch to last buffer
 nnoremap <leader>e :e#<cr>
 
-" save using <C-s> in every mode
-" when in operator-pending or insert, takes you to normal mode
-nnoremap <c-s> :write<Cr>
-vnoremap <c-s> <c-c>:write<Cr>
-inoremap <c-s> <esc>:write<Cr>
-onoremap <c-s> <esc>:write<Cr>
-
 " use `u` to undo, use `U` to redo, mind = blown
 nnoremap U <c-r>
 
@@ -551,8 +551,9 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
 " Move to the first/last non-blank character on this line
-nnoremap H ^
-nnoremap L $
+" H normally moves to top of the screen, L moves to bottom
+" nnoremap H ^
+" nnoremap L $
 
 " Quick Saving
 nnoremap <leader>w :w<cr>
@@ -773,7 +774,11 @@ nnoremap ]ot :TagbarClose<cr>
 "==============================================================================
 " Airline {{{
 "==============================================================================
-let g:airline_theme='dracula'
+if g:is_nvim
+  let g:airline_theme='dracula'
+else
+  let g:airline_theme='gruvbox'
+endif
 let g:airline_powerline_fonts = 1
 
 let g:airline#extensions#tabline#enabled = 1
