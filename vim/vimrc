@@ -673,6 +673,9 @@ endif
 " let g:ale_set_loclist = 0
 " let g:ale_set_quickfix = 1
 
+" Disable on start, enable by toggling
+let g:ale_enabled = 0
+
 " }}}
 "==============================================================================
 " Vim-grepper {{{
@@ -989,7 +992,7 @@ let g:coc_global_extensions=[
       \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
       \ 'coc-vimlsp', 'coc-xml', 'coc-snippets',
       \ 'coc-marketplace', 'coc-prettier',
-      \ 'coc-java', 'coc-clangd'
+      \ 'coc-clangd'
       \]
 
 if g:is_win
@@ -1284,6 +1287,24 @@ augroup java
   " https://jbodah.github.io/blog/2016/11/01/positivenegative-lookaheadlookbehind-vim/
   command! CpPkg call CopyMatches('\(package .*\)\@<=[^;]')
   command! CpImport call CopyFullyQualifiedName()
+
+  command! -range JavaFmt <line1>,<line2>call <SID>JavaFmtRange()
+  command! JavaImports execute '!java -jar ' . expand(g:vim_dir . '/java/google-java-format.jar') . ' -a -i --fix-imports-only %:p'
+
+  function! s:JavaFmtRange() range abort
+    if a:firstline == a:lastline
+      echom 'Formatting file:' . expand('%:p')
+      execute '!java -jar ' . expand(g:vim_dir . '/java/google-java-format.jar') . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
+    else
+      echom 'Formatting lines: ' . a:firstline . '-' . a:lastline
+      execute '!java -jar ' . expand(g:vim_dir . '/java/google-java-format.jar') . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' %:p'
+    endif
+  endfunction
+
+  xmap <leader>F :JavaFmt<CR>
+  nmap <leader>F :JavaFmt<CR>
+  nmap <leader>I :JavaImports<CR>
+
 augroup END
 
 " }}}

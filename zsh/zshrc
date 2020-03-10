@@ -31,11 +31,8 @@ function zle-line-finish {
 zle -N zle-line-finish
 
 # Make Vi mode transitions faster (KEYTIMEOUT is in hundredths of a second)
-export KEYTIMEOUT=0.7
-
-bindkey 'jj' vi-cmd-mode
-bindkey -M vicmd 'H' beginning-of-line
-bindkey -M vicmd 'L' end-of-line
+# 0.6 is slower than 1
+export KEYTIMEOUT=1
 
 # Better searching in command mode
 bindkey -M vicmd '?' fzf-history-widget
