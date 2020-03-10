@@ -17,6 +17,12 @@ let g:skip_coc_plugin = 0
 let g:skip_go_plugin = 0
 let g:skip_ctags_plugin = 0
 
+if g:is_mac
+  let g:ctags_exe = '/usr/local/opt/universal-ctags/bin/ctags'
+else
+  let g:ctags_exe = 'ctags'
+endif
+
 " Vim directory where all settings, plugins, syntax, etc stored
 " Note: expand vs glob = glob will return empty if file doesnt exist
 " also, expand has a list of special variables (see :h expand)
@@ -126,7 +132,11 @@ Plug 'jmcantrell/vim-virtualenv'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'plasticboy/vim-markdown'
 
-Plug 'mileszs/ack.vim'
+" Handle multi-file find and replace.
+" Plug 'mhinz/vim-grepper'
+
+" Plug 'mileszs/ack.vim'
+Plug 'wincent/ferret'
 Plug 'airblade/vim-rooter'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tpope/vim-fugitive'
@@ -159,9 +169,6 @@ Plug 'henrik/vim-indexed-search'
 " Automatically clear search highlights after you move your cursor.
 " Doesnt seem to work with windows for some reason
 Plug 'haya14busa/is.vim'
-
-" Handle multi-file find and replace.
-Plug 'mhinz/vim-grepper'
 
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
@@ -218,7 +225,6 @@ endtry
 
 " Makes highlighting not an eyesore
 let g:dracula_inverse = 0
-let g:gruvbox_inverse = 0
 
 set t_Co=256
 set background=dark
@@ -250,6 +256,9 @@ elseif g:is_mac
 else
   set clipboard=unnamed
 endif
+
+" Allow for global replacement
+set gdefault
 
 " Unset paste on InsertLeave.
 autocmd InsertLeave * silent! set nopaste
@@ -505,6 +514,8 @@ nnoremap <leader>e :e#<cr>
 " use `u` to undo, use `U` to redo, mind = blown
 nnoremap U <c-r>
 
+" To change buffer position, use <C-W><C-H> to move it left, <C-W><C-J> to move
+" it down, etc... (Note, that its a capital letter for movement)
 "https://vim.fandom.com/wiki/Fast_window_resizing_with_plus/minus_keys
 "+ increases vertical buffer, - decreases
 if bufwinnr(1)
@@ -564,53 +575,25 @@ nnoremap <leader>q :q<cr>
 " Quick esc
 inoremap jj <esc>
 
-" Visual mode pressing * or # searches for the current selection
-" Super useful! From an idea by Michael Naumann
-" Could replace with visual-star-search plugin
-vnoremap <silent> * :<c-u>call VisualSelection('', '')<cr>/<c-r>=@/<cr><cr>
-vnoremap <silent> # :<c-u>call VisualSelection('', '')<cr>?<c-r>=@/<cr><cr>
-
-" Clear highlighting on escape in normal mode
-" https://stackoverflow.com/a/1037182
-" nnoremap <esc> :noh<return><esc>
-" nnoremap <esc>^[ <esc>^[
+" Remove current highlighting
 nnoremap <leader><cr> :noh<cr>
 
 " * highlights current word without navigating to first occurance
 nnoremap * :let @/='\<<c-r>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
 
-function! VisualSelection(direction, extra_filter) range
-  let l:saved_reg = @"
-  execute "normal! vgvy"
-
-  let l:pattern = escape(@", "\\/.*'$^~[]")
-  let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-  if a:direction == 'gv'
-    call CmdLine("Ack '" . l:pattern . "' " )
-  elseif a:direction == 'replace'
-    call CmdLine("%s" . '/'. l:pattern . '/')
-  endif
-
-  let @/ = l:pattern
-  let @" = l:saved_reg
-endfunction
+" https://vim.fandom.com/wiki/Search_for_visually_selected_text
+vnoremap * y/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
 " c = confirm each
-nnoremap <leader>s :%s///gc<left><left><left>
+nnoremap <leader>r :%s///gc<left><left><left>
 
 " The same as above but instead of acting on the whole file it will be
 " restricted to the previously visually selected range. You can do that by
 " pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
-xnoremap <leader>s :s///gc<left><left><left>
-
-" Type a replacement term and press . to repeat the replacement again. Useful
-" for replacing a few instances of the term (comparable to multiple cursors).
-nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<cr>cgn
-xnoremap <silent> s* "sy:let @/=@s<cr>cgn
+xnoremap <leader>r :s///gc<left><left><left>
 
 " Map <Space> to / (search)
 map <space> /
@@ -657,9 +640,7 @@ let g:magit_default_fold_level = 0
 "==============================================================================
 " Gutentags {{{
 "==============================================================================
-if g:is_mac
-  let g:gutentags_ctags_executable='/usr/local/opt/universal-ctags/bin/ctags'
-endif
+let g:gutentags_ctags_executable=g:ctags_exe
 
 " }}}
 "==============================================================================
@@ -678,34 +659,31 @@ let g:ale_enabled = 0
 
 " }}}
 "==============================================================================
-" Vim-grepper {{{
+" Ferret {{{
 "==============================================================================
-let g:grepper={}
-let g:grepper.rg = { 'grepprg': 'rg -S --no-heading --hidden --vimgrep' }
-let g:grepper.tools=["rg"]
+" If you want to do a global replace, you need to search for the term to add it
+" to the ferret quickfix, then all instances in the quickfix will be subject to
+" the replacement matching when using FerretAcks
 
-" Find all references in project
-xmap <leader>/ <plug>(GrepperOperator)
-nmap <leader>/ :Grepper -cword -noprompt<cr>
+" Perform a search and add to quickfix list
+nmap <leader>A <Plug>(FerretAck)
 
-" Search whole project
-nnoremap \ :Grepper<cr>
+" Perform a search and add to location list
+nmap <leader>L <Plug>(FerretLack)
 
-" After searching for text, press this mapping to do a project wide find and
-" replace. It's similar to <leader>rf except this one applies to all matches
-" across all files instead of just the current file.
-nnoremap <leader>S
-  \ :let @s='\<'.expand('<cword>').'\>'<cr>
-  \ :Grepper -cword -noprompt<cr>
-  \ :cfdo %s/<c-r>s//gc \| update
-  \<left><left><left><left><left><left><left><left><left><left><left><left>
+" Search for current word
+nmap <leader>S <Plug>()
 
-" The same as above except it works with a visual selection.
-xmap <leader>S
-    \ "sy
-    \ gvgr
-    \ :cfdo %s/<c-r>s//gc \| update
-     \<left><left><left><left><left><left><left><left><left><left><left><left>
+" Need to use <C-U> to escape visual mode and not enter search
+vmap <leader>S :<C-U>call <SID>FerretVAck()<CR>
+
+function! s:FerretVAck() abort
+  let l:selection = s:get_visual_selection()
+  execute ':Ack ' . l:selection
+endfunction
+
+" Replace instances matching term in quickfix
+nmap <leader>R <Plug>(FerretAcks)
 
 " }}}
 "==============================================================================
@@ -903,7 +881,7 @@ endif
 
 nnoremap <leader>N :Files<cR>
 nnoremap <leader>n :GFiles<cr>
-nnoremap <leader>b :Buffers<cr>
+nnoremap <leader>B :Buffers<cr>
 nnoremap <leader>E :History<cr>
 nnoremap <leader>x :Maps<cr>
 nnoremap <leader>X :Commands<cr>
@@ -933,6 +911,9 @@ if g:is_nvim
   autocmd FileType fzf tnoremap <buffer> <c-k> <up>
 endif
 
+" [Tags] Command to generate tags file
+let g:fzf_tags_command = g:ctags_exe . ' -R'
+
 " }}}
 "==============================================================================
 " Ack {{{
@@ -945,7 +926,7 @@ if executable('rg')
 endif
 
 " Searches whole project, even through ignored files
-nnoremap <leader>\ :Ack<space>
+nnoremap \ :Ack<space>
 
 " }}}
 "==============================================================================
@@ -1032,8 +1013,8 @@ if exists('*CocActionAsync')
 endif
 
 " Use `[c` and `]c` to navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+" nmap <silent> [c <Plug>(coc-diagnostic-prev)
+" nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
 " Use K to see documentation in a popup preview window
 nnoremap <silent> K :call <SID>show_documentation()<cr>
@@ -1047,24 +1028,23 @@ function! s:show_documentation()
 endfunction
 
 " Use `:Format` to format current buffer
-command! -nargs=0 Format :call CocAction('format')
-command! -nargs=? Fold :call CocAction('fold', <f-args>)
-command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
+" command! -nargs=0 Format :call CocAction('format')
+" command! -nargs=? Fold :call CocAction('fold', <f-args>)
+" command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Remap for format selected region
-xmap <leader>F <Plug>(coc-format-selected)
-nmap <leader>F :Format<cr>
-
-nmap <leader>I :Imports<cr>
+" xmap <leader>F <Plug>(coc-format-selected)
+" nmap <leader>F :Format<cr>
+" nmap <leader>I :Imports<cr>
 
 " Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gt <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gf <Plug>(coc-references)
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gt <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gf <Plug>(coc-references)
 
 " Rename symbol
-nmap <silent> <F6> <Plug>(coc-rename)
+" nmap <silent> <F6> <Plug>(coc-rename)
 
 function! SetupCommandAbbrs(from, to)
   exec 'cnoreabbrev <expr> '.a:from
@@ -1101,6 +1081,20 @@ function! CopyMatches(regex)
   let @+ = trim(@a)
 endfunction
 
+" https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
+function! s:get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
 " Print the directory of the current buffer
 " Helpful since :pwd will print the project root dir when vim-rooter is applied
 command! Dirname :echo expand('%:p:h')
@@ -1112,6 +1106,30 @@ ab SS SyncSyntax
 
 command! Dos2Linux :%s///g
 ab D2L Dos2Linux
+
+" Add all TODO items to the quickfix list relative to where you opened Vim.
+function! s:todo() abort
+  let entries = []
+  for cmd in ['git grep -niIw -e TODO -e FIXME 2> /dev/null',
+            \ 'grep -rniIw -e TODO -e FIXME . 2> /dev/null']
+    let lines = split(system(cmd), '\n')
+    if v:shell_error != 0
+      echoerr 'Error executing cmd: ' . cmd
+    endif
+    for line in lines
+      let [fname, lno, text] = matchlist(line, '^\([^:]*\):\([^:]*\):\(.*\)')[1:3]
+      call add(entries, { 'filename': fname, 'lnum': lno, 'text': text })
+    endfor
+    break
+  endfor
+
+  if !empty(entries)
+    call setqflist(entries)
+    copen
+  endif
+endfunction
+
+command! Todo call s:todo()
 
 " }}}
 "==============================================================================
@@ -1223,49 +1241,10 @@ autocmd FileType c,cpp
 augroup java
   autocmd!
 
-  " Navigate functions using [ and ] instead of ]m
   autocmd FileType java nmap [[ [m
   autocmd FileType java nmap ]] ]m
-  autocmd FileType java set makeprg=javac\ %
+  autocmd FileType java set makeprg=gradlew
   set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C.%#
-
-  if g:is_win
-    let s:gradle_exe = 'gradlew.bat'
-  else
-    let s:gradle_exe = 'gradlew'
-  endif
-
-  let g:java_compile_gradle_task = 'compileJava'
-
-  " Determines whether the user is using gradle, mvn, or javac for compiling the
-  " java project by utilizing rooter to check for the executable wrappers and
-  " defaulting to javac if those arent present.
-  function! s:CompileJava() abort
-    let l:pwd = getcwd()
-    exec ':Dispatch! ' . l:pwd . '/' . s:gradle_exe . ' ' . g:java_compile_gradle_task
-  endfunction
-
-  " This function will look for a main method in the filename passed as an arg
-  " or the current file if not args passed and will execute it using gradle,
-  " mvn, or java utilizing rooter to check for the wrapper scripts and defaulting
-  " to java if none found.
-  function! s:RunJavaMain() abort
-    echo "TODO: implement RunJavaMain"
-  endfunction
-
-  " This function will run a linter over the entire project using
-  function! s:LintJava() abort
-    echo "TODO: implement LintJava"
-  endfunction
-
-  " This function will run the current test, if no args provided or all tests
-  " matching a given regex using gradle, mvn, or java utilizing rooter to check
-  " for the wrapper scripts and defaulting to java if none found.
-  function! s:TestJava() abort
-    echo "TODO: implement TestJava"
-  endfunction
-
-  autocmd FileType java nmap <leader>m :call <SID>CompileJava()<cr>
 
   autocmd FileType java,groovy
       \ set tabstop=4 |
@@ -1275,18 +1254,6 @@ augroup java
       \ set expandtab |
       \ set autoindent |
       \ setlocal nolist
-
-  function! CopyFullyQualifiedName()
-    call CopyMatches('\(package .*\)\@<=[^;]')
-    let filename = expand('%:t')
-    let @+ = @+ . '.' . substitute(filename, '.java', '', '')
-  endfunction
-
-  " Get the package for the current file (Think CopyPackage)
-  " Grabs all of the content between 'package' and ';' ex: 'package com.nexidia.db;'
-  " https://jbodah.github.io/blog/2016/11/01/positivenegative-lookaheadlookbehind-vim/
-  command! CpPkg call CopyMatches('\(package .*\)\@<=[^;]')
-  command! CpImport call CopyFullyQualifiedName()
 
   command! -range JavaFmt <line1>,<line2>call <SID>JavaFmtRange()
   command! JavaImports execute '!java -jar ' . expand(g:vim_dir . '/java/google-java-format.jar') . ' -a -i --fix-imports-only %:p'
