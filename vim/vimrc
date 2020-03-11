@@ -12,16 +12,6 @@ let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') ==
 let g:is_gui = has('gui_running')
 let g:is_nvim = has('nvim')
 
-" 1 = skip, 0 = dont skip
-let g:skip_go_plugin = 0
-let g:skip_ctags_plugin = 0
-
-if g:is_mac
-  let g:ctags_exe = '/usr/local/opt/universal-ctags/bin/ctags'
-else
-  let g:ctags_exe = 'ctags'
-endif
-
 " Vim directory where all settings, plugins, syntax, etc stored
 " Note: expand vs glob = glob will return empty if file doesnt exist
 " also, expand has a list of special variables (see :h expand)
@@ -32,6 +22,20 @@ else
   let g:vim_dir = expand('~/.vim')
   let g:rc_file = expand('~/.vimrc')
 endif
+
+let g:java_formatter = g:vim_dir . '/java/fmt/google-java-format.jar'
+let g:java_decompiler = g:vim_dir . '/java/decompile/jd-cli.jar'
+
+" 1 = skip, 0 = dont skip
+let g:skip_go_plugin = 0
+let g:skip_ctags_plugin = 0
+
+if g:is_mac
+  let g:ctags_exe = '/usr/local/opt/universal-ctags/bin/ctags'
+else
+  let g:ctags_exe = 'ctags'
+endif
+
 
 " Disable python2, ruby, and node providers
 let g:loaded_python_provider = 0
@@ -137,7 +141,6 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
 
-Plug 'jreybert/vimagit'
 Plug 'rhysd/git-messenger.vim'
 
 " Can be used to change case of word.
@@ -618,15 +621,10 @@ endfunction
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
-" Magit {{{
-"==============================================================================
-let g:magit_default_fold_level = 0
-
-" }}}
-"==============================================================================
 " Gutentags {{{
 "==============================================================================
 let g:gutentags_ctags_executable=g:ctags_exe
+let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea', '.libs']
 
 " }}}
 "==============================================================================
@@ -642,16 +640,16 @@ let g:gutentags_ctags_executable=g:ctags_exe
 " the replacement matching when using FerretAcks
 
 " Perform a search and add to quickfix list
-nmap <leader>A <Plug>(FerretAck)
+nmap <leader>a <Plug>(FerretAck)
 
 " Perform a search and add to location list
-nmap <leader>L <Plug>(FerretLack)
+nmap <leader>l <Plug>(FerretLack)
 
 " Search for current word
-nmap <leader>S <Plug>()
+nmap <leader>s <Plug>(FerretAckWord)
 
 " Need to use <C-U> to escape visual mode and not enter search
-vmap <leader>S :<C-U>call <SID>FerretVAck()<CR>
+vmap <leader>s :<C-U>call <SID>FerretVAck()<CR>
 
 function! s:FerretVAck() abort
   let l:selection = s:get_visual_selection()
@@ -873,7 +871,52 @@ if g:is_nvim
 endif
 
 " [Tags] Command to generate tags file
-let g:fzf_tags_command = g:ctags_exe . ' -R'
+let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.idea --exclude=.libs'
+
+function! s:align_lists(lists)
+  let maxes = {}
+  for list in a:lists
+    let i = 0
+    while i < len(list)
+      let maxes[i] = max([get(maxes, i, 0), len(list[i])])
+      let i += 1
+    endwhile
+  endfor
+  for list in a:lists
+    call map(list, "printf('%-'.maxes[v:key].'s', v:val)")
+  endfor
+  return a:lists
+endfunction
+
+function! s:btags_source()
+  let lines = map(split(system(printf(
+    \ g:ctags_exe . ' -f - --sort=no --excmd=number --language-force=%s %s',
+    \ &filetype, expand('%:S'))), "\n"), 'split(v:val, "\t")')
+  if v:shell_error
+    throw 'failed to extract tags'
+  endif
+  return map(s:align_lists(lines), 'join(v:val, "\t")')
+endfunction
+
+function! s:btags_sink(line)
+  execute split(a:line, "\t")[2]
+endfunction
+
+function! s:btags()
+  try
+    call fzf#run({
+    \ 'source':  s:btags_source(),
+    \ 'options': '+m -d "\t" --with-nth 1,4.. -n 1 --tiebreak=index',
+    \ 'down':    '40%',
+    \ 'sink':    function('s:btags_sink')})
+  catch
+    echohl WarningMsg
+    echom v:exception
+    echohl None
+  endtry
+endfunction
+
+command! BTags call s:btags()
 
 " }}}
 "==============================================================================
@@ -1099,8 +1142,6 @@ augroup java
 
   autocmd FileType java nmap [[ [m
   autocmd FileType java nmap ]] ]m
-  " autocmd FileType java set makeprg=gradlew
-  " set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C.%#
 
   " || com.amazon.oa.CriticalRoutersTest > testArticulationPoints FAILED
   " src/main/java/com/amazon/oa/NumberOfClusters.java|24 col 24 error| ';' expected
@@ -1126,15 +1167,15 @@ augroup java
       \ setlocal nolist
 
   command! -range JavaFmt <line1>,<line2>call <SID>JavaFmtRange()
-  command! JavaImports execute '!java -jar ' . expand(g:vim_dir . '/java/google-java-format.jar') . ' -a -i --fix-imports-only %:p'
+  command! JavaImports execute '!java -jar ' . g:java_formatter . ' -a -i --fix-imports-only %:p'
 
   function! s:JavaFmtRange() range abort
     if a:firstline == a:lastline
       echom 'Formatting file:' . expand('%:p')
-      execute '!java -jar ' . expand(g:vim_dir . '/java/google-java-format.jar') . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
+      execute '!java -jar ' . g:java_formatter  . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
     else
       echom 'Formatting lines: ' . a:firstline . '-' . a:lastline
-      execute '!java -jar ' . expand(g:vim_dir . '/java/google-java-format.jar') . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' %:p'
+      execute '!java -jar ' . g:java_formatter . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' %:p'
     endif
   endfunction
 
