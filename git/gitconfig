@@ -34,7 +34,6 @@
 ; (porcelain)$ git show --pretty="" --name-only wkejf3j2fj
 ;   > Could use --no-pager so output isnt paged
 ###############################################################################
-
 [user]
   name = asidlo
   email = sidlo.andrew@gmail.com
@@ -43,6 +42,7 @@
   fscache = true
   editor = nvim
   excludesfile = ~/.gitignore
+  pager = diff-so-fancy | less --tabs=4 -RFX
 [log]
   # 2019-02-05 11:53:12 -0500
   date = iso
@@ -60,8 +60,6 @@
   au = add -u # Update all tracked files
   aa = add -A # Add all files to staging
 
-  fa = !fish -c "gadd"
-
   b = branch
 
   co = checkout
@@ -76,8 +74,6 @@
   ds = diff --stat
   dh = diff HEAD
   dhs = diff HEAD --stat
-
-  fl = !fish -c "gll"
 
   # l = log
   # o = oneline
@@ -103,23 +99,19 @@
   lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
   lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
-  # git reset HEAD fileName --> removes file from stages, keeps modifications
-  # if you want to remove all changes use git checkout fileName instead
-  rh = reset HEAD
-
   s = status
   ss = status -s
-
-  sm = submodule
-  sma = submodule add
 
   # standup - last 1 week written by me
   sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week' --author sidlo.andrew@gmail.com
 
-  # https://git-scm.com/docs/git-worktree
-  w = worktree
-  wl = worktree list
-  wa = worktree add
-  wrm = worktree remove
+  # Get all aliases defined in gitconfig
   alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
+[diff-so-fancy]
+  markEmptyLines = false
+  stripLeadingSymbols = false
+[color "diff"]
+  commit = yellow bold
+[color]
+  ui = true

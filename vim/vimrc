@@ -13,7 +13,6 @@ let g:is_gui = has('gui_running')
 let g:is_nvim = has('nvim')
 
 " 1 = skip, 0 = dont skip
-let g:skip_coc_plugin = 0
 let g:skip_go_plugin = 0
 let g:skip_ctags_plugin = 0
 
@@ -48,11 +47,6 @@ if !executable('rg')
   echoerr 'Ripgrep executable not found! Install and add to Path to perform project searching'
 endif
 
-if !executable('nodejs') && !executable('node')
-  echoerr 'Nodejs is required for coc.nvim, please install nodejs and npm and add to PATH'
-  let g:skip_coc_plugin = 1
-endif
-
 if !executable('fzf')
   echoerr 'fzf is required for fuzzy searching, please install fzf and add to PATH'
 endif
@@ -73,10 +67,6 @@ if executable('python') || executable('python3')
 else
   echoerr 'Python 3 executable not found! You must install Python 3 and set its PATH correctly!'
   exit
-endif
-
-if !executable('java')
-  echoerr 'Java needs to be installed in order to have coc.nvim autocompletion'
 endif
 
 if !executable('go')
@@ -172,11 +162,6 @@ Plug 'haya14busa/is.vim'
 
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
-if !g:skip_coc_plugin
-  Plug 'neoclide/coc.nvim', {'tag': '*', 'branch': 'release'}
-endif
-
-Plug 'dense-analysis/ale'
 
 " Symbol / Tag Plugins
 if !g:skip_ctags_plugin
@@ -184,7 +169,8 @@ if !g:skip_ctags_plugin
   Plug 'ludovicchabant/vim-gutentags'
 endif
 
-" Snippets (using coc-snippets so no need for Ultisnips)
+" Snippets
+Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'segeljakt/vim-silicon'
 
@@ -649,16 +635,6 @@ let g:gutentags_ctags_executable=g:ctags_exe
 
 " }}}
 "==============================================================================
-" ALE {{{
-"==============================================================================
-" let g:ale_set_loclist = 0
-" let g:ale_set_quickfix = 1
-
-" Disable on start, enable by toggling
-let g:ale_enabled = 0
-
-" }}}
-"==============================================================================
 " Ferret {{{
 "==============================================================================
 " If you want to do a global replace, you need to search for the term to add it
@@ -767,7 +743,6 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " Disable tagbar for performance
 let g:airline#extensions#tagbar#enabled = 0
-let g:airline#extensions#coc#enabled = 1
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -799,20 +774,6 @@ let g:lightline#ale#indicator_checking = "\uf110"
 let g:lightline#ale#indicator_infos = "\uf129 "
 let g:lightline#ale#indicator_ok = "\uf00c"
 
-" Prepend the separator to the status
-function! AirlineCocStatus() abort
-  let l:status = coc#status()
-  if trim(l:status) != ''
-    return '  ' . g:airline_left_alt_sep . ' ' . coc#status()
-  endif
-  return ''
-endfunction
-
-if exists('g:loaded_airline')
-  call airline#parts#define_function('coc_status', 'AirlineCocStatus')
-  " let g:airline_section_c = airline#section#create_right(['file', 'readonly', 'coc_status'])
-endif
-
 let g:airline#extensions#default#section_truncate_width = {
     \ 'c': 50,
     \ }
@@ -831,7 +792,7 @@ let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 " Disable go def mapping so we can delegate it to the coc lsp = 0
-let g:go_def_mapping_enabled = 0
+" let g:go_def_mapping_enabled = 1
 
 " Fmt on save
 let g:go_fmt_autosave = 1
@@ -962,99 +923,6 @@ autocmd FileType json setlocal commentstring=//\ %s
 if exists("g:loaded_webdevicons")
   call webdevicons#refresh()
 endif
-
-" }}}
-"==============================================================================
-" Section: Coc Mappings {{{
-"==============================================================================
-let g:coc_global_extensions=[
-      \ 'coc-json', 'coc-eslint', 'coc-tsserver',
-      \ 'coc-html', 'coc-css', 'coc-vetur', 'coc-rls',
-      \ 'coc-yaml', 'coc-python', 'coc-lists', 'coc-git',
-      \ 'coc-vimlsp', 'coc-xml', 'coc-snippets',
-      \ 'coc-marketplace', 'coc-prettier',
-      \ 'coc-clangd'
-      \]
-
-if g:is_win
-  let g:coc_global_extensions = add(g:coc_global_extensions, 'coc-powershell')
-endif
-
-command! -nargs=0 CocStatus echo coc#status()
-ab CS CocStatus
-
-" Close the preview window when completion is done.
-autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
-
-" Use tab for trigger completion with characters ahead and navigate.
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Use <m-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
-
-" Use <cr> to confirm completion, `<c-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<c-g>u\<cr>"
-
-if exists('*CocActionAsync')
-  " Highlight symbol under cursor on CursorHold
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-endif
-
-" Use `[c` and `]c` to navigate diagnostics
-" nmap <silent> [c <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]c <Plug>(coc-diagnostic-next)
-
-" Use K to see documentation in a popup preview window
-nnoremap <silent> K :call <SID>show_documentation()<cr>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-" Use `:Format` to format current buffer
-" command! -nargs=0 Format :call CocAction('format')
-" command! -nargs=? Fold :call CocAction('fold', <f-args>)
-" command! -nargs=0 Imports :call CocAction('runCommand', 'editor.action.organizeImport')
-
-" Remap for format selected region
-" xmap <leader>F <Plug>(coc-format-selected)
-" nmap <leader>F :Format<cr>
-" nmap <leader>I :Imports<cr>
-
-" Remap keys for gotos
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gt <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gf <Plug>(coc-references)
-
-" Rename symbol
-" nmap <silent> <F6> <Plug>(coc-rename)
-
-function! SetupCommandAbbrs(from, to)
-  exec 'cnoreabbrev <expr> '.a:from
-        \ .' ((getcmdtype() ==# ":" && getcmdline() ==# "'.a:from.'")'
-        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
-endfunction
-
-" Use C to open coc config
-call SetupCommandAbbrs('CC', 'CocConfig')
-call SetupCommandAbbrs('CL', 'CocList')
 
 " }}}
 "==============================================================================
@@ -1224,18 +1092,6 @@ augroup END
 
 " }}}
 "==============================================================================
-" C++ {{{
-"==============================================================================
-autocmd FileType c,cpp
-    \ set tabstop=4 |
-    \ set softtabstop=4 |
-    \ set shiftwidth=4 |
-    \ set expandtab |
-    \ set autoindent |
-    \ setlocal nolist
-
-" }}}
-"==============================================================================
 " Java {{{
 "==============================================================================
 augroup java
@@ -1243,8 +1099,22 @@ augroup java
 
   autocmd FileType java nmap [[ [m
   autocmd FileType java nmap ]] ]m
-  autocmd FileType java set makeprg=gradlew
-  set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C.%#
+  " autocmd FileType java set makeprg=gradlew
+  " set errorformat=%A%f:%l:\ %m,%-Z%p^,%-C.%#
+
+  " || com.amazon.oa.CriticalRoutersTest > testArticulationPoints FAILED
+  " src/main/java/com/amazon/oa/NumberOfClusters.java|24 col 24 error| ';' expected
+  autocmd FileType java,groovy set makeprg=./gradlew
+  autocmd FileType java,groovy set errorformat=
+      \%E[ant:scalac]\ %f:%l:\ error:\ %m,
+      \%W[ant:scalac]\ %f:%l:\ warning:\ %m,
+      \%E%.%#:compile%\\w%#Java%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
+      \%W%.%#:compile%\\w%#Java%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
+      \%E%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
+      \%W%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
+      \%E%f:\ %\\d%\\+:\ %m\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
+      \%E%>%f:\ %\\d%\\+:\ %m,%C\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
+      \%-G%.%#
 
   autocmd FileType java,groovy
       \ set tabstop=4 |
