@@ -552,8 +552,8 @@ nnoremap <c-l> <c-w>l
 
 " Move to the first/last non-blank character on this line
 " H normally moves to top of the screen, L moves to bottom
-" nnoremap H ^
-" nnoremap L $
+nnoremap H ^
+nnoremap L $
 
 " Quick Saving
 nnoremap <leader>w :w<cr>
@@ -840,7 +840,7 @@ endif
 
 nnoremap <leader>N :Files<cR>
 nnoremap <leader>n :GFiles<cr>
-nnoremap <leader>B :Buffers<cr>
+nnoremap <leader>b :Buffers<cr>
 nnoremap <leader>E :History<cr>
 nnoremap <leader>x :Maps<cr>
 nnoremap <leader>X :Commands<cr>
