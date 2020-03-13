@@ -233,9 +233,6 @@ else
   set clipboard=unnamed
 endif
 
-" Allow for global replacement
-set gdefault
-
 " Unset paste on InsertLeave.
 autocmd InsertLeave * silent! set nopaste
 
@@ -550,8 +547,8 @@ nnoremap <c-l> <c-w>l
 
 " Move to the first/last non-blank character on this line
 " H normally moves to top of the screen, L moves to bottom
-nnoremap H ^
-nnoremap L $
+" nnoremap H ^
+" nnoremap L $
 
 " Quick Saving
 nnoremap <leader>w :w<cr>
@@ -1184,13 +1181,67 @@ augroup java
       execute '!java -jar ' . g:java_formatter  . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
     else
       echom 'Formatting lines: ' . a:firstline . '-' . a:lastline
-      execute '!java -jar ' . g:java_formatter . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' %:p'
+      execute '!java -jar ' . g:java_formatter . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines=' . a:firstline . ':' . a:lastline . ' %:p'
     endif
   endfunction
 
   xmap <leader>F :JavaFmt<CR>
   nmap <leader>F :JavaFmt<CR>
   nmap <leader>I :JavaImports<CR>
+
+  " autocmd Filetype java,groovy 
+  "       \ call <SID>create_libs_dir() |
+  "       \ call <SID>copy_jdk_src() |
+  "       \ call <SID>extract_jdk_src()
+
+  command! JavaCollectLibs 
+        \ call <SID>create_libs_dir() |
+        \ call <SID>copy_jdk_src() |
+        \ call <SID>extract_jdk_src()
+
+  " TODO - add variable for debug, to print out messages for progress
+  let b:libs_dir = expand(getcwd() . '/.libs')
+  let b:jdk_src = $JAVA_HOME . '/src.zip'
+  let b:libs_jdk_src = b:libs_dir . '/src.zip'
+  
+  " Should only create the libs dir if in a project, i.e assumes using git
+  " and vim-rooter
+  function! s:create_libs_dir() abort
+    if (empty(glob(b:libs_dir)))
+      call mkdir(b:libs_dir)
+    endif
+  endfunction
+
+  function! s:copy_jdk_src() abort
+    " Copy the src.zip from JAVA_HOME if not already present in libs
+    if (empty(glob(b:libs_jdk_src)) && !empty(glob(b:jdk_src)))
+      let b:jdk_src_zip = readfile(b:jdk_src, 'b')
+      call writefile(b:jdk_src_zip, b:libs_dir . '/src.zip')
+    endif
+  endfunction
+
+  function! s:extract_jdk_src() abort
+    if (!executable('unzip'))
+      echoerr 'Unzip command not found in PATH'
+      return 1
+    endif
+
+    " TODO - make async, and only exec if not already unzipped
+    "      - should I namespace the jdk by version? ie unzip in jdk8_204/
+    "        or should at least remove the old sdk files async as well.
+    "      - Also should do custom impl of :Files command to sort the entries
+    "        so that the libs in the jdk are on the bottom and when selecting
+    "        files from the libs dir, the :view command is used instead of :e
+    exec ':Dispatch! unzip -qq -u ' . b:libs_jdk_src . ' -d ' . b:libs_dir
+
+    " Notes: Could just search in the gradle directory for the files instead of
+    "        copying them locally. Could also do the same for the jvm files.
+    "        Might need root perms for that though..
+    " NewPlan: vim is able to directly read zip files, so just open the src.zip
+    "        and open java file of choice, if we need to extract we could do that
+    "        also....wonder if fd can search through zip
+  endfunction
+
 
 augroup END
 
