@@ -16,3 +16,5 @@ org.eclipse.buildship.core.prefs
 # MacOS
 .DS_Store
 
+# Libs directory for java classpath
+.libs/

@@ -255,6 +255,7 @@ case $OS in
     alias ls='ls -G'
     alias copy='pbcopy'
     alias ctags=/usr/local/opt/universal-ctags/bin/ctags
+    alias vim='/usr/local/Cellar/vim/**/bin/vim'
     ;;
   *$WIN*)
     alias copy='clip.exe'
