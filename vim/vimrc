@@ -104,7 +104,10 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'morhetz/gruvbox'
 Plug 'dracula/vim', { 'as': 'dracula' }
 
+" Tabular must come before markdown
 Plug 'godlygeek/tabular'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+Plug 'plasticboy/vim-markdown'
 
 " Golang plugins
 " Need to load before vim-polyglot in order to avoid getting errors like
@@ -120,12 +123,7 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
-
 Plug 'jmcantrell/vim-virtualenv'
-
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
-Plug 'plasticboy/vim-markdown'
-
 Plug 'wincent/ferret'
 Plug 'airblade/vim-rooter'
 Plug 'ryanoasis/vim-devicons'
@@ -136,7 +134,6 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
-
 Plug 'rhysd/git-messenger.vim'
 
 " Can be used to change case of word.
@@ -531,12 +528,18 @@ if g:is_mac
   vnoremap ∆ :m '>+1<cr>gv=gv
   vnoremap ˚ :m '<-2<cr>gv=gv
 else
-  nnoremap <M-j> :m .+1<cr>==
-  nnoremap <M-k> :m .-2<cr>==
-  inoremap <M-j> <esc>:m .+1<cr>==gi
-  inoremap <M-k> <esc>:m .-2<cr>==gi
-  vnoremap <M-j> :m '>+1<cr>gv=gv
-  vnoremap <M-k> :m '<-2<cr>gv=gv
+  " nnoremap <M-j> :m .+1<cr>==
+  " nnoremap <M-k> :m .-2<cr>==
+  " inoremap <M-j> <esc>:m .+1<cr>==gi
+  " inoremap <M-k> <esc>:m .-2<cr>==gi
+  " vnoremap <M-j> :m '>+1<cr>gv=gv
+  " vnoremap <M-k> :m '<-2<cr>gv=gv
+  nnoremap <M-DOWN> :m .+1<cr>==
+  nnoremap <M-UP> :m .-2<cr>==
+  inoremap <M-DOWN> <esc>:m .+1<cr>==gi
+  inoremap <M-UP> <esc>:m .-2<cr>==gi
+  vnoremap <M-DOWN> :m '>+1<cr>gv=gv
+  vnoremap <M-UP> :m '<-2<cr>gv=gv
 endif
 
 "Smart way to move between windows
@@ -564,6 +567,9 @@ nnoremap <leader><cr> :noh<cr>
 
 " Search for current word but dont jump to next result
 nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
+" Prints number of hits and num lines where hits found for last search
+command! SearchHits %s///gn
 
 " replace vim's built-in visual * and # behavior
 xnoremap * :<C-u>call VisualStarSearchSet('/')<CR>/<C-R>=@/<CR><CR>
@@ -932,14 +938,11 @@ nnoremap \ :Ack<space>
 "==============================================================================
 " Markdown {{{
 "==============================================================================
-let g:vim_markdown_folding_disabled = 0
-let g:vim_markdown_folding_style_pythonic = 1
+" let g:vim_markdown_folding_style_pythonic = 1
 let g:vim_markdown_math = 1
 let g:vim_markdown_strikethrough = 1
-
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
-" let g:vim_markdown_no_default_key_mappings = 1
 
 augroup markdown
   autocmd!

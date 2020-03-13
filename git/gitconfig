@@ -1,39 +1,3 @@
-###############################################################################
-# Git Notes
-###############################################################################
-; Grep the git messages for the following term and show the commit hash, adding
-; %s would also show the message.
-;
-; $ git log --pretty="format:%h" --reverse --grep=US17593 -i origin/FE2389
-;
-; Undo all of the commits and restage the changes to make different
-; micro-commits
-;
-; $ git reset --soft HEAD~2
-;
-; Change the git commit history (ordering, messages, squash, etc) Rebase the
-; commits onto the provided hash from HEAD.
-;
-; $ git rebase -i hash
-;
-; Commit using the same commit message from another commit
-;
-; $ git commit -C a45kj23bf
-;
-; View a file from a particular commit
-;
-; $ git show 23sdwjb4g4:source/share/java/com/.../NodeInventory.java > file
-;
-; Display commits since (and not including) another commit
-;
-; $ git log master-next..HEAD --pretty="format:%h" --reverse
-;
-; Get all changed files in a commit
-;
-; (plumbing) $ git diff-tree --no-commit-id --name-only -r wefwjken3f3
-; (porcelain)$ git show --pretty="" --name-only wkejf3j2fj
-;   > Could use --no-pager so output isnt paged
-###############################################################################
 [user]
   name = asidlo
   email = sidlo.andrew@gmail.com
