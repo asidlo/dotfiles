@@ -126,10 +126,6 @@ Plug 'jmcantrell/vim-virtualenv'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'plasticboy/vim-markdown'
 
-" Handle multi-file find and replace.
-" Plug 'mhinz/vim-grepper'
-
-" Plug 'mileszs/ack.vim'
 Plug 'wincent/ferret'
 Plug 'airblade/vim-rooter'
 Plug 'ryanoasis/vim-devicons'
@@ -156,13 +152,6 @@ Plug 'vim-scripts/ReplaceWithRegister'
 " Ex: gcii (toggles comment for all adjacent inner indented lines)
 Plug 'michaeljsmith/vim-indent-object'
 
-" Show the current index count for search
-Plug 'henrik/vim-indexed-search'
-
-" Automatically clear search highlights after you move your cursor.
-" Doesnt seem to work with windows for some reason
-Plug 'haya14busa/is.vim'
-
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
 
@@ -185,6 +174,7 @@ else
 endif
 Plug 'junegunn/fzf.vim'
 
+" Follow symlinks for git etc.
 Plug 'moll/vim-bbye' " optional dependency
 Plug 'aymericbeaumet/vim-symlink'
 
@@ -484,7 +474,12 @@ nnoremap N Nzzzv
 nnoremap Y y$
 
 " Edit global todo.md
-nnoremap <expr> <leader>td ':e ' . g:vim_dir . '/todo.md<cr>'
+let s:notes_dir = g:vim_dir . '/notes'
+if (empty(glob(s:notes_dir)))
+  call mkdir(s:notes_dir)
+  exec '!git clone git@github.com:asidlo/notes.git ' . s:notes_dir
+endif
+nnoremap <expr> <leader>td ':e ' . s:notes_dir . '<CR>' 
 
 " Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
@@ -564,11 +559,12 @@ inoremap jj <esc>
 " Remove current highlighting
 nnoremap <leader><cr> :noh<cr>
 
-" * highlights current word without navigating to first occurance
-nnoremap * :let @/='\<<c-r>=expand("<cword>")<cr>\>'<cr>:set hls<cr>
+" Search for current word but dont jump to next result
+nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 
-" https://vim.fandom.com/wiki/Search_for_visually_selected_text
-vnoremap * y/\V<C-R>=escape(@",'/\')<CR><CR>
+" replace vim's built-in visual * and # behavior
+xnoremap * :<C-u>call VisualStarSearchSet('/')<CR>/<C-R>=@/<CR><CR>
+xnoremap # :<C-u>call VisualStarSearchSet('?')<CR>?<C-R>=@/<CR><CR>
 
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
@@ -970,6 +966,16 @@ endif
 "==============================================================================
 " Section: Misc Functions / Commands {{{
 "=============================================================================
+" makes * and # work on visual mode too.  global function so user mappings can call it.
+function! VisualStarSearchSet(cmdtype,...)
+  let temp = @"
+  normal! gvy
+  let @/ = substitute(@", '\n', '\\n', 'g')
+  let @/ = substitute(@/, '\[', '\\[', 'g')
+  let @/ = substitute(@/, '\~', '\\~', 'g')
+  let @" = temp
+endfunction
+
 function! Copy2Register(reg)
   let hits = []
   %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
