@@ -477,12 +477,12 @@ nnoremap N Nzzzv
 nnoremap Y y$
 
 " Edit global todo.md
-let s:notes_dir = g:vim_dir . '/notes'
-if (empty(glob(s:notes_dir)))
-  call mkdir(s:notes_dir)
-  exec '!git clone git@github.com:asidlo/notes.git ' . s:notes_dir
+let g:notes_dir = g:vim_dir . '/notes'
+if (empty(glob(g:notes_dir)))
+  call mkdir(g:notes_dir)
+  exec '!git clone git@github.com:asidlo/notes.git ' . g:notes_dir
 endif
-nnoremap <expr> <leader>td ':e ' . s:notes_dir . '<CR>' 
+nnoremap <expr> <leader>td ':e ' . g:notes_dir . '/README.md<CR>' 
 
 " Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
