@@ -1,6 +1,56 @@
 #==============================================================================
 # Author: Andrew Sidlo
 #==============================================================================
+# Variables {{{
+#==============================================================================
+# Ex: Linux NXDEV181 4.4.0-17763-Microsoft #864-Microsoft Thu Nov 07 15:22:00 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
+local OS=$(uname -a)
+
+local MAC='Darwin'
+local LINUX='Linux'
+local WIN='Microsoft'
+
+# }}}
+#==============================================================================
+# Functions {{{
+#==============================================================================
+function is_mac() {
+  [[ $OS =~ $MAC ]] && return 0
+  return 1
+}
+function is_win() {
+  [[ $OS =~ $WIN ]] && return 0
+  return 1
+}
+function is_linux() {
+  [[ $OS =~ $LINUX ]] && return 0
+  return 1
+}
+
+# Completions & keybindings & functions
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Echoes a username/host string when connected over SSH (empty otherwise)
+ssh_info() {
+  [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
+}
+
+git_branch() {
+  # Exit if not inside a Git repository
+  ! git rev-parse --is-inside-work-tree > /dev/null 2>&1 && return
+
+  # Git branch/tag, or name-rev if on detached head
+  local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
+
+  # Add the branch icon and the branch name
+  local -a GIT_INFO
+  # GIT_INFO+=( "\033[38;5;15m(" )
+  GIT_INFO+=( "\033[38;5;15m($GIT_LOCATION)%{$reset_color%}" )
+  echo "${(j: :)GIT_INFO}"
+}
+
+# }}}
+#==============================================================================
 # Colors {{{
 #==============================================================================
 # https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
@@ -38,11 +88,25 @@ export KEYTIMEOUT=1
 bindkey -M vicmd '?' fzf-history-widget
 bindkey -M vicmd ' ' fzf-history-widget
 
+
 # Use C-F to complete recent command
 # Note: need to use -s if binding to non widget, in this case we are binding to
 # the right arrow key. You can discover key bindings by hitting <C-V><KEYCOMBO>
 # in the terminal.
 bindkey -s '^F' '^[[C' 
+
+# Search history in insert mode using <C-R>
+bindkey '^r' history-incremental-search-backward
+
+if is_mac; then
+  # Bind <A-[> to escape without moving, just like in linux
+  bindkey -M viins '“' vi-cmd-mode
+  # Bind <A-H|J|K|L> respectively to escape so mac works like linux
+  bindkey -M viins '˙' vi-cmd-mode
+  bindkey -M viins '∆' vi-cmd-mode
+  bindkey -M viins '˚' vi-cmd-mode
+  bindkey -M viins '¬' vi-cmd-mode
+fi
 
 # }}}
 #==============================================================================
@@ -102,56 +166,6 @@ PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{
 $vim_mode %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
 # %(?.%{$fg[white]%}.%{$fg[red]%})[$vim_mode%(?.%{$fg[white]%}.%{$fg[red]%})]%{$reset_color%} '
 
-
-# }}}
-#==============================================================================
-# Variables {{{
-#==============================================================================
-# Ex: Linux NXDEV181 4.4.0-17763-Microsoft #864-Microsoft Thu Nov 07 15:22:00 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
-local OS=$(uname -a)
-
-local MAC='Darwin'
-local LINUX='Linux'
-local WIN='Microsoft'
-
-# }}}
-#==============================================================================
-# Functions {{{
-#==============================================================================
-function is_mac() {
-  [[ $OS =~ $MAC ]] && return 0
-  return 1
-}
-function is_win() {
-  [[ $OS =~ $WIN ]] && return 0
-  return 1
-}
-function is_linux() {
-  [[ $OS =~ $LINUX ]] && return 0
-  return 1
-}
-
-# Completions & keybindings & functions
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Echoes a username/host string when connected over SSH (empty otherwise)
-ssh_info() {
-  [[ "$SSH_CONNECTION" != '' ]] && echo '%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%}@%{$fg[green]%}%m%{$reset_color%}:' || echo ''
-}
-
-git_branch() {
-  # Exit if not inside a Git repository
-  ! git rev-parse --is-inside-work-tree > /dev/null 2>&1 && return
-
-  # Git branch/tag, or name-rev if on detached head
-  local GIT_LOCATION=${$(git symbolic-ref -q HEAD || git name-rev --name-only --no-undefined --always HEAD)#(refs/heads/|tags/)}
-
-  # Add the branch icon and the branch name
-  local -a GIT_INFO
-  # GIT_INFO+=( "\033[38;5;15m(" )
-  GIT_INFO+=( "\033[38;5;15m($GIT_LOCATION)%{$reset_color%}" )
-  echo "${(j: :)GIT_INFO}"
-}
 
 # }}}
 #==============================================================================

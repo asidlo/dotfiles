@@ -512,31 +512,16 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 vnoremap < <gv
 vnoremap > >gv
 
-" Use alt+j/k to move line down/up
-" https://vim.fandom.com/wiki/Moving_lines_up_or_down
-" https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
-" Move a line of text using ALT+[jk] or Command+[jk] on mac
-" Note: requires remapping of option/alt key in iterm term profile for macos to +esc
+" Mapping ;; to escape, let see which I prefer 
+imap ;; <Esc>
+
+" Making mac working like linux for using <A-H|J|K|L> for escape, respectively
 if g:is_mac
-  nnoremap ∆ :m .+1<cr>==
-  nnoremap ˚ :m .-2<cr>==
-  inoremap ∆ <esc>:m .+1<cr>==gi
-  inoremap ˚ <esc>:m .-2<cr>==gi
-  vnoremap ∆ :m '>+1<cr>gv=gv
-  vnoremap ˚ :m '<-2<cr>gv=gv
-else
-  " nnoremap <M-j> :m .+1<cr>==
-  " nnoremap <M-k> :m .-2<cr>==
-  " inoremap <M-j> <esc>:m .+1<cr>==gi
-  " inoremap <M-k> <esc>:m .-2<cr>==gi
-  " vnoremap <M-j> :m '>+1<cr>gv=gv
-  " vnoremap <M-k> :m '<-2<cr>gv=gv
-  nnoremap <M-DOWN> :m .+1<cr>==
-  nnoremap <M-UP> :m .-2<cr>==
-  inoremap <M-DOWN> <esc>:m .+1<cr>==gi
-  inoremap <M-UP> <esc>:m .-2<cr>==gi
-  vnoremap <M-DOWN> :m '>+1<cr>gv=gv
-  vnoremap <M-UP> :m '<-2<cr>gv=gv
+  inoremap “ <ESC> 
+  inoremap ˙ <esc>h
+  inoremap ∆ <esc>j
+  inoremap ˚ <esc>k
+  inoremap ¬ <esc>l
 endif
 
 "Smart way to move between windows
@@ -557,7 +542,7 @@ nnoremap <leader>w :w<cr>
 nnoremap <leader>q :q<cr>
 
 " Quick esc
-inoremap jj <esc>
+" inoremap jj <esc>
 
 " Remove current highlighting
 nnoremap <leader><cr> :noh<cr>
