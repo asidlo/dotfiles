@@ -6,11 +6,17 @@
 "==============================================================================
 let g:is_win = has('win32') || has('win64')
 let g:is_linux = has('unix') && !has('macunix')
-
-" Has some issues with vim detecting macunix/mac
-let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
-let g:is_gui = has('gui_running')
 let g:is_nvim = has('nvim')
+let g:is_gui = has('gui_running')
+
+" Vim on windows doesn't have uname so results in error message even though we
+" already know its not macos
+if !g:is_nvim && g:is_win
+  let g:is_mac = 0
+else
+  " Has some issues with vim detecting macunix/mac
+  let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
+endif
 
 " Vim directory where all settings, plugins, syntax, etc stored
 " Note: expand vs glob = glob will return empty if file doesnt exist
@@ -522,6 +528,14 @@ if g:is_mac
   inoremap ∆ <esc>j
   inoremap ˚ <esc>k
   inoremap ¬ <esc>l
+endif
+
+if g:is_win && !g:is_nvim
+  inoremap Û <ESC> 
+  inoremap è <esc>h
+  inoremap ê <esc>j
+  inoremap ë <esc>k
+  inoremap ì <esc>l
 endif
 
 "Smart way to move between windows
