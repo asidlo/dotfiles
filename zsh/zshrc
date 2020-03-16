@@ -181,7 +181,9 @@ if test umask != '022'; then
 fi
 
 if is_mac; then
-  bindkey "ç" fzf-cd-widget
+  bindkey 'ç' fzf-cd-widget
+else
+  bindkey '^[c' fzf-cd-widget
 fi
 
 # }}}
