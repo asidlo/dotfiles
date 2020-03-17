@@ -66,6 +66,10 @@ if !executable('ctags')
   let g:skip_ctags_plugin = 1
 endif
 
+if !executable('gtags-cscope')
+  echoerr 'Gtags-cscope executable not found! Install gnu global package and add to Path for static project analysis'
+endif
+
 " Path to Python 3 interpreter (must be an absolute path), make startup
 " faster. See https://neovim.io/doc/user/provider.html.
 if executable('python') || executable('python3')
@@ -162,6 +166,7 @@ Plug 'sheerun/vim-polyglot'
 if !g:skip_ctags_plugin
   Plug 'majutsushi/tagbar'
   Plug 'ludovicchabant/vim-gutentags'
+  Plug 'skywind3000/gutentags_plus'
 endif
 
 " Snippets
@@ -312,6 +317,7 @@ set laststatus=2
 " No annoying sound on errors
 set noerrorbells
 set novisualbell
+set belloff=all
 set t_vb=
 set timeoutlen=500
 
@@ -630,7 +636,24 @@ endfunction
 " Gutentags {{{
 "==============================================================================
 let g:gutentags_ctags_executable=g:ctags_exe
-let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea', '.libs']
+let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea'] 
+
+" enable gtags module
+let g:gutentags_modules = ['ctags', 'gtags_cscope']
+
+" config project root markers.
+" let g:gutentags_project_root = ['.libs']
+
+" generate datebases in my cache directory, prevent gtags files polluting my project
+let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
+
+" provides additional troubleshooting commands
+let g:gutentags_define_advanced_commands = 1
+
+" change focus to quickfix window after search (optional).
+let g:gutentags_plus_switch = 1
+
+let g:gutentags_file_list_command = 'fd --hidden --no-ignore-vcs --type f'
 
 " }}}
 "==============================================================================
@@ -1207,28 +1230,35 @@ augroup java
         \ call <SID>extract_jdk_src()
 
   " TODO - add variable for debug, to print out messages for progress
-  let b:libs_dir = expand(getcwd() . '/.libs')
-  let b:jdk_src = $JAVA_HOME . '/src.zip'
-  let b:libs_jdk_src = b:libs_dir . '/src.zip'
-  
+  let g:jdk_src = $JAVA_HOME . '/src.zip'
+
+  function! s:get_libs_dir() abort
+    return expand(getcwd() . '/.libs')
+  endfunction
+
   " Should only create the libs dir if in a project, i.e assumes using git
   " and vim-rooter
   function! s:create_libs_dir() abort
-    if (empty(glob(b:libs_dir)))
-      call mkdir(b:libs_dir)
+    let l:libs_dir = <SID>get_libs_dir()
+    if (empty(glob(l:libs_dir)))
+      call mkdir(l:libs_dir)
     endif
   endfunction
 
   function! s:copy_jdk_src() abort
+    let l:libs_dir = <SID>get_libs_dir()
+    let l:libs_jdk_src = l:libs_dir . '/src.zip'
     " Copy the src.zip from JAVA_HOME if not already present in libs
-    if (empty(glob(b:libs_jdk_src)) && !empty(glob(b:jdk_src)))
-      let b:jdk_src_zip = readfile(b:jdk_src, 'b')
-      call writefile(b:jdk_src_zip, b:libs_dir . '/src.zip')
+    if (empty(glob(g:libs_jdk_src)) && !empty(glob(g:jdk_src)))
+      let g:jdk_src_zip = readfile(g:jdk_src, 'b')
+      call writefile(g:jdk_src_zip, l:libs_dir . '/src.zip')
     endif
   endfunction
 
   function! s:extract_jdk_src() abort
-    if (!executable('unzip'))
+    let l:libs_dir = <SID>get_libs_dir()
+    let l:libs_jdk_src = l:libs_dir . '/src.zip'
+    if !executable('unzip')
       echoerr 'Unzip command not found in PATH'
       return 1
     endif
@@ -1239,7 +1269,7 @@ augroup java
     "      - Also should do custom impl of :Files command to sort the entries
     "        so that the libs in the jdk are on the bottom and when selecting
     "        files from the libs dir, the :view command is used instead of :e
-    exec ':Dispatch! unzip -qq -u ' . b:libs_jdk_src . ' -d ' . b:libs_dir
+    exec ':Dispatch! unzip -qq -u ' . l:libs_jdk_src . ' -d ' . l:libs_dir
 
     " Notes: Could just search in the gradle directory for the files instead of
     "        copying them locally. Could also do the same for the jvm files.
