@@ -447,9 +447,15 @@ if g:is_nvim
   " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
   " Also, Altc+ - should be used instead of just -
   " Open terminal in vertical, horizontal and new tab
-  nnoremap <leader>tv :vsplit term://zsh<cr>
-  nnoremap <leader>ts :split term://zsh<cr>
-  nnoremap <leader>tt :e term://zsh<cr>
+  if g:is_win
+    nnoremap <leader>tv :vsplit term://powershell<cr>
+    nnoremap <leader>ts :split term://powershell<cr>
+    nnoremap <leader>tt :e term://powershell<cr>
+  else
+    nnoremap <leader>tv :vsplit term://zsh<cr>
+    nnoremap <leader>ts :split term://zsh<cr>
+    nnoremap <leader>tt :e term://zsh<cr>
+  endif
 
   " always start terminal in insert mode
   autocmd BufWinEnter,WinEnter term://* startinsert
