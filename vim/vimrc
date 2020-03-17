@@ -435,8 +435,18 @@ noremap k gk
 " If you want to kill all buffers matching regex, then you need to use <C-A>
 " after the regex to expand out the matches
 if g:is_nvim
+
+  if g:is_win
+    set shell=powershell shellquote=( shellpipe=\| shellxquote=
+    set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
+    set shellredir=\|\ Out-File\ -Encoding\ UTF8
+  else
+    set shell=zsh
+  endif
+
   " Leader q to exit terminal mode
   tnoremap <leader>q <c-\><c-n>:q<cr>
+  tnoremap <leader>e <c-\><c-n>:e#<cr>
 
   " mappings to move out from terminal to other views
   tnoremap <c-h> <c-\><c-n><c-w>h
