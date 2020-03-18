@@ -66,8 +66,8 @@ if !executable('ctags')
   let g:skip_ctags_plugin = 1
 endif
 
-if !executable('gtags-cscope')
-  echoerr 'Gtags-cscope executable not found! Install gnu global package and add to Path for static project analysis'
+if !executable('cscope')
+  echoerr 'cscope executable not found! Install cscope and add to Path for static project analysis'
 endif
 
 " Path to Python 3 interpreter (must be an absolute path), make startup
@@ -165,8 +165,6 @@ Plug 'sheerun/vim-polyglot'
 " Symbol / Tag Plugins
 if !g:skip_ctags_plugin
   Plug 'majutsushi/tagbar'
-  Plug 'ludovicchabant/vim-gutentags'
-  Plug 'skywind3000/gutentags_plus'
 endif
 
 " Snippets
@@ -629,38 +627,73 @@ function! g:ToggleQuickfix()
   copen
 endfunction
 
+if has("cscope")
+    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+    set cscopetag
+
+    " check cscope for definition of a symbol before checking ctags: set to 1
+    " if you want the reverse search order.
+    set csto=0
+
+    " add any cscope database in current directory
+    if filereadable("cscope.out")
+        cs add cscope.out  
+    " else add the database pointed to by environment variable 
+    elseif $CSCOPE_DB != ""
+        cs add $CSCOPE_DB
+    endif
+
+    " show msg when any other cscope db added
+    set cscopeverbose  
+
+    """"""""""""" My cscope/vim key mappings
+    "
+    " The following maps all invoke one of the following cscope search types:
+    "
+    "   's'   symbol: find all references to the token under cursor
+    "   'g'   global: find global definition(s) of the token under cursor
+    "   'c'   calls:  find all calls to the function name under cursor
+    "   't'   text:   find all instances of the text under cursor
+    "   'e'   egrep:  egrep search for the word under cursor
+    "   'f'   file:   open the filename under cursor
+    "   'i'   includes: find files that include the filename under cursor
+    "   'd'   called: find functions that function under cursor calls
+    "
+    " All of the maps involving the <cfile> macro use '^<cfile>$': this is so
+    " that searches over '#include <time.h>" return only references to
+    " 'time.h', and not 'sys/time.h', etc. (by default cscope will return all
+    " files that contain 'time.h' as part of their name).
+
+    nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>cf :cs find f <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+    nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>	
+
+    nmap <leader>scs :scs find s <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>scg :scs find g <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>scc :scs find c <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>sct :scs find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>sce :scs find e <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>scf :scs find f <C-R>=expand("<cfile>")<CR><CR>	
+    nmap <leader>sci :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
+    nmap <leader>scd :scs find d <C-R>=expand("<cword>")<CR><CR>	
+
+    nmap <leader>vcs :vert find s <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>vcg :vert find g <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>vcc :vert find c <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>vct :vert find t <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>vce :vert find e <C-R>=expand("<cword>")<CR><CR>	
+    nmap <leader>vcf :vert find f <C-R>=expand("<cfile>")<CR><CR>	
+    nmap <leader>vci :vert find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
+    nmap <leader>vcd :vert find d <C-R>=expand("<cword>")<CR><CR>	
+endif
 " }}}
 "==============================================================================
 " Section: Plugins {{{
-"==============================================================================
-" Gutentags {{{
-"==============================================================================
-let g:gutentags_ctags_executable=g:ctags_exe
-let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea'] 
-
-" enable gtags module
-let g:gutentags_modules = ['ctags', 'gtags_cscope']
-
-" config project root markers.
-" let g:gutentags_project_root = ['.libs']
-
-" generate datebases in my cache directory, prevent gtags files polluting my project
-let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
-
-" provides additional troubleshooting commands
-let g:gutentags_define_advanced_commands = 1
-
-" change focus to quickfix window after search (optional).
-let g:gutentags_plus_switch = 1
-
-let g:gutentags_file_list_command = 'fd --hidden --no-ignore-vcs --type f'
-
-" }}}
-"==============================================================================
-" Dispatch {{{
-"==============================================================================
-
-" }}}
 "==============================================================================
 " Ferret {{{
 "==============================================================================
@@ -900,7 +933,7 @@ if g:is_nvim
 endif
 
 " [Tags] Command to generate tags file
-let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.idea --exclude=.libs'
+let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.idea'
 
 function! s:align_lists(lists)
   let maxes = {}
@@ -1249,9 +1282,9 @@ augroup java
     let l:libs_dir = <SID>get_libs_dir()
     let l:libs_jdk_src = l:libs_dir . '/src.zip'
     " Copy the src.zip from JAVA_HOME if not already present in libs
-    if (empty(glob(g:libs_jdk_src)) && !empty(glob(g:jdk_src)))
-      let g:jdk_src_zip = readfile(g:jdk_src, 'b')
-      call writefile(g:jdk_src_zip, l:libs_dir . '/src.zip')
+    if (empty(glob(l:libs_jdk_src)) && !empty(glob(g:jdk_src)))
+      let l:jdk_src_zip = readfile(g:jdk_src, 'b')
+      call writefile(l:jdk_src_zip, l:libs_dir . '/src.zip')
     endif
   endfunction
 
