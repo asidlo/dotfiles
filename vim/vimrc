@@ -179,11 +179,20 @@ endfunction
 command! Todo call s:todo()
 
 function! s:get_libs_dir() abort
-  let l:jdk_version_dir = substitute(expand(g:gtags_jdk_home), ' ', '', 'g')
-  let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,':', '', 'g'))
-  let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'\', '_', 'g'))
-  let $GTAGSLIBPATH = expand(g:vim_dir . '/jdk-src/' . l:jdk_version_dir) 
-  return $GTAGSLIBPATH
+  " let l:jdk_version_dir = substitute(expand(g:gtags_jdk_home), ' ', '', 'g')
+  " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,':', '', 'g'))
+  " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'\', '_', 'g'))
+  " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'/', '_', 'g'))
+
+  " if l:jdk_version_dir[0] == '_'
+  "   " remove the first char if its an underscore (usually on linux)
+  "   let l:jdk_version_dir = l:jdk_version_dir[1:]
+  " endif
+
+  " let $GTAGSLIBPATH = expand(g:vim_dir . '/jdk-src/' . l:jdk_version_dir) 
+  " return $GTAGSLIBPATH
+
+  return expand(getcwd() . '/jdk-src')
 endfunction
 
 " Should only create the libs dir if in a project, i.e assumes using git
@@ -232,41 +241,45 @@ endfunction
 
 " no need to call this function as it will get called internally during the
 " src.zip setup extraction.
-function! s:set_gtags_jdk_src_dir(home) abort
-  let l:java_ext = ''
-  if g:is_win
-    let l:java_ext = '.exe'
-  endif
+" function! s:set_gtags_jdk_src_dir(home) abort
+"   let l:java_ext = ''
+"   if g:is_win
+"     let l:java_ext = '.exe'
+"   endif
 
-  let l:java_home_path = a:home
-  if empty(glob(l:java_home_path))
-    if empty(glob('$'.l:java_home_path))
-      echoerr 'Arg="'.a:home.'" must be a valid JAVA_HOME path'
-      return 1
-    else
-      let l:java_home_path = expand('$'.l:java_home_path)
-    endif
-  endif
+"   let l:java_home_path = a:home
+"   if empty(glob(l:java_home_path))
+"     if empty(glob('$'.l:java_home_path))
+"       echoerr 'Arg="'.a:home.'" must be a valid JAVA_HOME path'
+"       return 1
+"     else
+"       let l:java_home_path = expand('$'.l:java_home_path)
+"     endif
+"   endif
 
-  if empty(glob(l:java_home_path . '/bin/java' . l:java_ext))
-    echoerr 'Arg="'.a:home.'" must be a valid JAVA_HOME path'
-    return 1
-  endif
+"   if empty(glob(l:java_home_path . '/bin/java' . l:java_ext))
+"     echoerr 'Arg="'.a:home.'" must be a valid JAVA_HOME path'
+"     return 1
+"   endif
 
-  let g:gtags_jdk_home = l:java_home_path
-  let $GTAGSLIBPATH = <SID>get_libs_dir()
-endfunction
+"   let g:gtags_jdk_home = l:java_home_path
+"   let $GTAGSLIBPATH = <SID>get_libs_dir()
+" endfunction
 
-function! s:init_gtags_jdk_src_dir() abort
-  let l:jdk_src_dir = <SID>get_libs_dir()
-  call chdir(l:jdk_src_dir)
-  exec ':Dispatch gtags -v -c '
-endfunction
+" function! s:init_gtags_jdk_src_dir() abort
+"   let l:jdk_src_dir = <SID>get_libs_dir()
+"   if !g:is_nvim
+"     call chdir(l:jdk_src_dir)
+"     exec ':Dispatch gtags -v -c '
+"   else
+"     exec ':Dispatch gtags -v -c '. l:jdk_src_dir
+"   endif
+" endfunction
 
 " must pass 1 arg
 " :h command-nargs
-command! -nargs=1 -complete=environment JavaGtagsJavaHome call <SID>set_gtags_jdk_src_dir(<q-args>)
-command! -nargs=0 JavaGtagsInit call <SID>init_gtags_jdk_src_dir()
+" command! -nargs=1 -complete=environment JavaGtagsJavaHome call <SID>set_gtags_jdk_src_dir(<q-args>)
+" command! -nargs=0 JavaGtagsInitJdkSrc call <SID>init_gtags_jdk_src_dir()
 
 " }}}
 "==============================================================================
@@ -341,7 +354,7 @@ Plug 'sheerun/vim-polyglot'
 if !g:skip_ctags_plugin
   Plug 'majutsushi/tagbar'
   Plug 'ludovicchabant/vim-gutentags'
-  Plug 'skywind3000/gutentags_plus'
+  " Plug 'skywind3000/gutentags_plus'
 endif
 
 " Snippets
@@ -817,6 +830,9 @@ set csto=0
 " show msg when any other cscope db added
 set cscopeverbose  
 
+" add results (of find usages and references) to quickfix list instead of location list
+set cscopequickfix=c-,t-,e-
+
 " }}}
 "==============================================================================
 " Section: Plugins {{{
@@ -826,14 +842,24 @@ set cscopeverbose
 " enable gtags module
 let g:gutentags_modules = ['ctags', 'gtags_cscope']
 
+let g:gutentags_ctags_executable=g:ctags_exe
+let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea']
+
+" Dont auto add db so we can make sure only one is present,
+" since we want to add manually, dont use cache dir for longer path
+let g:gutentags_auto_add_gtags_cscope = 0
+
 " debug commands
 let g:gutentags_define_advanced_commands = 1
 
-" Get files not included in source control
-" let g:gutentags_file_list_command = 'fd -t f -e java'
+" Get files not included in source control (only problem with this is that it
+" only gets java files...should change this and maybe also try aggregating
+" files from other directories, then we could have the jdk files be somewhere
+" else. 
+let g:gutentags_file_list_command = 'fd -t f -e java'
 
 " generate datebases in my cache directory, prevent gtags files polluting my project
-let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
+" let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
 
 " NOTE: gutentags will identify current project root by by root markers
 " (.git/.svn/.root). if your project is not in any git/svn repository,
@@ -843,24 +869,33 @@ let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
 let g:gutentags_project_root = ['.root']
 
 " disable default keymappings
-let g:gutentags_plus_nomap = 1
+" let g:gutentags_plus_nomap = 1
 
 " change focus to quickfix window after search (optional).
-let g:gutentags_plus_switch = 1
+" let g:gutentags_plus_switch = 1
 
-noremap <silent> <leader>cs :GscopeFind s <C-R><C-W><cr>
-noremap <silent> <leader>cg :GscopeFind g <C-R><C-W><cr>
-noremap <silent> <leader>cc :GscopeFind c <C-R><C-W><cr>
-noremap <silent> <leader>ct :GscopeFind t <C-R><C-W><cr>
-noremap <silent> <leader>ce :GscopeFind e <C-R><C-W><cr>
-noremap <silent> <leader>cf :GscopeFind f <C-R>=expand("<cword>")<cr><cr>
-noremap <silent> <leader>ci :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-noremap <silent> <leader>cd :GscopeFind d <C-R><C-W><cr>
-noremap <silent> <leader>ca :GscopeFind a <C-R><C-W><cr>
-noremap <silent> <leader>cz :GscopeFind z <C-R><C-W><cr>
+" noremap <silent> <leader>cs :GscopeFind s <C-R><C-W><cr>
+" noremap <silent> <leader>cg :GscopeFind g <C-R><C-W><cr>
+" noremap <silent> <leader>cc :GscopeFind c <C-R><C-W><cr>
+" noremap <silent> <leader>ct :GscopeFind t <C-R><C-W><cr>
+" noremap <silent> <leader>ce :GscopeFind e <C-R><C-W><cr>
+" noremap <silent> <leader>cf :GscopeFind f <C-R>=expand("<cword>")<cr><cr>
+" noremap <silent> <leader>ci :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+" noremap <silent> <leader>cd :GscopeFind d <C-R><C-W><cr>
+" noremap <silent> <leader>ca :GscopeFind a <C-R><C-W><cr>
+" noremap <silent> <leader>cz :GscopeFind z <C-R><C-W><cr>
 
-let g:gtags_jdk_home = $JAVA_HOME
-call <SID>set_gtags_jdk_src_dir(g:gtags_jdk_home)
+nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>	
+nmap <leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>	
+nmap <leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>	
+nmap <leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>	
+nmap <leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>	
+nmap <leader>cf :cs find f <C-R>=expand("<cword>")<CR><CR>	
+nmap <leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>	
+
+" let g:gtags_jdk_home = $JAVA_HOME
+" call <SID>set_gtags_jdk_src_dir(g:gtags_jdk_home)
 
 " }}}
 "==============================================================================
