@@ -16,9 +16,6 @@ org.eclipse.buildship.core.prefs
 # MacOS
 .DS_Store
 
-# Cscope database files
-cscope.*
-
 # Gtags / Gtags-cscope files
 GPATH
 GRTAGS
