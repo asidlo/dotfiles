@@ -304,7 +304,9 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 
 " Tabular must come before markdown
 Plug 'godlygeek/tabular'
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+if !g:is_win
+  Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
+endif
 Plug 'plasticboy/vim-markdown'
 
 " Golang plugins
@@ -366,7 +368,7 @@ Plug 'segeljakt/vim-silicon'
 if g:is_mac
   Plug '/usr/local/opt/fzf'
 else
-  Plug 'junegunn/fzf', { 'do': './install --bin' }
+  Plug 'junegunn/fzf'
 endif
 Plug 'junegunn/fzf.vim'
 
@@ -404,6 +406,13 @@ let g:dracula_inverse = 0
 set t_Co=256
 set background=dark
 set termguicolors
+
+if g:is_nvim
+  " dracula specific highlighting
+  hi Search guibg=None guifg=Yellow
+endif
+
+hi Search gui=underline term=underline cterm=underline
 
 if g:is_gui
   " No toolbars, menu, or scrollbars in the GUI
@@ -1017,6 +1026,7 @@ endif
 let g:airline_symbols.whitespace='_'
 let g:airline_symbols.linenr = ''
 let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.notexists = 'D'
 
 " let g:airline_symbols.space = "\ua0"
 
