@@ -66,8 +66,10 @@ if !executable('ctags')
   let g:skip_ctags_plugin = 1
 endif
 
-if !executable('cscope')
-  echoerr 'cscope executable not found! Install cscope and add to Path for static project analysis'
+if !executable('gtags')
+  " https://code.google.com/archive/p/cscope-win32/downloads Or brew install
+  " echoerr 'cscope executable not found! Install cscope and add to Path for static project analysis'
+  echoerr 'gtags executable not found! Install gtags via gnu global package and add to Path for static project analysis'
 endif
 
 " Path to Python 3 interpreter (must be an absolute path), make startup
@@ -92,6 +94,179 @@ if !exists('$GOPATH')
   echoerr 'Please also set go env vars [GOPATH, GOROOT, GOBIN]'
   let g:skip_go_plugin = 1
 endif
+
+" }}}
+"==============================================================================
+" Section: Misc Functions / Commands {{{
+"=============================================================================
+" makes * and # work on visual mode too.  global function so user mappings can call it.
+function! VisualStarSearchSet(cmdtype,...)
+  let temp = @"
+  normal! gvy
+  let @/ = substitute(@", '\n', '\\n', 'g')
+  let @/ = substitute(@/, '\[', '\\[', 'g')
+  let @/ = substitute(@/, '\~', '\\~', 'g')
+  let @" = temp
+endfunction
+
+function! Copy2Register(reg)
+  let hits = []
+  %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
+  let reg = empty(a:reg) ? '+' : a:reg
+  execute 'let @'.reg.' = join(hits, "") . "\n"'
+endfunction
+
+function! CopyMatches(regex)
+  " Clear the a register
+  normal! qaq
+
+  " Copy the result to the register 'A'
+  execute '/' . a:regex
+  call Copy2Register('A')
+
+  " Store the result from register 'A' to the clipboard
+  let @+ = trim(@a)
+endfunction
+
+" https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
+function! s:get_visual_selection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
+endfunction
+
+" Print the directory of the current buffer
+" Helpful since :pwd will print the project root dir when vim-rooter is applied
+command! Dirname :echo expand('%:p:h')
+ab DN Dirname
+ab FN file
+
+command! SyncSyntax :syntax sync fromstart
+ab SS SyncSyntax
+
+command! Dos2Linux :%s///g
+ab D2L Dos2Linux
+
+" Add all TODO items to the quickfix list relative to where you opened Vim.
+function! s:todo() abort
+  let entries = []
+  for cmd in ['git grep -niIw -e TODO -e FIXME 2> /dev/null',
+            \ 'grep -rniIw -e TODO -e FIXME . 2> /dev/null']
+    let lines = split(system(cmd), '\n')
+    if v:shell_error != 0
+      echoerr 'Error executing cmd: ' . cmd
+    endif
+    for line in lines
+      let [fname, lno, text] = matchlist(line, '^\([^:]*\):\([^:]*\):\(.*\)')[1:3]
+      call add(entries, { 'filename': fname, 'lnum': lno, 'text': text })
+    endfor
+    break
+  endfor
+
+  if !empty(entries)
+    call setqflist(entries)
+    copen
+  endif
+endfunction
+
+command! Todo call s:todo()
+
+function! s:get_libs_dir() abort
+  let l:jdk_version_dir = substitute(expand(g:gtags_jdk_home), ' ', '', 'g')
+  let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,':', '', 'g'))
+  let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'\', '_', 'g'))
+  let $GTAGSLIBPATH = expand(g:vim_dir . '/jdk-src/' . l:jdk_version_dir) 
+  return $GTAGSLIBPATH
+endfunction
+
+" Should only create the libs dir if in a project, i.e assumes using git
+" and vim-rooter
+function! s:create_libs_dir() abort
+  let l:libs_dir = <SID>get_libs_dir()
+  if (empty(glob(l:libs_dir)))
+    call mkdir(l:libs_dir, 'p')
+  endif
+endfunction
+
+function! s:copy_jdk_src() abort
+  let g:jdk_src = expand($JAVA_HOME . '/src.zip')
+  let l:libs_dir = <SID>get_libs_dir()
+  let l:libs_jdk_src = expand(l:libs_dir . '/src.zip')
+  " Copy the src.zip from JAVA_HOME if not already present in libs
+  if (empty(glob(l:libs_jdk_src)) && !empty(glob(g:jdk_src)))
+    let l:jdk_src_zip = readfile(g:jdk_src, 'b')
+    call writefile(l:jdk_src_zip, l:libs_dir . '/src.zip')
+  endif
+endfunction
+
+function! s:extract_jdk_src() abort
+  let l:libs_dir = <SID>get_libs_dir()
+  let l:libs_jdk_src = expand(l:libs_dir . '/src.zip')
+  if !executable('unzip')
+    echoerr 'Unzip command not found in PATH'
+    return 1
+  endif
+
+  " TODO - make async, and only exec if not already unzipped
+  "      - should I namespace the jdk by version? ie unzip in jdk8_204/
+  "        or should at least remove the old sdk files async as well.
+  "      - Also should do custom impl of :Files command to sort the entries
+  "        so that the libs in the jdk are on the bottom and when selecting
+  "        files from the libs dir, the :view command is used instead of :e
+  exec ':Dispatch unzip ' . l:libs_jdk_src . ' -d ' . l:libs_dir
+
+  " Notes: Could just search in the gradle directory for the files instead of
+  "        copying them locally. Could also do the same for the jvm files.
+  "        Might need root perms for that though..
+  " NewPlan: vim is able to directly read zip files, so just open the src.zip
+  "        and open java file of choice, if we need to extract we could do that
+  "        also....wonder if fd can search through zip
+endfunction
+
+" no need to call this function as it will get called internally during the
+" src.zip setup extraction.
+function! s:set_gtags_jdk_src_dir(home) abort
+  let l:java_ext = ''
+  if g:is_win
+    let l:java_ext = '.exe'
+  endif
+
+  let l:java_home_path = a:home
+  if empty(glob(l:java_home_path))
+    if empty(glob('$'.l:java_home_path))
+      echoerr 'Arg="'.a:home.'" must be a valid JAVA_HOME path'
+      return 1
+    else
+      let l:java_home_path = expand('$'.l:java_home_path)
+    endif
+  endif
+
+  if empty(glob(l:java_home_path . '/bin/java' . l:java_ext))
+    echoerr 'Arg="'.a:home.'" must be a valid JAVA_HOME path'
+    return 1
+  endif
+
+  let g:gtags_jdk_home = l:java_home_path
+  let $GTAGSLIBPATH = <SID>get_libs_dir()
+endfunction
+
+function! s:init_gtags_jdk_src_dir() abort
+  let l:jdk_src_dir = <SID>get_libs_dir()
+  call chdir(l:jdk_src_dir)
+  exec ':Dispatch gtags -v -c '
+endfunction
+
+" must pass 1 arg
+" :h command-nargs
+command! -nargs=1 -complete=environment JavaGtagsJavaHome call <SID>set_gtags_jdk_src_dir(<q-args>)
+command! -nargs=0 JavaGtagsInit call <SID>init_gtags_jdk_src_dir()
 
 " }}}
 "==============================================================================
@@ -165,6 +340,8 @@ Plug 'sheerun/vim-polyglot'
 " Symbol / Tag Plugins
 if !g:skip_ctags_plugin
   Plug 'majutsushi/tagbar'
+  Plug 'ludovicchabant/vim-gutentags'
+  Plug 'skywind3000/gutentags_plus'
 endif
 
 " Snippets
@@ -627,73 +804,65 @@ function! g:ToggleQuickfix()
   copen
 endfunction
 
-if has("cscope")
-    " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
-    set cscopetag
+" use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
+set cscopetag
 
-    " check cscope for definition of a symbol before checking ctags: set to 1
-    " if you want the reverse search order.
-    set csto=0
+" set if using gtags instead of cscope for generating db
+set csprg=gtags-cscope
 
-    " add any cscope database in current directory
-    if filereadable("cscope.out")
-        cs add cscope.out  
-    " else add the database pointed to by environment variable 
-    elseif $CSCOPE_DB != ""
-        cs add $CSCOPE_DB
-    endif
+" check cscope for definition of a symbol before checking ctags: set to 1
+" if you want the reverse search order.
+set csto=0
 
-    " show msg when any other cscope db added
-    set cscopeverbose  
+" show msg when any other cscope db added
+set cscopeverbose  
 
-    """"""""""""" My cscope/vim key mappings
-    "
-    " The following maps all invoke one of the following cscope search types:
-    "
-    "   's'   symbol: find all references to the token under cursor
-    "   'g'   global: find global definition(s) of the token under cursor
-    "   'c'   calls:  find all calls to the function name under cursor
-    "   't'   text:   find all instances of the text under cursor
-    "   'e'   egrep:  egrep search for the word under cursor
-    "   'f'   file:   open the filename under cursor
-    "   'i'   includes: find files that include the filename under cursor
-    "   'd'   called: find functions that function under cursor calls
-    "
-    " All of the maps involving the <cfile> macro use '^<cfile>$': this is so
-    " that searches over '#include <time.h>" return only references to
-    " 'time.h', and not 'sys/time.h', etc. (by default cscope will return all
-    " files that contain 'time.h' as part of their name).
-
-    nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>cf :cs find f <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-    nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>	
-
-    nmap <leader>scs :scs find s <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>scg :scs find g <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>scc :scs find c <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>sct :scs find t <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>sce :scs find e <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>scf :scs find f <C-R>=expand("<cfile>")<CR><CR>	
-    nmap <leader>sci :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
-    nmap <leader>scd :scs find d <C-R>=expand("<cword>")<CR><CR>	
-
-    nmap <leader>vcs :vert find s <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>vcg :vert find g <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>vcc :vert find c <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>vct :vert find t <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>vce :vert find e <C-R>=expand("<cword>")<CR><CR>	
-    nmap <leader>vcf :vert find f <C-R>=expand("<cfile>")<CR><CR>	
-    nmap <leader>vci :vert find i ^<C-R>=expand("<cfile>")<CR>$<CR>	
-    nmap <leader>vcd :vert find d <C-R>=expand("<cword>")<CR><CR>	
-endif
 " }}}
 "==============================================================================
 " Section: Plugins {{{
+"==============================================================================
+" Gutentags {{{
+"==============================================================================
+" enable gtags module
+let g:gutentags_modules = ['ctags', 'gtags_cscope']
+
+" debug commands
+let g:gutentags_define_advanced_commands = 1
+
+" Get files not included in source control
+" let g:gutentags_file_list_command = 'fd -t f -e java'
+
+" generate datebases in my cache directory, prevent gtags files polluting my project
+let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
+
+" NOTE: gutentags will identify current project root by by root markers
+" (.git/.svn/.root). if your project is not in any git/svn repository,
+" gutentags will not generate gtags database for it. To avoid this, you can
+" create an empty .root file in your project root, and gutentags will know
+" where is your project root and generate gtags database for it.
+let g:gutentags_project_root = ['.root']
+
+" disable default keymappings
+let g:gutentags_plus_nomap = 1
+
+" change focus to quickfix window after search (optional).
+let g:gutentags_plus_switch = 1
+
+noremap <silent> <leader>cs :GscopeFind s <C-R><C-W><cr>
+noremap <silent> <leader>cg :GscopeFind g <C-R><C-W><cr>
+noremap <silent> <leader>cc :GscopeFind c <C-R><C-W><cr>
+noremap <silent> <leader>ct :GscopeFind t <C-R><C-W><cr>
+noremap <silent> <leader>ce :GscopeFind e <C-R><C-W><cr>
+noremap <silent> <leader>cf :GscopeFind f <C-R>=expand("<cword>")<cr><cr>
+noremap <silent> <leader>ci :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>cd :GscopeFind d <C-R><C-W><cr>
+noremap <silent> <leader>ca :GscopeFind a <C-R><C-W><cr>
+noremap <silent> <leader>cz :GscopeFind z <C-R><C-W><cr>
+
+let g:gtags_jdk_home = $JAVA_HOME
+call <SID>set_gtags_jdk_src_dir(g:gtags_jdk_home)
+
+" }}}
 "==============================================================================
 " Ferret {{{
 "==============================================================================
@@ -796,7 +965,9 @@ if g:is_nvim
 else
   let g:airline_theme='gruvbox'
 endif
+
 let g:airline_powerline_fonts = 1
+" let g:airline_symbols_ascii = 1
 
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
@@ -808,7 +979,11 @@ if !exists('g:airline_symbols')
   let g:airline_symbols = {}
 endif
 
-let g:airline_symbols.space = "\ua0"
+let g:airline_symbols.whitespace='_'
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ''
+
+" let g:airline_symbols.space = "\ua0"
 
 " powerline symbols
 " https://www.nerdfonts.com/cheat-sheet
@@ -816,23 +991,21 @@ let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
 let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = 'שׂ'
+" let g:airline_symbols.branch = '@'
 let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
-let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.dirty=' ??'
-let g:airline_symbols.whitespace='/s'
-let g:airline_symbols.crypt='0x'
-let g:airline_symbols.notexists=' ?'
+" let g:airline_symbols.linenr = ''
+" let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.dirty='?'
+" let g:airline_symbols.whitespace='/s'
+" let g:airline_symbols.crypt='0x'
+" let g:airline_symbols.notexists=' ?'
 
-let airline#extensions#ale#show_line_numbers = 0
-
-let g:airline#extensions#ale#warning_symbol = "\uf071 "
-let g:airline#extensions#ale#error_symbol = "\uf05e "
-
-let g:lightline#ale#indicator_checking = "\uf110"
-let g:lightline#ale#indicator_infos = "\uf129 "
-let g:lightline#ale#indicator_ok = "\uf00c"
+" let airline#extensions#ale#show_line_numbers = 0
+" let g:airline#extensions#ale#warning_symbol = "\uf071 "
+" let g:airline#extensions#ale#error_symbol = "\uf05e "
+" let g:lightline#ale#indicator_checking = "\uf110"
+" let g:lightline#ale#indicator_infos = "\uf129 "
+" let g:lightline#ale#indicator_ok = "\uf00c"
 
 let g:airline#extensions#default#section_truncate_width = {
     \ 'c': 50,
@@ -1030,89 +1203,6 @@ endif
 "==============================================================================
 " }}}
 "==============================================================================
-" Section: Misc Functions / Commands {{{
-"=============================================================================
-" makes * and # work on visual mode too.  global function so user mappings can call it.
-function! VisualStarSearchSet(cmdtype,...)
-  let temp = @"
-  normal! gvy
-  let @/ = substitute(@", '\n', '\\n', 'g')
-  let @/ = substitute(@/, '\[', '\\[', 'g')
-  let @/ = substitute(@/, '\~', '\\~', 'g')
-  let @" = temp
-endfunction
-
-function! Copy2Register(reg)
-  let hits = []
-  %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
-  let reg = empty(a:reg) ? '+' : a:reg
-  execute 'let @'.reg.' = join(hits, "") . "\n"'
-endfunction
-
-function! CopyMatches(regex)
-  " Clear the a register
-  normal! qaq
-
-  " Copy the result to the register 'A'
-  execute '/' . a:regex
-  call Copy2Register('A')
-
-  " Store the result from register 'A' to the clipboard
-  let @+ = trim(@a)
-endfunction
-
-" https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
-function! s:get_visual_selection()
-    " Why is this not a built-in Vim script function?!
-    let [line_start, column_start] = getpos("'<")[1:2]
-    let [line_end, column_end] = getpos("'>")[1:2]
-    let lines = getline(line_start, line_end)
-    if len(lines) == 0
-        return ''
-    endif
-    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-    let lines[0] = lines[0][column_start - 1:]
-    return join(lines, "\n")
-endfunction
-
-" Print the directory of the current buffer
-" Helpful since :pwd will print the project root dir when vim-rooter is applied
-command! Dirname :echo expand('%:p:h')
-ab DN Dirname
-ab FN file
-
-command! SyncSyntax :syntax sync fromstart
-ab SS SyncSyntax
-
-command! Dos2Linux :%s///g
-ab D2L Dos2Linux
-
-" Add all TODO items to the quickfix list relative to where you opened Vim.
-function! s:todo() abort
-  let entries = []
-  for cmd in ['git grep -niIw -e TODO -e FIXME 2> /dev/null',
-            \ 'grep -rniIw -e TODO -e FIXME . 2> /dev/null']
-    let lines = split(system(cmd), '\n')
-    if v:shell_error != 0
-      echoerr 'Error executing cmd: ' . cmd
-    endif
-    for line in lines
-      let [fname, lno, text] = matchlist(line, '^\([^:]*\):\([^:]*\):\(.*\)')[1:3]
-      call add(entries, { 'filename': fname, 'lnum': lno, 'text': text })
-    endfor
-    break
-  endfor
-
-  if !empty(entries)
-    call setqflist(entries)
-    copen
-  endif
-endfunction
-
-command! Todo call s:todo()
-
-" }}}
-"==============================================================================
 " Section: Language Specific Mappings {{{
 "==============================================================================
 " Go {{{
@@ -1252,66 +1342,10 @@ augroup java
   nmap <leader>F :JavaFmt<CR>
   nmap <leader>I :JavaImports<CR>
 
-  " autocmd Filetype java,groovy 
-  "       \ call <SID>create_libs_dir() |
-  "       \ call <SID>copy_jdk_src() |
-  "       \ call <SID>extract_jdk_src()
-
   command! JavaCollectLibs 
         \ call <SID>create_libs_dir() |
         \ call <SID>copy_jdk_src() |
         \ call <SID>extract_jdk_src()
-
-  " TODO - add variable for debug, to print out messages for progress
-  let g:jdk_src = $JAVA_HOME . '/src.zip'
-
-  function! s:get_libs_dir() abort
-    return expand(getcwd() . '/.libs')
-  endfunction
-
-  " Should only create the libs dir if in a project, i.e assumes using git
-  " and vim-rooter
-  function! s:create_libs_dir() abort
-    let l:libs_dir = <SID>get_libs_dir()
-    if (empty(glob(l:libs_dir)))
-      call mkdir(l:libs_dir)
-    endif
-  endfunction
-
-  function! s:copy_jdk_src() abort
-    let l:libs_dir = <SID>get_libs_dir()
-    let l:libs_jdk_src = l:libs_dir . '/src.zip'
-    " Copy the src.zip from JAVA_HOME if not already present in libs
-    if (empty(glob(l:libs_jdk_src)) && !empty(glob(g:jdk_src)))
-      let l:jdk_src_zip = readfile(g:jdk_src, 'b')
-      call writefile(l:jdk_src_zip, l:libs_dir . '/src.zip')
-    endif
-  endfunction
-
-  function! s:extract_jdk_src() abort
-    let l:libs_dir = <SID>get_libs_dir()
-    let l:libs_jdk_src = l:libs_dir . '/src.zip'
-    if !executable('unzip')
-      echoerr 'Unzip command not found in PATH'
-      return 1
-    endif
-
-    " TODO - make async, and only exec if not already unzipped
-    "      - should I namespace the jdk by version? ie unzip in jdk8_204/
-    "        or should at least remove the old sdk files async as well.
-    "      - Also should do custom impl of :Files command to sort the entries
-    "        so that the libs in the jdk are on the bottom and when selecting
-    "        files from the libs dir, the :view command is used instead of :e
-    exec ':Dispatch! unzip -qq -u ' . l:libs_jdk_src . ' -d ' . l:libs_dir
-
-    " Notes: Could just search in the gradle directory for the files instead of
-    "        copying them locally. Could also do the same for the jvm files.
-    "        Might need root perms for that though..
-    " NewPlan: vim is able to directly read zip files, so just open the src.zip
-    "        and open java file of choice, if we need to extract we could do that
-    "        also....wonder if fd can search through zip
-  endfunction
-
 
 augroup END
 

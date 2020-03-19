@@ -16,5 +16,11 @@ org.eclipse.buildship.core.prefs
 # MacOS
 .DS_Store
 
-# Libs directory for java classpath
-.libs/
+# Cscope database files
+cscope.*
+
+# Gtags / Gtags-cscope files
+GPATH
+GRTAGS
+GTAGS
+.gutgtags
