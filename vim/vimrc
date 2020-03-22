@@ -555,14 +555,14 @@ set noswapfile
 
 " Linebreak on 500 characters if set wrap
 set lbr
-set tw=500
+set tw=119
 set nowrap
 
 " How to represent non-printable characters
 " In general, don't want tabs, so have them show up as special characters
 set listchars=tab:>-,trail:_,extends:>,precedes:<,nbsp:~
 set showbreak=\\ "
-setlocal list "turn the above on
+setlocal nolist "turn chars off by default, can be toggled via yol
 
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
@@ -593,8 +593,8 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces (tabstop)
-set shiftwidth=2
-set tabstop=2
+set shiftwidth=4
+set tabstop=4
 
 set ai "Auto indent
 set si "Smart indent
@@ -719,8 +719,7 @@ if bufwinnr(1)
 endif
 
 " Switch CWD to the directory of the open buffer
-nnoremap <leader>cd :cd %:p:h<cr>:pwd<cr>
-
+" :cd %:p:h
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -1222,11 +1221,6 @@ let g:vim_markdown_strikethrough = 1
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_new_list_item_indent = 0
 
-augroup markdown
-  autocmd!
-  autocmd BufNewFile,BufRead CHANGELOG.txt,README.txt set filetype=markdown
-  autocmd FileType markdown set textwidth=79
-augroup END
 
 " }}}
 "==============================================================================
@@ -1286,38 +1280,10 @@ augroup go
     \ setlocal noexpandtab |
     \ set tabstop=4 |
     \ set shiftwidth=4 |
-    \ set tw=79 |
-    \ setlocal nolist
+    \ set tw=79
 
   " :GoBuild and :GoTestCompile
   autocmd FileType go nmap <leader>m :<c-u>call <SID>build_go_files()<cr>
-
-  autocmd FileType go nmap <leader>i :GoImport<space>
-
-  " :GoTest
-  autocmd FileType go nmap <leader>T  <Plug>(go-test)
-  autocmd FileType go nmap <leader>t <Plug>(go-test-func)
-
-  " :GoRun
-  if g:is_nvim
-    autocmd FileType go nmap <leader>r <Plug>(go-run-split)
-  else
-    autocmd FileType go nmap <leader>r <Plug>(go-run)
-  endif
-
-  " :GoMetaLinter
-  autocmd FileType go nmap <leader>l <Plug>(go-metalinter)
-
-  " :GoDef but opens in a vertical split
-  autocmd FileType go nmap <leader>K <Plug>(go-def-vertical)
-
-  " :GoDef but opens in a horizontal split
-  autocmd FileType go nmap <leader>k <Plug>(go-def-split)
-
-  " :GoDecls - Show all methods in current file (Methods)
-  " Think (list methods/members)
-  autocmd Filetype go nmap <leader>o :GoDecls<cr>
-  autocmd Filetype go nmap <leader>O :GoDeclsDir<cr>
 
   " :GoAlternate  commands :A, :AV, :AS and :AT
   autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
@@ -1365,10 +1331,8 @@ augroup java
       \ set tabstop=4 |
       \ set softtabstop=4 |
       \ set shiftwidth=4 |
-      \ set textwidth=79 |
-      \ set expandtab |
-      \ set autoindent |
-      \ setlocal nolist
+      \ set textwidth=119 |
+      \ set expandtab
 
   command! -range JavaFmt <line1>,<line2>call <SID>JavaFmtRange()
   command! JavaImports execute '!java -jar ' . g:java_formatter . ' -a -i --fix-imports-only %:p'
@@ -1399,9 +1363,9 @@ augroup END
 " Misc {{{
 "==============================================================================
 autocmd FileType json syntax match Comment +\/\/.\+$+
-autocmd FileType vim set foldmethod=marker
+autocmd FileType vim set foldmethod=marker tabstop=2 shiftwidth=2
 autocmd BufEnter *zshrc set foldmethod=marker
-autocmd BufRead,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
+autocmd BufEnter,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
 autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 
 " Open all folds = zR; Close all folds = zM
@@ -1409,6 +1373,12 @@ autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 augroup XML
     autocmd!
     autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
+augroup END
+
+augroup markdown
+  autocmd!
+  autocmd BufNewFile,BufEnter CHANGELOG.txt,README.txt set filetype=markdown
+  autocmd FileType markdown set textwidth=79
 augroup END
 
 " }}}
