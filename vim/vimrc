@@ -1197,6 +1197,9 @@ endfunction
 
 command! BTags call s:btags()
 
+" Replace the default dictionary completion with fzf-based fuzzy completion
+inoremap <expr> <c-x><c-k> fzf#vim#complete('cat /usr/share/dict/words')
+
 " }}}
 "==============================================================================
 " Ack {{{
@@ -1355,6 +1358,8 @@ augroup java
         \ call <SID>create_libs_dir() |
         \ call <SID>copy_jdk_src() |
         \ call <SID>extract_jdk_src()
+
+ " call fzf#run({ 'source': 'unzip -l src.zip', 'down': '40%' }) 
 
 augroup END
 
