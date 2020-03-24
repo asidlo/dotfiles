@@ -390,26 +390,29 @@ let mapleader=","
 
 syntax enable
 
+let g:is_colo_dracula = 1
+let g:is_colo_gruvbox = 0
+
 try
-  if g:is_nvim
+  if g:is_colo_dracula
     colorscheme dracula
-  else
+  elseif g:is_colo_gruvbox
     colorscheme gruvbox
   endif
 catch
   colorscheme desert
 endtry
 
-" Makes highlighting not an eyesore
-let g:dracula_inverse = 0
-
 set t_Co=256
 set background=dark
 set termguicolors
 
-if g:is_nvim
+if g:is_colo_dracula
+  " Makes highlighting not an eyesore
+  let g:dracula_inverse = 0
+
   " dracula specific highlighting
-  hi Search guibg=None guifg=Yellow
+  hi Search guibg=NONE guifg=Yellow
 endif
 
 hi Search gui=underline term=underline cterm=underline
@@ -1003,9 +1006,9 @@ nnoremap ]ot :TagbarClose<cr>
 "==============================================================================
 " Airline {{{
 "==============================================================================
-if g:is_nvim
+if g:is_colo_dracula
   let g:airline_theme='dracula'
-else
+elseif g:is_colo_gruvbox
   let g:airline_theme='gruvbox'
 endif
 
