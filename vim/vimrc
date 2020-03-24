@@ -1149,6 +1149,12 @@ if g:is_nvim
   autocmd FileType fzf tnoremap <buffer> <c-k> <up>
 endif
 
+" Disable preview with windows since fzf.vim internally uses a bash script to 
+" render preview window even though I can do the same with cmd using bat
+if g:is_win
+  let g:fzf_preview_window = ''
+endif
+
 " [Tags] Command to generate tags file
 let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.idea'
 
