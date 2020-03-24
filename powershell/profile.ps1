@@ -5,7 +5,7 @@
 # Import Powershell Modules
 Import-Module PSReadLine
 Import-Module get-childitemcolor
-Import-Module 'C:\tools\poshgit\dahlbyk-posh-git-9bda399\src\posh-git.psd1'
+# Import-Module 'C:\tools\poshgit\dahlbyk-posh-git-9bda399\src\posh-git.psd1'
 
 #--------------------------------------------------------------
 # Misc Config
@@ -91,15 +91,15 @@ function prompt {
 }
 
 # Git Color Settings
-$GitPromptSettings.WorkingForegroundColor = "Red"
-$GitPromptSettings.LocalWorkingStatusForegroundColor = "Red"
-$GitPromptSettings.BeforeForegroundColor = "White"
-$GitPromptSettings.AfterForegroundColor = "White"
-$GitPromptSettings.BranchGoneStatusForegroundColor = "Cyan"
+# $GitPromptSettings.WorkingForegroundColor = "Red"
+# $GitPromptSettings.LocalWorkingStatusForegroundColor = "Red"
+# $GitPromptSettings.BeforeForegroundColor = "White"
+# $GitPromptSettings.AfterForegroundColor = "White"
+# $GitPromptSettings.BranchGoneStatusForegroundColor = "Cyan"
 
 # Searchgrid repo takes too long to load file status, so disable for all
 # Could pick specific ones, but just for simplicity do all
-$GitPromptSettings.EnableFileStatus = $false
+# $GitPromptSettings.EnableFileStatus = $false
 
 # Console Color Settings
 $host.UI.RawUI.BackgroundColor = "Black"
@@ -238,33 +238,6 @@ Function Test-ConsoleColor {
         Write-Progress -Activity "Progress Test" -Status "Working" -CurrentOperation $_ -PercentComplete $p
         Start-Sleep -Milliseconds 250
     }
-}
-
-# https://stackoverflow.com/questions/567650/how-to-reload-user-profile-from-script-file-in-powershell
-# Note: Can get list of approved verbs for naming convention via (Get-Verb)
-function Update-Profile {
-    @(
-        $Profile.AllUsersAllHosts,
-        $Profile.AllUsersCurrentHost,
-        $Profile.CurrentUserAllHosts,
-        $Profile.CurrentUserCurrentHost
-    ) | % {
-        if (Test-Path $_) {
-            Write-Verbose "Running $_"
-            . $_
-        }
-    }    
-}
-
-function Clear-EclipseWorkspace {
-  $files = fd -I -H  '.project|.classpath|\.settings'
-  Write-Output $files
-  $remove = Read-Host -Prompt 'Do you want to remove all of the files? [y|N] '
-  if ($remove.ToUpper() -eq 'Y') {
-    foreach ($file in $files) {
-      Remove-Item $file 
-    }
-  }
 }
 
 function Stop-NxJavaProcesses {
