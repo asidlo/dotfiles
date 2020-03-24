@@ -368,7 +368,7 @@ Plug 'segeljakt/vim-silicon'
 if g:is_mac
   Plug '/usr/local/opt/fzf'
 else
-  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 endif
 Plug 'junegunn/fzf.vim'
 
@@ -1025,7 +1025,7 @@ endif
 let g:airline_symbols.whitespace='_'
 let g:airline_symbols.linenr = ''
 let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.notexists = 'D'
+let g:airline_symbols.notexists = ' D'
 
 " let g:airline_symbols.space = "\ua0"
 
@@ -1039,7 +1039,7 @@ let g:airline_right_alt_sep = ''
 let g:airline_symbols.readonly = ''
 " let g:airline_symbols.linenr = ''
 " let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.dirty='?'
+let g:airline_symbols.dirty=' ?'
 " let g:airline_symbols.whitespace='/s'
 " let g:airline_symbols.crypt='0x'
 " let g:airline_symbols.notexists=' ?'
