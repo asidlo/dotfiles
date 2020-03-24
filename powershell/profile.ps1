@@ -5,7 +5,6 @@
 # Import Powershell Modules
 Import-Module PSReadLine
 Import-Module get-childitemcolor
-# Import-Module 'C:\tools\poshgit\dahlbyk-posh-git-9bda399\src\posh-git.psd1'
 
 #--------------------------------------------------------------
 # Misc Config
@@ -78,8 +77,6 @@ function prompt {
 
     Write-Host $curPath -NoNewline -ForegroundColor Blue
 
-    # Even takes too long to load branch smh
-    # Write-VcsStatus
     $curBranch = git rev-parse --abbrev-ref HEAD
 
     if ($curBranch) {
@@ -89,17 +86,6 @@ function prompt {
     $LastExitCode = $origLastExitCode
     "`n$('>' * ($nestedPromptLevel + 1)) "
 }
-
-# Git Color Settings
-# $GitPromptSettings.WorkingForegroundColor = "Red"
-# $GitPromptSettings.LocalWorkingStatusForegroundColor = "Red"
-# $GitPromptSettings.BeforeForegroundColor = "White"
-# $GitPromptSettings.AfterForegroundColor = "White"
-# $GitPromptSettings.BranchGoneStatusForegroundColor = "Cyan"
-
-# Searchgrid repo takes too long to load file status, so disable for all
-# Could pick specific ones, but just for simplicity do all
-# $GitPromptSettings.EnableFileStatus = $false
 
 # Console Color Settings
 $host.UI.RawUI.BackgroundColor = "Black"
@@ -167,77 +153,6 @@ function cddash {
         Set-Location $pwd;
     }
     Set-Variable -Name OLDPWD -Value $tmp -Scope global;
-}
-
-# To print color names only
-# > Get-ConsoleColor
-# To print with colors
-# > Get-ConsoleColor -Colorize
-#
-# https://www.petri.com/change-powershell-console-font-and-background-colors
-function Get-ConsoleColor {
-    Param(
-        [switch]$Colorize
-    )
-     
-    $wsh = New-Object -ComObject wscript.shell
-     
-    $data = [enum]::GetNames([consolecolor])
-     
-    if ($Colorize) {
-        Foreach ($color in $data) {
-            Write-Host $color -ForegroundColor $Color
-        }
-        [void]$wsh.Popup("The current background color is $([console]::BackgroundColor)", 16, "Get-ConsoleColor")
-    }
-    else {
-        #display values
-        $data
-    }  
-}
-
-Function Show-ConsoleColor {
-    Param()
-    $host.PrivateData.psobject.properties | 
-    ForEach-Object {
-        #$text = "$($_.Name) = $($_.Value)"
-        Write-host "$($_.name.padright(23)) = " -NoNewline
-        Write-Host $_.Value -ForegroundColor $_.value
-    }
-}
-
-Function Test-ConsoleColor {
-    [cmdletbinding()]
-    Param()
-     
-    Clear-Host
-    $heading = "White"
-    Write-Host "Pipeline Output" -ForegroundColor $heading
-    Get-Service | Select-Object -first 5
-     
-    Write-Host "`nError" -ForegroundColor $heading
-    Write-Error "I made a mistake"
-     
-    Write-Host "`nWarning" -ForegroundColor $heading
-    Write-Warning "Let this be a warning to you."
-     
-    Write-Host "`nVerbose" -ForegroundColor $heading
-    $VerbosePreference = "Continue"
-    Write-Verbose "I have a lot to say."
-    $VerbosePreference = "SilentlyContinue"
-     
-    Write-Host "`nDebug" -ForegroundColor $heading
-    $DebugPreference = "Continue"
-    Write-Debug "`nSomething is bugging me. Figure it out."
-    $DebugPreference = "SilentlyContinue"
-     
-    Write-Host "`nProgress" -ForegroundColor $heading
-    1..10 | ForEach-Object -Begin { $i = 0 } -process {
-        $i++
-        $p = ($i / 10) * 100
-        Write-Progress -Activity "Progress Test" -Status "Working" -CurrentOperation $_ -PercentComplete $p
-        Start-Sleep -Milliseconds 250
-    }
 }
 
 function Stop-NxJavaProcesses {
