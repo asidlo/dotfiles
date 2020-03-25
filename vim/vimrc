@@ -1129,22 +1129,30 @@ nnoremap <leader>X :Commands<cr>
 nnoremap <leader>o :BTags<cr>
 nnoremap <leader>O :Tags<cr>
 
-" Match color scheme
-let g:fzf_colors =
-  \ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'gutter':  ['bg', 'Normal'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
+" Match color scheme for gruvbox since term has dracula colors tweaked and
+" defined in $FZF_DEFAULT_OPTS
+if g:is_colo_gruvbox
+  let g:fzf_colors =
+    \ { 'fg':      ['fg', 'Normal'],
+    \ 'bg':      ['bg', 'Normal'],
+    \ 'hl':      ['fg', 'Comment'],
+    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'gutter':  ['bg', 'Normal'],
+    \ 'hl+':     ['fg', 'Statement'],
+    \ 'info':    ['fg', 'PreProc'],
+    \ 'border':  ['fg', 'Ignore'],
+    \ 'prompt':  ['fg', 'Conditional'],
+    \ 'pointer': ['fg', 'Exception'],
+    \ 'marker':  ['fg', 'Keyword'],
+    \ 'spinner': ['fg', 'Label'],
+    \ 'header':  ['fg', 'Comment'] }
+else
+  let g:fzf_colors =
+    \ {  'fg':      ['fg', 'Normal'],
+    \    'bg':      ['bg', 'Normal'],
+    \ }
+endif
 
 if g:is_nvim
   " https://github.com/junegunn/fzf.vim/issues/221
