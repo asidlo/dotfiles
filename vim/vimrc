@@ -42,6 +42,10 @@ else
   let g:ctags_exe = 'ctags'
 endif
 
+if g:is_win
+  let $GTAGSLIBPATH = 'D:\jdk8src' 
+  let $GTAGSTHROUGH = 'true' 
+endif
 
 " Disable python2, ruby, and node providers
 let g:loaded_python_provider = 0
@@ -281,6 +285,20 @@ endfunction
 " command! -nargs=1 -complete=environment JavaGtagsJavaHome call <SID>set_gtags_jdk_src_dir(<q-args>)
 " command! -nargs=0 JavaGtagsInitJdkSrc call <SID>init_gtags_jdk_src_dir()
 
+" https://www.reddit.com/r/vim/comments/9iwr41/store_quickfix_list_as_a_file_and_load_it/
+function! s:qf_to_filename(qf) abort
+  for i in range(len(a:qf.items))
+    let d = a:qf.items[i]
+    if bufexists(d.bufnr)
+      let d.filename = fnamemodify(bufname(d.bufnr), ':p')
+    endif
+    silent! call remove(d, 'bufnr')
+    let a:qf.items[i] = d
+  endfor
+  return a:qf
+endfunction
+command! -bar -nargs=1 -complete=file WriteQF call writefile([js_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
+command! -bar -nargs=1 -complete=file ReadQF call setqflist([], ' ', js_decode(get(readfile(<f-args>), 0, '')))
 " }}}
 "==============================================================================
 " Section: Plugin Manager {{{
@@ -1335,17 +1353,17 @@ augroup java
 
   " || com.amazon.oa.CriticalRoutersTest > testArticulationPoints FAILED
   " src/main/java/com/amazon/oa/NumberOfClusters.java|24 col 24 error| ';' expected
-  autocmd FileType java,groovy set makeprg=./gradlew
-  autocmd FileType java,groovy set errorformat=
-      \%E[ant:scalac]\ %f:%l:\ error:\ %m,
-      \%W[ant:scalac]\ %f:%l:\ warning:\ %m,
-      \%E%.%#:compile%\\w%#Java%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
-      \%W%.%#:compile%\\w%#Java%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
-      \%E%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
-      \%W%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
-      \%E%f:\ %\\d%\\+:\ %m\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
-      \%E%>%f:\ %\\d%\\+:\ %m,%C\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
-      \%-G%.%#
+  autocmd FileType java,groovy set makeprg=gradlew
+  " autocmd FileType java,groovy set errorformat=
+  "     \%E[ant:scalac]\ %f:%l:\ error:\ %m,
+  "     \%W[ant:scalac]\ %f:%l:\ warning:\ %m,
+  "     \%E%.%#:compile%\\w%#Java%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
+  "     \%W%.%#:compile%\\w%#Java%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
+  "     \%E%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
+  "     \%W%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
+  "     \%E%f:\ %\\d%\\+:\ %m\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
+  "     \%E%>%f:\ %\\d%\\+:\ %m,%C\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
+  "     \%-G%.%#
 
   autocmd FileType java,groovy
       \ set tabstop=4 |
