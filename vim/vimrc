@@ -43,8 +43,11 @@ else
 endif
 
 if g:is_win
-  let $GTAGSLIBPATH = 'D:\jdk8src' 
+  " Need to remove this var when working with non-java based repos
+  let $GTAGSLIBPATH = glob('D:\jdk8src')
   let $GTAGSTHROUGH = 'true' 
+  let $GTAGSLABEL = 'pygments'
+  let $GTAGSCONF = glob($GTAGS_HOME . '/share/gtags/gtags.conf')
 endif
 
 " Disable python2, ruby, and node providers
@@ -233,7 +236,7 @@ function! s:extract_jdk_src() abort
   "      - Also should do custom impl of :Files command to sort the entries
   "        so that the libs in the jdk are on the bottom and when selecting
   "        files from the libs dir, the :view command is used instead of :e
-  exec ':Dispatch unzip ' . l:libs_jdk_src . ' -d ' . l:libs_dir
+  exec 'Dispatch unzip ' . l:libs_jdk_src . ' -d ' . l:libs_dir
 
   " Notes: Could just search in the gradle directory for the files instead of
   "        copying them locally. Could also do the same for the jvm files.
@@ -885,7 +888,7 @@ let g:gutentags_define_advanced_commands = 1
 " only gets java files...should change this and maybe also try aggregating
 " files from other directories, then we could have the jdk files be somewhere
 " else. 
-let g:gutentags_file_list_command = 'fd -t f -e java'
+" let g:gutentags_file_list_command = 'fd -t f -e java'
 
 " generate datebases in my cache directory, prevent gtags files polluting my project
 " let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
@@ -1348,6 +1351,8 @@ augroup END
 augroup java
   autocmd!
 
+  " autocmd FileType java let $GTAGSLABEL = ''
+
   autocmd FileType java nmap [[ [m
   autocmd FileType java nmap ]] ]m
 
@@ -1373,15 +1378,15 @@ augroup java
       \ set expandtab
 
   command! -range JavaFmt <line1>,<line2>call <SID>JavaFmtRange()
-  command! JavaImports execute '!java -jar ' . g:java_formatter . ' -a -i --fix-imports-only %:p'
+  command! JavaImports execute 'Dispatch! java -jar ' . g:java_formatter . ' -a -i --fix-imports-only %:p'
 
   function! s:JavaFmtRange() range abort
     if a:firstline == a:lastline
       echom 'Formatting file:' . expand('%:p')
-      execute '!java -jar ' . g:java_formatter  . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
+      execute 'Dispatch! java -jar ' . g:java_formatter  . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
     else
       echom 'Formatting lines: ' . a:firstline . '-' . a:lastline
-      execute '!java -jar ' . g:java_formatter . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines=' . a:firstline . ':' . a:lastline . ' %:p'
+      execute 'Dispatch! java -jar ' . g:java_formatter . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines=' . a:firstline . ':' . a:lastline . ' %:p'
     endif
   endfunction
 

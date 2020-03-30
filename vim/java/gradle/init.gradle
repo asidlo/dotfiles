@@ -29,6 +29,7 @@ allprojects {
                 exceptionFormat = 'full'   // Print error if fail
                 showStandardStreams = true // Show stdout
             }
+            failFast = true
         }
     }
 }
