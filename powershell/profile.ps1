@@ -4,7 +4,7 @@
 
 # Import Powershell Modules
 Import-Module PSReadLine
-Import-Module get-childitemcolor
+Import-Module Get-ChildItemColor 
 
 #--------------------------------------------------------------
 # Misc Config
@@ -127,19 +127,6 @@ ForEach ($Exe in $GetChildItemColorExtensions.DllPdbList) {
 # Functions
 #--------------------------------------------------------------
 
-# Do not show dotfile when list directory contents
-function ShowNonDotFiles {
-    Get-ChildItem | Where-Object -FilterScript {$_ -notlike ".*"}
-}
-
-function ShowNonDotFilesWide {
-    ShowNonDotFiles | Format-Wide -AutoSize
-}
-
-function ShowAllFiles {
-    Get-ChildItemColor -Force
-}
-
 function cddash {
     if ($args[0] -eq '-') {
         $pwd = $OLDPWD;
@@ -164,6 +151,4 @@ function Stop-NxJavaProcesses {
 #--------------------------------------------------------------
 Set-Alias ll Get-ChildItemColor -option AllScope
 Set-Alias ls Get-ChildItemColorFormatWide -option AllScope
-Set-Alias la ShowAllFiles -option AllScope
 Set-Alias -Name cd -value cddash -Option AllScope
-Set-Alias g git.exe -option AllScope

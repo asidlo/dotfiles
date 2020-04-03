@@ -2,17 +2,11 @@
   name = asidlo
   email = sidlo.andrew@gmail.com
 [core]
-  preloadindex = true
-  fscache = true
   editor = nvim
   excludesfile = ~/.gitignore
   pager = diff-so-fancy | less --tabs=4 -RFX
 [log]
-  # 2019-02-05 11:53:12 -0500
   date = iso
-[branch]
-  # Automatically rebase to remove merged commit message on pull
-  autosetuprebase = always
 [commit]
   verbose = true
 [diff]
@@ -25,6 +19,8 @@
   aa = add -A # Add all files to staging
 
   b = branch
+  bc = rev-parse --abbrev-ref HEAD
+  ba = branch -a
 
   co = checkout
   cob = checkout -b
