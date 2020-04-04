@@ -96,17 +96,17 @@ bindkey -M vicmd ' ' fzf-history-widget
 bindkey -s '^F' '^[[C' 
 
 # Search history in insert mode using <C-R>
-bindkey '^r' history-incremental-search-backward
+# bindkey '^r' history-incremental-search-backward
 
-if is_mac; then
+# if is_mac; then
   # Bind <A-[> to escape without moving, just like in linux
-  bindkey -M viins '“' vi-cmd-mode
+  # bindkey -M viins '“' vi-cmd-mode
   # Bind <A-H|J|K|L> respectively to escape so mac works like linux
-  bindkey -M viins '˙' vi-cmd-mode
-  bindkey -M viins '∆' vi-cmd-mode
-  bindkey -M viins '˚' vi-cmd-mode
-  bindkey -M viins '¬' vi-cmd-mode
-fi
+  # bindkey -M viins '˙' vi-cmd-mode
+  # bindkey -M viins '∆' vi-cmd-mode
+  # bindkey -M viins '˚' vi-cmd-mode
+  # bindkey -M viins '¬' vi-cmd-mode
+# fi
 
 # }}}
 #==============================================================================
@@ -180,11 +180,15 @@ if test umask != '022'; then
   umask 022
 fi
 
+# Note, would need to do this if I didnt remap alt to Esc+ in iterm2
 if is_mac; then
   bindkey 'ç' fzf-cd-widget
 else
   bindkey '^[c' fzf-cd-widget
 fi
+
+bindkey '' fzf-file-widget
+bindkey '' fzf-history-widget 
 
 # }}}
 #==============================================================================
