@@ -3,4 +3,4 @@
 
 :: show bare files when running dir command
 doskey ls=dir /w $*
-doskey ll=dir /b $*
+doskey ll=dir /a $*

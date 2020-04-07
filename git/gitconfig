@@ -30,11 +30,6 @@
   can = commit --amend --no-edit
   cmsg = commit -m
 
-  d = diff
-  ds = diff --stat
-  dh = diff HEAD
-  dhs = diff HEAD --stat
-
   # l = log
   # o = oneline
   # d = date [r = relative, s = short]
@@ -63,7 +58,7 @@
   ss = status -s
 
   # standup - last 1 week written by me
-  sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week' --author sidlo.andrew@gmail.com
+  sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author sidlo.andrew@gmail.com
 
   # Get all aliases defined in gitconfig
   alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /

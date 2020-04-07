@@ -44,7 +44,7 @@ endif
 
 if g:is_win
   " Need to remove this var when working with non-java based repos
-  let $GTAGSLIBPATH = glob('D:\jdk8src')
+  " let $GTAGSLIBPATH = glob('D:\jdk8src')
   let $GTAGSTHROUGH = 'true' 
   let $GTAGSLABEL = 'pygments'
   let $GTAGSCONF = glob($GTAGS_HOME . '/share/gtags/gtags.conf')
@@ -758,25 +758,22 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 vnoremap < <gv
 vnoremap > >gv
 
-" Mapping ;; to escape, let see which I prefer 
-imap ;; <Esc>
-
 " Making mac working like linux for using <A-H|J|K|L> for escape, respectively
-if g:is_mac
-  inoremap “ <ESC> 
-  inoremap ˙ <esc>h
-  inoremap ∆ <esc>j
-  inoremap ˚ <esc>k
-  inoremap ¬ <esc>l
-endif
+" if g:is_mac
+"   inoremap “ <ESC> 
+"   inoremap ˙ <esc>h
+"   inoremap ∆ <esc>j
+"   inoremap ˚ <esc>k
+"   inoremap ¬ <esc>l
+" endif
 
-if g:is_win && !g:is_nvim
-  inoremap Û <ESC> 
-  inoremap è <esc>h
-  inoremap ê <esc>j
-  inoremap ë <esc>k
-  inoremap ì <esc>l
-endif
+" if g:is_win && !g:is_nvim
+"   inoremap Û <ESC> 
+"   inoremap è <esc>h
+"   inoremap ê <esc>j
+"   inoremap ë <esc>k
+"   inoremap ì <esc>l
+" endif
 
 "Smart way to move between windows
 nnoremap <c-j> <c-w>j
@@ -794,9 +791,6 @@ nnoremap <leader>w :w<cr>
 
 " Quick quit
 nnoremap <leader>q :q<cr>
-
-" Quick esc
-" inoremap jj <esc>
 
 " Remove current highlighting
 nnoremap <leader><cr> :noh<cr>
