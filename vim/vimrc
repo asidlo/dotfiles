@@ -347,6 +347,7 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'jmcantrell/vim-virtualenv'
 Plug 'wincent/ferret'
 Plug 'airblade/vim-rooter'
@@ -416,12 +417,15 @@ syntax enable
 
 let g:is_colo_dracula = 1
 let g:is_colo_gruvbox = 0
+let g:is_colo_jellybeans = 0
 
 try
   if g:is_colo_dracula
     colorscheme dracula
   elseif g:is_colo_gruvbox
     colorscheme gruvbox
+  elseif g:is_colo_jellybeans
+    colorscheme jellybeans
   endif
 catch
   colorscheme desert
@@ -533,7 +537,7 @@ set lazyredraw
 set showmatch
 
 " How many tenths of a second to blink when matching brackets
-set mat=2
+set matchtime=2
 
 " Always show the status line
 set laststatus=2
@@ -549,7 +553,7 @@ set timeoutlen=500
 set encoding=utf8
 
 " Use Unix as the standard file type
-set ffs=unix,dos,mac
+set fileformats=unix,dos,mac
 
 " A buffer becomes hidden when it is abandoned
 set hid
@@ -566,7 +570,7 @@ if v:version > 703 || v:version == 703 && has('patch541')
 endif
 
 " Set 7 lines to the cursor - when moving vertically using j/k
-set so=7
+set scrolloff=0
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -581,8 +585,8 @@ set nowb
 set noswapfile
 
 " Linebreak on 500 characters if set wrap
-set lbr
-set tw=119
+set linebreak
+set textwidth=119
 set nowrap
 
 " How to represent non-printable characters
@@ -607,9 +611,6 @@ set smartcase
 " Highlight search results
 set hlsearch
 
-" Remove previous highlight, but keep in register
-noh
-
 " Makes search act like search in modern browsers
 set incsearch
 
@@ -623,13 +624,8 @@ set smarttab
 set shiftwidth=4
 set tabstop=4
 
-set ai "Auto indent
-set si "Smart indent
-
-" When using airline with tabbuffers on, dont set this as reloading config file
-" causes the tabline to disappear.
-" Show tab number only if more than 1
-" set stal=1
+set autoindent
+set smartindent
 
 " Sets how many lines of history VIM has to remember
 set history=500
@@ -705,10 +701,6 @@ vmap y ygv<esc>
 " While in visual mode(double click), control-c copies to clipboard
 vmap <C-C> y
 
-" Prevent x from overriding what's in the clipboard.
-noremap x "_x
-noremap X "_x
-
 " search will center on the line it's found in.
 nnoremap n nzzzv
 nnoremap N Nzzzv
@@ -748,32 +740,12 @@ if bufwinnr(1)
   nnoremap _ <c-w>-
 endif
 
-" Switch CWD to the directory of the open buffer
-" :cd %:p:h
-
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 "Go back to visual mode after indenting
 vnoremap < <gv
 vnoremap > >gv
-
-" Making mac working like linux for using <A-H|J|K|L> for escape, respectively
-" if g:is_mac
-"   inoremap “ <ESC> 
-"   inoremap ˙ <esc>h
-"   inoremap ∆ <esc>j
-"   inoremap ˚ <esc>k
-"   inoremap ¬ <esc>l
-" endif
-
-" if g:is_win && !g:is_nvim
-"   inoremap Û <ESC> 
-"   inoremap è <esc>h
-"   inoremap ê <esc>j
-"   inoremap ë <esc>k
-"   inoremap ì <esc>l
-" endif
 
 "Smart way to move between windows
 nnoremap <c-j> <c-w>j
@@ -785,12 +757,6 @@ nnoremap <c-l> <c-w>l
 " H normally moves to top of the screen, L moves to bottom
 " nnoremap H ^
 " nnoremap L $
-
-" Quick Saving
-nnoremap <leader>w :w<cr>
-
-" Quick quit
-nnoremap <leader>q :q<cr>
 
 " Remove current highlighting
 nnoremap <leader><cr> :noh<cr>
@@ -853,11 +819,11 @@ endfunction
 set cscopetag
 
 " set if using gtags instead of cscope for generating db
-set csprg=gtags-cscope
+set cscopeprg=gtags-cscope
 
 " check cscope for definition of a symbol before checking ctags: set to 1
 " if you want the reverse search order.
-set csto=0
+set cscopetagorder=0
 
 " show msg when any other cscope db added
 set cscopeverbose  
@@ -888,7 +854,7 @@ let g:gutentags_define_advanced_commands = 1
 " only gets java files...should change this and maybe also try aggregating
 " files from other directories, then we could have the jdk files be somewhere
 " else. 
-" let g:gutentags_file_list_command = 'fd -t f -e java'
+let g:gutentags_file_list_command = 'fd -t f -e java'
 
 " generate datebases in my cache directory, prevent gtags files polluting my project
 " let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
@@ -1031,6 +997,8 @@ if g:is_colo_dracula
   let g:airline_theme='dracula'
 elseif g:is_colo_gruvbox
   let g:airline_theme='gruvbox'
+elseif g:is_colo_jellybeans
+  let g:airline_theme='jellybeans'
 endif
 
 let g:airline_powerline_fonts = 1
@@ -1205,9 +1173,12 @@ function! s:align_lists(lists)
   return a:lists
 endfunction
 
+" See what fields are exposed $ ctags --list-fields
+" TODO - use external java program to parse the list and format it pretty
+"      - use excmd=pattern to get the matching pattern to use also in output
 function! s:btags_source()
   let lines = map(split(system(printf(
-    \ g:ctags_exe . ' -f - --sort=no --excmd=number --language-force=%s %s',
+    \ g:ctags_exe . ' -f - --fields=NKaF --sort=no --excmd=number --language-force=%s %s',
     \ &filetype, expand('%:S'))), "\n"), 'split(v:val, "\t")')
   if v:shell_error
     throw 'failed to extract tags'
@@ -1321,7 +1292,7 @@ augroup go
     \ setlocal noexpandtab |
     \ set tabstop=4 |
     \ set shiftwidth=4 |
-    \ set tw=79
+    \ set textwidth=79
 
   " :GoBuild and :GoTestCompile
   autocmd FileType go nmap <leader>m :<c-u>call <SID>build_go_files()<cr>
