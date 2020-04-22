@@ -264,6 +264,17 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias grep='grep --color=auto'
 alias cls='clear'
+alias confe="$EDITOR ~/.zshrc"
+alias confr='source ~/.zshrc'
+
+if is_win; then
+    local VIM_HOME='~/_vimfiles'
+else
+    local VIM_HOME='~/.vim'
+fi
+
+alias todo="$EDITOR $VIM_HOME/notes/README.md"
+
 
 if (( $+commands[tree] )); then
   alias tree='tree -C'
@@ -304,8 +315,6 @@ antibody bundle < ~/.zsh_plugins.txt
 abbrev-alias -g g='git'
 abbrev-alias -g py='python'
 abbrev-alias -g py3='python3'
-abbrev-alias -g confe="$EDITOR ~/.zshrc"
-abbrev-alias -g confr="source ~/.zshrc"
 
 # }}}
 #==============================================================================
