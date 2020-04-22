@@ -1,1 +1,48 @@
-source ~/.vimrc
+set ideajoin
+set surround
+set commentary
+set ReplaceWithRegister
+
+set incsearch
+set relativenumber
+set timeoutlen=500
+
+let mapleader = ','
+
+nnoremap <leader>: :action IdeaExActionBar<CR>
+
+" File Navigation
+nnoremap ]] :action MethodDown<CR>
+nnoremap [[ :action MethodUp<CR>
+nnoremap <leader>o :action FileStructurePopup<CR>
+nnoremap <leader>e :e#<CR>
+nnoremap <leader>E :action RecentFiles<CR>
+nnoremap gd :action GotoDeclaration<CR>
+nnoremap gs :action GotoSuperMethod<CR>
+nnoremap gi :action GotoImplementation<CR>
+nnoremap <C-O> :action Back<CR>
+nnoremap <C-I> :action Forward<CR>
+
+" Project Navigation
+nnoremap <leader>f :action FindUsages<CR>
+nnoremap ]q :action NextOccurence<CR>
+nnoremap [q :action PreviousOccurence<CR>
+nnoremap ]h :action VcsShowNextChangeMarker<CR>
+nnoremap [h :action VcsShowPrevChangeMarker<CR>
+nnoremap ]! :action GotoNextError<CR>
+nnoremap [! :action GotoPreviousError<CR>
+
+" File Manipulation
+" Note: Could use 'EditorStartNewLine' & 'EditorStartNewLineBefore', but it " moves the cursor to the newline also, and we cant use jk to move afterwards
+" for some reason
+nnoremap ]<Space> o<ESC>k
+nnoremap [<Space> O<ESC>j
+nnoremap gww :action com.andrewbrookins.idea.wrap.WrapAction<CR>
+vnoremap gww :action com.andrewbrookins.idea.wrap.WrapAction<CR>
+nnoremap gwip :action com.andrewbrookins.idea.wrap.WrapParagraphAction<CR>
+
+nnoremap <leader>r :action RenameElement<CR>
+
+" Misc
+nnoremap <leader>a :action GotoAction<CR>
+vnoremap <leader>a :action GotoAction<CR>
