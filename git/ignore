@@ -21,6 +21,7 @@ org.eclipse.buildship.core.prefs
 
 # Cscope database files
 cscope.*
+/.temp
 
 # Gtags / Gtags-cscope files
 GPATH

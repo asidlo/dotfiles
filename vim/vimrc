@@ -360,6 +360,7 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
 Plug 'rhysd/git-messenger.vim'
+Plug 'jiangmiao/auto-pairs'
 
 " Can be used to change case of word.
 " Ex: gsciw (changeToCamelCase), gs_iw (snake_case), gs-iw (kabob-case)
