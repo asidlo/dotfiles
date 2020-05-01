@@ -6,6 +6,7 @@ org.eclipse.buildship.core.prefs
 
 # exuberent ctags
 /tags*
+/.temp
 
 # Java class files
 *.class
@@ -15,9 +16,6 @@ org.eclipse.buildship.core.prefs
 
 # MacOS
 .DS_Store
-
-# jdk src libs
-/jdk-src/
 
 # Cscope database files
 cscope.*

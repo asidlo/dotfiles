@@ -33,7 +33,8 @@ nnoremap ]! :action GotoNextError<CR>
 nnoremap [! :action GotoPreviousError<CR>
 
 " File Manipulation
-" Note: Could use 'EditorStartNewLine' & 'EditorStartNewLineBefore', but it " moves the cursor to the newline also, and we cant use jk to move afterwards
+" Note: Could use 'EditorStartNewLine' & 'EditorStartNewLineBefore', but it
+" moves the cursor to the newline also, and we cant use jk to move afterwards
 " for some reason
 nnoremap ]<Space> o<ESC>k
 nnoremap [<Space> O<ESC>j

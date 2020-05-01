@@ -581,7 +581,7 @@ set autowriteall
 
 " Turn backup off, since most stuff is in SVN, git et.c anyway...
 set nobackup
-set nowb
+set nowritebackup
 set noswapfile
 
 " Linebreak on 500 characters if set wrap
@@ -731,14 +731,6 @@ nnoremap <leader>e :e#<cr>
 " use `u` to undo, use `U` to redo, mind = blown
 nnoremap U <c-r>
 
-" To change buffer position, use <C-W><C-H> to move it left, <C-W><C-J> to move
-" it down, etc... (Note, that its a capital letter for movement)
-"https://vim.fandom.com/wiki/Fast_window_resizing_with_plus/minus_keys
-"+ increases vertical buffer, - decreases
-if bufwinnr(1)
-  nnoremap + <c-w>+
-  nnoremap _ <c-w>-
-endif
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
