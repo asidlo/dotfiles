@@ -23,7 +23,7 @@ rootProject {
 }
 
 allprojects {
-    plugins.withType(JavaPlugin).whenPluginAdded {
+    plugins.withType(JavaPlugin).afterPluginAdded {
         test {
             testLogging {
                 exceptionFormat = 'full'   // Print error if fail

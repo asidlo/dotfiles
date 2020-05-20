@@ -1,0 +1,3 @@
+^[::
+Send, {Escape}
+return

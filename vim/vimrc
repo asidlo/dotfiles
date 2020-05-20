@@ -974,6 +974,15 @@ let g:gitgutter_map_keys = 0
 nnoremap ]h :GitGutterNextHunk<cr>
 nnoremap [h :GitGutterPrevHunk<cr>
 
+nmap <leader>hs <Plug>(GitGutterStageHunk)
+nmap <leader>hu <Plug>(GitGutterUndoHunk)
+nmap <leader>hp <Plug>(GitGutterPreviewHunk)
+
+omap ih <Plug>(GitGutterTextObjectInnerPending)
+omap ah <Plug>(GitGutterTextObjectOuterPending)
+xmap ih <Plug>(GitGutterTextObjectInnerVisual)
+xmap ah <Plug>(GitGutterTextObjectOuterVisual)
+
 " }}}
 "==============================================================================
 " TagBar {{{

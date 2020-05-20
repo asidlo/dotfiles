@@ -3,12 +3,22 @@
 #--------------------------------------------------------------
 
 # Import Powershell Modules
-Import-Module PSReadLine
+Import-Module PSReadLine 
+Import-Module posh-git           # Install with: `Install-Module -Name posh-git`
 Import-Module Get-ChildItemColor 
+
+# Make sure you copy the escape.ahk from ~\Documents\dotfiles\powershell\escape.ahk
+# into C:\Users\<UserName>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+# in order for it to run on user login
 
 #--------------------------------------------------------------
 # Misc Config
 #--------------------------------------------------------------
+
+# Vi Mode (needs to be before other options)
+Set-PSReadLineOption -EditMode Vi 
+Set-PSReadLineOption -ViModeIndicator Cursor
+Set-PSReadLineKeyHandler -Chord Ctrl+[ -Function ViCommandMode
 
 # Turn off annoying bell
 Set-PSReadlineOption -BellStyle None
@@ -126,29 +136,47 @@ ForEach ($Exe in $GetChildItemColorExtensions.DllPdbList) {
 #--------------------------------------------------------------
 # Functions
 #--------------------------------------------------------------
+function Set-LocationEnhanced {
+	 if ($args[0] -eq '-') {
+         $pwd = $OLDPWD;
+	 }
+	 else {
+         $pwd = $args[0];
+	 }
+	 $tmp = Get-Location;
 
-function cddash {
-    if ($args[0] -eq '-') {
-        $pwd = $OLDPWD;
-    }
-    else {
-        $pwd = $args[0];
-    }
-    $tmp = Get-Location;
-
-    if ($pwd) {
-        Set-Location $pwd;
-    }
-    Set-Variable -Name OLDPWD -Value $tmp -Scope global;
+	 if ($pwd) {
+         Set-Location $pwd;
+	 } else {
+         Set-Location (Resolve-Path ~)
+	 }
+	 Set-Variable -Name OLDPWD -Value $tmp -Scope global;
 }
 
 function Stop-NxJavaProcesses {
-  jps -l | Select-String "nexidia" | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru} 
+    jps -l | Select-String "nexidia" | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru} 
+}
+
+function Get-ChildItemWide {
+	Get-ChildItem | Format-Wide -AutoSize
+}
+
+function Invoke-FzfHistory {
+    # Needs to be either private scope or renamed since $result might conflict
+    # with some internal powershell function as it indents the '>' in the prompt
+    # on cancellation.
+    $private:result = Get-History | ForEach-Object { $_.CommandLine } | fzf
+    if ($null -ne $private:result) {
+        Write-Output "Invoking '$private:result'`n"
+        Invoke-Expression "$private:result"
+    }
 }
 
 #--------------------------------------------------------------
 # Aliases
 #--------------------------------------------------------------
-Set-Alias ll Get-ChildItemColor -option AllScope
-Set-Alias ls Get-ChildItemColorFormatWide -option AllScope
-Set-Alias -Name cd -value cddash -Option AllScope
+#Set-Alias -Name ls -value Get-ChildItemWide -Option AllScope
+Set-Alias -Name ls -Value Get-ChildItemColorFormatWide -Option AllScope
+Set-Alias -Name ll -Value Get-ChildItem
+Set-Alias -Name cd -Value Set-LocationEnhanced -Option AllScope
+Set-Alias -Name which -Value where.exe
