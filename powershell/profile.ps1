@@ -6,6 +6,10 @@
 Import-Module PSReadLine 
 Import-Module posh-git           # Install with: `Install-Module -Name posh-git`
 Import-Module Get-ChildItemColor 
+Import-Module pscx
+
+# How to see all functions provided by a module
+# Get-Command -Module pscx
 
 # Make sure you copy the escape.ahk from ~\Documents\dotfiles\powershell\escape.ahk
 # into C:\Users\<UserName>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
@@ -158,7 +162,7 @@ function Stop-NxJavaProcesses {
 }
 
 function Get-ChildItemWide {
-	Get-ChildItem | Format-Wide -AutoSize
+    Get-ChildItem | Format-Wide -AutoSize
 }
 
 function Invoke-FzfHistory {
@@ -172,6 +176,15 @@ function Invoke-FzfHistory {
     }
 }
 
+function Invoke-Bat {
+    param(
+      [string] $FileName
+    )
+    $private:batCmd = Get-Command bat.exe | Select-Object -ExpandProperty Source
+
+    Invoke-Expression "$private:batCmd --paging=never $FileName"
+}
+
 #--------------------------------------------------------------
 # Aliases
 #--------------------------------------------------------------
@@ -180,3 +193,5 @@ Set-Alias -Name ls -Value Get-ChildItemColorFormatWide -Option AllScope
 Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias -Name cd -Value Set-LocationEnhanced -Option AllScope
 Set-Alias -Name which -Value where.exe
+Set-Alias -Name bat -Value Invoke-Bat
+Remove-Item Alias:curl
