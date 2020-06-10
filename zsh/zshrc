@@ -237,7 +237,7 @@ is_mac && export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/
 case $OS in
   *$MAC*)
     export GOROOT=(/usr/local/Cellar/go/*/libexec)
-    export GOPATH=~/Documents/workspace/go
+    export GOPATH=~/Workspace/go
     export SDKMAN_DIR="/Users/asidlo/.sdkman"
     ;;
   *$LINUX*)
