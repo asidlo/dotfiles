@@ -669,6 +669,8 @@ if g:is_nvim
   " Leader q to exit terminal mode
   tnoremap <leader>q <c-\><c-n>:q<cr>
   tnoremap <leader>e <c-\><c-n>:e#<cr>
+  tnoremap ]b <c-\><c-n>:bnext<cr>
+  tnoremap [b <c-\><c-n>:bprevious<cr>
 
   " mappings to move out from terminal to other views
   tnoremap <c-h> <c-\><c-n><c-w>h
@@ -680,17 +682,16 @@ if g:is_nvim
   " Also, Altc+ - should be used instead of just -
   " Open terminal in vertical, horizontal and new tab
   if g:is_win
-    nnoremap <leader>tv :vsplit term://powershell<cr>
-    nnoremap <leader>ts :split term://powershell<cr>
-    nnoremap <leader>tt :e term://powershell<cr>
+    nnoremap <leader>tv :vsplit term://powershell -NoLogo -NoExit<cr>
+    nnoremap <leader>ts :split term://powershell -NoLogo -NoExit<cr>
+    nnoremap <leader>tt :e term://powershell -NoLogo -NoExit<cr>
   else
     nnoremap <leader>tv :vsplit term://zsh<cr>
     nnoremap <leader>ts :split term://zsh<cr>
     nnoremap <leader>tt :e term://zsh<cr>
   endif
 
-  " always start terminal in insert mode
-  autocmd BufWinEnter,WinEnter term://* startinsert
+  autocmd BufEnter term://* startinsert!
 endif
 
 " Format paragraph (selected or not) to 80 character lines.
@@ -1104,7 +1105,6 @@ let g:go_decls_includes = 'func'
 " FZF {{{
 "==============================================================================
 let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
 
