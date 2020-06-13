@@ -44,7 +44,7 @@ endif
 
 if g:is_win
   " Need to remove this var when working with non-java based repos
-  " let $GTAGSLIBPATH = glob('D:\jdk8src')
+  " let $GTAGSLIBPATH = glob($JAVA_HOME . '/lib')
   let $GTAGSTHROUGH = 'true' 
   let $GTAGSLABEL = 'pygments'
   let $GTAGSCONF = glob($GTAGS_HOME . '/share/gtags/gtags.conf')
