@@ -343,6 +343,18 @@ if !g:skip_go_plugin
 endif
 Plug 'AndrewRadev/splitjoin.vim'
 
+if g:is_win
+  Plug 'autozimu/LanguageClient-neovim', {
+      \ 'branch': 'next',
+      \ 'do': 'powershell install.ps1',
+      \ }
+else
+  Plug 'autozimu/LanguageClient-neovim', {
+      \ 'branch': 'next',
+      \ 'do': 'bash install.sh',
+      \ }
+endif
+
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
@@ -828,6 +840,20 @@ set cscopequickfix=c-,t-,e-
 " }}}
 "==============================================================================
 " Section: Plugins {{{
+"==============================================================================
+" LanguageClient {{{
+"==============================================================================
+let g:LanguageClient_serverCommands = {
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+    \ 'python': ['/usr/local/bin/pyls'],
+    \ }
+
+nnoremap <F5> :call LanguageClient_contextMenu()<CR>
+nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+
+" }}}
 "==============================================================================
 " Gutentags {{{
 "==============================================================================
