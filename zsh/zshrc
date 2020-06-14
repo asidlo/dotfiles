@@ -173,6 +173,7 @@ $vim_mode %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
 #==============================================================================
 if is_mac || is_linux; then
   export PATH=$PATH:/usr/local/bin
+  export PATH=$PATH:$HOME/.vim/java/bin
 fi
 
 # Fix for wsl setting umask to 0000
@@ -236,6 +237,7 @@ is_mac && export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/
 # linux location over the windows location.
 case $OS in
   *$MAC*)
+    export CARGO_HOME=~/.cargo
     export GOROOT=(/usr/local/Cellar/go/*/libexec)
     export GOPATH=~/Workspace/go
     export SDKMAN_DIR="/Users/asidlo/.sdkman"
@@ -255,6 +257,7 @@ esac
 # Check if env vars are set, if so then add their bin to path
 [ ! -z $GOROOT ] && export PATH=$PATH:"$GOROOT/bin"
 [ ! -z $GOPATH ] && export PATH=$PATH:"$GOPATH/bin"
+[ ! -z $CARGO_HOME ] && export PATH=$PATH:"$CARGO_HOME/bin"
 
 # }}}
 #==============================================================================
