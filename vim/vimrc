@@ -850,7 +850,7 @@ set cscopequickfix=c-,t-,e-
 let g:LanguageClient_serverCommands = {
     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
     \ 'python': ['/usr/local/bin/pyls'],
-    \ 'java': ['jdtls.sh']
+    \ 'java': ['powershell', '-NoExit', 'jdtls.ps1']
     \ }
 
 " nnoremap <F5> :call LanguageClient_contextMenu()<CR>
@@ -879,7 +879,7 @@ let g:LanguageClient_loggingFile = expand(g:vim_dir . '/LanguageClient.log')
 let g:gutentags_modules = ['ctags', 'gtags_cscope']
 
 let g:gutentags_ctags_executable=g:ctags_exe
-let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea']
+let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea'] 
 
 " Dont auto add db so we can make sure only one is present,
 " since we want to add manually, dont use cache dir for longer path
@@ -892,7 +892,7 @@ let g:gutentags_define_advanced_commands = 1
 " only gets java files...should change this and maybe also try aggregating
 " files from other directories, then we could have the jdk files be somewhere
 " else. 
-let g:gutentags_file_list_command = 'fd -t f -e java'
+" let g:gutentags_file_list_command = 'fd -t f -e java'
 
 " generate datebases in my cache directory, prevent gtags files polluting my project
 " let g:gutentags_cache_dir = expand(g:vim_dir . '/tags')
