@@ -76,7 +76,7 @@ endif
 if !executable('gtags')
   " https://code.google.com/archive/p/cscope-win32/downloads Or brew install
   " echoerr 'cscope executable not found! Install cscope and add to Path for static project analysis'
-  echoerr 'gtags executable not found! Install gtags via gnu global package and add to Path for static project analysis'
+  throw 'gtags executable not found! Install gtags via gnu global package and add to Path for static project analysis'
 endif
 
 " Path to Python 3 interpreter (must be an absolute path), make startup
@@ -322,9 +322,10 @@ endif
 call plug#begin(g:vim_dir . '/plugged')
 
 " Colorschemes
-Plug 'nanotech/jellybeans.vim'
 Plug 'morhetz/gruvbox'
 Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'reedes/vim-colors-pencil'
+Plug 'endel/vim-github-colorscheme'
 
 " Tabular must come before markdown
 Plug 'godlygeek/tabular'
@@ -343,9 +344,6 @@ if !g:skip_go_plugin
   Plug 'AndrewRadev/splitjoin.vim'
 endif
 
-" Plug 'rust-lang/rust.vim'
-" Plug 'racer-rust/vim-racer'
-
 if g:is_win
   Plug 'autozimu/LanguageClient-neovim', {
       \ 'branch': 'next',
@@ -363,7 +361,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'jmcantrell/vim-virtualenv'
+" Plug 'jmcantrell/vim-virtualenv'
 Plug 'wincent/ferret'
 Plug 'airblade/vim-rooter'
 Plug 'ryanoasis/vim-devicons'
@@ -431,25 +429,37 @@ let mapleader=","
 
 syntax enable
 
-let g:is_colo_dracula = 1
+" Favorite dark colors
+let g:is_colo_dracula = 0
 let g:is_colo_gruvbox = 0
-let g:is_colo_jellybeans = 0
+
+" Favorite light colors
+let g:is_colo_pencil = 1
+let g:is_colo_github = 0
 
 try
   if g:is_colo_dracula
     colorscheme dracula
+    set background=dark
   elseif g:is_colo_gruvbox
     colorscheme gruvbox
-  elseif g:is_colo_jellybeans
-    colorscheme jellybeans
+    set background=dark
+  elseif g:is_colo_github
+    colorscheme github
+    set background=light
+  elseif g:is_colo_pencil
+    colorscheme pencil
+    set background=light
   endif
 catch
   colorscheme desert
 endtry
 
 set t_Co=256
-set background=dark
 set termguicolors
+
+hi Search gui=underline term=underline cterm=underline guibg=NONE
+hi SpellBad gui=undercurl
 
 if g:is_colo_dracula
   " Makes highlighting not an eyesore
@@ -459,7 +469,11 @@ if g:is_colo_dracula
   hi Search guibg=NONE guifg=Yellow
 endif
 
-hi Search gui=underline term=underline cterm=underline
+" hi SignColumn to get current value from colorscheme
+if g:is_colo_github 
+  hi SignColumn cterm=bold ctermfg=246 ctermbg=15 gui=bold guibg=#ECECEC guifg=#959595
+  hi CursorLine cterm=underline ctermbg=253 guibg=#D8D8DD guifg=NONE
+endif
 
 if g:is_gui
   " No toolbars, menu, or scrollbars in the GUI
@@ -473,7 +487,7 @@ if g:is_gui
 endif
 
 " See vulnerability:
-" https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+" https://cithub.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
 set modelines=0
 set nomodeline
 
@@ -532,7 +546,7 @@ set signcolumn=yes
 set nowrap
 
 " Add 80, 120 line columns
-set colorcolumn=80,120
+" set colorcolumn=80,120
 
 "Always show current position
 set ruler
@@ -679,31 +693,32 @@ noremap k gk
 if g:is_nvim
 
   " Leader q to exit terminal mode
-  tnoremap <leader>q <c-\><c-n>:q<cr>
-  tnoremap <leader>e <c-\><c-n>:e#<cr>
-  tnoremap ]b <c-\><c-n>:bnext<cr>
-  tnoremap [b <c-\><c-n>:bprevious<cr>
+  " tnoremap <leader>q <c-\><c-n>:q<cr>
+  " tnoremap <leader>e <c-\><c-n>:e#<cr>
+  " tnoremap ]b <c-\><c-n>:bnext<cr>
+  " tnoremap [b <c-\><c-n>:bprevious<cr>
 
   " mappings to move out from terminal to other views
-  tnoremap <c-h> <c-\><c-n><c-w>h
-  tnoremap <c-j> <c-\><c-n><c-w>j
-  tnoremap <c-k> <c-\><c-n><c-w>k
-  tnoremap <c-l> <c-\><c-n><c-w>l
+  " tnoremap <c-h> <c-\><c-n><c-w>h
+  " tnoremap <c-j> <c-\><c-n><c-w>j
+" tnoremap <c-k> <c-\><c-n><c-w>k
+" tnoremap <c-l> <c-\><c-n><c-w>l
 
-  " Note: <c-backspace> should be used for backspace, since normal bs exits insert mode
-  " Also, Altc+ - should be used instead of just -
-  " Open terminal in vertical, horizontal and new tab
-  if g:is_win
-    nnoremap <leader>tv :vsplit term://powershell -NoLogo -NoExit<cr>
-    nnoremap <leader>ts :split term://powershell -NoLogo -NoExit<cr>
-    nnoremap <leader>tt :e term://powershell -NoLogo -NoExit<cr>
-  else
-    nnoremap <leader>tv :vsplit term://zsh<cr>
-    nnoremap <leader>ts :split term://zsh<cr>
-    nnoremap <leader>tt :e term://zsh<cr>
-  endif
+" Open terminal in vertical, horizontal and new tab
+if g:is_win
+  " nnoremap <leader>tv :vsplit term://powershell -NoLogo -NoExit<cr>
+  " nnoremap <leader>ts :split term://powershell -NoLogo -NoExit<cr>
+  " nnoremap <leader>tt :e term://powershell -NoLogo -NoExit<cr>
+  nnoremap <leader>tv :vsplit term://cmd<cr>
+  nnoremap <leader>ts :split term://cmd<cr>
+  nnoremap <leader>tt :e term://cmd<cr>
+else
+  nnoremap <leader>tv :vsplit term://zsh<cr>
+  nnoremap <leader>ts :split term://zsh<cr>
+  nnoremap <leader>tt :e term://zsh<cr>
+endif
 
-  autocmd BufEnter term://* startinsert!
+autocmd BufEnter term://* startinsert!
 endif
 
 " Format paragraph (selected or not) to 80 character lines.
@@ -729,8 +744,8 @@ nnoremap Y y$
 " Edit global todo.md
 let g:notes_dir = g:vim_dir . '/notes'
 if (empty(glob(g:notes_dir)))
-  call mkdir(g:notes_dir)
-  exec '!git clone git@github.com:asidlo/notes.git ' . g:notes_dir
+call mkdir(g:notes_dir)
+exec '!git clone git@github.com:asidlo/notes.git ' . g:notes_dir
 endif
 nnoremap <expr> <leader>td ':e ' . g:notes_dir . '/README.md<CR>' 
 
@@ -757,10 +772,10 @@ vnoremap < <gv
 vnoremap > >gv
 
 "Smart way to move between windows
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
+" nnoremap <c-j> <c-w>j
+" nnoremap <c-k> <c-w>k
+" nnoremap <c-h> <c-w>h
+" nnoremap <c-l> <c-w>l
 
 " Move to the first/last non-blank character on this line
 " H normally moves to top of the screen, L moves to bottom
@@ -815,13 +830,13 @@ nnoremap ]oq :cclose<cr>
 nnoremap yoq :call ToggleQuickfix()<cr>
 
 function! g:ToggleQuickfix()
-  for winnr in range(1, winnr('$'))
-    if getwinvar(winnr, '&syntax') == 'qf'
-      cclose
-      return
-    endif
-  endfor
-  copen
+for winnr in range(1, winnr('$'))
+  if getwinvar(winnr, '&syntax') == 'qf'
+    cclose
+    return
+  endif
+endfor
+copen
 endfunction
 
 " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
@@ -846,12 +861,11 @@ set cscopequickfix=c-,t-,e-
 "==============================================================================
 " LanguageClient {{{
 "==============================================================================
-    " \ 'rust': [glob($CARGO_HOME . '/bin/rustup'), 'run', 'stable', 'rls'],
 let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-    \ 'python': ['/usr/local/bin/pyls'],
-    \ 'java': ['powershell', '-NoExit', 'jdtls.ps1']
-    \ }
+  \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+  \ 'python': ['/usr/local/bin/pyls'],
+  \ 'java': ['powershell', '-NoExit', 'jdtls.ps1']
+  \ }
 
 " nnoremap <F5> :call LanguageClient_contextMenu()<CR>
 " nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
@@ -859,17 +873,27 @@ let g:LanguageClient_serverCommands = {
 " nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
 
 function LC_maps()
-  if has_key(g:LanguageClient_serverCommands, &filetype)
-    nnoremap <buffer> <silent> K :call LanguageClient#textDocument_hover()<cr>
-    nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
-    nnoremap <buffer> <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-    nnoremap <buffer> <silent> <leader>o :call LanguageClient#textDocument_documentSymbol()<CR>
-  endif
+if has_key(g:LanguageClient_serverCommands, &filetype)
+  nnoremap <buffer> <silent> K :call LanguageClient#textDocument_hover()<cr>
+  nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <buffer> <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+  nnoremap <buffer> <silent> <leader>o :call LanguageClient#textDocument_documentSymbol()<CR>
+endif
 endfunction
 
 autocmd FileType * call LC_maps()
 
 let g:LanguageClient_loggingFile = expand(g:vim_dir . '/LanguageClient.log')
+
+command! Symbol call <SID>symbol_tag_switch()
+
+function! s:symbol_tag_switch() abort
+  if has_key(g:LanguageClient_serverCommands, &filetype)
+      call LanguageClient#textDocument_documentSymbol()
+  else
+      call s:btags()
+  endif
+endfunction
 
 " }}}
 "==============================================================================
@@ -954,8 +978,8 @@ nmap <leader>s <Plug>(FerretAckWord)
 vmap <leader>s :<C-U>call <SID>FerretVAck()<CR>
 
 function! s:FerretVAck() abort
-  let l:selection = s:get_visual_selection()
-  execute ':Ack ' . substitute(l:selection, ' ', '\\ ', 'g')
+let l:selection = s:get_visual_selection()
+execute ':Ack ' . substitute(l:selection, ' ', '\\ ', 'g')
 endfunction
 
 " Replace instances matching term in quickfix
@@ -984,10 +1008,10 @@ let g:NERDTreeWinSize=35
 
 " Prevent fluff from appearing in the file drawer
 let NERDTreeIgnore=[
-            \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
-            \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project',
-            \ '^\.gradle$', '^\.idea$'
-            \]
+          \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
+          \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project',
+          \ '^\.gradle$', '^\.idea$'
+          \]
 
 " Show hidden files in NERDTree
 let NERDTreeShowHidden=1
@@ -1044,8 +1068,10 @@ if g:is_colo_dracula
   let g:airline_theme='dracula'
 elseif g:is_colo_gruvbox
   let g:airline_theme='gruvbox'
-elseif g:is_colo_jellybeans
-  let g:airline_theme='jellybeans'
+elseif g:is_colo_github
+  let g:airline_theme='github'
+elseif g:is_colo_pencil
+  let g:airline_theme='pencil'
 endif
 
 let g:airline_powerline_fonts = 1
@@ -1058,7 +1084,7 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tagbar#enabled = 0
 
 if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
+let g:airline_symbols = {}
 endif
 
 let g:airline_symbols.whitespace='_'
@@ -1091,8 +1117,8 @@ let g:airline_symbols.dirty=' ?'
 " let g:lightline#ale#indicator_ok = "\uf00c"
 
 let g:airline#extensions#default#section_truncate_width = {
-    \ 'c': 50,
-    \ }
+  \ 'c': 50,
+  \ }
 
 let g:airline#extensions#tabline#fnamemod = ':t'
 
@@ -1155,6 +1181,8 @@ elseif executable('rg')
   let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden -g !tags -g !.git -g !.gradle -g !*.class -g !node_modules -g !.idea -g !.settings -g !.project -g !.classpath"
 endif
 
+let $FZF_DEFAULT_OPTS = '--height 50% -1 --reverse --multi --inline-info --preview="bat --color=always --style=numbers {}" --preview-window="right:hidden"  --bind="F2:toggle-preview" --bind="ctrl-d:half-page-down" --bind="ctrl-u:half-page-up" --bind="ctrl-a:select-all+accept" --bind="ctrl-y:execute-silent(echo {+} | copy.exe)"'
+
 nnoremap <leader>N :Files<cR>
 nnoremap <leader>n :GFiles<cr>
 nnoremap <leader>b :Buffers<cr>
@@ -1164,16 +1192,13 @@ nnoremap <leader>X :Commands<cr>
 nnoremap <leader>o :BTags<cr>
 nnoremap <leader>O :Tags<cr>
 
-" Match color scheme for gruvbox since term has dracula colors tweaked and
-" defined in $FZF_DEFAULT_OPTS
-if g:is_colo_gruvbox
+" Dracula adds the CursorLine highlight to fzf
+if g:is_colo_dracula
   let g:fzf_colors =
-    \ { 'fg':      ['fg', 'Normal'],
+  \ { 'fg':      ['fg', 'Normal'],
     \ 'bg':      ['bg', 'Normal'],
     \ 'hl':      ['fg', 'Comment'],
     \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-    \ 'gutter':  ['bg', 'Normal'],
     \ 'hl+':     ['fg', 'Statement'],
     \ 'info':    ['fg', 'PreProc'],
     \ 'border':  ['fg', 'Ignore'],
@@ -1184,9 +1209,19 @@ if g:is_colo_gruvbox
     \ 'header':  ['fg', 'Comment'] }
 else
   let g:fzf_colors =
-    \ {  'fg':      ['fg', 'Normal'],
-    \    'bg':      ['bg', 'Normal'],
-    \ }
+  \ { 'fg':      ['fg', 'Normal'],
+    \ 'bg':      ['bg', 'Normal'],
+    \ 'hl':      ['fg', 'Comment'],
+    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'hl+':     ['fg', 'Statement'],
+    \ 'info':    ['fg', 'PreProc'],
+    \ 'border':  ['fg', 'Ignore'],
+    \ 'prompt':  ['fg', 'Conditional'],
+    \ 'pointer': ['fg', 'Exception'],
+    \ 'marker':  ['fg', 'Keyword'],
+    \ 'spinner': ['fg', 'Label'],
+    \ 'header':  ['fg', 'Comment'] }
 endif
 
 if g:is_nvim
@@ -1201,34 +1236,38 @@ if g:is_win
   let g:fzf_preview_window = ''
 endif
 
+" Hide statusline color
+autocmd! FileType fzf set laststatus=0 noshowmode noruler
+  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+
 " [Tags] Command to generate tags file
 let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.idea'
 
 function! s:align_lists(lists)
-  let maxes = {}
-  for list in a:lists
-    let i = 0
-    while i < len(list)
-      let maxes[i] = max([get(maxes, i, 0), len(list[i])])
-      let i += 1
-    endwhile
-  endfor
-  for list in a:lists
-    call map(list, "printf('%-'.maxes[v:key].'s', v:val)")
-  endfor
-  return a:lists
+let maxes = {}
+for list in a:lists
+  let i = 0
+  while i < len(list)
+    let maxes[i] = max([get(maxes, i, 0), len(list[i])])
+    let i += 1
+  endwhile
+endfor
+for list in a:lists
+  call map(list, "printf('%-'.maxes[v:key].'s', v:val)")
+endfor
+return a:lists
 endfunction
 
 " See what fields are exposed $ ctags --list-fields
 " TODO - use external java program to parse the list and format it pretty
 "      - use excmd=pattern to get the matching pattern to use also in output
 function! s:btags_source()
-  let lines = map(split(system(printf(
-    \ g:ctags_exe . ' -f - --fields=NKaF --sort=no --excmd=number --language-force=%s %s',
-    \ &filetype, expand('%:S'))), "\n"), 'split(v:val, "\t")')
-  if v:shell_error
-    throw 'failed to extract tags'
-  endif
+let lines = map(split(system(printf(
+  \ g:ctags_exe . ' -f - --fields=NKaF --sort=no --excmd=number --language-force=%s %s',
+  \ &filetype, expand('%:S'))), "\n"), 'split(v:val, "\t")')
+if v:shell_error
+  throw 'failed to extract tags'
+endif
   return map(s:align_lists(lines), 'join(v:val, "\t")')
 endfunction
 
@@ -1237,33 +1276,33 @@ function! s:btags_sink(line)
 endfunction
 
 function! s:btags()
-  try
-    call fzf#run({
-    \ 'source':  s:btags_source(),
-    \ 'options': '+m -d "\t" --with-nth 1,4.. -n 1 --tiebreak=index',
-    \ 'down':    '40%',
-    \ 'sink':    function('s:btags_sink')})
-  catch
-    echohl WarningMsg
-    echom v:exception
-    echohl None
-  endtry
+try
+  call fzf#run({
+  \ 'source':  s:btags_source(),
+  \ 'options': '+m -d "\t" --with-nth 1,4.. -n 1 --tiebreak=index',
+  \ 'down':    '40%',
+  \ 'sink':    function('s:btags_sink')})
+catch
+  echohl WarningMsg
+  echom v:exception
+  echohl None
+endtry
 endfunction
 
 command! BTags call s:btags()
 
 " Replace the default dictionary completion with fzf-based fuzzy completion
-inoremap <expr> <c-x><c-k> fzf#vim#complete('cat /usr/share/dict/words')
+inoremap <expr> <c-x><c-k> fzf#vim#complete('cat C:\Users\asidlo\Documents\dotfiles\vim\dictionary.txt') 
 
 " }}}
 "==============================================================================
 " Ack {{{
 "==============================================================================
 if executable('rg')
-  set grepformat=%f:%l:%c:%m,%f:%l:%m
-  set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden\ -g\ !tags
-  " -g !tags = ignore tags file
-  let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags'
+set grepformat=%f:%l:%c:%m,%f:%l:%m
+set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden\ -g\ !tags
+" -g !tags = ignore tags file
+let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags'
 endif
 
 " Searches whole project, even through ignored files
@@ -1293,7 +1332,7 @@ autocmd FileType json setlocal commentstring=//\ %s
 "==============================================================================
 "https://github.com/ryanoasis/vim-devicons/wiki/FAQ-&-Troubleshooting#how-do-i-solve-issues-after-re-sourcing-my-vimrc
 if exists("g:loaded_webdevicons")
-  call webdevicons#refresh()
+call webdevicons#refresh()
 endif
 
 " }}}
@@ -1331,33 +1370,33 @@ endif
 " Can be custom impl also: :GoImpl github.com/asidlo/algorithms/collections.Stack
 
 augroup go
-  autocmd!
+autocmd!
 
-  " Show by default 4 spaces for a tab
-  autocmd FileType go
-    \ setlocal noexpandtab |
-    \ set tabstop=4 |
-    \ set shiftwidth=4 |
-    \ set textwidth=79
+" Show by default 4 spaces for a tab
+autocmd FileType go
+  \ setlocal noexpandtab |
+  \ set tabstop=4 |
+  \ set shiftwidth=4 |
+  \ set textwidth=79
 
-  " :GoBuild and :GoTestCompile
-  autocmd FileType go nmap <leader>m :<c-u>call <SID>build_go_files()<cr>
+" :GoBuild and :GoTestCompile
+autocmd FileType go nmap <leader>m :<c-u>call <SID>build_go_files()<cr>
 
-  " :GoAlternate  commands :A, :AV, :AS and :AT
-  autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
-  autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
-  autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
-  autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+" :GoAlternate  commands :A, :AV, :AS and :AT
+autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
 
-  " Run :GoBuild or :GoTestCompile based on the go file
-  function! s:build_go_files()
-    let l:file = expand('%')
-    if l:file =~# '^\f\+_test\.go$'
-      call go#test#Test(0, 1)
-    elseif l:file =~# '^\f\+\.go$'
-      call go#cmd#Build(0)
-    endif
-  endfunction
+" Run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
 
 augroup END
 
@@ -1366,25 +1405,25 @@ augroup END
 " Java {{{
 "==============================================================================
 augroup java
-  autocmd!
+autocmd!
 
-  " autocmd FileType java let $GTAGSLABEL = ''
+" autocmd FileType java let $GTAGSLABEL = ''
 
-  autocmd FileType java nmap [[ [m
-  autocmd FileType java nmap ]] ]m
+autocmd FileType java nmap [[ [m
+autocmd FileType java nmap ]] ]m
 
-  " || com.amazon.oa.CriticalRoutersTest > testArticulationPoints FAILED
-  " src/main/java/com/amazon/oa/NumberOfClusters.java|24 col 24 error| ';' expected
-  autocmd FileType java,groovy set makeprg=gradlew
-  " autocmd FileType java,groovy set errorformat=
-  "     \%E[ant:scalac]\ %f:%l:\ error:\ %m,
-  "     \%W[ant:scalac]\ %f:%l:\ warning:\ %m,
-  "     \%E%.%#:compile%\\w%#Java%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
-  "     \%W%.%#:compile%\\w%#Java%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
-  "     \%E%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
-  "     \%W%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
-  "     \%E%f:\ %\\d%\\+:\ %m\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
-  "     \%E%>%f:\ %\\d%\\+:\ %m,%C\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
+" || com.amazon.oa.CriticalRoutersTest > testArticulationPoints FAILED
+" src/main/java/com/amazon/oa/NumberOfClusters.java|24 col 24 error| ';' expected
+autocmd FileType java,groovy set makeprg=gradlew
+" autocmd FileType java,groovy set errorformat=
+"     \%E[ant:scalac]\ %f:%l:\ error:\ %m,
+"     \%W[ant:scalac]\ %f:%l:\ warning:\ %m,
+"     \%E%.%#:compile%\\w%#Java%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
+"     \%W%.%#:compile%\\w%#Java%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
+"     \%E%f:%l:\ error:\ %m,%-Z%p^,%-C%.%#,
+"     \%W%f:%l:\ warning:\ %m,%-Z%p^,%-C%.%#,
+"     \%E%f:\ %\\d%\\+:\ %m\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
+"     \%E%>%f:\ %\\d%\\+:\ %m,%C\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
   "     \%-G%.%#
 
   autocmd FileType java,groovy
@@ -1432,20 +1471,20 @@ autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
 
 " Open all folds = zR; Close all folds = zM
 " Close all folds = zM; Open all folds = zR
-augroup XML
+augroup XmlFiles
     autocmd!
     autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
 augroup END
 
-augroup Markdown
+augroup MarkdownFiles
   autocmd!
   autocmd FileType markdown set textwidth=79
 augroup END
 
-augroup Txt
-  autocmd!
-  autocmd BufNewFile,BufEnter *.txt set textwidth=79 syntax=markdown
-augroup END
+" augroup Txt
+"   autocmd!
+"   autocmd BufNewFile,BufEnter *.txt set textwidth=79 syntax=markdown
+" augroup END
 
 " }}}
 "==============================================================================
