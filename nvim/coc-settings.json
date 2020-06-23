@@ -4,34 +4,27 @@
       "command": "gopls",
       "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
       "filetypes": ["go"],
-      "args": ["serve", "-debug", "0.0.0.0:8484", "-rpc.trace"],
+      "args": ["serve", "-debug", "0.0.0.0:8484", "-rpc.trace"]
     }
   },
   // Can use conda env, but must install jedi, a linter(pylint), and a
   // formatter (yapf) in env, and specify the path to the python exe for env
   "python.pythonPath": "python3",
-  "python.condaPath": "/usr/lociwcal/anaconda3/condabin/conda",
+  "python.condaPath": "/usr/local/anaconda3/condabin/conda",
   "python.venvPath": "./venv",
   "python.analysis.logLevel": "Trace",
   "python.linting.enabled": true,
-  "signature.target": "echo",
   "suggest.echodocSupport": true,
-  "diagnostic.displayByAle": true,
   "suggest.maxCompleteItemCount": 20,
-  "diagnostic.errorSign": "•",
-  "diagnostic.warningSign": "•",
-  "diagnostic.infoSign": "•",
-  "coc.source.buffer.enable": false,
-  "coc.preferences.useQuickfixForLocations": true,
-  "java.format.enabled": true,
-  "java.signatureHelp.enabled": true,
-  "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
-  "java.format.settings.profile": "GoogleStyle",
-  "java.format.comments.enabled": true,
-  "java.import.gradle.enabled": true,
-  "java.import.gradle.wrapper.enabled": true,
-
-  // For troubleshooting imports, use CocCommand java.cleanWorkspace
-  // followed by CocCommand java.projectConfiguration.update
-  "java.home": "/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/Contents/Home"
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.enableMessage": "never",
+  // "diagnostic.errorSign": "•",
+  // "diagnostic.warningSign": "•",
+  // "diagnostic.infoSign": "•",
+  // "coc.source.buffer.enable": false,
+  // "coc.preferences.useQuickfixForLocations": true,
+  // "coc.preferences.hoverTarget": "preview",
+  // "coc.preferences.previewAutoClose": false,
+  "java.signatureHelp.enabled": true
 }

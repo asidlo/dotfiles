@@ -29,12 +29,12 @@ else
   let g:rc_file = expand('~/.vimrc')
 endif
 
-let g:java_formatter = g:vim_dir . '/java/fmt/google-java-format.jar'
-let g:java_decompiler = g:vim_dir . '/java/decompile/jd-cli.jar'
+" let g:java_formatter = g:vim_dir . '/java/fmt/google-java-format.jar'
+" let g:java_decompiler = g:vim_dir . '/java/decompile/jd-cli.jar'
 
 " 1 = skip, 0 = dont skip
-let g:skip_go_plugin = 0
-let g:skip_ctags_plugin = 0
+" let g:skip_go_plugin = 0
+" let g:skip_ctags_plugin = 0
 
 if g:is_mac
   let g:ctags_exe = '/usr/local/opt/universal-ctags/bin/ctags'
@@ -42,13 +42,13 @@ else
   let g:ctags_exe = 'ctags'
 endif
 
-if g:is_win
-  " Need to remove this var when working with non-java based repos
-  " let $GTAGSLIBPATH = glob($JAVA_HOME . '/lib')
-  let $GTAGSTHROUGH = 'true' 
-  let $GTAGSLABEL = 'pygments'
-  let $GTAGSCONF = glob($GTAGS_HOME . '/share/gtags/gtags.conf')
-endif
+" if g:is_win
+"   " Need to remove this var when working with non-java based repos
+"   " let $GTAGSLIBPATH = glob($JAVA_HOME . '/lib')
+"   let $GTAGSTHROUGH = 'true' 
+"   let $GTAGSLABEL = 'pygments'
+"   let $GTAGSCONF = glob($GTAGS_HOME . '/share/gtags/gtags.conf')
+" endif
 
 " Disable python2, ruby, and node providers
 let g:loaded_python_provider = 0
@@ -57,20 +57,19 @@ let g:loaded_node_provider = 0
 
 let s:undo_dir = g:vim_dir . '/undo'
 if empty(glob(s:undo_dir))
-  echoerr "Undo dir does not exist, please create it to ensure change history: " . s:undo_dir
+  throw "Undo dir does not exist, please create it to ensure change history: " . s:undo_dir
 endif
 
 if !executable('rg')
-  echoerr 'Ripgrep executable not found! Install and add to Path to perform project searching'
+  throw 'Ripgrep executable not found! Install and add to Path to perform project searching'
 endif
 
 if !executable('fzf')
-  echoerr 'fzf is required for fuzzy searching, please install fzf and add to PATH'
+  throw 'fzf is required for fuzzy searching, please install fzf and add to PATH'
 endif
 
 if !executable('ctags')
-  echoerr 'ctags is required for generating tags, please install ctags and add to PATH'
-  let g:skip_ctags_plugin = 1
+  throw 'ctags is required for generating tags, please install ctags and add to PATH'
 endif
 
 if !executable('gtags')
@@ -88,18 +87,15 @@ if executable('python') || executable('python3')
     let g:python3_host_prog=exepath('python3')
   endif
 else
-  echoerr 'Python 3 executable not found! You must install Python 3 and set its PATH correctly!'
-  exit
+  throw 'Python 3 executable not found! You must install Python 3 and set its PATH correctly!'
 endif
 
 if !executable('go')
-  echoerr 'Go needs to be installed in order to run the vim-go plugin'
-  let g:skip_go_plugin = 1
+  throw 'Go needs to be installed in order to run the vim-go plugin'
 endif
 
 if !exists('$GOPATH')
-  echoerr 'Please also set go env vars [GOPATH, GOROOT, GOBIN]'
-  let g:skip_go_plugin = 1
+  throw 'Please also set go env vars [GOPATH, GOROOT, GOBIN]'
 endif
 
 " }}}
@@ -116,37 +112,37 @@ function! VisualStarSearchSet(cmdtype,...)
   let @" = temp
 endfunction
 
-function! Copy2Register(reg)
-  let hits = []
-  %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
-  let reg = empty(a:reg) ? '+' : a:reg
-  execute 'let @'.reg.' = join(hits, "") . "\n"'
-endfunction
+" function! Copy2Register(reg)
+"   let hits = []
+"   %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
+"   let reg = empty(a:reg) ? '+' : a:reg
+"   execute 'let @'.reg.' = join(hits, "") . "\n"'
+" endfunction
 
-function! CopyMatches(regex)
-  " Clear the a register
-  normal! qaq
+" function! CopyMatches(regex)
+"   " Clear the a register
+"   normal! qaq
 
-  " Copy the result to the register 'A'
-  execute '/' . a:regex
-  call Copy2Register('A')
+"   " Copy the result to the register 'A'
+"   execute '/' . a:regex
+"   call Copy2Register('A')
 
-  " Store the result from register 'A' to the clipboard
-  let @+ = trim(@a)
-endfunction
+"   " Store the result from register 'A' to the clipboard
+"   let @+ = trim(@a)
+" endfunction
 
 " https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
 function! s:get_visual_selection()
-    " Why is this not a built-in Vim script function?!
-    let [line_start, column_start] = getpos("'<")[1:2]
-    let [line_end, column_end] = getpos("'>")[1:2]
-    let lines = getline(line_start, line_end)
-    if len(lines) == 0
-        return ''
-    endif
-    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-    let lines[0] = lines[0][column_start - 1:]
-    return join(lines, "\n")
+  " Why is this not a built-in Vim script function?!
+  let [line_start, column_start] = getpos("'<")[1:2]
+  let [line_end, column_end] = getpos("'>")[1:2]
+  let lines = getline(line_start, line_end)
+  if len(lines) == 0
+      return ''
+  endif
+  let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+  let lines[0] = lines[0][column_start - 1:]
+  return join(lines, "\n")
 endfunction
 
 " Print the directory of the current buffer
@@ -162,89 +158,89 @@ command! Dos2Linux :%s///g
 ab D2L Dos2Linux
 
 " Add all TODO items to the quickfix list relative to where you opened Vim.
-function! s:todo() abort
-  let entries = []
-  for cmd in ['git grep -niIw -e TODO -e FIXME 2> /dev/null',
-            \ 'grep -rniIw -e TODO -e FIXME . 2> /dev/null']
-    let lines = split(system(cmd), '\n')
-    if v:shell_error != 0
-      echoerr 'Error executing cmd: ' . cmd
-    endif
-    for line in lines
-      let [fname, lno, text] = matchlist(line, '^\([^:]*\):\([^:]*\):\(.*\)')[1:3]
-      call add(entries, { 'filename': fname, 'lnum': lno, 'text': text })
-    endfor
-    break
-  endfor
+" function! s:todo() abort
+"   let entries = []
+"   for cmd in ['git grep -niIw -e TODO -e FIXME 2> /dev/null',
+"             \ 'grep -rniIw -e TODO -e FIXME . 2> /dev/null']
+"     let lines = split(system(cmd), '\n')
+"     if v:shell_error != 0
+"       echoerr 'Error executing cmd: ' . cmd
+"     endif
+"     for line in lines
+"       let [fname, lno, text] = matchlist(line, '^\([^:]*\):\([^:]*\):\(.*\)')[1:3]
+"       call add(entries, { 'filename': fname, 'lnum': lno, 'text': text })
+"     endfor
+"     break
+"   endfor
 
-  if !empty(entries)
-    call setqflist(entries)
-    copen
-  endif
-endfunction
+"   if !empty(entries)
+"     call setqflist(entries)
+"     copen
+"   endif
+" endfunction
 
-command! Todo call s:todo()
+" command! Todo call s:todo()
 
-function! s:get_libs_dir() abort
-  " let l:jdk_version_dir = substitute(expand(g:gtags_jdk_home), ' ', '', 'g')
-  " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,':', '', 'g'))
-  " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'\', '_', 'g'))
-  " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'/', '_', 'g'))
+" function! s:get_libs_dir() abort
+"   " let l:jdk_version_dir = substitute(expand(g:gtags_jdk_home), ' ', '', 'g')
+"   " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,':', '', 'g'))
+"   " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'\', '_', 'g'))
+"   " let l:jdk_version_dir = tolower(substitute(l:jdk_version_dir,'/', '_', 'g'))
 
-  " if l:jdk_version_dir[0] == '_'
-  "   " remove the first char if its an underscore (usually on linux)
-  "   let l:jdk_version_dir = l:jdk_version_dir[1:]
-  " endif
+"   " if l:jdk_version_dir[0] == '_'
+"   "   " remove the first char if its an underscore (usually on linux)
+"   "   let l:jdk_version_dir = l:jdk_version_dir[1:]
+"   " endif
 
-  " let $GTAGSLIBPATH = expand(g:vim_dir . '/jdk-src/' . l:jdk_version_dir) 
-  " return $GTAGSLIBPATH
+"   " let $GTAGSLIBPATH = expand(g:vim_dir . '/jdk-src/' . l:jdk_version_dir) 
+"   " return $GTAGSLIBPATH
 
-  return expand(getcwd() . '/jdk-src')
-endfunction
+"   return expand(getcwd() . '/jdk-src')
+" endfunction
 
 " Should only create the libs dir if in a project, i.e assumes using git
 " and vim-rooter
-function! s:create_libs_dir() abort
-  let l:libs_dir = <SID>get_libs_dir()
-  if (empty(glob(l:libs_dir)))
-    call mkdir(l:libs_dir, 'p')
-  endif
-endfunction
+" function! s:create_libs_dir() abort
+"   let l:libs_dir = <SID>get_libs_dir()
+"   if (empty(glob(l:libs_dir)))
+"     call mkdir(l:libs_dir, 'p')
+"   endif
+" endfunction
 
-function! s:copy_jdk_src() abort
-  let g:jdk_src = expand($JAVA_HOME . '/src.zip')
-  let l:libs_dir = <SID>get_libs_dir()
-  let l:libs_jdk_src = expand(l:libs_dir . '/src.zip')
-  " Copy the src.zip from JAVA_HOME if not already present in libs
-  if (empty(glob(l:libs_jdk_src)) && !empty(glob(g:jdk_src)))
-    let l:jdk_src_zip = readfile(g:jdk_src, 'b')
-    call writefile(l:jdk_src_zip, l:libs_dir . '/src.zip')
-  endif
-endfunction
+" function! s:copy_jdk_src() abort
+"   let g:jdk_src = expand($JAVA_HOME . '/src.zip')
+"   let l:libs_dir = <SID>get_libs_dir()
+"   let l:libs_jdk_src = expand(l:libs_dir . '/src.zip')
+"   " Copy the src.zip from JAVA_HOME if not already present in libs
+"   if (empty(glob(l:libs_jdk_src)) && !empty(glob(g:jdk_src)))
+"     let l:jdk_src_zip = readfile(g:jdk_src, 'b')
+"     call writefile(l:jdk_src_zip, l:libs_dir . '/src.zip')
+"   endif
+" endfunction
 
-function! s:extract_jdk_src() abort
-  let l:libs_dir = <SID>get_libs_dir()
-  let l:libs_jdk_src = expand(l:libs_dir . '/src.zip')
-  if !executable('unzip')
-    echoerr 'Unzip command not found in PATH'
-    return 1
-  endif
+" function! s:extract_jdk_src() abort
+"   let l:libs_dir = <SID>get_libs_dir()
+"   let l:libs_jdk_src = expand(l:libs_dir . '/src.zip')
+"   if !executable('unzip')
+"     echoerr 'Unzip command not found in PATH'
+"     return 1
+"   endif
 
-  " TODO - make async, and only exec if not already unzipped
-  "      - should I namespace the jdk by version? ie unzip in jdk8_204/
-  "        or should at least remove the old sdk files async as well.
-  "      - Also should do custom impl of :Files command to sort the entries
-  "        so that the libs in the jdk are on the bottom and when selecting
-  "        files from the libs dir, the :view command is used instead of :e
-  exec 'Dispatch unzip ' . l:libs_jdk_src . ' -d ' . l:libs_dir
+"   " TODO - make async, and only exec if not already unzipped
+"   "      - should I namespace the jdk by version? ie unzip in jdk8_204/
+"   "        or should at least remove the old sdk files async as well.
+"   "      - Also should do custom impl of :Files command to sort the entries
+"   "        so that the libs in the jdk are on the bottom and when selecting
+"   "        files from the libs dir, the :view command is used instead of :e
+"   exec 'Dispatch unzip ' . l:libs_jdk_src . ' -d ' . l:libs_dir
 
-  " Notes: Could just search in the gradle directory for the files instead of
-  "        copying them locally. Could also do the same for the jvm files.
-  "        Might need root perms for that though..
-  " NewPlan: vim is able to directly read zip files, so just open the src.zip
-  "        and open java file of choice, if we need to extract we could do that
-  "        also....wonder if fd can search through zip
-endfunction
+"   " Notes: Could just search in the gradle directory for the files instead of
+"   "        copying them locally. Could also do the same for the jvm files.
+"   "        Might need root perms for that though..
+"   " NewPlan: vim is able to directly read zip files, so just open the src.zip
+"   "        and open java file of choice, if we need to extract we could do that
+"   "        also....wonder if fd can search through zip
+" endfunction
 
 " no need to call this function as it will get called internally during the
 " src.zip setup extraction.
@@ -314,7 +310,7 @@ command! -nargs=0 Scriptnames call fzf#run({'source': split(execute('scriptnames
 if !g:is_win
   if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif
 endif
@@ -325,7 +321,6 @@ call plug#begin(g:vim_dir . '/plugged')
 Plug 'morhetz/gruvbox'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'reedes/vim-colors-pencil'
-Plug 'endel/vim-github-colorscheme'
 
 " Tabular must come before markdown
 Plug 'godlygeek/tabular'
@@ -339,29 +334,32 @@ Plug 'plasticboy/vim-markdown'
 " Unknown function: go#config#GoplsMatcher
 " See: https://github.com/fatih/vim-go/issues/2272
 " See: https://github.com/fatih/vim-go/issues/2262
-if !g:skip_go_plugin
+" if !g:skip_go_plugin
   Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
   Plug 'AndrewRadev/splitjoin.vim'
-endif
+" endif
 
-if g:is_win
-  Plug 'autozimu/LanguageClient-neovim', {
-      \ 'branch': 'next',
-      \ 'do': 'powershell install.ps1',
-      \ }
-else
-  Plug 'autozimu/LanguageClient-neovim', {
-      \ 'branch': 'next',
-      \ 'do': 'bash install.sh',
-      \ }
-endif
+" if g:is_win
+"   Plug 'autozimu/LanguageClient-neovim', {
+"       \ 'branch': 'next',
+"       \ 'do': 'powershell -executionpolicy bypass -File install.ps1',
+"       \ }
+" else
+"   Plug 'autozimu/LanguageClient-neovim', {
+"       \ 'branch': 'next',
+"       \ 'do': 'bash install.sh',
+"       \ }
+" endif
+
+" Plug 'prabirshrestha/vim-lsp'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'Shougo/echodoc.vim'
 
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'scrooloose/nerdtree'
 Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-" Plug 'jmcantrell/vim-virtualenv'
 Plug 'wincent/ferret'
 Plug 'airblade/vim-rooter'
 Plug 'ryanoasis/vim-devicons'
@@ -370,7 +368,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-eunuch'
+" Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-dispatch'
 Plug 'rhysd/git-messenger.vim'
 Plug 'jiangmiao/auto-pairs'
@@ -387,19 +385,21 @@ Plug 'vim-scripts/ReplaceWithRegister'
 " Targets indents
 " Ex: gcii (toggles comment for all adjacent inner indented lines)
 Plug 'michaeljsmith/vim-indent-object'
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-function'
 
 " Completion, highlighting, and linting
 Plug 'sheerun/vim-polyglot'
 
 " Symbol / Tag Plugins
-if !g:skip_ctags_plugin
+" if !g:skip_ctags_plugin
   Plug 'majutsushi/tagbar'
   Plug 'ludovicchabant/vim-gutentags'
   " Plug 'skywind3000/gutentags_plus'
-endif
+" endif
 
 " Snippets
-Plug 'SirVer/ultisnips'
+" Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'segeljakt/vim-silicon'
 
@@ -430,12 +430,11 @@ let mapleader=","
 syntax enable
 
 " Favorite dark colors
-let g:is_colo_dracula = 0
+let g:is_colo_dracula = 1
 let g:is_colo_gruvbox = 0
 
 " Favorite light colors
-let g:is_colo_pencil = 1
-let g:is_colo_github = 0
+let g:is_colo_pencil = 0
 
 try
   if g:is_colo_dracula
@@ -444,9 +443,6 @@ try
   elseif g:is_colo_gruvbox
     colorscheme gruvbox
     set background=dark
-  elseif g:is_colo_github
-    colorscheme github
-    set background=light
   elseif g:is_colo_pencil
     colorscheme pencil
     set background=light
@@ -467,12 +463,6 @@ if g:is_colo_dracula
 
   " dracula specific highlighting
   hi Search guibg=NONE guifg=Yellow
-endif
-
-" hi SignColumn to get current value from colorscheme
-if g:is_colo_github 
-  hi SignColumn cterm=bold ctermfg=246 ctermbg=15 gui=bold guibg=#ECECEC guifg=#959595
-  hi CursorLine cterm=underline ctermbg=253 guibg=#D8D8DD guifg=NONE
 endif
 
 if g:is_gui
@@ -691,34 +681,20 @@ noremap k gk
 " If you want to kill all buffers matching regex, then you need to use <C-A>
 " after the regex to expand out the matches
 if g:is_nvim
-
-  " Leader q to exit terminal mode
-  " tnoremap <leader>q <c-\><c-n>:q<cr>
-  " tnoremap <leader>e <c-\><c-n>:e#<cr>
-  " tnoremap ]b <c-\><c-n>:bnext<cr>
-  " tnoremap [b <c-\><c-n>:bprevious<cr>
-
-  " mappings to move out from terminal to other views
-  " tnoremap <c-h> <c-\><c-n><c-w>h
-  " tnoremap <c-j> <c-\><c-n><c-w>j
-" tnoremap <c-k> <c-\><c-n><c-w>k
-" tnoremap <c-l> <c-\><c-n><c-w>l
-
 " Open terminal in vertical, horizontal and new tab
-if g:is_win
-  " nnoremap <leader>tv :vsplit term://powershell -NoLogo -NoExit<cr>
-  " nnoremap <leader>ts :split term://powershell -NoLogo -NoExit<cr>
-  " nnoremap <leader>tt :e term://powershell -NoLogo -NoExit<cr>
-  nnoremap <leader>tv :vsplit term://cmd<cr>
-  nnoremap <leader>ts :split term://cmd<cr>
-  nnoremap <leader>tt :e term://cmd<cr>
-else
-  nnoremap <leader>tv :vsplit term://zsh<cr>
-  nnoremap <leader>ts :split term://zsh<cr>
-  nnoremap <leader>tt :e term://zsh<cr>
-endif
-
-autocmd BufEnter term://* startinsert!
+  if g:is_win
+    " nnoremap <leader>tv :vsplit term://powershell -NoLogo -NoExit<cr>
+    " nnoremap <leader>ts :split term://powershell -NoLogo -NoExit<cr>
+    " nnoremap <leader>tt :e term://powershell -NoLogo -NoExit<cr>
+    nnoremap <leader>tv :vsplit term://cmd<cr>
+    nnoremap <leader>ts :split term://cmd<cr>
+    nnoremap <leader>tt :e term://cmd<cr>
+  else
+    nnoremap <leader>tv :vsplit term://zsh<cr>
+    nnoremap <leader>ts :split term://zsh<cr>
+    nnoremap <leader>tt :e term://zsh<cr>
+  endif
+  autocmd BufEnter term://* startinsert!
 endif
 
 " Format paragraph (selected or not) to 80 character lines.
@@ -744,8 +720,8 @@ nnoremap Y y$
 " Edit global todo.md
 let g:notes_dir = g:vim_dir . '/notes'
 if (empty(glob(g:notes_dir)))
-call mkdir(g:notes_dir)
-exec '!git clone git@github.com:asidlo/notes.git ' . g:notes_dir
+  call mkdir(g:notes_dir)
+  exec '!git clone git@github.com:asidlo/notes.git ' . g:notes_dir
 endif
 nnoremap <expr> <leader>td ':e ' . g:notes_dir . '/README.md<CR>' 
 
@@ -762,7 +738,6 @@ nnoremap <leader>e :e#<cr>
 
 " use `u` to undo, use `U` to redo, mind = blown
 nnoremap U <c-r>
-
 
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -798,13 +773,13 @@ xnoremap # :<C-u>call VisualStarSearchSet('?')<CR>?<C-R>=@/<CR><CR>
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
 " c = confirm each
-nnoremap <leader>r :%s///gc<left><left><left>
+nnoremap <leader>s :%s///gc<left><left><left>
 
 " The same as above but instead of acting on the whole file it will be
 " restricted to the previously visually selected range. You can do that by
 " pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
-xnoremap <leader>r :s///gc<left><left><left>
+xnoremap <leader>s :s///gc<left><left><left>
 
 " Map <Space> to / (search)
 map <space> /
@@ -820,24 +795,20 @@ cnoremap <c-n> <down>
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 
-" Note can also use :lop / :lcl
-nnoremap [ok :lopen<cr>
-nnoremap ]ok :lclose<cr>
+" " Note can also use :cope / :ccl
+" nnoremap [oq :copen<cr>
+" nnoremap ]oq :cclose<cr>
+" nnoremap yoq :call ToggleQuickfix()<cr>
 
-" Note can also use :cope / :ccl
-nnoremap [oq :copen<cr>
-nnoremap ]oq :cclose<cr>
-nnoremap yoq :call ToggleQuickfix()<cr>
-
-function! g:ToggleQuickfix()
-for winnr in range(1, winnr('$'))
-  if getwinvar(winnr, '&syntax') == 'qf'
-    cclose
-    return
-  endif
-endfor
-copen
-endfunction
+" function! g:ToggleQuickfix()
+"   for winnr in range(1, winnr('$'))
+"     if getwinvar(winnr, '&syntax') == 'qf'
+"       cclose
+"       return
+"     endif
+"   endfor
+"   copen
+" endfunction
 
 " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
 set cscopetag
@@ -859,41 +830,174 @@ set cscopequickfix=c-,t-,e-
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
-" LanguageClient {{{
+" vim-lsp {{{
 "==============================================================================
-let g:LanguageClient_serverCommands = {
-  \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-  \ 'python': ['/usr/local/bin/pyls'],
-  \ 'java': ['powershell', '-NoExit', 'jdtls.ps1']
-  \ }
 
-" nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-" nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
-" nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-" nnoremap <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+" Notes: I love the fact that it is pure vimscript and utilizes native
+" vim functions / idioms. However, there is a lot of work to be done.
+" It needs the ability to navigate to java classes ie jdk files / jar files
+" It needs the ability to change the LspDocumentSymbols output to location list
+" since this makes more sense than quickfix list. It should have some way to 
+" put all of the diagnostics into a quickfix list from the entire project and
+" not just from a single file. Also should handle the lsp output from the eclipse
+" debug settings
 
-function LC_maps()
-if has_key(g:LanguageClient_serverCommands, &filetype)
-  nnoremap <buffer> <silent> K :call LanguageClient#textDocument_hover()<cr>
-  nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
-  nnoremap <buffer> <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
-  nnoremap <buffer> <silent> <leader>o :call LanguageClient#textDocument_documentSymbol()<CR>
-endif
-endfunction
 
-autocmd FileType * call LC_maps()
+" let g:jdtls_script = glob(g:vim_dir . '/java/bin/jdtls.sh')
+" if executable('java') && filereadable(g:jdtls_script)
+"   autocmd User lsp_setup call lsp#register_server({
+"     \ 'name': 'eclipse.jdt.ls',
+"     \ 'cmd': {server_info->[&shell, &shellcmdflag, g:jdtls_script]},
+"     \ 'whitelist': ['java'],
+"     \ })
+" endif
 
-let g:LanguageClient_loggingFile = expand(g:vim_dir . '/LanguageClient.log')
+" function! s:on_lsp_buffer_enabled() abort
+"   setlocal omnifunc=lsp#complete
+"   setlocal signcolumn=yes
+"   if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+"   set foldmethod=expr
+"     \ foldexpr=lsp#ui#vim#folding#foldexpr()
+"     \ foldtext=lsp#ui#vim#folding#foldtext()
 
-command! Symbol call <SID>symbol_tag_switch()
+"   set formatexpr=lsp#ui#vim#document_format_sync()
 
-function! s:symbol_tag_switch() abort
-  if has_key(g:LanguageClient_serverCommands, &filetype)
-      call LanguageClient#textDocument_documentSymbol()
+"   nmap <buffer> gd <plug>(lsp-definition)
+"   nmap <buffer> K <plug>(lsp-hover)
+"   nmap <buffer> <f2> <plug>(lsp-rename)
+" endfunction
+
+" augroup lsp_install
+"   au!
+"   autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+" augroup END
+
+" " Opens preview windows as normal windows
+" let g:lsp_preview_float = 0
+
+" " Preview remains open and waits for an explicit call
+" let g:lsp_preview_autoclose = 0
+
+" let g:lsp_log_file = expand(g:vim_dir . '/vim-lsp.log')
+" highlight LspErrorHighlight term=underline cterm=underline gui=underline
+" highlight LspWarningHighlight term=underline cterm=underline gui=underline
+" highlight LspInformationHighlight term=underline cterm=underline gui=underline
+" highlight LspHintHighlight term=underline cterm=underline gui=underline
+" highlight link LspWarningVirtual DraculaOrange
+" highlight link LspWarningText DraculaOrange
+
+" }}}
+"==============================================================================
+" EchoDoc {{{
+"==============================================================================
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = 'signature'
+
+" }}}
+"==============================================================================
+" coc {{{
+"==============================================================================
+let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 'coc-snippets']
+let g:coc_data_home = expand(g:vim_dir . '/coc')
+let g:coc_config_home = g:coc_data_home
+
+highlight link CocHighlightText CocUnderline
+
+augroup coc_lsp
+  autocmd!
+  " Highlight the symbol and its references when holding the cursor.
+  autocmd CursorHold * silent call CocActionAsync('highlight')
+  setlocal formatexpr=CocAction('formatSelected')
+
+  inoremap <silent><expr> <c-space> coc#refresh()
+  imap <C-j> <Plug>(coc-snippets-expand-jump)
+
+  " Use `[g` and `]g` to navigate diagnostics
+  " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+  nmap <silent> [d <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]d <Plug>(coc-diagnostic-next)
+
+  " GoTo code navigation.
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gs <Plug>(coc-references)
+
+  " Symbol renaming.
+  nmap <leader>r <Plug>(coc-rename)
+
+  " Use K to show documentation in preview window.
+  nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+  " enter to select completion
+  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+  " use tab for easy completion navigation
+  inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+augroup end
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
   else
-      call s:btags()
+    call CocAction('doHover')
   endif
 endfunction
+
+command! -nargs=0 Format :call CocAction('format')
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
+abbreviate CC CocConfig
+
+" }}}
+"==============================================================================
+" LanguageClient {{{
+"==============================================================================
+  " \ 'java': ['/Users/asidlo/.local/share/vim-lsp-settings/servers/eclipse-jdt-ls/eclipse-jdt-ls']
+" if g:is_win
+"   let g:jdtls_script = expand(g:vim_dir.'/java/bin/jdtls.ps1')
+" else
+"   let g:jdtls_script = expand(g:vim_dir.'/java/bin/jdtls.sh')
+" endif
+
+" let g:LanguageClient_serverCommands = {
+"   \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+"   \ 'python': ['/usr/local/bin/pyls'],
+"   \ 'java': [g:jdtls_script]
+"   \ }
+
+" function LC_maps()
+"   if has_key(g:LanguageClient_serverCommands, &filetype)
+"     nnoremap <buffer> <silent> K :call LanguageClient#textDocument_hover()<cr>
+"     nnoremap <buffer> <silent> gd :call LanguageClient#textDocument_definition()<CR>
+"     nnoremap <buffer> <silent> <F2> :call LanguageClient#textDocument_rename()<CR>
+"     nnoremap <buffer> <silent> <leader>o :call LanguageClient#textDocument_documentSymbol()<CR>
+"     setlocal formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
+"   endif
+" endfunction
+
+" autocmd FileType * call LC_maps()
+
+" let g:LanguageClient_loggingFile = expand(g:vim_dir . '/LanguageClient.log')
+" let g:LanguageClient_loggingLevel = 'DEBUG'
+
+" command! Symbol call <SID>symbol_tag_switch()
+
+" function! s:symbol_tag_switch() abort
+"   if has_key(g:LanguageClient_serverCommands, &filetype)
+"     call LanguageClient#textDocument_documentSymbol()
+"   else
+"     call s:btags()
+"   endif
+" endfunction
+
+" let g:LanguageClient_useFloatingHover = 0
+" let g:LanguageClient_diagnosticsEnable = 1
+" let g:LanguageClient_diagnosticsSignsMax = 200
+" let g:LanguageClient_loggingLevel = 'INFO'
+" let g:LanguageClient_useVirtualText = 'All'
+" let g:LanguageClient_diagnosticsList = 'Location'
 
 " }}}
 "==============================================================================
@@ -969,21 +1073,21 @@ nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
 nmap <leader>a <Plug>(FerretAck)
 
 " Perform a search and add to location list
-nmap <leader>l <Plug>(FerretLack)
+" nmap <leader>l <Plug>(FerretLack)
 
 " Search for current word
-nmap <leader>s <Plug>(FerretAckWord)
+nmap <leader>f <Plug>(FerretAckWord)
 
 " Need to use <C-U> to escape visual mode and not enter search
-vmap <leader>s :<C-U>call <SID>FerretVAck()<CR>
+vmap <leader>f :<C-U>call <SID>FerretVAck()<CR>
 
 function! s:FerretVAck() abort
-let l:selection = s:get_visual_selection()
-execute ':Ack ' . substitute(l:selection, ' ', '\\ ', 'g')
+  let l:selection = s:get_visual_selection()
+  execute ':Ack ' . substitute(l:selection, ' ', '\\ ', 'g')
 endfunction
 
 " Replace instances matching term in quickfix
-nmap <leader>R <Plug>(FerretAcks)
+nmap <leader>S <Plug>(FerretAcks)
 
 " }}}
 "==============================================================================
@@ -1008,10 +1112,10 @@ let g:NERDTreeWinSize=35
 
 " Prevent fluff from appearing in the file drawer
 let NERDTreeIgnore=[
-          \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
-          \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project',
-          \ '^\.gradle$', '^\.idea$'
-          \]
+  \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
+  \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project',
+  \ '^\.gradle$', '^\.idea$'
+  \]
 
 " Show hidden files in NERDTree
 let NERDTreeShowHidden=1
@@ -1068,8 +1172,6 @@ if g:is_colo_dracula
   let g:airline_theme='dracula'
 elseif g:is_colo_gruvbox
   let g:airline_theme='gruvbox'
-elseif g:is_colo_github
-  let g:airline_theme='github'
 elseif g:is_colo_pencil
   let g:airline_theme='pencil'
 endif
@@ -1193,36 +1295,19 @@ nnoremap <leader>o :BTags<cr>
 nnoremap <leader>O :Tags<cr>
 
 " Dracula adds the CursorLine highlight to fzf
-if g:is_colo_dracula
-  let g:fzf_colors =
+let g:fzf_colors =
   \ { 'fg':      ['fg', 'Normal'],
-    \ 'bg':      ['bg', 'Normal'],
-    \ 'hl':      ['fg', 'Comment'],
-    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-    \ 'hl+':     ['fg', 'Statement'],
-    \ 'info':    ['fg', 'PreProc'],
-    \ 'border':  ['fg', 'Ignore'],
-    \ 'prompt':  ['fg', 'Conditional'],
-    \ 'pointer': ['fg', 'Exception'],
-    \ 'marker':  ['fg', 'Keyword'],
-    \ 'spinner': ['fg', 'Label'],
-    \ 'header':  ['fg', 'Comment'] }
-else
-  let g:fzf_colors =
-  \ { 'fg':      ['fg', 'Normal'],
-    \ 'bg':      ['bg', 'Normal'],
-    \ 'hl':      ['fg', 'Comment'],
-    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-    \ 'hl+':     ['fg', 'Statement'],
-    \ 'info':    ['fg', 'PreProc'],
-    \ 'border':  ['fg', 'Ignore'],
-    \ 'prompt':  ['fg', 'Conditional'],
-    \ 'pointer': ['fg', 'Exception'],
-    \ 'marker':  ['fg', 'Keyword'],
-    \ 'spinner': ['fg', 'Label'],
-    \ 'header':  ['fg', 'Comment'] }
-endif
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
 if g:is_nvim
   " https://github.com/junegunn/fzf.vim/issues/221
@@ -1244,31 +1329,31 @@ autocmd! FileType fzf set laststatus=0 noshowmode noruler
 let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.idea'
 
 function! s:align_lists(lists)
-let maxes = {}
-for list in a:lists
-  let i = 0
-  while i < len(list)
-    let maxes[i] = max([get(maxes, i, 0), len(list[i])])
-    let i += 1
-  endwhile
-endfor
-for list in a:lists
-  call map(list, "printf('%-'.maxes[v:key].'s', v:val)")
-endfor
-return a:lists
+  let maxes = {}
+  for list in a:lists
+    let i = 0
+    while i < len(list)
+      let maxes[i] = max([get(maxes, i, 0), len(list[i])])
+      let i += 1
+    endwhile
+  endfor
+  for list in a:lists
+    call map(list, "printf('%-'.maxes[v:key].'s', v:val)")
+  endfor
+  return a:lists
 endfunction
 
 " See what fields are exposed $ ctags --list-fields
 " TODO - use external java program to parse the list and format it pretty
 "      - use excmd=pattern to get the matching pattern to use also in output
 function! s:btags_source()
-let lines = map(split(system(printf(
-  \ g:ctags_exe . ' -f - --fields=NKaF --sort=no --excmd=number --language-force=%s %s',
-  \ &filetype, expand('%:S'))), "\n"), 'split(v:val, "\t")')
-if v:shell_error
-  throw 'failed to extract tags'
-endif
-  return map(s:align_lists(lines), 'join(v:val, "\t")')
+  let lines = map(split(system(printf(
+    \ g:ctags_exe . ' -f - --fields=NKaF --sort=no --excmd=number --language-force=%s %s',
+    \ &filetype, expand('%:S'))), "\n"), 'split(v:val, "\t")')
+  if v:shell_error
+    throw 'failed to extract tags'
+  endif
+    return map(s:align_lists(lines), 'join(v:val, "\t")')
 endfunction
 
 function! s:btags_sink(line)
@@ -1276,17 +1361,17 @@ function! s:btags_sink(line)
 endfunction
 
 function! s:btags()
-try
-  call fzf#run({
-  \ 'source':  s:btags_source(),
-  \ 'options': '+m -d "\t" --with-nth 1,4.. -n 1 --tiebreak=index',
-  \ 'down':    '40%',
-  \ 'sink':    function('s:btags_sink')})
-catch
-  echohl WarningMsg
-  echom v:exception
-  echohl None
-endtry
+  try
+    call fzf#run({
+    \ 'source':  s:btags_source(),
+    \ 'options': '+m -d "\t" --with-nth 1,4.. -n 1 --tiebreak=index',
+    \ 'down':    '40%',
+    \ 'sink':    function('s:btags_sink')})
+  catch
+    echohl WarningMsg
+    echom v:exception
+    echohl None
+  endtry
 endfunction
 
 command! BTags call s:btags()
@@ -1299,10 +1384,10 @@ inoremap <expr> <c-x><c-k> fzf#vim#complete('cat C:\Users\asidlo\Documents\dotfi
 " Ack {{{
 "==============================================================================
 if executable('rg')
-set grepformat=%f:%l:%c:%m,%f:%l:%m
-set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden\ -g\ !tags
-" -g !tags = ignore tags file
-let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags'
+  set grepformat=%f:%l:%c:%m,%f:%l:%m
+  set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden\ -g\ !tags
+  " -g !tags = ignore tags file
+  let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags'
 endif
 
 " Searches whole project, even through ignored files
@@ -1332,7 +1417,7 @@ autocmd FileType json setlocal commentstring=//\ %s
 "==============================================================================
 "https://github.com/ryanoasis/vim-devicons/wiki/FAQ-&-Troubleshooting#how-do-i-solve-issues-after-re-sourcing-my-vimrc
 if exists("g:loaded_webdevicons")
-call webdevicons#refresh()
+  call webdevicons#refresh()
 endif
 
 " }}}
@@ -1341,80 +1426,16 @@ endif
 "==============================================================================
 " Section: Language Specific Mappings {{{
 "==============================================================================
-" Go {{{
-"==============================================================================
-" | command         | description                                                                                         |
-" | vaf             | select whole function (including comments)                                                          |
-" | vif             | select function body only                                                                           |
-" | dif             | delete function body                                                                                |
-" | yif             | copy function body                                                                                  |
-" | <c-]> or gd     | go to declaration                                                                                   |
-" | <c-t>           | go back a definition                                                                                |
-" | ]]              | jump to next function (accepts v]], y]], d]]...)                                                    |
-" | [[              | jump to previous function                                                                           |
-" | :GoWhicherrs    | Shows which types of errors can occur from error return type                                        |
-" | :GoChannelPeers | Shows information about a selected channel                                                          |
-" | :GoCallees      | Shows all possible targets for the current function                                                 |
-" | :GoCallers      | Shows which functions call the current function and navigates to the usage, similar to GoReferrers  |
-" | :GoRename       | refactor renames current identifier(only works in GOPATH)                                           |
-" | :GoFreevars     | shows variables that are referenced but not defined within a given selection, helps for refactoring |
-" | :GoGenerate     | runs go generate                                                                                    |
-" | :GoImpl         | generates methods for a given interface                                                             |
-" | :GoDeps | Dependencies of current file|
-" | :GoFiles | Files in current package|
-" | :GoReferrers | Find usages|
-" | :GoImplements | Shows all interfaces current type/struct implements|
-"
-" Can also do GoImpl anywhere in file, just specify which type to attach it to
-" :GoImpl b *B fmt.Stringer
-" Can be custom impl also: :GoImpl github.com/asidlo/algorithms/collections.Stack
-
-augroup go
-autocmd!
-
-" Show by default 4 spaces for a tab
-autocmd FileType go
-  \ setlocal noexpandtab |
-  \ set tabstop=4 |
-  \ set shiftwidth=4 |
-  \ set textwidth=79
-
-" :GoBuild and :GoTestCompile
-autocmd FileType go nmap <leader>m :<c-u>call <SID>build_go_files()<cr>
-
-" :GoAlternate  commands :A, :AV, :AS and :AT
-autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
-autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
-autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
-autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
-
-" Run :GoBuild or :GoTestCompile based on the go file
-function! s:build_go_files()
-  let l:file = expand('%')
-  if l:file =~# '^\f\+_test\.go$'
-    call go#test#Test(0, 1)
-  elseif l:file =~# '^\f\+\.go$'
-    call go#cmd#Build(0)
-  endif
-endfunction
-
-augroup END
-
-" }}}
-"==============================================================================
-" Java {{{
-"==============================================================================
-augroup java
-autocmd!
+" augroup java_files
+" autocmd!
 
 " autocmd FileType java let $GTAGSLABEL = ''
 
-autocmd FileType java nmap [[ [m
-autocmd FileType java nmap ]] ]m
 
 " || com.amazon.oa.CriticalRoutersTest > testArticulationPoints FAILED
 " src/main/java/com/amazon/oa/NumberOfClusters.java|24 col 24 error| ';' expected
-autocmd FileType java,groovy set makeprg=gradlew
+" autocmd FileType java,groovy set makeprg=gradlew
+
 " autocmd FileType java,groovy set errorformat=
 "     \%E[ant:scalac]\ %f:%l:\ error:\ %m,
 "     \%W[ant:scalac]\ %f:%l:\ warning:\ %m,
@@ -1426,67 +1447,93 @@ autocmd FileType java,groovy set makeprg=gradlew
 "     \%E%>%f:\ %\\d%\\+:\ %m,%C\ @\ line\ %l\\,\ column\ %c.,%-C%.%#,%Z%p^,
   "     \%-G%.%#
 
-  autocmd FileType java,groovy
-      \ set tabstop=4 |
-      \ set softtabstop=4 |
-      \ set shiftwidth=4 |
-      \ set textwidth=119 |
-      \ set expandtab
+  " autocmd FileType java,groovy
+  "     \ set tabstop=4 |
+  "     \ set softtabstop=4 |
+  "     \ set shiftwidth=4 |
+  "     \ set expandtab
 
-  command! -range JavaFmt <line1>,<line2>call <SID>JavaFmtRange()
-  command! JavaImports execute 'Dispatch! java -jar ' . g:java_formatter . ' -a -i --fix-imports-only %:p'
+  " command! -range JavaFmt <line1>,<line2>call <SID>JavaFmtRange()
+  " command! JavaImports execute 'Dispatch! java -jar ' . g:java_formatter . ' -a -i --fix-imports-only %:p'
 
-  function! s:JavaFmtRange() range abort
-    if a:firstline == a:lastline
-      echom 'Formatting file:' . expand('%:p')
-      execute 'Dispatch! java -jar ' . g:java_formatter  . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
-    else
-      echom 'Formatting lines: ' . a:firstline . '-' . a:lastline
-      execute 'Dispatch! java -jar ' . g:java_formatter . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines=' . a:firstline . ':' . a:lastline . ' %:p'
-    endif
-  endfunction
+  " function! s:JavaFmtRange() range abort
+  "   if a:firstline == a:lastline
+  "     echom 'Formatting file:' . expand('%:p')
+  "     execute 'Dispatch! java -jar ' . g:java_formatter  . ' -a -i --skip-sorting-imports --skip-removing-unused-imports %:p'
+  "   else
+  "     echom 'Formatting lines: ' . a:firstline . '-' . a:lastline
+  "     execute 'Dispatch! java -jar ' . g:java_formatter . ' -a -i --skip-sorting-imports --skip-removing-unused-imports --lines=' . a:firstline . ':' . a:lastline . ' %:p'
+  "   endif
+  " endfunction
 
-  xmap <leader>F :JavaFmt<CR>
-  nmap <leader>F :JavaFmt<CR>
-  nmap <leader>I :JavaImports<CR>
+  " xmap <leader>F :JavaFmt<CR>
+  " nmap <leader>F :JavaFmt<CR>
+  " nmap <leader>I :JavaImports<CR>
 
-  command! JavaCollectLibs 
-        \ call <SID>create_libs_dir() |
-        \ call <SID>copy_jdk_src() |
-        \ call <SID>extract_jdk_src()
+  " command! JavaCollectLibs 
+  "       \ call <SID>create_libs_dir() |
+  "       \ call <SID>copy_jdk_src() |
+  "       \ call <SID>extract_jdk_src()
 
  " call fzf#run({ 'source': 'unzip -l src.zip', 'down': '40%' }) 
-
-augroup END
-
-" }}}
-"==============================================================================
-" Misc {{{
-"==============================================================================
-autocmd FileType json syntax match Comment +\/\/.\+$+
-autocmd FileType vim set foldmethod=marker tabstop=2 shiftwidth=2
-autocmd BufEnter *zshrc set foldmethod=marker
-autocmd BufEnter,BufNewFile agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log set syntax=nxlog
-autocmd BufEnter *.png,*.jpg,*.gif,*.jpeg exec "silent !open ".expand("%:p")
-
-" Open all folds = zR; Close all folds = zM
-" Close all folds = zM; Open all folds = zR
-augroup XmlFiles
-    autocmd!
-    autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
-augroup END
-
-augroup MarkdownFiles
+ 
+augroup go_files
   autocmd!
-  autocmd FileType markdown set textwidth=79
+  autocmd FileType go setlocal noexpandtab tabstop=4 shiftwidth=4
+  autocmd FileType go nmap <leader>m :<c-u>call <SID>build_go_files()<cr>
+  autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+  autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+  autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+  autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+augroup end
+
+" Run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+  call go#test#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
+augroup java_files
+  autocmd!
+  autocmd FileType java nmap [[ [m
+  autocmd FileType java nmap ]] ]m
+  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab
+  autocmd FileType java,groovy setlocal makeprg=gradlew
 augroup END
 
-" augroup Txt
-"   autocmd!
-"   autocmd BufNewFile,BufEnter *.txt set textwidth=79 syntax=markdown
-" augroup END
+augroup json_files
+  autocmd!
+  autocmd FileType json syntax match Comment +\/\/.\+$+
+augroup END
 
-" }}}
-"==============================================================================
+augroup xml_files
+  autocmd!
+  autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
+augroup END
+
+augroup markdown_files
+  autocmd!
+  autocmd FileType markdown setlocal textwidth=79
+augroup END
+
+augroup vim_files
+  autocmd!
+  autocmd FileType vim setlocal foldmethod=marker tabstop=2 shiftwidth=2
+augroup END
+
+augroup zsh_files
+  autocmd!
+  autocmd FileType zsh setlocal foldmethod=marker
+augroup END
+
+augroup nx_logs
+  autocmd!
+  autocmd BufEnter agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log setlocal syntax=nxlog
+augroup END
+
 " }}}
 "==============================================================================
