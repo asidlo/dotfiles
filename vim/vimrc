@@ -353,6 +353,8 @@ Plug 'plasticboy/vim-markdown'
 
 " Plug 'prabirshrestha/vim-lsp'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neovim/nvim-lsp'
+
 Plug 'Shougo/echodoc.vim'
 
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -830,6 +832,27 @@ set cscopequickfix=c-,t-,e-
 "==============================================================================
 " Section: Plugins {{{
 "==============================================================================
+" nvim-lsp {{{
+"==============================================================================
+" lua << EOF
+" require'nvim_lsp'.rls.setup{}
+" require'nvim_lsp'.vimls.setup{}
+" EOF
+
+" nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+" nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+" nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+" nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+" nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+" nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+" nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+" nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+" nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+
+" autocmd Filetype vim,rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
+
+" }}}
+"==============================================================================
 " vim-lsp {{{
 "==============================================================================
 
@@ -928,9 +951,9 @@ augroup coc_lsp
   nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
   nmap <silent> gd <Plug>(coc-definition)
-  nmap <silent> gy <Plug>(coc-type-definition)
-  nmap <silent> gi <Plug>(coc-implementation)
-  nmap <silent> gs <Plug>(coc-references)
+  nmap <silent> gD <Plug>(coc-implementation)
+  nmap <silent> 1gd <Plug>(coc-type-definition)
+  nmap <silent> 1gD <Plug>(coc-references)
 
   nnoremap <silent> K :call <SID>show_documentation()<CR>
 
