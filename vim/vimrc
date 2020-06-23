@@ -916,9 +916,6 @@ augroup coc_lsp
 
   nmap <leader>cr <Plug>(coc-rename)
   nmap <leader>ca <Plug>(coc-codeaction)
-  nnoremap <silent><nowait> <leader>cq  :<C-u>CocList diagnostics<cr>
-  nnoremap <silent><nowait> <leader>cx  :<C-u>CocList commands<cr>
-  nnoremap <silent><nowait> <leader>co  :<C-u>CocList outline<cr>
 
   nnoremap <silent><nowait> ]c :<C-u>CocNext<CR>
   nnoremap <silent><nowait> [c :<C-u>CocPrev<CR>
@@ -958,12 +955,18 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
 
 abbreviate CC CocConfig
-abbreviate CLR CocListResume
 abbreviate CI CocInfo
 abbreviate CD CocDiagnostics
 abbreviate CF CocFix
 abbreviate CL CocList
 abbreviate CU CocUpdate 
+abbreviate CX CocCommand
+abbreviate CA CocAction
+abbreviate CLR CocListResume
+abbreviate CLO CocList outline
+abbreviate CLD CocList diagnostics
+abbreviate CLC CocList commands
+abbreviate CLS CocList snippets
 
 " }}}
 "==============================================================================
