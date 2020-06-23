@@ -1,4 +1,4 @@
-$jdtlsTargetRepo = "$env:HOME\vimfiles\java\eclipse.jdt.ls\org.eclipse.jdt.ls.product\target\repository"
+$jdtlsTargetRepo = "$env:HOME\vimfiles\coc\extensions\coc-java-data\server"
 $jarFile = Get-ChildItem $jdtlsTargetRepo\plugins | Where-Object Name -Match org.eclipse.equinox.launcher_.*
 
 # JDK9+

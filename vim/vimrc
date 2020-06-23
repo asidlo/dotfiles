@@ -979,11 +979,19 @@ abbreviate CLS CocList snippets
 "   let g:jdtls_script = expand(g:vim_dir.'/java/bin/jdtls.sh')
 " endif
 
-" let g:LanguageClient_serverCommands = {
-"   \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-"   \ 'python': ['/usr/local/bin/pyls'],
-"   \ 'java': [g:jdtls_script]
-"   \ }
+" if g:is_win
+"   let g:LanguageClient_serverCommands = {
+"     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+"     \ 'python': ['/usr/local/bin/pyls'],
+"     \ 'java': ['powershell', '-NoExit', '-File', g:jdtls_script]
+"     \ }
+" else
+"   let g:LanguageClient_serverCommands = {
+"     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
+"     \ 'python': ['/usr/local/bin/pyls'],
+"     \ 'java': [g:jdtls_script]
+"     \ }
+" endif
 
 " function LC_maps()
 "   if has_key(g:LanguageClient_serverCommands, &filetype)
