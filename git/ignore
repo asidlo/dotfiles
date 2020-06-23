@@ -2,7 +2,9 @@
 .classpath
 .project
 .settings/
+.metadata
 org.eclipse.buildship.core.prefs
+bin/
 
 # exuberent ctags
 /tags*
