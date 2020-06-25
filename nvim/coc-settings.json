@@ -1,12 +1,4 @@
 {
-  // "languageserver": {
-  //   "golang": {
-  //     "command": "gopls",
-  //     "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
-  //     "filetypes": ["go"],
-  //     "args": ["serve", "-debug", "0.0.0.0:8484", "-rpc.trace"]
-  //   }
-  // },
   // Can use conda env, but must install jedi, a linter(pylint), and a
   // formatter (yapf) in env, and specify the path to the python exe for env
   "python.pythonPath": "python3",
