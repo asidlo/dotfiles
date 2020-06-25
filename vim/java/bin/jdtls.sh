@@ -31,6 +31,7 @@ if (( $JAVA_MAJOR_VERSION > 8 )); then
         -Declipse.product=org.eclipse.jdt.ls.core.product \
         -Dlog.protocol=true \
         -Dlog.level=ALL \
+        -Dsyntaxserver=true \
         -noverify \
         -Xmx4G \
         -jar $(echo "$JDTLS_JAR") \
@@ -45,6 +46,7 @@ elif (( $JAVA_MAJOR_VERSION == 8 )); then
         -Dosgi.bundles.defaultStartLevel=4 \
         -Declipse.product=org.eclipse.jdt.ls.core.product \
         -Dlog.level=ALL \
+        -Dsyntaxserver=true \
         -noverify \
         -Xmx1G \
         -jar $(echo "$JDTLS_JAR") \
