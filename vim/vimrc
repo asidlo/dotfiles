@@ -151,6 +151,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-eunuch'
 Plug 'rhysd/git-messenger.vim'
 Plug 'jiangmiao/auto-pairs'
 
@@ -402,8 +403,8 @@ set ignorecase
 " When searching try to be smart about cases
 set smartcase
 
-" Highlight search results
-set hlsearch
+" Dont Highlight search results, can be toggled with yoh | [oh
+set nohlsearch
 
 " Makes search act like search in modern browsers
 set incsearch
@@ -438,7 +439,7 @@ set wildmenu
 set wildmode=longest:full,full
 
 " Ignore compiled files
-set wildignore=*.o,*~,*.pyc
+set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 
 " use both cscope and ctag for 'ctrl-]', ':ta', and 'vim -t'
@@ -467,6 +468,13 @@ noremap <up> gk
 noremap <down> gj
 noremap j gj
 noremap k gk
+
+nnoremap <M-j> :m .+1<CR>==
+nnoremap <M-k> :m .-2<CR>==
+inoremap <M-j> <Esc>:m .+1<CR>==gi
+inoremap <M-k> <Esc>:m .-2<CR>==gi
+vnoremap <M-j> :m '>+1<CR>gv=gv
+vnoremap <M-k> :m '<-2<CR>gv=gv
 
 if g:is_nvim
   if g:is_win
@@ -515,7 +523,7 @@ nnoremap confr :source $MYVIMRC<cr>
 nnoremap <expr> confe ':e ' . g:rc_file . '<cr>'
 
 " Switch to last buffer --> use CTRL-^ instead
-" nnoremap <leader>e :e#<cr>
+nnoremap <leader>e :e#<cr>
 
 " use `u` to undo, use `U` to redo, mind = blown
 nnoremap U <c-r>
@@ -550,20 +558,21 @@ function! s:visual_star_search(cmdtype,...)
   let @" = temp
 endfunction
 
+"<F20> == <S-F8>
 " Press * to search for the term under the cursor or a visual selection and
 " then press a key below to replace all instances of it in the current file.
 " c = confirm each
-nnoremap <leader>s :%s///gc<left><left><left>
+nnoremap <F20> :%s///gc<left><left><left>
 
 " The same as above but instead of acting on the whole file it will be
 " restricted to the previously visually selected range. You can do that by
 " pressing *, visually selecting the range you want it to apply to and then
 " press a key below to replace all instances of it in the current selection.
-xnoremap <leader>s :s///gc<left><left><left>
+xnoremap <F20> :s///gc<left><left><left>
 
 " Map <Space> to / (search)
-map <space> /
-map <c-space> ?
+nmap <space> /
+nmap <c-space> ?
 
 " Vim like keys for the command line
 cnoremap <c-h> <home>
@@ -664,7 +673,7 @@ let g:echodoc#type = 'signature'
 "==============================================================================
 " COC {{{
 "==============================================================================
-let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 'coc-snippets']
+let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls']
 let g:coc_data_home = expand(g:vim_dir . '/coc')
 let g:coc_config_home = g:coc_data_home
 
@@ -681,8 +690,9 @@ augroup coc_lsp
   xmap ga <Plug>(coc-codeaction-selected)
   nmap ga <Plug>(coc-codeaction-selected)
 
-  nmap <leader>cr <Plug>(coc-rename)
-  nmap <leader>ca <Plug>(coc-codeaction)
+  " <S-F6> == <F18>
+  autocmd FileType java,rust,vim nmap <buffer> <F18> <Plug>(coc-rename)
+  autocmd FileType java,rust,vim nmap <buffer><silent> <F6> <Plug>(coc-references)
 
   nnoremap <silent><nowait> ]c :<C-u>CocNext<CR>
   nnoremap <silent><nowait> [c :<C-u>CocPrev<CR>
@@ -692,15 +702,14 @@ augroup coc_lsp
 
   " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
   nmap <silent> [d <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]d <Plug>(coc-diagnostic-next)
+  nmap <silent> ]d <Plug>(coc-diagnostic-next) 
 
-  nmap <silent> <C-]> <Plug>(coc-definition)
-  nmap <silent> gD <Plug>(coc-implementation)
-  nmap <silent> gf <Plug>(coc-type-definition)
-  nmap <silent> g/ <Plug>(coc-references)
-  nmap <silent><nowait> g0 :<C-u>CocList outline<CR> 
-
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
+  autocmd FileType java,rust,vim nmap <buffer><silent> <C-]> <Plug>(coc-definition)
+  autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
+  autocmd FileType java,rust nmap <buffer><silent> gD <Plug>(coc-implementation)
+  autocmd FileType rust nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
+  autocmd FileType java,rust,vim nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR> 
+  autocmd FileType java,rust nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 
   " enter to select completion
   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -708,19 +717,13 @@ augroup coc_lsp
   " use tab for easy completion navigation
   inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 augroup end
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
 
 command! -nargs=0 Format :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
 command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 CocStatus echo coc#status() 
 
 abbreviate CC CocConfig
 abbreviate CI CocInfo
@@ -735,6 +738,7 @@ abbreviate CLO CocList outline
 abbreviate CLD CocList diagnostics
 abbreviate CLC CocList commands
 abbreviate CLS CocList snippets
+abbreviate CS CocStatus
 
 " }}}
 "==============================================================================
@@ -843,14 +847,14 @@ let g:gutentags_project_root = ['.root']
 " noremap <silent> <leader>ca :GscopeFind a <C-R><C-W><cr>
 " noremap <silent> <leader>cz :GscopeFind z <C-R><C-W><cr>
 
-nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>	
-nmap <leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>	
-nmap <leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>	
-nmap <leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>	
-nmap <leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>	
-nmap <leader>cf :cs find f <C-R>=expand("<cword>")<CR><CR>	
-nmap <leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>cf :cs find f <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+" nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>	
 
 " let g:gtags_jdk_home = $JAVA_HOME
 " call <SID>set_gtags_jdk_src_dir(g:gtags_jdk_home)
@@ -863,21 +867,18 @@ nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
 " to the ferret quickfix, then all instances in the quickfix will be subject to
 " the replacement matching when using FerretAcks
 
-" Perform a search and add to quickfix list
-nmap <leader>a <Plug>(FerretAck)
-
-" Perform a search and add to location list
-" nmap <leader>l <Plug>(FerretLack)
-
 " Search for current word
-nmap <leader>f <Plug>(FerretAckWord)
+nmap <F7> <Plug>(FerretAckWord)
 
 " Need to use <C-U> to escape visual mode and not enter search
-vmap <leader>f :<C-U>call <SID>ferret_vack()<CR>
+vmap <F7> :<C-U>call <SID>ferret_vack()<CR>
 
 function! s:ferret_vack() abort
   let l:selection = s:get_visual_selection()
-  execute ':Ack ' . substitute(l:selection, ' ', '\\ ', 'g')
+  for l:char in [' ', '(', ')']
+      let l:selection = escape(l:selection, l:char)
+  endfor
+  execute ':Ack ' . l:selection 
 endfunction
 
 " https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
@@ -894,22 +895,22 @@ function! s:get_visual_selection()
   return join(lines, "\n")
 endfunction
 
-" Replace instances matching term in quickfix
-nmap <leader>S <Plug>(FerretAcks)
+" Replace instances matching term in quickfix 'F19 == S-F7'
+nmap <F19> <Plug>(FerretAcks)
 
 " }}}
 "==============================================================================
 " FUGITIVE {{{
 "==============================================================================
 " This normally opens up a split buffer, to make full screen with <c-w>o
-nnoremap <leader>gs :Gstatus<cr>
-nnoremap <leader>gl :Glog -n 50<cr>
+" nnoremap <leader>gs :Gstatus<cr>
+" nnoremap <leader>gl :Glog -n 50<cr>
 
 " --paginate/-p runs the command via the terminal and captures its output
 " Retains color which is nice for git branch
 " Running -P/--no-pager or :Git! will output contents to a tmp file and add it
 " to a split buffer which is useful for lots of output
-nnoremap <leader>gb :Git --paginate branch<cr>
+" nnoremap <leader>gb :Git --paginate branch<cr>
 
 " }}}
 "==============================================================================
@@ -920,9 +921,9 @@ let g:NERDTreeWinSize=35
 
 " Prevent fluff from appearing in the file drawer
 let NERDTreeIgnore=[
-  \ '\.pyc$', '__pycache__', 'node_modules$', '\~$', '\.git$',
-  \ '\.DS_Store$', '\.meta$', '\.settings', '\.classpath', '\.project',
-  \ '^\.gradle$', '^\.idea$'
+  \ '__pycache__', '^node_modules$', '\~$', '^\.git$', '^\.DS_Store$',
+  \ '^\.meta$', '^\.settings$', '^\.classpath$', '^\.project$',
+  \ '^\.gradle$', '^\.idea$', '^\.metadata$', '^/bin$', '^GPATH$', '^G.*TAGS$', '^tags$'
   \]
 
 " Show hidden files in NERDTree
@@ -1085,13 +1086,32 @@ let g:fzf_action = {
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
 
+let g:fzf_excluded_files = [ 'node_modules', '.gradle', '*.class', '.idea', '.git', '.settings', '.project', '.classpath', '.DS_Store', 'G*TAGS', 'tags', 'GPATH' ]
+
 if executable('fd')
-  let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never -E .git -E node_modules -E .gradle -E *.class -E .idea -E .settings -E .project -E .classpath"
+  let g:fd_formatted_excluded_files = "-E '" . join(g:fzf_excluded_files, "' -E '") . "'"
+  let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never " . g:fd_formatted_excluded_files
 elseif executable('rg')
-  let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden -g !tags -g !.git -g !.gradle -g !*.class -g !node_modules -g !.idea -g !.settings -g !.project -g !.classpath"
+  let g:rg_formatted_excluded_files = "-g '!" . join(g:fzf_excluded_files, "' -g '!") . "'"
+  let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden " . g:rg_formatted_excluded_files
 endif
 
-let $FZF_DEFAULT_OPTS = '--height 50% -1 --reverse --multi --inline-info --preview="bat --color=always --style=numbers {}" --preview-window="right:hidden"  --bind="F2:toggle-preview" --bind="ctrl-d:half-page-down" --bind="ctrl-u:half-page-up" --bind="ctrl-a:select-all+accept" --bind="ctrl-y:execute-silent(echo {+} | copy.exe)"'
+if g:is_mac
+  let g:fzf_copy_cmd = 'pbcopy'
+elseif g:is_win
+  let g:fzf_copy_cmd = 'copy.exe'
+else
+  let g:fzf_copy_cmd = 'xclip -selection clipboard'
+endif
+
+let $FZF_DEFAULT_OPTS = '--height 50% -1 --reverse --multi --inline-info ' .
+      \ '--preview="bat --color=always --style=numbers {}" ' .
+      \ '--preview-window="right:hidden" ' .
+      \ '--bind="F2:toggle-preview" ' .
+      \ '--bind="ctrl-d:half-page-down" '.
+      \ '--bind="ctrl-u:half-page-up" ' .
+      \ '--bind="ctrl-a:select-all+accept" ' .
+      \ '--bind="ctrl-y:execute-silent(echo {+} | ' . g:fzf_copy_cmd . ')"'
 
 nnoremap <leader>N :Files<cR>
 nnoremap <leader>n :GFiles<cr>
@@ -1252,6 +1272,8 @@ ab D2L Dos2Linux
 
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
+iab ldate <c-r>=strftime("%A %B %d, %Y")<cr>
+cab xdate <c-r>=strftime("%Y-%m-%d")<cr>
 
 command! -bar -nargs=1 -complete=file WriteQF 
             \ call writefile([json_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
