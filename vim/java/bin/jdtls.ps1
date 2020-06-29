@@ -9,6 +9,7 @@ $jarFile = Get-ChildItem $jdtlsTargetRepo\plugins | Where-Object Name -Match org
 #   '-Declipse.product=org.eclipse.jdt.ls.core.product' `
 #   '-Dlog.protocol=true' `
 #   '-Dlog.level=ALL' `
+#   '-Dsyntaxserver=true' `
 #   '-noverify' `
 #   '-Xmx4G' `
 #   '-jar' "$($jarFile.FullName)" `
@@ -24,6 +25,7 @@ java `
   '-Dosgi.bundles.defaultStartLevel=4' `
   '-Declipse.product=org.eclipse.jdt.ls.core.product' `
   '-Dlog.level=ALL' `
+  '-Dsyntaxserver=true' `
   '-noverify' `
   '-Xmx4G' `
   '-jar' "$($jarFile.FullName)" `

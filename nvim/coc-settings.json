@@ -19,5 +19,6 @@
   // "coc.preferences.hoverTarget": "preview",
   // "coc.preferences.previewAutoClose": false,
   "java.signatureHelp.enabled": true,
-  "java.trace.server": "verbose"
+  "java.trace.server": "verbose",
+  "java.home": "C:\\Program Files\\Zulu\\zulu"
 }
