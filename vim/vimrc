@@ -1321,12 +1321,12 @@ function! s:build_go_files()
   endif
 endfunction
 
+" set compiler option via :compiler gradlew
 augroup java_files
   autocmd!
   autocmd FileType java nmap [[ [m
   autocmd FileType java nmap ]] ]m
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab
-  autocmd FileType java,groovy setlocal makeprg=gradlew
 augroup END
 
 augroup json_files
@@ -1341,7 +1341,7 @@ augroup END
 
 augroup markdown_files
   autocmd!
-  autocmd FileType markdown setlocal textwidth=79
+  autocmd FileType markdown setlocal textwidth=79 tabstop=2 shiftwidth=2
 augroup END
 
 augroup vim_files
