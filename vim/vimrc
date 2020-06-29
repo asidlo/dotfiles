@@ -22,16 +22,11 @@ endif
 " Note: expand vs glob = glob will return empty if file doesnt exist
 " also, expand has a list of special variables (see :h expand)
 if g:is_win
-  if g:is_nvim
-    let g:vim_dir = expand('~/AppData/Local/nvim')
-    let g:rc_file = expand(g:vim_dir . '/init.vim')
-  else
-    let g:vim_dir = expand('~/vimfiles')
-    let g:rc_file = expand('~/_vimrc')
-  endif
+  let g:vim_dir = expand('~/vimfiles')
+  " let g:rc_file = expand('~/_vimrc')
 else
   let g:vim_dir = expand('~/.vim')
-  let g:rc_file = expand('~/.vimrc')
+  " let g:rc_file = expand('~/.vimrc')
 endif
 
 if g:is_mac
@@ -93,9 +88,9 @@ if !exists('$GOPATH')
   throw 'Please also set go env vars [GOPATH, GOROOT, GOBIN]'
 endif
 
-if !executable('yarn')
-  throw 'Yarn is required for installing coc.nvim'
-endif
+" if !executable('yarn')
+"   throw 'Yarn is required for installing coc.nvim'
+" endif
 
 " }}}
 "==============================================================================
@@ -277,15 +272,6 @@ endif
 " https://cithub.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
 set modelines=0
 set nomodeline
-
-if g:is_win
-  set shell=powershell.exe
-  set shellcmdflag=-NoLogo\ -NoProfile\ -ExecutionPolicy\ RemoteSigned\ -Command
-  set shellpipe=\|
-  set shellredir=\|\ Out-File\ -Encoding\ UTF8
-  set shellquote=
-  set shellxquote=
-endif
 
 " You can bind contents of the visual selection to system primary buffer
 " (* register in vim, usually referred as «mouse» buffer) by using
