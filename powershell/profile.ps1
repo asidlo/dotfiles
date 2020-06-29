@@ -6,7 +6,7 @@
 Import-Module PSReadLine 
 Import-Module posh-git           # Install with: `Install-Module -Name posh-git`
 Import-Module Get-ChildItemColor 
-Import-Module pscx
+# Import-Module pscx
 
 # How to see all functions provided by a module
 # Get-Command -Module pscx
