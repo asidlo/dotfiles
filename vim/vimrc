@@ -747,6 +747,7 @@ command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.o
 command! -nargs=0 CocStatus echo coc#status()
 
 abbreviate CC CocConfig
+abbreviate CCL CocLocalConfig
 abbreviate CI CocInfo
 abbreviate CD CocDiagnostics
 abbreviate CF CocFix
@@ -942,7 +943,7 @@ let g:NERDTreeWinSize=35
 
 " Prevent fluff from appearing in the file drawer
 let NERDTreeIgnore=[
-  \ '__pycache__', '^node_modules$', '\~$', '^\.git$', '^\.DS_Store$',
+  \ '__pycache__', '^node_modules$', '\~$', '^\.git$', '^\.DS_Store$', '^\.vim$',
   \ '^\.meta$', '^\.settings$', '^\.classpath$', '^\.project$',
   \ '^\.gradle$', '^\.idea$', '^\.metadata$', '^/bin$', '^GPATH$', '^G.*TAGS$', '^tags$'
   \]
