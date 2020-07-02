@@ -182,11 +182,7 @@ if test umask != '022'; then
 fi
 
 # Note, would need to do this if I didnt remap alt to Esc+ in iterm2
-if is_mac; then
-  bindkey 'ç' fzf-cd-widget
-else
-  bindkey '^[c' fzf-cd-widget
-fi
+bindkey '^[c' fzf-cd-widget
 
 bindkey '' fzf-file-widget
 bindkey '' fzf-history-widget 

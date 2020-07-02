@@ -105,7 +105,7 @@ if !g:is_win
       \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif
-  else
+else
   if empty(glob(g:vim_dir . '/autoload/plug.vim'))
     let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -OutFile "' . expand(g:vim_dir . '/autoload/plug.vim') . '"'
@@ -115,7 +115,7 @@ if !g:is_win
   endif
 endif
 
-call plug#begin(expand('~/vimfiles/plugged'))
+call plug#begin(expand(g:vim_dir . '/plugged'))
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
