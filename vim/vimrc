@@ -23,10 +23,10 @@ endif
 " also, expand has a list of special variables (see :h expand)
 if g:is_win
   let g:vim_dir = expand('~/vimfiles')
-  let g:rc_file = expand('~/_vimrc')
+  " let g:rc_file = expand('~/_vimrc')
 else
   let g:vim_dir = expand('~/.vim')
-  let g:rc_file = expand('~/.vimrc')
+  " let g:rc_file = expand('~/.vimrc')
 endif
 
 if g:is_mac
@@ -38,6 +38,7 @@ endif
 " Disable python2, ruby, and node providers
 let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
+let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
 
 let s:undo_dir = g:vim_dir . '/undo'
@@ -49,19 +50,23 @@ if !executable('rg')
   throw 'Ripgrep executable not found! Install and add to Path to perform project searching'
 endif
 
-if !executable('fzf')
+" if !executable('ctags')
+"   throw 'ctags is required for tagbar, please install ctags and add to PATH'
+" endif
+
+if g:is_mac && !executable('fzf')
   throw 'fzf is required for fuzzy searching, please install fzf and add to PATH'
 endif
 
-if !executable('ctags')
-  throw 'ctags is required for generating tags, please install ctags and add to PATH'
-endif
-
-if !executable('gtags')
-  " https://code.google.com/archive/p/cscope-win32/downloads Or brew install
-  " echoerr 'cscope executable not found! Install cscope and add to Path for static project analysis'
-  throw 'gtags executable not found! Install gtags via gnu global package and add to Path for static project analysis'
-endif
+" if !executable('ctags')
+"   throw 'ctags is required for generating tags, please install ctags and add to PATH'
+" endif
+" 
+" if !executable('gtags')
+"   " https://code.google.com/archive/p/cscope-win32/downloads Or brew install
+"   " echoerr 'cscope executable not found! Install cscope and add to Path for static project analysis'
+"   throw 'gtags executable not found! Install gtags via gnu global package and add to Path for static project analysis'
+" endif
 
 " Path to Python 3 interpreter (must be an absolute path), make startup
 " faster. See https://neovim.io/doc/user/provider.html.
@@ -83,6 +88,10 @@ if !exists('$GOPATH')
   throw 'Please also set go env vars [GOPATH, GOROOT, GOBIN]'
 endif
 
+" if !executable('yarn')
+"   throw 'Yarn is required for installing coc.nvim'
+" endif
+
 " }}}
 "==============================================================================
 " PLUGIN MANAGER {{{
@@ -90,14 +99,22 @@ endif
 " Automatically download the plug.vim plugin manager vimscript
 " Run :PlugInstall to install all plugins
 if !g:is_win
-  if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  if empty(glob(g:vim_dir . '/autoload/plug.vim'))
+    silent execute '!curl -fLo ' . expand(g:vim_dir . '/autoload/plug.vim') . ' --create-dirs ' .
+      \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+  else
+  if empty(glob(g:vim_dir . '/autoload/plug.vim'))
+    let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -OutFile "' . expand(g:vim_dir . '/autoload/plug.vim') . '"'  
+    silent execute '!powershell -command New-Item -ItemType Directory -Path "' . expand(g:vim_dir . '/autoload') . '"'
+    silent execute '!powershell -command ' . g:vim_plug_powershell_download_cmd
+	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif
 endif
 
-call plug#begin(g:vim_dir . '/plugged')
+call plug#begin(expand('~/vimfiles/plugged'))
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
@@ -116,8 +133,8 @@ Plug 'plasticboy/vim-markdown'
 " Unknown function: go#config#GoplsMatcher
 " See: https://github.com/fatih/vim-go/issues/2272
 " See: https://github.com/fatih/vim-go/issues/2262
-  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-  Plug 'AndrewRadev/splitjoin.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'AndrewRadev/splitjoin.vim'
 
 " if g:is_win
 "   Plug 'autozimu/LanguageClient-neovim', {
@@ -174,8 +191,8 @@ Plug 'kana/vim-textobj-function'
 Plug 'sheerun/vim-polyglot'
 
 " Symbol / Tag Plugins
-Plug 'majutsushi/tagbar'
-Plug 'ludovicchabant/vim-gutentags'
+" Plug 'majutsushi/tagbar'
+" Plug 'ludovicchabant/vim-gutentags'
 
 " Snippets
 " Plug 'SirVer/ultisnips'
@@ -478,9 +495,9 @@ vnoremap <M-k> :m '<-2<CR>gv=gv
 
 if g:is_nvim
   if g:is_win
-    nnoremap <leader>tv :vsplit term://cmd<cr>
-    nnoremap <leader>ts :split term://cmd<cr>
-    nnoremap <leader>tt :e term://cmd<cr>
+    nnoremap <leader>tv :vsplit term://powershell<cr>
+    nnoremap <leader>ts :split term://powershell<cr>
+    nnoremap <leader>tt :e term://powershell<cr>
   else
     nnoremap <leader>tv :vsplit term://zsh<cr>
     nnoremap <leader>ts :split term://zsh<cr>
@@ -520,7 +537,8 @@ nnoremap confr :source $MYVIMRC<cr>
 " Edit vimrc
 " Note: '<expr>' is required to using variable in mapping
 " See: h: map-expression
-nnoremap <expr> confe ':e ' . g:rc_file . '<cr>'
+" nnoremap <expr> confe ':e ' . g:rc_file . '<cr>'
+nnoremap confe :e $MYVIMRC<cr>
 
 " Switch to last buffer --> use CTRL-^ instead
 nnoremap <leader>e :e#<cr>
@@ -681,8 +699,10 @@ highlight link CocHighlightText CocUnderline
 
 augroup coc_lsp
   autocmd!
-  " Highlight the symbol and its references when holding the cursor.
-  autocmd CursorHold * silent call CocActionAsync('highlight')
+  if exists('*CocActionAsync')
+    " Highlight the symbol and its references when holding the cursor.
+    autocmd CursorHold * silent call CocActionAsync('highlight')
+  endif
 
   autocmd FileType java setlocal formatexpr=CocAction('formatSelected')
   autocmd FileType rust setlocal formatexpr=CocAction('format')
@@ -802,7 +822,7 @@ abbreviate CS CocStatus
 " GUTENTAGS {{{
 "==============================================================================
 " enable gtags module
-let g:gutentags_modules = ['ctags', 'gtags_cscope']
+" let g:gutentags_modules = ['ctags', 'gtags_cscope']
 
 let g:gutentags_ctags_executable=g:ctags_exe
 let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea'] 
@@ -828,7 +848,7 @@ let g:gutentags_define_advanced_commands = 1
 " gutentags will not generate gtags database for it. To avoid this, you can
 " create an empty .root file in your project root, and gutentags will know
 " where is your project root and generate gtags database for it.
-let g:gutentags_project_root = ['.root']
+" let g:gutentags_project_root = ['.root']
 
 " disable default keymappings
 " let g:gutentags_plus_nomap = 1
