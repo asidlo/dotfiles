@@ -27,3 +27,6 @@ GPATH
 GRTAGS
 GTAGS
 .gutgtags
+
+# coc-nvim local settings
+/.vim/coc-settings.json
