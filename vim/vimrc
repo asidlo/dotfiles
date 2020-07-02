@@ -1,6 +1,6 @@
 "==============================================================================
 " Author:  Andrew Sidlo
-" Updated: 2020/06/24 23:23:12 
+" Updated: 2020/06/24 23:23:12
 "==============================================================================
 " VARIABLES {{{
 "==============================================================================
@@ -61,7 +61,8 @@ endif
 " if !executable('ctags')
 "   throw 'ctags is required for generating tags, please install ctags and add to PATH'
 " endif
-" 
+"
+"
 " if !executable('gtags')
 "   " https://code.google.com/archive/p/cscope-win32/downloads Or brew install
 "   " echoerr 'cscope executable not found! Install cscope and add to Path for static project analysis'
@@ -107,10 +108,10 @@ if !g:is_win
   else
   if empty(glob(g:vim_dir . '/autoload/plug.vim'))
     let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-    let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -OutFile "' . expand(g:vim_dir . '/autoload/plug.vim') . '"'  
+    let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -OutFile "' . expand(g:vim_dir . '/autoload/plug.vim') . '"'
     silent execute '!powershell -command New-Item -ItemType Directory -Path "' . expand(g:vim_dir . '/autoload') . '"'
     silent execute '!powershell -command ' . g:vim_plug_powershell_download_cmd
-	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
   endif
 endif
 
@@ -470,7 +471,7 @@ set cscopeprg=gtags-cscope
 set cscopetagorder=0
 
 " show msg when any other cscope db added
-set cscopeverbose  
+set cscopeverbose
 
 " add results (of find usages and references) to quickfix list instead of location list
 set cscopequickfix=c-,t-,e-
@@ -529,7 +530,7 @@ if (empty(glob(g:notes_dir)))
   call mkdir(g:notes_dir)
   exec '!git clone git@github.com:asidlo/notes.git ' . g:notes_dir
 endif
-nnoremap <expr> <leader>td ':e ' . g:notes_dir . '/README.md<CR>' 
+nnoremap <expr> <leader>td ':e ' . g:notes_dir . '/README.md<CR>'
 
 " Reload vimrc
 nnoremap confr :source $MYVIMRC<cr>
@@ -631,7 +632,7 @@ cnoremap <c-n> <down>
 " vim functions / idioms. However, there is a lot of work to be done.
 " It needs the ability to navigate to java classes ie jdk files / jar files
 " It needs the ability to change the LspDocumentSymbols output to location list
-" since this makes more sense than quickfix list. It should have some way to 
+" since this makes more sense than quickfix list. It should have some way to
 " put all of the diagnostics into a quickfix list from the entire project and
 " not just from a single file. Also should handle the lsp output from the eclipse
 " debug settings
@@ -722,13 +723,13 @@ augroup coc_lsp
 
   " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
   nmap <silent> [d <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]d <Plug>(coc-diagnostic-next) 
+  nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
   autocmd FileType java,rust,vim nmap <buffer><silent> <C-]> <Plug>(coc-definition)
   autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
   autocmd FileType java,rust nmap <buffer><silent> gD <Plug>(coc-implementation)
   autocmd FileType rust nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
-  autocmd FileType java,rust,vim nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR> 
+  autocmd FileType java,rust,vim nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
   autocmd FileType java,rust nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 
   " enter to select completion
@@ -743,14 +744,14 @@ augroup end
 command! -nargs=0 Format :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
 command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
-command! -nargs=0 CocStatus echo coc#status() 
+command! -nargs=0 CocStatus echo coc#status()
 
 abbreviate CC CocConfig
 abbreviate CI CocInfo
 abbreviate CD CocDiagnostics
 abbreviate CF CocFix
 abbreviate CL CocList
-abbreviate CU CocUpdate 
+abbreviate CU CocUpdate
 abbreviate CX CocCommand
 abbreviate CA CocAction
 abbreviate CLR CocListResume
@@ -825,7 +826,7 @@ abbreviate CS CocStatus
 " let g:gutentags_modules = ['ctags', 'gtags_cscope']
 
 let g:gutentags_ctags_executable=g:ctags_exe
-let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea'] 
+let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea']
 
 " Dont auto add db so we can make sure only one is present,
 " since we want to add manually, dont use cache dir for longer path
@@ -837,7 +838,7 @@ let g:gutentags_define_advanced_commands = 1
 " Get files not included in source control (only problem with this is that it
 " only gets java files...should change this and maybe also try aggregating
 " files from other directories, then we could have the jdk files be somewhere
-" else. 
+" else.
 " let g:gutentags_file_list_command = 'fd -t f -e java'
 
 " generate datebases in my cache directory, prevent gtags files polluting my project
@@ -867,14 +868,14 @@ let g:gutentags_define_advanced_commands = 1
 " noremap <silent> <leader>ca :GscopeFind a <C-R><C-W><cr>
 " noremap <silent> <leader>cz :GscopeFind z <C-R><C-W><cr>
 
-" nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>	
-" nmap <leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>	
-" nmap <leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>	
-" nmap <leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>	
-" nmap <leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>	
-" nmap <leader>cf :cs find f <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+" nmap <leader>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+" nmap <leader>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+" nmap <leader>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+" nmap <leader>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+" nmap <leader>cf :cs find f <C-R>=expand("<cword>")<CR><CR>
 " nmap <leader>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-" nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>	
+" nmap <leader>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
 
 " let g:gtags_jdk_home = $JAVA_HOME
 " call <SID>set_gtags_jdk_src_dir(g:gtags_jdk_home)
@@ -898,7 +899,7 @@ function! s:ferret_vack() abort
   for l:char in [' ', '(', ')']
       let l:selection = escape(l:selection, l:char)
   endfor
-  execute ':Ack ' . l:selection 
+  execute ':Ack ' . l:selection
 endfunction
 
 " https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
@@ -1167,7 +1168,7 @@ if g:is_nvim
   autocmd FileType fzf tnoremap <buffer> <c-k> <up>
 endif
 
-" Disable preview with windows since fzf.vim internally uses a bash script to 
+" Disable preview with windows since fzf.vim internally uses a bash script to
 " render preview window even though I can do the same with cmd using bat
 if g:is_win
   let g:fzf_preview_window = ''
@@ -1229,7 +1230,7 @@ endfunction
 command! BTags call s:btags()
 
 " Replace the default dictionary completion with fzf-based fuzzy completion
-inoremap <expr> <c-x><c-k> fzf#vim#complete('cat C:\Users\asidlo\Documents\dotfiles\vim\dictionary.txt') 
+inoremap <expr> <c-x><c-k> fzf#vim#complete('cat C:\Users\asidlo\Documents\dotfiles\vim\dictionary.txt')
 
 " }}}
 "==============================================================================
@@ -1299,7 +1300,7 @@ iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 iab ldate <c-r>=strftime("%A %B %d, %Y")<cr>
 cab xdate <c-r>=strftime("%Y-%m-%d")<cr>
 
-command! -bar -nargs=1 -complete=file WriteQF 
+command! -bar -nargs=1 -complete=file WriteQF
             \ call writefile([json_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
 
 command! -bar -nargs=1 -complete=file ReadQF
@@ -1318,7 +1319,7 @@ function! s:qf_to_filename(qf) abort
   return a:qf
 endfunction
 
-command! -nargs=0 Scriptnames 
+command! -nargs=0 Scriptnames
             \ call fzf#run({'source': split(execute('scriptnames'), '\n'), 'down': '30%'})
 
 " }}}
