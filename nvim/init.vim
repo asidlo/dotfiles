@@ -5,7 +5,7 @@ if s:is_win
   let &packpath = &runtimepath
   source ~/_vimrc
 else
-  set runtimepath+=~/.vim,~/.vim/after
-  set packpath+=~/.vim
+  set runtimepath^=~/.vim runtimepath+=~/.vim/after
+  let &packpath = &runtimepath
   source ~/.vimrc
 endif
