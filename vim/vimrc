@@ -23,10 +23,8 @@ endif
 " also, expand has a list of special variables (see :h expand)
 if g:is_win
   let g:vim_dir = expand('~/vimfiles')
-  " let g:rc_file = expand('~/_vimrc')
 else
   let g:vim_dir = expand('~/.vim')
-  " let g:rc_file = expand('~/.vimrc')
 endif
 
 if g:is_mac
@@ -285,6 +283,7 @@ else
   set clipboard=unnamed
 endif
 
+" TIP: use <C-R>* to paste clipboard content while in insert mode: https://stackoverflow.com/questions/2861627/paste-in-insert-mode
 " Unset paste on InsertLeave.
 autocmd InsertLeave * silent! set nopaste
 
