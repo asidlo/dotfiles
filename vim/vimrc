@@ -192,8 +192,8 @@ Plug 'kana/vim-textobj-function'
 Plug 'sheerun/vim-polyglot'
 
 " Symbol / Tag Plugins
-" Plug 'majutsushi/tagbar'
-" Plug 'ludovicchabant/vim-gutentags'
+Plug 'majutsushi/tagbar'
+Plug 'ludovicchabant/vim-gutentags'
 
 " Snippets
 " Plug 'SirVer/ultisnips'
@@ -530,16 +530,18 @@ if (empty(glob(g:notes_dir)))
   call mkdir(g:notes_dir)
   exec '!git clone git@github.com:asidlo/notes.git ' . g:notes_dir
 endif
+
+" TODO - replace with sessions
 nnoremap <expr> <leader>td ':e ' . g:notes_dir . '/README.md<CR>'
 
 " Reload vimrc
-nnoremap confr :source $MYVIMRC<cr>
+" nnoremap confr :source $MYVIMRC<cr>
 
 " Edit vimrc
 " Note: '<expr>' is required to using variable in mapping
 " See: h: map-expression
 " nnoremap <expr> confe ':e ' . g:rc_file . '<cr>'
-nnoremap confe :e $MYVIMRC<cr>
+" nnoremap confe :e $MYVIMRC<cr>
 
 " Switch to last buffer --> use CTRL-^ instead
 nnoremap <leader>e :e#<cr>
@@ -607,8 +609,9 @@ cnoremap <c-n> <down>
 " NVIM-LSP {{{
 "==============================================================================
 " lua << EOF
-" require'nvim_lsp'.rls.setup{}
-" require'nvim_lsp'.vimls.setup{}
+"   local nvim_lsp = require'nvim_lsp'
+"   nvim_lsp.rls.setup{}
+"   nvim_lsp.vimls.setup{}
 " EOF
 
 " nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
@@ -925,14 +928,11 @@ nmap <F19> <Plug>(FerretAcks)
 " FUGITIVE {{{
 "==============================================================================
 " This normally opens up a split buffer, to make full screen with <c-w>o
-" nnoremap <leader>gs :Gstatus<cr>
-" nnoremap <leader>gl :Glog -n 50<cr>
-
-" --paginate/-p runs the command via the terminal and captures its output
-" Retains color which is nice for git branch
-" Running -P/--no-pager or :Git! will output contents to a tmp file and add it
-" to a split buffer which is useful for lots of output
-" nnoremap <leader>gb :Git --paginate branch<cr>
+nnoremap <leader>gs :G status -s<cr>
+nnoremap <leader>gl :G log --oneline<cr>
+nnoremap <leader>gb :!git branch<cr>
+nnoremap <leader>gD :G diff HEAD<cr>
+nnoremap <leader>gd :G diff HEAD %<cr>
 
 " }}}
 "==============================================================================
@@ -1276,25 +1276,37 @@ endif
 
 " }}}
 "==============================================================================
+" GIT-MESSENGER {{{
+"==============================================================================
+let g:git_messenger_no_default_mappings = v:true
+
+nmap <leader>gm <Plug>(git-messenger)
+" }}}
+"==============================================================================
 " }}}
 "==============================================================================
 " COMMANDS {{{
 "=============================================================================
-ab PC PlugClean
-ab PU PlugUpdate
-ab PI PlugInstall
+abbreviate PC PlugClean
+abbreviate PU PlugUpdate
+abbreviate PI PlugInstall
+
+abbreviate GGP GitGutterPreviewHunk
+abbreviate GGU GitGutterUndoHunk
+abbreviate GGS GitGutterStageHunk
 
 " Print the directory of the current buffer
 " Helpful since :pwd will print the project root dir when vim-rooter is applied
 command! Dirname :echo expand('%:p:h')
-ab DN Dirname
-ab FN file
+abbreviate DN Dirname
+abbreviate FN file
+
 
 command! SyncSyntax :syntax sync fromstart
-ab SS SyncSyntax
+abbreviate SS SyncSyntax
 
 command! Dos2Linux :%s///g
-ab D2L Dos2Linux
+abbreviate D2L Dos2Linux
 
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
@@ -1352,7 +1364,7 @@ augroup java_files
   autocmd!
   autocmd FileType java nmap [[ [m
   autocmd FileType java nmap ]] ]m
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab
+  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
 augroup END
 
 augroup json_files
@@ -1385,5 +1397,9 @@ augroup nx_logs
   autocmd BufEnter agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log setlocal syntax=nxlog
 augroup END
 
+augroup LuaHighlight
+  autocmd!
+  autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank()
+augroup END
 " }}}
 "==============================================================================
