@@ -494,6 +494,7 @@ vnoremap <M-j> :m '>+1<CR>gv=gv
 vnoremap <M-k> :m '<-2<CR>gv=gv
 
 if g:is_nvim
+  tnoremap <C-W> <C-\><C-n><C-W>
   if g:is_win
     nnoremap <leader>tv :vsplit term://powershell<cr>
     nnoremap <leader>ts :split term://powershell<cr>
@@ -1287,6 +1288,8 @@ nmap <leader>gm <Plug>(git-messenger)
 "==============================================================================
 " COMMANDS {{{
 "=============================================================================
+abbreviate TF TableFormat
+
 abbreviate PC PlugClean
 abbreviate PU PlugUpdate
 abbreviate PI PlugInstall
