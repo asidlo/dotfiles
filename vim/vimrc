@@ -744,7 +744,10 @@ augroup coc_lsp
   inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 augroup end
 
-command! -nargs=0 Format :call CocAction('format')
+nmap <leader>l :call CocAction('format')
+nmap <leader>; :call CocAction('runCommand', 'editor.action.organizeImport')
+
+command! -nargs=0 Fmt :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
 command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
 command! -nargs=0 CocStatus echo coc#status()
@@ -891,6 +894,7 @@ let g:gutentags_define_advanced_commands = 1
 " If you want to do a global replace, you need to search for the term to add it
 " to the ferret quickfix, then all instances in the quickfix will be subject to
 " the replacement matching when using FerretAcks
+let g:FerretMap = 0
 
 " Search for current word
 nmap <F7> <Plug>(FerretAckWord)
