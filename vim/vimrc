@@ -487,7 +487,6 @@ noremap j gj
 noremap k gk
 
 if g:is_nvim
-  tnoremap <C-W> <C-\><C-n><C-W>
   if g:is_win
     nnoremap <leader>tv :vsplit term://powershell<cr>
     nnoremap <leader>ts :split term://powershell<cr>
@@ -1362,6 +1361,7 @@ endfunction
 " set compiler option via :compiler gradlew
 augroup java_files
   autocmd!
+  autocmd BufEnter *.jsh setlocal filetype=java
   autocmd FileType java nmap [[ [m
   autocmd FileType java nmap ]] ]m
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
