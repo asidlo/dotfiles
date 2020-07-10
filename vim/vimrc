@@ -938,11 +938,8 @@ nmap <F19> <Plug>(FerretAcks)
 "==============================================================================
 " This normally opens up a split buffer, to make full screen with <c-w>o
 nnoremap <leader>gs :G status -s<cr>
-nnoremap <leader>gS :G status<cr>
 nnoremap <leader>gl :G log --oneline<cr>
-nnoremap <leader>gb :!git branch<cr>
-nnoremap <leader>gD :G diff HEAD<cr>
-nnoremap <leader>gd :G diff HEAD %<cr>
+nnoremap <leader>gb :!git branch -a<cr>
 
 " }}}
 "==============================================================================

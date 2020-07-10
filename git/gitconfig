@@ -32,6 +32,9 @@
   can = commit --amend --no-edit
   cmsg = commit -m
 
+  d = diff
+  dh = diff HEAD
+
   # l = log
   # o = oneline
   # d = date [r = relative, s = short]
