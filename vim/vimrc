@@ -221,8 +221,13 @@ let mapleader=","
 syntax enable
 
 " Favorite dark colors
-let g:is_colo_dracula = 1
-let g:is_colo_gruvbox = 0
+if g:is_nvim
+  let g:is_colo_dracula = 1
+  let g:is_colo_gruvbox = 0
+else
+  let g:is_colo_dracula = 0
+  let g:is_colo_gruvbox = 1
+endif
 
 " Favorite light colors
 let g:is_colo_pencil = 0
