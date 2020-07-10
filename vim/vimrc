@@ -893,6 +893,14 @@ let g:gutentags_define_advanced_commands = 1
 " the replacement matching when using FerretAcks
 let g:FerretMap = 0
 
+" having issues with ferret hanging on windows with nvim using async and job cancel
+" this will disable the async feature to make searches sync on win nvim
+" see: https://github.com/wincent/ferret/issues/60
+if g:is_win && g:is_nvim
+  let g:FerretNvim = 0
+  let g:FerretJob = 0
+endif
+
 " Search for current word
 nmap <F7> <Plug>(FerretAckWord)
 
@@ -1313,9 +1321,10 @@ command! Dos2Linux :%s///g
 abbreviate D2L Dos2Linux
 
 " Add date -> type XDATE lowercase followed by a char will autofill the date
-iab xdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
-iab ldate <c-r>=strftime("%A %B %d, %Y")<cr>
-cab xdate <c-r>=strftime("%Y-%m-%d")<cr>
+iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
+iab ddate <c-r>=strftime("%Y-%m-%d")<cr>
+iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>
+cab ddate <c-r>=strftime("%Y-%m-%d")<cr>
 
 command! -bar -nargs=1 -complete=file WriteQF
             \ call writefile([json_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
