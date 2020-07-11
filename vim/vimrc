@@ -168,6 +168,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-eunuch'
+Plug 'tpope/vim-obsession'
 Plug 'rhysd/git-messenger.vim'
 Plug 'jiangmiao/auto-pairs'
 
@@ -943,6 +944,7 @@ nmap <F19> <Plug>(FerretAcks)
 nnoremap <leader>gs :G status -s<cr>
 nnoremap <leader>gl :G log --oneline<cr>
 nnoremap <leader>gb :!git branch -a<cr>
+nnoremap <leader>gd :G diff<cr>
 
 " }}}
 "==============================================================================
@@ -1313,6 +1315,9 @@ command! Dirname :echo expand('%:p:h')
 abbreviate DN Dirname
 abbreviate FN file
 
+" Prevent accidental caps from ruining the moment
+command! -nargs=0 Q :q
+command! -nargs=0 Wq :Wall | :q
 
 command! SyncSyntax :syntax sync fromstart
 abbreviate SS SyncSyntax
