@@ -556,6 +556,9 @@ vnoremap > >gv
 " Remove current highlighting
 nnoremap <leader><cr> :noh<cr>
 
+" Change pwd to current directory
+nnoremap <leader>cd :cd %:p:h<cr>
+
 " Search for current word but dont jump to next result
 nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
 
