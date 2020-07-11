@@ -709,15 +709,15 @@ augroup coc_lsp
     autocmd CursorHold * silent call CocActionAsync('highlight')
   endif
 
-  autocmd FileType java setlocal formatexpr=CocAction('formatSelected')
-  autocmd FileType rust setlocal formatexpr=CocAction('format')
+  autocmd FileType java,go setlocal formatexpr=CocAction('formatSelected')
+  autocmd FileType rust,go setlocal formatexpr=CocAction('format')
 
   xmap ga <Plug>(coc-codeaction-selected)
   nmap ga <Plug>(coc-codeaction-selected)
 
   " <S-F6> == <F18>
-  autocmd FileType java,rust,vim nmap <buffer> <F18> <Plug>(coc-rename)
-  autocmd FileType java,rust,vim nmap <buffer><silent> <F6> <Plug>(coc-references)
+  autocmd FileType java,rust,vim,go nmap <buffer> <F18> <Plug>(coc-rename)
+  autocmd FileType java,rust,vim,go nmap <buffer><silent> <F6> <Plug>(coc-references)
 
   nnoremap <silent><nowait> ]c :<C-u>CocNext<CR>
   nnoremap <silent><nowait> [c :<C-u>CocPrev<CR>
@@ -729,12 +729,12 @@ augroup coc_lsp
   nmap <silent> [d <Plug>(coc-diagnostic-prev)
   nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
-  autocmd FileType java,rust,vim nmap <buffer><silent> <C-]> <Plug>(coc-definition)
+  autocmd FileType java,rust,vim,go nmap <buffer><silent> <C-]> <Plug>(coc-definition)
   autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
-  autocmd FileType java,rust nmap <buffer><silent> gD <Plug>(coc-implementation)
-  autocmd FileType rust nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
-  autocmd FileType java,rust,vim nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
-  autocmd FileType java,rust nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
+  autocmd FileType java,rust,go nmap <buffer><silent> gD <Plug>(coc-implementation)
+  autocmd FileType rust,go nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
+  autocmd FileType java,rust,vim,go nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
+  autocmd FileType java,rust,go nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 
   " enter to select completion
   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -1083,7 +1083,7 @@ let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 
 " Disable go def mapping so we can delegate it to the coc lsp = 0
-" let g:go_def_mapping_enabled = 1
+let g:go_def_mapping_enabled = 0
 
 " Fmt on save
 let g:go_fmt_autosave = 1
