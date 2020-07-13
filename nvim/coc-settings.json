@@ -31,6 +31,21 @@
             "filetypes": [
                 "go"
             ]
+        },
+        "clangd": {
+            "command": "/usr/local/Cellar/llvm/10.0.0_3/bin/clangd",
+            "rootPatterns": [
+                "compile_flags.txt",
+                "compile_commands.json"
+            ],
+            "filetypes": [
+                "c",
+                "cc",
+                "cpp",
+                "c++",
+                "objc",
+                "objcpp"
+            ]
         }
     }
 }

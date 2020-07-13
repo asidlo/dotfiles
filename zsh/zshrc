@@ -236,7 +236,15 @@ case $OS in
     export CARGO_HOME=~/.cargo
     export GOROOT=(/usr/local/Cellar/go/*/libexec)
     export GOPATH=~/Workspace/go
-    export SDKMAN_DIR="/Users/asidlo/.sdkman"
+    export SDKMAN_DIR='/Users/asidlo/.sdkman'
+
+    # Add all of the java homes for elasticsearch testing
+    # https://github.com/elastic/elasticsearch/blob/master/CONTRIBUTING.md#contributing-to-the-elasticsearch-codebase
+    export JAVA8_HOME='/Users/asidlo/.sdkman/candidates/java/8.0.252-zulu'
+    export JAVA9_HOME='/Users/asidlo/.sdkman/candidates/java/9.0.7-zulu'
+    export JAVA10_HOME='/Users/asidlo/.sdkman/candidates/java/10.0.2-zulu'
+    export JAVA11_HOME='/Users/asidlo/.sdkman/candidates/java/11.0.7-zulu'
+    export JAVA12_HOME='/Users/asidlo/.sdkman/candidates/java/12.0.2-zulu'
     ;;
   *$LINUX*)
     export GOROOT=/usr/local/go

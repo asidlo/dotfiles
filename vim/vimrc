@@ -613,6 +613,45 @@ cnoremap <c-n> <down>
 "   local nvim_lsp = require'nvim_lsp'
 "   nvim_lsp.rls.setup{}
 "   nvim_lsp.vimls.setup{}
+"   nvim_lsp.clangd.setup {
+"     cmd = {"/usr/local/Cellar/llvm/10.0.0_3/bin/clangd", "--background-index"}
+"   }
+
+"   -- Until they release the `vim.lsp.util.formatexpr()`
+"   -- https://github.com/neovim/neovim/issues/12528
+"   -- https://github.com/neovim/neovim/pull/12547
+"   -- for use with `formatexpr` if called without parms
+"   -- @param start_line 1-indexed line
+"   -- @param end_line 1-indexed line
+"   -- @param timeout_ms optional
+"   function formatexpr(start_line, end_line, timeout_ms)
+"     if not start_line or not end_line then
+"       if vim.fn.mode() == 'i' or vim.fn.mode() == 'R' then
+"         -- `formatexpr` is also called when exceding
+"         -- `textwidth` in insert mode
+"         -- fall back to internal formatting
+"         return 1
+"       end
+"       start_line = vim.v.lnum
+"       end_line = start_line + vim.v.count - 1
+"     end
+"     if start_line > 0 and end_line > 0 then
+"       local params = {
+"         textDocument = { uri = vim.uri_from_bufnr(0) };
+"         range = {
+"           start = { line = start_line - 1; character = 0; };
+"           ["end"] = { line = end_line - 1; character = 0; };
+"         };
+"       };
+"       local result = vim.lsp.buf_request_sync(0, "textDocument/rangeFormatting", params, timeout_ms)
+"       if result then
+"         result = result[1].result
+"         vim.lsp.util.apply_text_edits(result)
+"       end
+"     end
+"    -- do not run builtin formatter.
+"     return 0
+"   end
 " EOF
 
 " nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
@@ -621,11 +660,19 @@ cnoremap <c-n> <down>
 " nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
 " nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
 " nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-" nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+" nnoremap <silent> <F6>  <cmd>lua vim.lsp.buf.references()<CR>
 " nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 " nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 
-" autocmd Filetype vim,rust setlocal omnifunc=v:lua.vim.lsp.omnifunc
+" autocmd Filetype vim,rust,c setlocal omnifunc=v:lua.vim.lsp.omnifunc
+" autocmd Filetype vim,rust,c setlocal formatexpr=v:lua.formatexpr()
+
+" " use tab for easy completion navigation
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" " enter to select completion
+" inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 " }}}
 "==============================================================================
@@ -709,15 +756,15 @@ augroup coc_lsp
     autocmd CursorHold * silent call CocActionAsync('highlight')
   endif
 
-  autocmd FileType java,go setlocal formatexpr=CocAction('formatSelected')
-  autocmd FileType rust,go setlocal formatexpr=CocAction('format')
+  autocmd FileType java,go,c setlocal formatexpr=CocAction('formatSelected')
+  autocmd FileType rust,go,c setlocal formatexpr=CocAction('format')
 
   xmap ga <Plug>(coc-codeaction-selected)
   nmap ga <Plug>(coc-codeaction-selected)
 
   " <S-F6> == <F18>
-  autocmd FileType java,rust,vim,go nmap <buffer> <F18> <Plug>(coc-rename)
-  autocmd FileType java,rust,vim,go nmap <buffer><silent> <F6> <Plug>(coc-references)
+  autocmd FileType java,rust,vim,go,c nmap <buffer> <F18> <Plug>(coc-rename)
+  autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <F6> <Plug>(coc-references)
 
   nnoremap <silent><nowait> ]c :<C-u>CocNext<CR>
   nnoremap <silent><nowait> [c :<C-u>CocPrev<CR>
@@ -729,12 +776,12 @@ augroup coc_lsp
   nmap <silent> [d <Plug>(coc-diagnostic-prev)
   nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
-  autocmd FileType java,rust,vim,go nmap <buffer><silent> <C-]> <Plug>(coc-definition)
-  autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
-  autocmd FileType java,rust,go nmap <buffer><silent> gD <Plug>(coc-implementation)
-  autocmd FileType rust,go nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
-  autocmd FileType java,rust,vim,go nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
-  autocmd FileType java,rust,go nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
+  autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <C-]> <Plug>(coc-definition)
+  autocmd FileType rust,c nmap <buffer><silent> gd <Plug>(coc-declaration)
+  autocmd FileType java,rust,go,c nmap <buffer><silent> gD <Plug>(coc-implementation)
+  autocmd FileType rust,go,c nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
+  autocmd FileType java,rust,vim,go,c nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
+  autocmd FileType java,rust,go,c nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 
   " enter to select completion
   inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
@@ -745,10 +792,10 @@ augroup coc_lsp
   inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 augroup end
 
-nmap <leader>l :call CocAction('format')
-nmap <leader>; :call CocAction('runCommand', 'editor.action.organizeImport')
+nmap <leader>l :call CocAction('format')<cr>
+nmap <leader>; :call CocAction('runCommand', 'editor.action.organizeImport')<cr>
 
-command! -nargs=0 Fmt :call CocAction('format')
+command! -nargs=0 Format :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
 command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')
 command! -nargs=0 CocStatus echo coc#status()
