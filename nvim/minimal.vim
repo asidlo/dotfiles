@@ -28,23 +28,25 @@ set mouse=a
 set tabstop=4
 set shiftwidth=4
 
-let g:dracula_inverse = 0
-
 try
+  let g:dracula_inverse = 0
   colorscheme dracula
 catch
   colorscheme default
 endtry
 
-highlight SpellBad gui=undercurl
-highlight Search
-      \ guibg=NONE guifg=Yellow
-      \ gui=underline term=underline cterm=underline 
+augroup dracula_customization
+  autocmd!
+  autocmd ColorScheme dracula highlight SpellBad gui=undercurl
+  autocmd ColorScheme dracula highlight Search
+        \ guibg=NONE guifg=Yellow
+        \ gui=underline term=underline cterm=underline
+augroup END
 
 augroup filetype_settings
   autocmd!
-  autocmd Filetype vim setlocal tabstop=2 shiftwidth=2
-  autocmd Filetype c setlocal tabstop=4 shiftwidth=4
-  autocmd Filetype markdown setlocal textwidth=79
+  autocmd FileType vim setlocal tabstop=2 shiftwidth=2
+  autocmd FileType c setlocal tabstop=4 shiftwidth=4
+  autocmd FileType markdown setlocal textwidth=79
   autocmd TermOpen,BufEnter term://* startinsert!
 augroup END
