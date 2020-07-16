@@ -1,3 +1,13 @@
+if empty(glob(stdpath('data') . '/site/autoload/plug.vim'))
+  silent execute '!curl -fLo ' . expand(stdpath('data') . '/site/autoload/plug.vim') . ' --create-dirs ' .
+    \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin(expand(stdpath('data') . '/plugged'))
+  Plug 'dracula/vim', { 'as': 'dracula' }
+call plug#end()
+
 set smartindent
 set expandtab
 set relativenumber
@@ -17,8 +27,19 @@ set textwidth=119
 set mouse=a
 set tabstop=4
 set shiftwidth=4
-set undodir=~/.config/nvim/undo
-set tags+=~/.config/nvim/systags
+
+let g:dracula_inverse = 0
+
+try
+  colorscheme dracula
+catch
+  colorscheme default
+endtry
+
+highlight SpellBad gui=undercurl
+highlight Search
+      \ guibg=NONE guifg=Yellow
+      \ gui=underline term=underline cterm=underline 
 
 augroup filetype_settings
   autocmd!
