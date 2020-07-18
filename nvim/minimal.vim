@@ -49,4 +49,5 @@ augroup filetype_settings
   autocmd FileType c setlocal tabstop=4 shiftwidth=4
   autocmd FileType markdown setlocal textwidth=79
   autocmd TermOpen,BufEnter term://* startinsert!
+  autocmd TermOpen,BufEnter term://* setlocal nonumber norelativenumber
 augroup END
