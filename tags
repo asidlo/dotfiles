@@ -1,0 +1,383 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	//
+#	vim/vimrc	/^xnoremap # :<C-u>call <SID>visual_star_search('?')<CR>?<C-R>=@\/<CR><CR>$/;"	m
+$FZF_DEFAULT_COMMAND	vim/vimrc	/^  let $FZF_DEFAULT_COMMAND="fd --type f --hidden --no-ignore-vcs --color=never " . g:fd_formatte/;"	v
+$FZF_DEFAULT_COMMAND	vim/vimrc	/^  let $FZF_DEFAULT_COMMAND="rg --files --no-ignore-vcs --hidden " . g:rg_formatted_excluded_file/;"	v
+$FZF_DEFAULT_OPTS	vim/vimrc	/^let $FZF_DEFAULT_OPTS = '--height 50% -1 --reverse --multi --inline-info ' .$/;"	v
+$MYVIMRC	nvim/init.vim	/^  let $MYVIMRC = expand('~\/.vimrc')$/;"	v
+$MYVIMRC	nvim/init.vim	/^  let $MYVIMRC = expand('~\/_vimrc')$/;"	v
+*	vim/vimrc	/^nnoremap * :let @\/='\\<<C-R>=expand("<cword>")<CR>\\>'<CR>:set hls<CR>$/;"	m
+*	vim/vimrc	/^xnoremap * :<C-u>call <SID>visual_star_search('\/')<CR>\/<C-R>=@\/<CR><CR>$/;"	m
+0	nvim/coc-settings.json	/^                "c",$/;"	s	array:languageserver.clangd.filetypes
+0	nvim/coc-settings.json	/^                "compile_flags.txt",$/;"	s	array:languageserver.clangd.rootPatterns
+0	nvim/coc-settings.json	/^                "go"$/;"	s	array:languageserver.golang.filetypes
+0	nvim/coc-settings.json	/^                "go.mod"$/;"	s	array:languageserver.golang.rootPatterns
+1	nvim/coc-settings.json	/^                "cc",$/;"	s	array:languageserver.clangd.filetypes
+1	nvim/coc-settings.json	/^                "compile_commands.json"$/;"	s	array:languageserver.clangd.rootPatterns
+1gD	nvim/minimal.vim	/^nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>$/;"	m
+2	nvim/coc-settings.json	/^                "cpp",$/;"	s	array:languageserver.clangd.filetypes
+3	nvim/coc-settings.json	/^                "c++",$/;"	s	array:languageserver.clangd.filetypes
+4	nvim/coc-settings.json	/^                "objc",$/;"	s	array:languageserver.clangd.filetypes
+5	nvim/coc-settings.json	/^                "objcpp"$/;"	s	array:languageserver.clangd.filetypes
+<	vim/vimrc	/^vnoremap < <gv$/;"	m
+<C-C>	vim/vimrc	/^vmap <C-C> y$/;"	m
+<C-j>	vim/vimrc	/^  imap <C-j> <Plug>(coc-snippets-expand-jump)$/;"	m
+<F19>	vim/vimrc	/^nmap <F19> <Plug>(FerretAcks)$/;"	m
+<F20>	vim/vimrc	/^nnoremap <F20> :%s\/\/\/gc<left><left><left>$/;"	m
+<F20>	vim/vimrc	/^xnoremap <F20> :s\/\/\/gc<left><left><left>$/;"	m
+<F6>	nvim/minimal.vim	/^nnoremap <silent> <F6>  <cmd>lua vim.lsp.buf.references()<CR>$/;"	m
+<F7>	vim/vimrc	/^nmap <F7> <Plug>(FerretAckWord)$/;"	m
+<F7>	vim/vimrc	/^vmap <F7> :<C-U>call <SID>ferret_vack()<CR>$/;"	m
+<LeftRelease>	vim/vimrc	/^  vnoremap <LeftRelease> "*ygv$/;"	m
+<S-Insert>	nvim/ginit.vim	/^inoremap <silent>  <S-Insert>  <C-R>+$/;"	m
+<S-Tab>	nvim/minimal.vim	/^inoremap <expr> <S-Tab> pumvisible() ? "\\<C-p>" : "\\<S-Tab>"$/;"	m
+<S-Tab>	vim/vimrc	/^  inoremap <expr> <S-Tab> pumvisible() ? "\\<C-p>" : "\\<S-Tab>"$/;"	m
+<Tab>	nvim/minimal.vim	/^inoremap <expr> <Tab> pumvisible() ? "\\<C-n>" : "\\<Tab>"$/;"	m
+<Tab>	vim/vimrc	/^  inoremap <expr> <Tab> pumvisible() ? "\\<C-n>" : "\\<Tab>"$/;"	m
+<c-]>	nvim/minimal.vim	/^nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>$/;"	m
+<c-h>	vim/vimrc	/^cnoremap <c-h> <home>$/;"	m
+<c-k>	nvim/minimal.vim	/^nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>$/;"	m
+<c-k>	vim/vimrc	/^cnoremap <c-k> <c-u>$/;"	m
+<c-l>	vim/vimrc	/^cnoremap <c-l> <end>$/;"	m
+<c-n>	vim/vimrc	/^cnoremap <c-n> <down>$/;"	m
+<c-p>	vim/vimrc	/^cnoremap <c-p> <up>$/;"	m
+<c-space>	vim/vimrc	/^  inoremap <silent><expr> <c-space> coc#refresh()$/;"	m
+<c-space>	vim/vimrc	/^nmap <c-space> ?$/;"	m
+<c-x><c-k>	vim/vimrc	/^inoremap <expr> <c-x><c-k> fzf#vim#complete('cat C:\\Users\\asidlo\\Documents\\dotfiles\\vim\\di/;"	m
+<cr>	nvim/minimal.vim	/^inoremap <expr> <cr> pumvisible() ? "\\<C-y>" : "\\<C-g>u\\<CR>"$/;"	m
+<cr>	vim/vimrc	/^  inoremap <expr> <cr> pumvisible() ? "\\<C-y>" : "\\<C-g>u\\<CR>"$/;"	m
+<cr>	vim/vimrc	/^  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\\<C-g>u\\<CR>"$/;"	m
+<down>	vim/vimrc	/^noremap <down> gj$/;"	m
+<leader>;	vim/vimrc	/^nmap <leader>; :call CocAction('runCommand', 'editor.action.organizeImport')<cr>$/;"	m
+<leader><cr>	vim/vimrc	/^nnoremap <leader><cr> :noh<cr>$/;"	m
+<leader>E	vim/vimrc	/^nnoremap <leader>E :History<cr>$/;"	m
+<leader>N	vim/vimrc	/^nnoremap <leader>N :Files<cR>$/;"	m
+<leader>O	vim/vimrc	/^nnoremap <leader>O :Tags<cr>$/;"	m
+<leader>X	vim/vimrc	/^nnoremap <leader>X :Commands<cr>$/;"	m
+<leader>b	vim/vimrc	/^nnoremap <leader>b :Buffers<cr>$/;"	m
+<leader>cd	vim/vimrc	/^nnoremap <leader>cd :cd %:p:h<cr>$/;"	m
+<leader>e	vim/vimrc	/^nnoremap <leader>e :e#<cr>$/;"	m
+<leader>gb	nvim/minimal.vim	/^nnoremap <leader>gb :!git branch -a<cr>$/;"	m
+<leader>gb	vim/vimrc	/^nnoremap <leader>gb :!git branch -a<cr>$/;"	m
+<leader>gd	nvim/minimal.vim	/^nnoremap <leader>gd :G diff<cr>$/;"	m
+<leader>gd	vim/vimrc	/^nnoremap <leader>gd :G diff<cr>$/;"	m
+<leader>gl	nvim/minimal.vim	/^nnoremap <leader>gl :G log --oneline<cr>$/;"	m
+<leader>gl	vim/vimrc	/^nnoremap <leader>gl :G log --oneline<cr>$/;"	m
+<leader>gm	vim/vimrc	/^nmap <leader>gm <Plug>(git-messenger)$/;"	m
+<leader>gs	nvim/minimal.vim	/^nnoremap <leader>gs :G status -s<cr>$/;"	m
+<leader>gs	vim/vimrc	/^nnoremap <leader>gs :G status -s<cr>$/;"	m
+<leader>hp	nvim/minimal.vim	/^nmap <leader>hp <Plug>(GitGutterPreviewHunk)$/;"	m
+<leader>hp	vim/vimrc	/^nmap <leader>hp <Plug>(GitGutterPreviewHunk)$/;"	m
+<leader>hs	nvim/minimal.vim	/^nmap <leader>hs <Plug>(GitGutterStageHunk)$/;"	m
+<leader>hs	vim/vimrc	/^nmap <leader>hs <Plug>(GitGutterStageHunk)$/;"	m
+<leader>hu	nvim/minimal.vim	/^nmap <leader>hu <Plug>(GitGutterUndoHunk)$/;"	m
+<leader>hu	vim/vimrc	/^nmap <leader>hu <Plug>(GitGutterUndoHunk)$/;"	m
+<leader>l	vim/vimrc	/^nmap <leader>l :call CocAction('format')<cr>$/;"	m
+<leader>n	vim/vimrc	/^nnoremap <leader>n :GFiles<cr>$/;"	m
+<leader>o	vim/vimrc	/^nnoremap <leader>o :BTags<cr>$/;"	m
+<leader>td	vim/vimrc	/^nnoremap <expr> <leader>td ':e ' . g:notes_dir . '\/README.md<CR>'$/;"	m
+<leader>ts	vim/vimrc	/^    nnoremap <leader>ts :split term:\/\/powershell<cr>$/;"	m
+<leader>ts	vim/vimrc	/^    nnoremap <leader>ts :split term:\/\/zsh<cr>$/;"	m
+<leader>tt	vim/vimrc	/^    nnoremap <leader>tt :e term:\/\/powershell<cr>$/;"	m
+<leader>tt	vim/vimrc	/^    nnoremap <leader>tt :e term:\/\/zsh<cr>$/;"	m
+<leader>tv	vim/vimrc	/^    nnoremap <leader>tv :vsplit term:\/\/powershell<cr>$/;"	m
+<leader>tv	vim/vimrc	/^    nnoremap <leader>tv :vsplit term:\/\/zsh<cr>$/;"	m
+<leader>x	vim/vimrc	/^nnoremap <leader>x :Maps<cr>$/;"	m
+<space>	vim/vimrc	/^nmap <space> \/$/;"	m
+<up>	vim/vimrc	/^noremap <up> gk$/;"	m
+>	vim/vimrc	/^vnoremap > >gv$/;"	m
+BACKGROUND	powershell/Dracula.ini	/^BACKGROUND = 18,18,18$/;"	k	section:table
+BRIGHT_BLACK	powershell/Dracula.ini	/^BRIGHT_BLACK = 120,124,134$/;"	k	section:table
+BRIGHT_BLUE	powershell/Dracula.ini	/^BRIGHT_BLUE = 189,147,249$/;"	k	section:table
+BRIGHT_CYAN	powershell/Dracula.ini	/^BRIGHT_CYAN = 139,233,253$/;"	k	section:table
+BRIGHT_GREEN	powershell/Dracula.ini	/^BRIGHT_GREEN = 80,250,123$/;"	k	section:table
+BRIGHT_MAGENTA	powershell/Dracula.ini	/^BRIGHT_MAGENTA = 255,121,198$/;"	k	section:table
+BRIGHT_RED	powershell/Dracula.ini	/^BRIGHT_RED = 255,85,85$/;"	k	section:table
+BRIGHT_WHITE	powershell/Dracula.ini	/^BRIGHT_WHITE = 248,248,242$/;"	k	section:table
+BRIGHT_YELLOW	powershell/Dracula.ini	/^BRIGHT_YELLOW = 241,250,140$/;"	k	section:table
+BTags	vim/vimrc	/^command! BTags call s:btags()$/;"	c
+CocStatus	vim/vimrc	/^command! -nargs=0 CocStatus echo coc#status()$/;"	c
+DARK_BLACK	powershell/Dracula.ini	/^DARK_BLACK = 0,0,0$/;"	k	section:table
+DARK_BLUE	powershell/Dracula.ini	/^DARK_BLUE = 189,147,249$/;"	k	section:table
+DARK_CYAN	powershell/Dracula.ini	/^DARK_CYAN = 139,233,253$/;"	k	section:table
+DARK_GREEN	powershell/Dracula.ini	/^DARK_GREEN = 80,250,123$/;"	k	section:table
+DARK_MAGENTA	powershell/Dracula.ini	/^DARK_MAGENTA = 255,121,198$/;"	k	section:table
+DARK_RED	powershell/Dracula.ini	/^DARK_RED = 255,85,85$/;"	k	section:table
+DARK_WHITE	powershell/Dracula.ini	/^DARK_WHITE = 190,190,190$/;"	k	section:table
+DARK_YELLOW	powershell/Dracula.ini	/^DARK_YELLOW = 241,250,140$/;"	k	section:table
+DiffHighlight	git/diff-so-fancy	/^  package DiffHighlight;$/;"	p
+DirectoryOfThisScript	misc/ycm_extra_conf.py	/^def DirectoryOfThisScript():$/;"	f
+Dirname	vim/vimrc	/^command! Dirname :echo expand('%:p:h')$/;"	c
+Dos2Linux	vim/vimrc	/^command! Dos2Linux :%s\/$/;"	c
+Dotfiles	README.md	/^# Dotfiles$/;"	c
+FlagsForFile	misc/ycm_extra_conf.py	/^def FlagsForFile( filename ):$/;"	f
+Fold	vim/vimrc	/^command! -nargs=? Fold :call CocAction('fold', <f-args>)$/;"	c
+Format	vim/vimrc	/^command! -nargs=0 Format :call CocAction('format')$/;"	c
+K	nvim/minimal.vim	/^nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>$/;"	m
+LuaHighlight	vim/vimrc	/^augroup LuaHighlight$/;"	a
+MakeRelativePathsInFlagsAbsolute	misc/ycm_extra_conf.py	/^def MakeRelativePathsInFlagsAbsolute( flags, working_directory ):$/;"	f
+N	vim/vimrc	/^nnoremap N Nzzzv$/;"	m
+NERDTreeAutoDeleteBuffer	vim/vimrc	/^let NERDTreeAutoDeleteBuffer=1$/;"	v
+NERDTreeIgnore	vim/vimrc	/^let NERDTreeIgnore=[$/;"	v
+NERDTreeMinimalUI	vim/vimrc	/^let NERDTreeMinimalUI=1$/;"	v
+NERDTreeShowHidden	vim/vimrc	/^let NERDTreeShowHidden=1$/;"	v
+NxlogHiLink	vim/syntax/nxlog.vim	/^  command! -nargs=+ NxlogHiLink highlight default link <args>$/;"	c
+NxlogHiLink	vim/syntax/nxlog.vim	/^  command! -nargs=+ NxlogHiLink highlight link <args>$/;"	c
+OrganizeImports	vim/vimrc	/^command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.organizeImport')$/;"	c
+Q	vim/vimrc	/^command! -nargs=0 Q :q$/;"	c
+ReadQF	vim/vimrc	/^command! -bar -nargs=1 -complete=file ReadQF$/;"	c
+Scriptnames	vim/vimrc	/^command! -nargs=0 Scriptnames$/;"	c
+SearchHits	vim/vimrc	/^command! SearchHits %s\/\/\/gn$/;"	c
+SyncSyntax	nvim/minimal.vim	/^command! -nargs=0 SyncSyntax :syntax sync fromstart$/;"	c
+SyncSyntax	vim/vimrc	/^command! SyncSyntax :syntax sync fromstart$/;"	c
+U	vim/vimrc	/^nnoremap U <c-r>$/;"	m
+Wq	vim/vimrc	/^command! -nargs=0 Wq :Wall | :q$/;"	c
+WriteQF	vim/vimrc	/^command! -bar -nargs=1 -complete=file WriteQF$/;"	c
+Y	nvim/minimal.vim	/^nnoremap Y y\$$/;"	m
+Y	vim/vimrc	/^nnoremap Y y\$$/;"	m
+[c	vim/vimrc	/^  nnoremap <silent><nowait> [c :<C-u>CocPrev<CR>$/;"	m
+[d	vim/vimrc	/^  nmap <silent> [d <Plug>(coc-diagnostic-prev)$/;"	m
+[h	nvim/minimal.vim	/^nnoremap [h :GitGutterPrevHunk<cr>$/;"	m
+[h	vim/vimrc	/^nnoremap [h :GitGutterPrevHunk<cr>$/;"	m
+[oe	vim/vimrc	/^nnoremap [oe :NERDTree<cr>$/;"	m
+[ot	vim/vimrc	/^nnoremap [ot :TagbarOpen<cr>$/;"	m
+\\	vim/vimrc	/^nnoremap \\ :Ack<space>$/;"	m
+]c	vim/vimrc	/^  nnoremap <silent><nowait> ]c :<C-u>CocNext<CR>$/;"	m
+]d	vim/vimrc	/^  nmap <silent> ]d <Plug>(coc-diagnostic-next)$/;"	m
+]h	nvim/minimal.vim	/^nnoremap ]h :GitGutterNextHunk<cr>$/;"	m
+]h	vim/vimrc	/^nnoremap ]h :GitGutterNextHunk<cr>$/;"	m
+]oe	vim/vimrc	/^nnoremap ]oe :NERDTreeClose<cr>$/;"	m
+]ot	vim/vimrc	/^nnoremap ]ot :TagbarClose<cr>$/;"	m
+_git_cmd	cmd/sup.bat	/^set _git_cmd='git.exe for-each-ref --format="%%(refname)" refs\/heads\/'$/;"	v
+ah	nvim/minimal.vim	/^omap ah <Plug>(GitGutterTextObjectOuterPending)$/;"	m
+ah	nvim/minimal.vim	/^xmap ah <Plug>(GitGutterTextObjectOuterVisual)$/;"	m
+ah	vim/vimrc	/^omap ah <Plug>(GitGutterTextObjectOuterPending)$/;"	m
+ah	vim/vimrc	/^xmap ah <Plug>(GitGutterTextObjectOuterVisual)$/;"	m
+argv	git/diff-so-fancy	/^sub argv {$/;"	s
+author	powershell/Dracula.ini	/^author = asidlo$/;"	k	section:info
+b:current_syntax	vim/syntax/nxlog.vim	/^let b:current_syntax = "nxlog"$/;"	v
+bleach_text	git/diff-so-fancy	/^sub bleach_text {$/;"	s
+boolean	git/diff-so-fancy	/^sub boolean {$/;"	s
+c_syntax	nvim/minimal.vim	/^augroup c_syntax$/;"	a
+char_count	git/diff-so-fancy	/^sub char_count {$/;"	s
+check_first_run	git/diff-so-fancy	/^sub check_first_run {$/;"	s
+clangd	nvim/coc-settings.json	/^        "clangd": {$/;"	o	object:languageserver
+coc_lsp	vim/vimrc	/^augroup coc_lsp$/;"	a
+color	git/diff-so-fancy	/^sub color {$/;"	s
+color_config	git/diff-so-fancy	/^  sub color_config {$/;"	s
+command	nvim/coc-settings.json	/^            "command": "\/usr\/local\/Cellar\/llvm\/10.0.0_3\/bin\/clangd",$/;"	s	object:languageserver.clangd
+command	nvim/coc-settings.json	/^            "command": "gopls",$/;"	s	object:languageserver.golang
+compilation_database_folder	misc/ycm_extra_conf.py	/^compilation_database_folder = ''$/;"	v
+database	misc/ycm_extra_conf.py	/^  database = ycm_core.CompilationDatabase( compilation_database_folder )$/;"	v
+diagnostic.enableMessage	nvim/coc-settings.json	/^    "diagnostic.enableMessage": "never",$/;"	s
+diagnostic.virtualText	nvim/coc-settings.json	/^    "diagnostic.virtualText": true,$/;"	b
+diagnostic.virtualTextCurrentLineOnly	nvim/coc-settings.json	/^    "diagnostic.virtualTextCurrentLineOnly": false,$/;"	b
+disableWorkspaceFolders	nvim/coc-settings.json	/^            "disableWorkspaceFolders": true,$/;"	b	object:languageserver.golang
+do_dsf_stuff	git/diff-so-fancy	/^sub do_dsf_stuff {$/;"	s
+dracula_customization	nvim/minimal.vim	/^augroup dracula_customization$/;"	a
+file_change_string	git/diff-so-fancy	/^sub file_change_string {$/;"	s
+file_history	nvim/minimal.vim	/^augroup file_history$/;"	a
+filetype_settings	nvim/minimal.vim	/^augroup filetype_settings$/;"	a
+filetypes	nvim/coc-settings.json	/^            "filetypes": [$/;"	a	object:languageserver.clangd
+filetypes	nvim/coc-settings.json	/^            "filetypes": [$/;"	a	object:languageserver.golang
+flags	misc/ycm_extra_conf.py	/^flags = [$/;"	v
+flush	git/diff-so-fancy	/^  sub flush {$/;"	s
+g0	nvim/minimal.vim	/^nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>$/;"	m
+g:FerretJob	vim/vimrc	/^  let g:FerretJob = 0$/;"	v
+g:FerretMap	vim/vimrc	/^let g:FerretMap = 0$/;"	v
+g:FerretNvim	vim/vimrc	/^  let g:FerretNvim = 0$/;"	v
+g:NERDTreeQuitOnOpen	vim/vimrc	/^let g:NERDTreeQuitOnOpen = 0$/;"	v
+g:NERDTreeWinPos	vim/vimrc	/^let g:NERDTreeWinPos = "left"$/;"	v
+g:NERDTreeWinSize	vim/vimrc	/^let g:NERDTreeWinSize=35$/;"	v
+g:ackprg	vim/vimrc	/^  let g:ackprg = 'rg -S --no-heading --no-ignore-vcs --hidden --vimgrep -g !tags'$/;"	v
+g:airline#extensions#default#section_truncate_width	vim/vimrc	/^let g:airline#extensions#default#section_truncate_width = {$/;"	v
+g:airline#extensions#tabline#buffer_nr_show	vim/vimrc	/^let g:airline#extensions#tabline#buffer_nr_show = 1$/;"	v
+g:airline#extensions#tabline#enabled	vim/vimrc	/^let g:airline#extensions#tabline#enabled = 1$/;"	v
+g:airline#extensions#tabline#fnamemod	vim/vimrc	/^let g:airline#extensions#tabline#fnamemod = ':t'$/;"	v
+g:airline#extensions#tagbar#enabled	vim/vimrc	/^let g:airline#extensions#tagbar#enabled = 0$/;"	v
+g:airline_left_alt_sep	vim/vimrc	/^let g:airline_left_alt_sep = ''$/;"	v
+g:airline_left_sep	vim/vimrc	/^let g:airline_left_sep = ''$/;"	v
+g:airline_powerline_fonts	vim/vimrc	/^let g:airline_powerline_fonts = 1$/;"	v
+g:airline_right_alt_sep	vim/vimrc	/^let g:airline_right_alt_sep = ''$/;"	v
+g:airline_right_sep	vim/vimrc	/^let g:airline_right_sep = ''$/;"	v
+g:airline_section_z	vim/vimrc	/^let g:airline_section_z = "%3p%% %l:%c"$/;"	v
+g:airline_symbols	vim/vimrc	/^let g:airline_symbols = {}$/;"	v
+g:airline_symbols	vim/vimrc	/^let g:airline_symbols.dirty=' ?'$/;"	v
+g:airline_symbols	vim/vimrc	/^let g:airline_symbols.linenr = ''$/;"	v
+g:airline_symbols	vim/vimrc	/^let g:airline_symbols.maxlinenr = ''$/;"	v
+g:airline_symbols	vim/vimrc	/^let g:airline_symbols.notexists = ' D'$/;"	v
+g:airline_symbols	vim/vimrc	/^let g:airline_symbols.readonly = ''$/;"	v
+g:airline_symbols	vim/vimrc	/^let g:airline_symbols.whitespace=''$/;"	v
+g:airline_theme	vim/vimrc	/^  let g:airline_theme='dracula'$/;"	v
+g:airline_theme	vim/vimrc	/^  let g:airline_theme='gruvbox'$/;"	v
+g:airline_theme	vim/vimrc	/^  let g:airline_theme='pencil'$/;"	v
+g:coc_config_home	vim/vimrc	/^let g:coc_config_home = g:coc_data_home$/;"	v
+g:coc_data_home	vim/vimrc	/^let g:coc_data_home = expand(g:vim_dir . '\/coc')$/;"	v
+g:coc_global_extensions	vim/vimrc	/^let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 'coc-snippet/;"	v
+g:ctags_exe	vim/vimrc	/^  let g:ctags_exe = '\/usr\/local\/opt\/universal-ctags\/bin\/ctags'$/;"	v
+g:ctags_exe	vim/vimrc	/^  let g:ctags_exe = 'ctags'$/;"	v
+g:deoplete#enable_at_startup	nvim/minimal.vim	/^let g:deoplete#enable_at_startup = 1$/;"	v
+g:dracula_inverse	nvim/minimal.vim	/^  let g:dracula_inverse = 0$/;"	v
+g:dracula_inverse	vim/vimrc	/^  let g:dracula_inverse = 0$/;"	v
+g:echodoc#enable_at_startup	vim/vimrc	/^let g:echodoc#enable_at_startup = 1$/;"	v
+g:echodoc#type	vim/vimrc	/^let g:echodoc#type = 'signature'$/;"	v
+g:fd_formatted_excluded_files	vim/vimrc	/^  let g:fd_formatted_excluded_files = "-E '" . join(g:fzf_excluded_files, "' -E '") . "'"$/;"	v
+g:fzf_action	vim/vimrc	/^let g:fzf_action = {$/;"	v
+g:fzf_colors	vim/vimrc	/^let g:fzf_colors =$/;"	v
+g:fzf_copy_cmd	vim/vimrc	/^  let g:fzf_copy_cmd = 'copy.exe'$/;"	v
+g:fzf_copy_cmd	vim/vimrc	/^  let g:fzf_copy_cmd = 'pbcopy'$/;"	v
+g:fzf_copy_cmd	vim/vimrc	/^  let g:fzf_copy_cmd = 'xclip -selection clipboard'$/;"	v
+g:fzf_excluded_files	vim/vimrc	/^let g:fzf_excluded_files = [ 'node_modules', '.gradle', '*.class', '.idea', '.git', '.settings',/;"	v
+g:fzf_preview_window	vim/vimrc	/^  let g:fzf_preview_window = ''$/;"	v
+g:fzf_tags_command	vim/vimrc	/^let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.ide/;"	v
+g:git_messenger_no_default_mappings	vim/vimrc	/^let g:git_messenger_no_default_mappings = v:true$/;"	v
+g:gitgutter_map_keys	nvim/minimal.vim	/^let g:gitgutter_map_keys = 0$/;"	v
+g:gitgutter_map_keys	vim/vimrc	/^let g:gitgutter_map_keys = 0$/;"	v
+g:go_auto_sameids	vim/vimrc	/^let g:go_auto_sameids = 1$/;"	v
+g:go_auto_type_info	vim/vimrc	/^let g:go_auto_type_info = 1$/;"	v
+g:go_decls_includes	vim/vimrc	/^let g:go_decls_includes = 'func'$/;"	v
+g:go_def_mapping_enabled	vim/vimrc	/^let g:go_def_mapping_enabled = 0$/;"	v
+g:go_def_mode	vim/vimrc	/^let g:go_def_mode='gopls'$/;"	v
+g:go_fmt_autosave	vim/vimrc	/^let g:go_fmt_autosave = 1$/;"	v
+g:go_fmt_command	vim/vimrc	/^let g:go_fmt_command = "gofmt"$/;"	v
+g:go_highlight_build_constraints	vim/vimrc	/^let g:go_highlight_build_constraints = 1$/;"	v
+g:go_highlight_extra_types	vim/vimrc	/^let g:go_highlight_extra_types = 1$/;"	v
+g:go_highlight_fields	vim/vimrc	/^let g:go_highlight_fields = 1$/;"	v
+g:go_highlight_function_calls	vim/vimrc	/^let g:go_highlight_function_calls = 1$/;"	v
+g:go_highlight_functions	vim/vimrc	/^let g:go_highlight_functions = 1$/;"	v
+g:go_highlight_operators	vim/vimrc	/^let g:go_highlight_operators = 1$/;"	v
+g:go_highlight_types	vim/vimrc	/^let g:go_highlight_types = 1$/;"	v
+g:go_info_mode	vim/vimrc	/^let g:go_info_mode='gopls'$/;"	v
+g:go_list_type	vim/vimrc	/^let g:go_list_type = "quickfix"$/;"	v
+g:go_metalinter_autosave	vim/vimrc	/^let g:go_metalinter_autosave = 0$/;"	v
+g:gutentags_auto_add_gtags_cscope	vim/vimrc	/^let g:gutentags_auto_add_gtags_cscope = 0$/;"	v
+g:gutentags_ctags_exclude	vim/vimrc	/^let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea']$/;"	v
+g:gutentags_ctags_executable	vim/vimrc	/^let g:gutentags_ctags_executable=g:ctags_exe$/;"	v
+g:gutentags_define_advanced_commands	vim/vimrc	/^let g:gutentags_define_advanced_commands = 1$/;"	v
+g:is_colo_dracula	vim/vimrc	/^  let g:is_colo_dracula = 0$/;"	v
+g:is_colo_dracula	vim/vimrc	/^  let g:is_colo_dracula = 1$/;"	v
+g:is_colo_gruvbox	vim/vimrc	/^  let g:is_colo_gruvbox = 0$/;"	v
+g:is_colo_gruvbox	vim/vimrc	/^  let g:is_colo_gruvbox = 1$/;"	v
+g:is_colo_pencil	vim/vimrc	/^let g:is_colo_pencil = 0$/;"	v
+g:is_gui	vim/vimrc	/^let g:is_gui = has('gui_running')$/;"	v
+g:is_linux	vim/vimrc	/^let g:is_linux = has('unix') && !has('macunix')$/;"	v
+g:is_mac	vim/vimrc	/^  let g:is_mac = 0$/;"	v
+g:is_mac	vim/vimrc	/^  let g:is_mac = has('macunix') || substitute(system('uname -s'), '\\n', '', '') == 'Darwin'$/;"	v
+g:is_nvim	vim/vimrc	/^let g:is_nvim = has('nvim')$/;"	v
+g:is_win	vim/vimrc	/^let g:is_win = has('win32') || has('win64')$/;"	v
+g:lightline	nvim/minimal.vim	/^let g:lightline = {$/;"	v
+g:loaded_node_provider	nvim/minimal.vim	/^let g:loaded_node_provider = 0$/;"	v
+g:loaded_node_provider	vim/vimrc	/^let g:loaded_node_provider = 0$/;"	v
+g:loaded_perl_provider	nvim/minimal.vim	/^let g:loaded_perl_provider = 0$/;"	v
+g:loaded_perl_provider	vim/vimrc	/^let g:loaded_perl_provider = 0$/;"	v
+g:loaded_python_provider	nvim/minimal.vim	/^let g:loaded_python_provider = 0$/;"	v
+g:loaded_python_provider	vim/vimrc	/^let g:loaded_python_provider = 0$/;"	v
+g:loaded_ruby_provider	nvim/minimal.vim	/^let g:loaded_ruby_provider = 0$/;"	v
+g:loaded_ruby_provider	vim/vimrc	/^let g:loaded_ruby_provider = 0$/;"	v
+g:netrw_banner	nvim/minimal.vim	/^let g:netrw_banner = 0$/;"	v
+g:netrw_dirhistmax	nvim/minimal.vim	/^let g:netrw_dirhistmax = 0$/;"	v
+g:netrw_dirhistmax	vim/vimrc	/^let g:netrw_dirhistmax = 0$/;"	v
+g:netrw_liststyle	nvim/minimal.vim	/^let g:netrw_liststyle = 3$/;"	v
+g:netrw_winsize	nvim/minimal.vim	/^let g:netrw_winsize = 25$/;"	v
+g:notes_dir	vim/vimrc	/^let g:notes_dir = g:vim_dir . '\/notes'$/;"	v
+g:python3_host_prog	vim/vimrc	/^    let g:python3_host_prog=exepath('python3')$/;"	v
+g:python3_host_prog	vim/vimrc	/^    let g:python3_host_prog=substitute(exepath('python'), '.exe$', '', 'g')$/;"	v
+g:rg_formatted_excluded_files	vim/vimrc	/^  let g:rg_formatted_excluded_files = "-g '!" . join(g:fzf_excluded_files, "' -g '!") . "'"$/;"	v
+g:vim_dir	vim/vimrc	/^  let g:vim_dir = expand('~\/.vim')$/;"	v
+g:vim_dir	vim/vimrc	/^  let g:vim_dir = expand('~\/vimfiles')$/;"	v
+g:vim_markdown_auto_insert_bullets	vim/vimrc	/^let g:vim_markdown_auto_insert_bullets = 0$/;"	v
+g:vim_markdown_folding_style_pythonic	vim/vimrc	/^let g:vim_markdown_folding_style_pythonic = 1$/;"	v
+g:vim_markdown_math	vim/vimrc	/^let g:vim_markdown_math = 1$/;"	v
+g:vim_markdown_new_list_item_indent	vim/vimrc	/^let g:vim_markdown_new_list_item_indent = 0$/;"	v
+g:vim_markdown_strikethrough	vim/vimrc	/^let g:vim_markdown_strikethrough = 1$/;"	v
+g:vim_plug_powershell_download_cmd	vim/vimrc	/^    let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -O/;"	v
+g:vim_plug_uri	vim/vimrc	/^    let g:vim_plug_uri = 'https:\/\/raw.githubusercontent.com\/junegunn\/vim-plug\/master\/plug./;"	v
+gD	nvim/minimal.vim	/^nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>$/;"	m
+gW	nvim/minimal.vim	/^nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>$/;"	m
+ga	vim/vimrc	/^  nmap ga <Plug>(coc-codeaction-selected)$/;"	m
+ga	vim/vimrc	/^  xmap ga <Plug>(coc-codeaction-selected)$/;"	m
+gd	nvim/minimal.vim	/^nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>$/;"	m
+get_config_color	git/diff-so-fancy	/^	sub get_config_color {$/;"	s
+get_default_colors	git/diff-so-fancy	/^sub get_default_colors {$/;"	s
+get_less_charset	git/diff-so-fancy	/^sub get_less_charset {$/;"	s
+git_config	git/diff-so-fancy	/^sub git_config {$/;"	s
+git_config_boolean	git/diff-so-fancy	/^sub git_config_boolean {$/;"	s
+git_config_raw	git/diff-so-fancy	/^	sub git_config_raw {$/;"	s
+go_files	vim/vimrc	/^augroup go_files$/;"	a
+golang	nvim/coc-settings.json	/^        "golang": {$/;"	o	object:languageserver
+handle_line	git/diff-so-fancy	/^  sub handle_line {$/;"	s
+has_stdin	git/diff-so-fancy	/^sub has_stdin {$/;"	s
+highlight_line	git/diff-so-fancy	/^  sub highlight_line {$/;"	s
+highlight_pair	git/diff-so-fancy	/^  sub highlight_pair {$/;"	s
+highlight_stdin	git/diff-so-fancy	/^  sub highlight_stdin {$/;"	s
+horizontal_rule	git/diff-so-fancy	/^sub horizontal_rule {$/;"	s
+ih	nvim/minimal.vim	/^omap ih <Plug>(GitGutterTextObjectInnerPending)$/;"	m
+ih	nvim/minimal.vim	/^xmap ih <Plug>(GitGutterTextObjectInnerVisual)$/;"	m
+ih	vim/vimrc	/^omap ih <Plug>(GitGutterTextObjectInnerPending)$/;"	m
+ih	vim/vimrc	/^xmap ih <Plug>(GitGutterTextObjectInnerVisual)$/;"	m
+in_unit_test	git/diff-so-fancy	/^sub in_unit_test {$/;"	s
+info	powershell/Dracula.ini	/^[info]$/;"	s
+is_pair_interesting	git/diff-so-fancy	/^  sub is_pair_interesting {$/;"	s
+is_windows	git/diff-so-fancy	/^sub is_windows {$/;"	s
+j	vim/vimrc	/^noremap j gj$/;"	m
+java.enabled	nvim/coc-settings.json	/^    "java.enabled": false,$/;"	b
+java.signatureHelp.enabled	nvim/coc-settings.json	/^    "java.signatureHelp.enabled": true,$/;"	b
+java.trace.server	nvim/coc-settings.json	/^    "java.trace.server": "verbose",$/;"	s
+java_files	vim/vimrc	/^augroup java_files$/;"	a
+json_files	vim/vimrc	/^augroup json_files$/;"	a
+k	vim/vimrc	/^noremap k gk$/;"	m
+languageserver	nvim/coc-settings.json	/^    "languageserver": {$/;"	o
+main_syntax	vim/syntax/nxlog.vim	/^  let main_syntax = 'nxlog'$/;"	v
+mapleader	nvim/minimal.vim	/^let mapleader = ','$/;"	v
+mapleader	vim/vimrc	/^let mapleader=","$/;"	v
+mark_empty_line	git/diff-so-fancy	/^sub mark_empty_line {$/;"	s
+markdown_files	vim/vimrc	/^augroup markdown_files$/;"	a
+n	vim/vimrc	/^nnoremap n nzzzv$/;"	m
+name	powershell/Dracula.ini	/^name = Dracula$/;"	k	section:info
+nvim_settings	nvim/minimal.vim	/^augroup nvim_settings$/;"	a
+nx_logs	vim/vimrc	/^augroup nx_logs$/;"	a
+p	vim/vimrc	/^xnoremap p pgvy$/;"	m
+parse_hunk_header	git/diff-so-fancy	/^sub parse_hunk_header {$/;"	s
+python.analysis.logLevel	nvim/coc-settings.json	/^    "python.analysis.logLevel": "Trace",$/;"	s
+python.condaPath	nvim/coc-settings.json	/^    "python.condaPath": "\/usr\/local\/anaconda3\/condabin\/conda",$/;"	s
+python.linting.enabled	nvim/coc-settings.json	/^    "python.linting.enabled": true,$/;"	b
+python.venvPath	nvim/coc-settings.json	/^    "python.venvPath": ".\/venv",$/;"	s
+rootPatterns	nvim/coc-settings.json	/^            "rootPatterns": [$/;"	a	object:languageserver.clangd
+rootPatterns	nvim/coc-settings.json	/^            "rootPatterns": [$/;"	a	object:languageserver.golang
+s:align_lists	vim/vimrc	/^function! s:align_lists(lists)$/;"	f
+s:btags	vim/vimrc	/^function! s:btags()$/;"	f
+s:btags_sink	vim/vimrc	/^function! s:btags_sink(line)$/;"	f
+s:btags_source	vim/vimrc	/^function! s:btags_source()$/;"	f
+s:build_go_files	vim/vimrc	/^function! s:build_go_files()$/;"	f
+s:ferret_vack	vim/vimrc	/^function! s:ferret_vack() abort$/;"	f
+s:get_visual_selection	vim/vimrc	/^function! s:get_visual_selection()$/;"	f
+s:is_win	nvim/init.vim	/^let s:is_win = has('win32') || has('win64')$/;"	v
+s:qf_to_filename	vim/vimrc	/^function! s:qf_to_filename(qf) abort$/;"	f
+s:undo_dir	vim/vimrc	/^let s:undo_dir = g:vim_dir . '\/undo'$/;"	v
+s:visual_star_search	vim/vimrc	/^function! s:visual_star_search(cmdtype,...)$/;"	f
+set_defaults	git/diff-so-fancy	/^sub set_defaults {$/;"	s
+should_print_unicode	git/diff-so-fancy	/^sub should_print_unicode {$/;"	s
+show_hunk	git/diff-so-fancy	/^  sub show_hunk {$/;"	s
+split_line	git/diff-so-fancy	/^  sub split_line {$/;"	s
+start_line_calc	git/diff-so-fancy	/^sub start_line_calc {$/;"	s
+starts_with_ansi	git/diff-so-fancy	/^sub starts_with_ansi {$/;"	s
+strip_leading_indicators	git/diff-so-fancy	/^sub strip_leading_indicators {$/;"	s
+suggest.echodocSupport	nvim/coc-settings.json	/^    "suggest.echodocSupport": true,$/;"	b
+suggest.maxCompleteItemCount	nvim/coc-settings.json	/^    "suggest.maxCompleteItemCount": 20,$/;"	n
+table	powershell/Dracula.ini	/^[table]$/;"	s
+trim	git/diff-so-fancy	/^sub trim {$/;"	s
+usage	git/diff-so-fancy	/^sub usage {$/;"	s
+version	git/diff-so-fancy	/^sub version {$/;"	s
+vim_files	vim/vimrc	/^augroup vim_files$/;"	a
+visible_substr	git/diff-so-fancy	/^  sub visible_substr {$/;"	s
+visible_width	git/diff-so-fancy	/^  sub visible_width {$/;"	s
+xml_files	vim/vimrc	/^augroup xml_files$/;"	a
+y	vim/vimrc	/^vmap y ygv<esc>$/;"	m
+yoe	vim/vimrc	/^nnoremap yoe :NERDTreeToggle<cr>$/;"	m
+yot	vim/vimrc	/^nnoremap yot :TagbarToggle<cr>$/;"	m
+zsh_files	vim/vimrc	/^augroup zsh_files$/;"	a
