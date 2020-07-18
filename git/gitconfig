@@ -14,6 +14,12 @@
   tool = vimdiff
 [difftool]
   prompt = 0
+[color "diff"]
+  commit = yellow bold
+[color]
+  ui = true
+[pull]
+	rebase = false
 [alias]
   a = add
   au = add -u # Update all tracked files
@@ -66,7 +72,3 @@
 
   # Get all aliases defined in gitconfig
   alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
-[color "diff"]
-  commit = yellow bold
-[color]
-  ui = true
