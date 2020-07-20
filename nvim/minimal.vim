@@ -51,7 +51,7 @@ set textwidth=119
 set mouse=a
 set tabstop=4
 set shiftwidth=4
-set completeopt=menuone,longest,preview
+set completeopt=menuone,longest
 set clipboard=unnamed
 set wildmode=longest:full,full
 set updatetime=100
@@ -161,3 +161,13 @@ nnoremap Y y$
 let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea']
 let g:gutentags_auto_add_gtags_cscope = 0
 let g:gutentags_define_advanced_commands = 1
+let g:gutentags_ctags_extra_args = [
+      \ '/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/include' ]
+      " \ '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Kernel.framework/Versions/Current/Headers' ]
+
+" use tab for easy completion navigation
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" enter to select completion
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
