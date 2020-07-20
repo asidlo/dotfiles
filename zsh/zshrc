@@ -28,7 +28,7 @@ function is_linux() {
 }
 
 # Completions & keybindings & functions
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
 # Echoes a username/host string when connected over SSH (empty otherwise)
 ssh_info() {
@@ -201,13 +201,21 @@ else
 fi
 
 # Fd, bat, fzf
-if (( $+commands[fd] )) && (( $+commands[fzf] )) && (( $+commands[bat] )); then
+if is_linux; then
+  FD_EXE='fdfind'
+  BAT_EXE='batcat'
+else
+  FD_EXE='fd'
+  BAT_EXE='bat'
+fi
+
+if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
   export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
   # Note in windows env vars use the following instead:
   # git ls-files --cached --others --exclude-standard 2> null | fd --type f --type l %FD_OPTS%
-  export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | fd --type f --type l $FD_OPTS"
+  export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | $FD_EXE --type f --type l $FD_OPTS"
   export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
-  export FZF_ALT_C_COMMAND="fd --type d $FD_OPTS"
+  export FZF_ALT_C_COMMAND="$FD_EXE --type d $FD_OPTS"
   export FZF_DEFAULT_OPTS='
     --color=fg:#c2bebe,bg:-1,hl:#8be9fd
     --color=fg+:#f8f8f2,bg+:-1,hl+:#ff79c6
@@ -223,7 +231,7 @@ if (( $+commands[fd] )) && (( $+commands[fzf] )) && (( $+commands[bat] )); then
     --bind="ctrl-y:execute-silent(echo {+} | copy)"
   '
 else
-  >&2 echo "[fzf|fd|bat]+ not found. Install all and add to PATH" 
+  >&2 echo "[fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
 fi
 
 # JAVA_HOME
@@ -302,6 +310,8 @@ case $OS in
   *$LINUX*)
     alias copy='xclip -selection -c'
     alias ls='ls --color=auto'
+    alias fd='fdfind'
+    alias bat='batcat'
     ;;
 esac
 
