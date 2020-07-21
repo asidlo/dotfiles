@@ -255,6 +255,7 @@ case $OS in
     export JAVA12_HOME='/Users/asidlo/.sdkman/candidates/java/12.0.2-zulu'
     ;;
   *$LINUX*)
+    export CARGO_HOME=~/.cargo
     export GOROOT=/usr/local/go
     export GOPATH=~/workspace/go
     export SDKMAN_DIR="/home/asidlo/.sdkman"
@@ -279,8 +280,6 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias grep='grep --color=auto'
 alias cls='clear'
-alias confe="$EDITOR ~/.zshrc"
-alias confr='source ~/.zshrc'
 
 if is_win; then
     local VIM_HOME='~/_vimfiles'
