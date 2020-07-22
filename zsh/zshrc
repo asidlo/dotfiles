@@ -28,6 +28,7 @@ function is_linux() {
 }
 
 # Completions & keybindings & functions
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
 # Echoes a username/host string when connected over SSH (empty otherwise)
@@ -85,8 +86,7 @@ zle -N zle-line-finish
 export KEYTIMEOUT=1
 
 # Better searching in command mode
-bindkey -M vicmd '?' fzf-history-widget
-bindkey -M vicmd ' ' fzf-history-widget
+bindkey -M vicmd '/' fzf-history-widget
 
 
 # Use C-F to complete recent command
