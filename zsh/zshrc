@@ -11,7 +11,6 @@ local LINUX='Linux'
 local WIN='Microsoft'
 
 # }}}
-#==============================================================================
 # Functions {{{
 #==============================================================================
 function is_mac() {
@@ -51,7 +50,6 @@ git_branch() {
 }
 
 # }}}
-#==============================================================================
 # Colors {{{
 #==============================================================================
 # https://joshdick.net/2017/06/08/my_git_prompt_for_zsh_revisited.html
@@ -62,7 +60,6 @@ autoload -U colors && colors # Enable colors in prompt
 zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 
 # }}}
-#==============================================================================
 # Vim-Mode {{{
 #==============================================================================
 bindkey -v
@@ -109,7 +106,6 @@ bindkey -s '^F' '^[[C'
 # fi
 
 # }}}
-#==============================================================================
 # Completion {{{
 #==============================================================================
 # Enable tab completion
@@ -119,7 +115,6 @@ autoload -U compinit && compinit
 zstyle ':completion:*' menu select
 
 # }}}
-#==============================================================================
 # Pushd {{{
 #==============================================================================
 setopt auto_pushd               # make cd push old dir in dir stack
@@ -128,7 +123,6 @@ setopt pushd_silent             # no dir stack after pushd or popd
 setopt pushd_to_home            # `pushd` = `pushd $HOME`
 
 # }}}
-#==============================================================================
 # History {{{
 #==============================================================================
 HISTFILE=~/.zsh_history         # where to store zsh config
@@ -144,7 +138,6 @@ setopt share_history            # share hist between sessions
 setopt bang_hist                # !keyword
 
 # }}}
-#==============================================================================
 # Misc {{{
 #==============================================================================
 setopt chase_links              # resolve symlinks
@@ -155,7 +148,6 @@ unsetopt rm_star_silent         # ask for confirmation for `rm *' or `rm path/*'
 unsetopt BEEP                   # Turn off all beeps
 
 # }}}
-#==============================================================================
 # Prompt {{{
 #==============================================================================
 setopt prompt_subst     # allow funky stuff in prompt
@@ -168,7 +160,6 @@ $vim_mode %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
 
 
 # }}}
-#==============================================================================
 # Misc {{{
 #==============================================================================
 if is_mac || is_linux; then
@@ -188,7 +179,6 @@ bindkey '' fzf-file-widget
 bindkey '' fzf-history-widget 
 
 # }}}
-#==============================================================================
 # Exports {{{
 #==============================================================================
 # Editor [nvim|vim]
@@ -210,26 +200,34 @@ else
 fi
 
 if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
+  if is_mac; then
+    FZF_COPY_CMD='pbcopy'
+  elif is_win; then
+    FZF_COPY_CMD='copy.exe'
+  else
+    FZF_COPY_CMD='xclip -selection clipboard'
+  fi
+
   export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
   # Note in windows env vars use the following instead:
   # git ls-files --cached --others --exclude-standard 2> null | fd --type f --type l %FD_OPTS%
   export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | $FD_EXE --type f --type l $FD_OPTS"
   export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
   export FZF_ALT_C_COMMAND="$FD_EXE --type d $FD_OPTS"
-  export FZF_DEFAULT_OPTS='
+  export FZF_DEFAULT_OPTS="
     --color=fg:#c2bebe,bg:-1,hl:#8be9fd
     --color=fg+:#f8f8f2,bg+:-1,hl+:#ff79c6
     --color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
     --color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
     --height 50% -1 --reverse --multi --inline-info
-    --preview="bat --color=always --style=numbers {}"
-    --preview-window="right:hidden"
-    --bind="F2:toggle-preview"
-    --bind="ctrl-d:half-page-down"
-    --bind="ctrl-u:half-page-up"
-    --bind="ctrl-a:select-all+accept"
-    --bind="ctrl-y:execute-silent(echo {+} | copy)"
-  '
+    --preview='bat --color=always --style=numbers {}'
+    --preview-window='right:hidden'
+    --bind='F2:toggle-preview'
+    --bind='ctrl-d:half-page-down'
+    --bind='ctrl-u:half-page-up'
+    --bind='ctrl-a:select-all+accept'
+    --bind='ctrl-y:execute-silent(echo {+} | $FZF_COPY_CMD)'
+  "
 else
   >&2 echo "[fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
 fi
@@ -273,7 +271,6 @@ esac
 [ ! -z $CARGO_HOME ] && export PATH=$PATH:"$CARGO_HOME/bin"
 
 # }}}
-#==============================================================================
 # Aliases {{{
 #==============================================================================
 alias ll='ls -alF'
@@ -315,7 +312,6 @@ case $OS in
 esac
 
 # }}}
-#==============================================================================
 # Plugins {{{
 #==============================================================================
 if ! (( $+commands[antibody] )); then
@@ -332,7 +328,6 @@ abbrev-alias -g py='python'
 abbrev-alias -g py3='python3'
 
 # }}}
-#==============================================================================
 # SDKMAN {{{
 #==============================================================================
 # Note SDKMAN init should be last
