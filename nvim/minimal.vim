@@ -18,21 +18,17 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'airblade/vim-rooter'
   Plug 'airblade/vim-gitgutter'
   Plug 'rhysd/git-messenger.vim'
+
   Plug 'jiangmiao/auto-pairs'
+  Plug 'vim-scripts/ReplaceWithRegister'
 
   " Follow symlinks
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
 
-  Plug 'vim-scripts/ReplaceWithRegister'
-  Plug 'kana/vim-textobj-user'
-  Plug 'kana/vim-textobj-function'
-
+  Plug 'neovim/nvim-lsp'
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'autozimu/LanguageClient-neovim', {
-        \ 'branch': 'next',
-        \ 'do': 'bash install.sh',
-        \ }
+  Plug 'Shougo/echodoc.vim'
 call plug#end()
 
 set smartindent
@@ -84,15 +80,6 @@ augroup nvim_settings
   autocmd TermEnter term://* setlocal nonumber norelativenumber signcolumn=no
 augroup END
 
-augroup c_syntax
-  autocmd!
-  autocmd Syntax c syntax keyword cType
-        \ u8 u16 u32 u64 s8 s16 s32 s64
-        \ __u8 __u16 __u32 __u64 __s8 __s16 __s32 __s64
-  autocmd Syntax c syntax keyword cStatement fallthrough
-  autocmd Syntax c syntax keyword cOperator likely unlikely
-augroup END
-
 augroup file_history
   autocmd!
   " Return to last edit position when opening files (You want this!)
@@ -139,12 +126,9 @@ let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
 let g:python3_host_prog = '/usr/bin/python3'
 
-let g:lightline = {
-      \ 'colorscheme': 'dracula',
-      \ }
+let g:lightline = { 'colorscheme': 'dracula' }
 
 let g:gitgutter_map_keys = 0
-
 nnoremap ]h :GitGutterNextHunk<CR>
 nnoremap [h :GitGutterPrevHunk<CR>
 
@@ -165,22 +149,67 @@ nnoremap <Leader>gd :G diff<CR>
 nnoremap Y y$
 
 let g:deoplete#enable_at_startup = 1
-let g:LanguageClient_serverCommands = { 'rust': ['rustup', 'run', 'stable', 'rls'] }
-let g:LanguageClient_hideVirtualTextsOnInsert = 1
-nmap <F5> <Plug>(lcn-menu)
 
-augroup lcn_settings
-  autocmd!
-  autocmd FileType rust nmap <buffer> <silent> K <Plug>(lcn-hover) 
-  autocmd FileType rust nmap <buffer> <silent> <C-]> <Plug>(lcn-definition)
-  autocmd FileType rust nmap <buffer> <silent> g0 <Plug>(lcn-symbols)
-  autocmd FileType rust nmap <buffer> <silent> gd <Plug>(lcn-declaration)
-  autocmd FileType rust nmap <buffer> <silent> gD <Plug>(lcn-implementation)
-  autocmd FileType rust nmap <buffer> <silent> 1gD <Plug>(lcn-type-definition)
-  autocmd FileType rust nmap <buffer> <silent> <F2> <Plug>(lcn-rename)
-  autocmd FileType rust nmap <buffer> <silent> <F6> <Plug>(lcn-references)
-  autocmd FileType rust setlocal formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
-augroup END
+let g:echodoc#enable_at_startup = 1
+let g:echodoc#type = 'signature'
+
+lua << EOF
+  local nvim_lsp = require'nvim_lsp'
+  nvim_lsp.rls.setup{}
+  nvim_lsp.vimls.setup{}
+  nvim_lsp.clangd.setup {
+    cmd = {"/usr/local/Cellar/llvm/10.0.0_3/bin/clangd", "--background-index"}
+  }
+
+  -- Until they release the `vim.lsp.util.formatexpr()`
+  -- https://github.com/neovim/neovim/issues/12528
+  -- https://github.com/neovim/neovim/pull/12547
+  -- for use with `formatexpr` if called without parms
+  -- @param start_line 1-indexed line
+  -- @param end_line 1-indexed line
+  -- @param timeout_ms optional
+  function formatexpr(start_line, end_line, timeout_ms)
+    if not start_line or not end_line then
+      if vim.fn.mode() == 'i' or vim.fn.mode() == 'R' then
+        -- `formatexpr` is also called when exceding
+        -- `textwidth` in insert mode
+        -- fall back to internal formatting
+        return 1
+      end
+      start_line = vim.v.lnum
+      end_line = start_line + vim.v.count - 1
+    end
+    if start_line > 0 and end_line > 0 then
+      local params = {
+        textDocument = { uri = vim.uri_from_bufnr(0) };
+        range = {
+          start = { line = start_line - 1; character = 0; };
+          ["end"] = { line = end_line - 1; character = 0; };
+        };
+      };
+      local result = vim.lsp.buf_request_sync(0, "textDocument/rangeFormatting", params, timeout_ms)
+      if result then
+        result = result[1].result
+        vim.lsp.util.apply_text_edits(result)
+      end
+    end
+   -- do not run builtin formatter.
+    return 0
+  end
+EOF
+
+nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> <F6>  <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+
+autocmd Filetype vim,rust,c setlocal omnifunc=v:lua.vim.lsp.omnifunc
+autocmd Filetype vim,rust,c setlocal formatexpr=v:lua.formatexpr()
 
 " use tab for easy completion navigation
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
