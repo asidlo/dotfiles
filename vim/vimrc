@@ -502,7 +502,8 @@ if g:is_nvim
     nnoremap <leader>ts :split term://zsh<cr>
     nnoremap <leader>tt :e term://zsh<cr>
   endif
-  autocmd BufEnter term://* startinsert!
+  autocmd TermOpen,TermEnter term://* startinsert!
+  autocmd TermEnter term://* setlocal nonumber norelativenumber signcolumn=no
 endif
 
 " Prevent selecting and pasting from overwriting what you originally copied.
@@ -759,15 +760,9 @@ augroup coc_lsp
   autocmd FileType java,go,c setlocal formatexpr=CocAction('formatSelected')
   autocmd FileType rust,go,c setlocal formatexpr=CocAction('format')
 
-  xmap ga <Plug>(coc-codeaction-selected)
-  nmap ga <Plug>(coc-codeaction-selected)
-
   " <S-F6> == <F18>
   autocmd FileType java,rust,vim,go,c nmap <buffer> <F18> <Plug>(coc-rename)
   autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <F6> <Plug>(coc-references)
-
-  nnoremap <silent><nowait> ]c :<C-u>CocNext<CR>
-  nnoremap <silent><nowait> [c :<C-u>CocPrev<CR>
 
   inoremap <silent><expr> <c-space> coc#refresh()
   imap <C-j> <Plug>(coc-snippets-expand-jump)
@@ -792,8 +787,8 @@ augroup coc_lsp
   inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 augroup end
 
-nmap <leader>l :call CocAction('format')<cr>
-nmap <leader>; :call CocAction('runCommand', 'editor.action.organizeImport')<cr>
+" nmap <leader>l :call CocAction('format')<cr>
+" nmap <leader>; :call CocAction('runCommand', 'editor.action.organizeImport')<cr>
 
 command! -nargs=0 Format :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
@@ -801,19 +796,13 @@ command! -nargs=0 OrganizeImports :call CocAction('runCommand', 'editor.action.o
 command! -nargs=0 CocStatus echo coc#status()
 
 abbreviate CC CocConfig
-abbreviate CCL CocLocalConfig
+abbreviate CLC CocLocalConfig
 abbreviate CI CocInfo
 abbreviate CD CocDiagnostics
 abbreviate CF CocFix
 abbreviate CL CocList
-abbreviate CU CocUpdate
 abbreviate CX CocCommand
 abbreviate CA CocAction
-abbreviate CLR CocListResume
-abbreviate CLO CocList outline
-abbreviate CLD CocList diagnostics
-abbreviate CLC CocList commands
-abbreviate CLS CocList snippets
 abbreviate CS CocStatus
 
 " }}}
@@ -1083,7 +1072,7 @@ endif
 let g:airline_symbols.whitespace=''
 let g:airline_symbols.linenr = ''
 let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.notexists = ' D'
+let g:airline_symbols.notexists = ' ??'
 
 " let g:airline_symbols.space = "\ua0"
 
@@ -1097,7 +1086,7 @@ let g:airline_right_alt_sep = ''
 let g:airline_symbols.readonly = ''
 " let g:airline_symbols.linenr = ''
 " let g:airline_symbols.maxlinenr = ''
-let g:airline_symbols.dirty=' ?'
+let g:airline_symbols.dirty=' M'
 " let g:airline_symbols.whitespace='/s'
 " let g:airline_symbols.crypt='0x'
 " let g:airline_symbols.notexists=' ?'
@@ -1233,10 +1222,6 @@ endif
 if g:is_win
   let g:fzf_preview_window = ''
 endif
-
-" Hide statusline color
-autocmd! FileType fzf set laststatus=0 noshowmode noruler
-  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
 " [Tags] Command to generate tags file
 let g:fzf_tags_command = g:ctags_exe . ' -R --exclude=.git --exclude=node_modules --exclude=.idea'
