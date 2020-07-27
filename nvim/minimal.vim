@@ -1,3 +1,28 @@
+"==============================================================================
+" Author: Andrew Sidlo
+" Description: Neovim minimal configuration file
+"==============================================================================
+" Section: VARIABLES {{{
+"==============================================================================
+let g:is_win = has('win32') || has('win64')
+let g:is_linux = has('unix') && !has('macunix')
+let g:is_nvim = has('nvim')
+let g:is_gui = has('gui_running')
+
+" Vim on windows doesn't have uname so results in error message even though we
+" already know its not macos
+if !g:is_nvim && g:is_win
+  let g:is_mac = 0
+else
+  " Has some issues with vim detecting macunix/mac
+  let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
+endif
+
+let mapleader = ','
+
+" }}}
+" Section: PLUGINS {{{
+"==============================================================================
 if empty(glob(stdpath('data') . '/site/autoload/plug.vim'))
   silent execute '!curl -fLo ' . expand(stdpath('data') . '/site/autoload/plug.vim') . ' --create-dirs ' .
     \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -25,12 +50,10 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   " Follow symlinks
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
-
-  Plug 'neovim/nvim-lsp'
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'Shougo/echodoc.vim'
 call plug#end()
-
+" }}}
+" Section: SETTINGS {{{
+"==============================================================================
 set smartindent
 set expandtab
 set relativenumber
@@ -66,69 +89,15 @@ set tags=./tags,tags,~/.local/share/nvim/include/systags
 
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-
-augroup dracula_customization
-  autocmd!
-  autocmd ColorScheme dracula highlight SpellBad gui=undercurl
-  autocmd ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
-augroup END
-
-augroup nvim_settings
-  autocmd!
-  autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank()
-  autocmd TermOpen,TermEnter term://* startinsert!
-  autocmd TermEnter term://* setlocal nonumber norelativenumber signcolumn=no
-augroup END
-
-augroup file_history
-  autocmd!
-  " Return to last edit position when opening files (You want this!)
-  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-augroup END
-
-augroup filetype_settings
-  autocmd!
-  autocmd FileType vim setlocal tabstop=2 shiftwidth=2
-  autocmd FileType json syntax match Comment +\/\/.\+$+
-  autocmd FileType json setlocal commentstring=//\ %s
-  autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
-  autocmd FileType markdown setlocal textwidth=79 tabstop=2 shiftwidth=2
-  autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
-
-  autocmd BufEnter *.jsh setlocal filetype=java
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
-
-  autocmd FileType c
-        \ setlocal tabstop=4 shiftwidth=4
-        \ formatprg=clang-format\ -style=file\ --fallback-style=Microsoft
-        \ textwidth=80
-        \ cindent cinoptions=:0,l1,t0,g0,(0
-augroup END
-
-let mapleader = ','
-
-try
-  let g:dracula_inverse = 0
-  colorscheme dracula
-catch
-  colorscheme default
-endtry
-
-let g:netrw_dirhistmax = 0
-let g:netrw_banner = 0
-let g:netrw_winsize = 25
-let g:netrw_liststyle = 3
-
-" Disable python2, ruby, and node providers
-let g:loaded_python_provider = 0
-let g:loaded_ruby_provider = 0
-let g:loaded_perl_provider = 0
-let g:loaded_node_provider = 0
-let g:python3_host_prog = '/usr/bin/python3'
-
+"}}}
+" Plugin: LIGHTLINE {{{
+"==============================================================================
 let g:lightline = { 'colorscheme': 'dracula' }
-
+"}}}
+" Plugin: GITGUTTER {{{
+"==============================================================================
 let g:gitgutter_map_keys = 0
+
 nnoremap ]h :GitGutterNextHunk<CR>
 nnoremap [h :GitGutterPrevHunk<CR>
 
@@ -141,79 +110,101 @@ omap ah <Plug>(GitGutterTextObjectOuterPending)
 xmap ih <Plug>(GitGutterTextObjectInnerVisual)
 xmap ah <Plug>(GitGutterTextObjectOuterVisual)
 
+"}}}
+" Plugin: FUGITIVE {{{
+"==============================================================================
 nnoremap <Leader>gs :G status -s<CR>
 nnoremap <Leader>gl :G log --oneline<CR>
 nnoremap <Leader>gb :!git branch -a<CR>
 nnoremap <Leader>gd :G diff<CR>
+" }}}
+" Settings: NETRW {{{
+"==============================================================================
+let g:netrw_dirhistmax = 0
+let g:netrw_banner = 0
+let g:netrw_winsize = 25
+let g:netrw_liststyle = 3
 
+" }}}
+" Settings: NVIM {{{
+"==============================================================================
+" Disable python2, ruby, and node providers
+let g:loaded_python_provider = 0
+let g:loaded_ruby_provider = 0
+let g:loaded_perl_provider = 0
+let g:loaded_node_provider = 0
+let g:python3_host_prog = '/usr/bin/python3'
+
+augroup nvim_settings
+  autocmd!
+  autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank()
+  autocmd TermOpen,TermEnter term://* startinsert!
+  autocmd TermEnter term://* setlocal nonumber norelativenumber signcolumn=no
+augroup END
+
+"}}}
+" Settings: MISC {{{
+"==============================================================================
+augroup file_history
+  autocmd!
+  " Return to last edit position when opening files (You want this!)
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup END
+
+" }}}
+" Settings: FILETYPES {{{
+"==============================================================================
+augroup filetype_settings
+  autocmd!
+  autocmd FileType vim setlocal tabstop=2 shiftwidth=2 foldmethod=marker
+  autocmd FileType json syntax match Comment +\/\/.\+$+
+  autocmd FileType json setlocal commentstring=//\ %s
+  autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
+  autocmd FileType markdown setlocal textwidth=79 tabstop=2 shiftwidth=2
+  autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
+  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
+  autocmd BufEnter *.jsh setlocal filetype=java
+  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
+
+  autocmd FileType c
+        \ setlocal tabstop=4 shiftwidth=4
+        \ formatprg=clang-format\ -style=file\ --fallback-style=Microsoft
+        \ textwidth=80
+        \ cindent cinoptions=:0,l1,t0,g0,(0
+augroup END
+"}}}
+" Settings: COLORSCHEME {{{
+"==============================================================================
+augroup dracula_customization
+  autocmd!
+  autocmd ColorScheme dracula highlight SpellBad gui=undercurl
+  autocmd ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
+augroup END
+
+try
+  let g:dracula_inverse = 0
+  colorscheme dracula
+catch
+  colorscheme default
+endtry
+
+"}}}
+"==============================================================================
+"Yank till end of line
 nnoremap Y y$
 
-let g:deoplete#enable_at_startup = 1
+" Center search hit on next
+nnoremap n nzzzv
+nnoremap N Nzzzv
 
-let g:echodoc#enable_at_startup = 1
-let g:echodoc#type = 'signature'
+" Move cusor by display lines when wrapping
+noremap <up> gk
+noremap <down> gj
+noremap j gj
+noremap k gk
 
-lua << EOF
-  local nvim_lsp = require'nvim_lsp'
-  nvim_lsp.rls.setup{}
-  nvim_lsp.vimls.setup{}
-  nvim_lsp.clangd.setup {
-    cmd = {"/usr/local/Cellar/llvm/10.0.0_3/bin/clangd", "--background-index"}
-  }
+" Change pwd to current directory
+nnoremap <leader>cd :cd %:p:h<cr>
 
-  -- Until they release the `vim.lsp.util.formatexpr()`
-  -- https://github.com/neovim/neovim/issues/12528
-  -- https://github.com/neovim/neovim/pull/12547
-  -- for use with `formatexpr` if called without parms
-  -- @param start_line 1-indexed line
-  -- @param end_line 1-indexed line
-  -- @param timeout_ms optional
-  function formatexpr(start_line, end_line, timeout_ms)
-    if not start_line or not end_line then
-      if vim.fn.mode() == 'i' or vim.fn.mode() == 'R' then
-        -- `formatexpr` is also called when exceding
-        -- `textwidth` in insert mode
-        -- fall back to internal formatting
-        return 1
-      end
-      start_line = vim.v.lnum
-      end_line = start_line + vim.v.count - 1
-    end
-    if start_line > 0 and end_line > 0 then
-      local params = {
-        textDocument = { uri = vim.uri_from_bufnr(0) };
-        range = {
-          start = { line = start_line - 1; character = 0; };
-          ["end"] = { line = end_line - 1; character = 0; };
-        };
-      };
-      local result = vim.lsp.buf_request_sync(0, "textDocument/rangeFormatting", params, timeout_ms)
-      if result then
-        result = result[1].result
-        vim.lsp.util.apply_text_edits(result)
-      end
-    end
-   -- do not run builtin formatter.
-    return 0
-  end
-EOF
-
-nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent> <F6>  <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-
-autocmd Filetype vim,rust,c setlocal omnifunc=v:lua.vim.lsp.omnifunc
-autocmd Filetype vim,rust,c setlocal formatexpr=v:lua.formatexpr()
-
-" use tab for easy completion navigation
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" enter to select completion
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Search for current word but dont jump to next result
+nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
