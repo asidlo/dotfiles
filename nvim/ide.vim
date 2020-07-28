@@ -44,15 +44,13 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'airblade/vim-rooter'
   Plug 'airblade/vim-gitgutter'
   Plug 'rhysd/git-messenger.vim'
+
   Plug 'jiangmiao/auto-pairs'
+  Plug 'vim-scripts/ReplaceWithRegister'
 
   " Follow symlinks
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
-
-  Plug 'vim-scripts/ReplaceWithRegister'
-  Plug 'kana/vim-textobj-user'
-  Plug 'kana/vim-textobj-function'
 
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'Shougo/echodoc.vim'
@@ -316,28 +314,37 @@ augroup coc_settings
   autocmd FileType java,rust,vim,go,c nmap <buffer> <F18> <Plug>(coc-rename)
   autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <F6> <Plug>(coc-references)
 
-  inoremap <silent><expr> <c-space> coc#refresh()
-  imap <C-j> <Plug>(coc-snippets-expand-jump)
-
-  " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-  nmap <silent> [d <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]d <Plug>(coc-diagnostic-next)
-
   autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <C-]> <Plug>(coc-definition)
   autocmd FileType rust,c nmap <buffer><silent> gd <Plug>(coc-declaration)
   autocmd FileType java,rust,go,c nmap <buffer><silent> gD <Plug>(coc-implementation)
   autocmd FileType rust,go,c nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
   autocmd FileType java,rust,vim,go,c nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
   autocmd FileType java,rust,go,c nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
-
-  " enter to select completion
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
-  " use tab for easy completion navigation
-  inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 augroup end
+
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [d <Plug>(coc-diagnostic-prev)
+nmap <silent> ]d <Plug>(coc-diagnostic-next)
+
+" enter to select completion
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" use tab for easy completion navigation
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+
+inoremap <silent><expr> <c-space> coc#refresh()
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
 
 command! -nargs=0 Format :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
