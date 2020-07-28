@@ -40,6 +40,7 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'tpope/vim-repeat'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-dispatch'
+  Plug 'tpope/vim-obsession'
 
   Plug 'airblade/vim-rooter'
   Plug 'airblade/vim-gitgutter'
