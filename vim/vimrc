@@ -211,6 +211,8 @@ Plug 'junegunn/fzf.vim'
 Plug 'moll/vim-bbye' " optional dependency
 Plug 'aymericbeaumet/vim-symlink'
 
+Plug 'neoclide/jsonc.vim'
+
 call plug#end()
 
 " }}}
@@ -1421,6 +1423,7 @@ augroup END
 augroup json_files
   autocmd!
   autocmd FileType json syntax match Comment +\/\/.\+$+
+  autocmd BufEnter settings.json set filetype=jsonc
 augroup END
 
 augroup xml_files
