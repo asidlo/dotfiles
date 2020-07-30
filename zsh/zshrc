@@ -220,7 +220,7 @@ if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE]
     --color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
     --color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
     --height 50% -1 --reverse --multi --inline-info
-    --preview='bat --color=always --style=numbers {}'
+    --preview='$BAT_EXE --color=always --style=numbers {}'
     --preview-window='right:hidden'
     --bind='F2:toggle-preview'
     --bind='ctrl-d:half-page-down'

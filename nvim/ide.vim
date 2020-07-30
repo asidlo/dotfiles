@@ -40,6 +40,7 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'tpope/vim-repeat'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-dispatch'
+  Plug 'tpope/vim-obsession'
 
   Plug 'airblade/vim-rooter'
   Plug 'airblade/vim-gitgutter'
@@ -307,7 +308,7 @@ highlight link CocHighlightText CocUnderline
 augroup coc_settings
   autocmd!
   " Highlight the symbol and its references when holding the cursor.
-  autocmd CursorHold * silent call CocActionAsync('highlight')
+  autocmd CursorHold * silent if exists('*CocActionAsync') | call CocActionAsync('highlight') | endif
 
   autocmd FileType java,go,c setlocal formatexpr=CocAction('formatSelected')
   autocmd FileType rust,go,c setlocal formatexpr=CocAction('format')
