@@ -29,7 +29,7 @@
                 "name": "Windows PowerShell",
                 "commandline": "powershell.exe",
                 "fontFace": "MesloLGM Nerd Font Mono",
-                "fontSize": 11,
+                "fontSize": 10,
                 "hidden": false
             },
             {
@@ -38,7 +38,7 @@
                 "name": "Command Prompt",
                 "commandline": "cmd.exe",
                 "fontFace": "MesloLGM Nerd Font Mono",
-                "fontSize": 11,
+                "fontSize": 10,
                 "hidden": false
             },
             {
@@ -46,8 +46,9 @@
                 "hidden": false,
                 "name": "Ubuntu",
                 "source": "Windows.Terminal.Wsl",
+		"commandline": "wsl.exe ~ -d Ubuntu",
                 "fontFace": "MesloLGM Nerd Font Mono",
-                "fontSize": 11,
+                "fontSize": 10,
             },
             {
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
