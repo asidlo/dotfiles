@@ -53,8 +53,13 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
 
+  Plug 'sheerun/vim-polyglot'
+  Plug 'godlygeek/tabular'
+  Plug 'plasticboy/vim-markdown'
+
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'Shougo/echodoc.vim'
+  Plug 'neoclide/jsonc.vim'
 
   Plug 'scrooloose/nerdtree'
   Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -300,7 +305,8 @@ nnoremap <Leader>gd :G diff<CR>
 " }}}
 " Plugin: COC-NVIM {{{
 "==============================================================================
-let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls']
+let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 
+      \ 'coc-snippets', 'coc-rls', 'coc-omnisharp']
 highlight link CocHighlightText CocUnderline
 
 augroup coc_settings
@@ -408,6 +414,7 @@ augroup END
 augroup filetype_settings
   autocmd!
   autocmd FileType vim setlocal tabstop=2 shiftwidth=2 foldmethod=marker
+  autocmd BufEnter settings.json setlocal filetype=jsonc
   autocmd FileType json syntax match Comment +\/\/.\+$+
   autocmd FileType json setlocal commentstring=//\ %s
   autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
