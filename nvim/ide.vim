@@ -5,6 +5,7 @@
 " Section: VARIABLES {{{
 "==============================================================================
 let g:is_win = has('win32') || has('win64')
+let g:is_unix = has('unix')
 let g:is_linux = has('unix') && !has('macunix')
 let g:is_nvim = has('nvim')
 let g:is_gui = has('gui_running')
@@ -45,18 +46,21 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'airblade/vim-rooter'
   Plug 'airblade/vim-gitgutter'
   Plug 'rhysd/git-messenger.vim'
+
   Plug 'jiangmiao/auto-pairs'
+  Plug 'vim-scripts/ReplaceWithRegister'
 
   " Follow symlinks
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
 
-  Plug 'vim-scripts/ReplaceWithRegister'
-  Plug 'kana/vim-textobj-user'
-  Plug 'kana/vim-textobj-function'
+  Plug 'sheerun/vim-polyglot'
+  Plug 'godlygeek/tabular'
+  Plug 'plasticboy/vim-markdown'
 
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
   Plug 'Shougo/echodoc.vim'
+  Plug 'neoclide/jsonc.vim'
 
   Plug 'scrooloose/nerdtree'
   Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
@@ -88,6 +92,7 @@ set autowriteall
 set nobackup
 set nowritebackup
 set noswapfile
+set nowrap
 set linebreak
 set smartcase
 set undofile
@@ -104,6 +109,7 @@ set wildmode=longest:full,full
 set updatetime=100
 set signcolumn=yes
 set cmdheight=2
+set shortmess+=c
 
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
@@ -302,27 +308,23 @@ nnoremap <Leader>gd :G diff<CR>
 " }}}
 " Plugin: COC-NVIM {{{
 "==============================================================================
-let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls']
+let g:coc_global_extensions = [ 
+      \ 'coc-json', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls' ]
+
 highlight link CocHighlightText CocUnderline
 
 augroup coc_settings
   autocmd!
   " Highlight the symbol and its references when holding the cursor.
   autocmd CursorHold * silent if exists('*CocActionAsync') | call CocActionAsync('highlight') | endif
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
-  autocmd FileType java,go,c setlocal formatexpr=CocAction('formatSelected')
-  autocmd FileType rust,go,c setlocal formatexpr=CocAction('format')
+  autocmd FileType java,c,vim setlocal formatexpr=CocAction('formatSelected')
+  autocmd FileType rust,go setlocal formatexpr=CocAction('format')
 
   " <S-F6> == <F18>
   autocmd FileType java,rust,vim,go,c nmap <buffer> <F18> <Plug>(coc-rename)
   autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <F6> <Plug>(coc-references)
-
-  inoremap <silent><expr> <c-space> coc#refresh()
-  imap <C-j> <Plug>(coc-snippets-expand-jump)
-
-  " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
-  nmap <silent> [d <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]d <Plug>(coc-diagnostic-next)
 
   autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <C-]> <Plug>(coc-definition)
   autocmd FileType rust,c nmap <buffer><silent> gd <Plug>(coc-declaration)
@@ -330,15 +332,31 @@ augroup coc_settings
   autocmd FileType rust,go,c nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
   autocmd FileType java,rust,vim,go,c nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
   autocmd FileType java,rust,go,c nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
-
-  " enter to select completion
-  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
-  " use tab for easy completion navigation
-  inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 augroup end
+
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [d <Plug>(coc-diagnostic-prev)
+nmap <silent> ]d <Plug>(coc-diagnostic-next)
+
+" enter to select completion
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" use tab for easy completion navigation
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+
+inoremap <silent><expr> <c-space> coc#refresh()
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
 
 command! -nargs=0 Format :call CocAction('format')
 command! -nargs=? Fold :call CocAction('fold', <f-args>)
@@ -377,7 +395,12 @@ let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
-let g:python3_host_prog = '/usr/bin/python3'
+
+if g:is_unix
+  let g:python3_host_prog = '/usr/bin/python3'
+elseif g:is_win
+  let g:python3_host_prog = 'C:\\Python38\python.exe'
+endif
 
 augroup nvim_settings
   autocmd!
@@ -401,6 +424,7 @@ augroup END
 augroup filetype_settings
   autocmd!
   autocmd FileType vim setlocal tabstop=2 shiftwidth=2 foldmethod=marker
+  autocmd BufEnter settings.json setlocal filetype=jsonc
   autocmd FileType json syntax match Comment +\/\/.\+$+
   autocmd FileType json setlocal commentstring=//\ %s
   autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0

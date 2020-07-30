@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\16.0\OneNote\WebServiceProvider]
+"DisableSkydriveSetupOnFirstBoot"=dword:00000001
+
+[HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\Common\WebIntegration]
+"WebIntegrationEnabled"=dword:00000000
