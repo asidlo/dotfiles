@@ -91,6 +91,7 @@ set autowriteall
 set nobackup
 set nowritebackup
 set noswapfile
+set nowrap
 set linebreak
 set smartcase
 set undofile
@@ -107,6 +108,7 @@ set wildmode=longest:full,full
 set updatetime=100
 set signcolumn=yes
 set cmdheight=2
+set shortmess+=c
 
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
@@ -305,17 +307,19 @@ nnoremap <Leader>gd :G diff<CR>
 " }}}
 " Plugin: COC-NVIM {{{
 "==============================================================================
-let g:coc_global_extensions = [ 'coc-json', 'coc-python', 'coc-vimlsp', 'coc-java', 
-      \ 'coc-snippets', 'coc-rls', 'coc-omnisharp']
+let g:coc_global_extensions = [ 
+      \ 'coc-json', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls' ]
+
 highlight link CocHighlightText CocUnderline
 
 augroup coc_settings
   autocmd!
   " Highlight the symbol and its references when holding the cursor.
-  autocmd CursorHold * silent call CocActionAsync('highlight')
+  autocmd CursorHold * silent if exists('*CocActionAsync') | call CocActionAsync('highlight') | endif
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
-  autocmd FileType java,go,c setlocal formatexpr=CocAction('formatSelected')
-  autocmd FileType rust,go,c setlocal formatexpr=CocAction('format')
+  autocmd FileType java,c,vim setlocal formatexpr=CocAction('formatSelected')
+  autocmd FileType rust,go setlocal formatexpr=CocAction('format')
 
   " <S-F6> == <F18>
   autocmd FileType java,rust,vim,go,c nmap <buffer> <F18> <Plug>(coc-rename)
