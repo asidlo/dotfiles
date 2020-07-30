@@ -5,6 +5,7 @@
 " Section: VARIABLES {{{
 "==============================================================================
 let g:is_win = has('win32') || has('win64')
+let g:is_unix = has('unix')
 let g:is_linux = has('unix') && !has('macunix')
 let g:is_nvim = has('nvim')
 let g:is_gui = has('gui_running')
@@ -394,7 +395,12 @@ let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
-let g:python3_host_prog = '/usr/bin/python3'
+
+if g:is_unix
+  let g:python3_host_prog = '/usr/bin/python3'
+elseif g:is_win
+  let g:python3_host_prog = 'C:\\Python38\python.exe'
+endif
 
 augroup nvim_settings
   autocmd!
