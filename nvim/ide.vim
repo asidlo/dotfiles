@@ -401,6 +401,13 @@ let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'signature'
 
 " }}}
+" Plugin: VIM-MARKDOWN {{{
+"==============================================================================
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_override_foldtext = 0
+" let g:vim_markdown_new_list_item_indent = 0
+
+" }}}
 " Settings: NX {{{
 "==============================================================================
 augroup nx_logs
