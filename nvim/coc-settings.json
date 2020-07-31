@@ -1,25 +1,9 @@
 {
-    // Can use conda env, but must install jedi, a linter(pylint), and a
-    // formatter (yapf) in env, and specify the path to the python exe for env
-    "python.pythonPath": "python3",
-    "python.condaPath": "/usr/local/anaconda3/condabin/conda",
-    "python.venvPath": "./venv",
-    "python.analysis.logLevel": "Trace",
-    "python.linting.enabled": true,
     "suggest.echodocSupport": true,
     "suggest.maxCompleteItemCount": 20,
     "diagnostic.virtualText": true,
     "diagnostic.virtualTextCurrentLineOnly": false,
     "diagnostic.enableMessage": "never",
-    // "diagnostic.errorSign": "•",
-    // "diagnostic.warningSign": "•",
-    // "diagnostic.infoSign": "•",
-    // "coc.source.buffer.enable": false,
-    // "coc.preferences.useQuickfixForLocations": true,
-    // "coc.preferences.hoverTarget": "preview",
-    // "coc.preferences.previewAutoClose": false,
-    "java.signatureHelp.enabled": true,
-    "java.trace.server": "verbose",
     "java.enabled": false,
     "languageserver": {
         "golang": {
@@ -30,21 +14,6 @@
             "disableWorkspaceFolders": true,
             "filetypes": [
                 "go"
-            ]
-        },
-        "clangd": {
-            "command": "/usr/local/Cellar/llvm/10.0.0_3/bin/clangd",
-            "rootPatterns": [
-                "compile_flags.txt",
-                "compile_commands.json"
-            ],
-            "filetypes": [
-                "c",
-                "cc",
-                "cpp",
-                "c++",
-                "objc",
-                "objcpp"
             ]
         }
     }
