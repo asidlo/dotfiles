@@ -1,9 +1,13 @@
 {
     "suggest.echodocSupport": true,
     "suggest.maxCompleteItemCount": 20,
+    "diagnostic.enableMessage": "never",
     "diagnostic.virtualText": true,
     "diagnostic.virtualTextCurrentLineOnly": false,
-    "diagnostic.enableMessage": "never",
+    "diagnostic.errorSign": "",
+    "diagnostic.infoSign": "",
+    "diagnostic.warningSign": "",
+    "diagnostic.hintSign": "",
     "java.enabled": false,
     "languageserver": {
         "golang": {
