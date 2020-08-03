@@ -341,6 +341,8 @@ augroup coc_settings
   autocmd FileType java,rust,go nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 augroup end
 
+nmap <M-CR> <Plug>(coc-fix-current)
+
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
 nmap <silent> [d <Plug>(coc-diagnostic-prev)
 nmap <silent> ]d <Plug>(coc-diagnostic-next)
