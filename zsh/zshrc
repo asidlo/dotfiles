@@ -273,8 +273,8 @@ esac
 # }}}
 # Aliases {{{
 #==============================================================================
-alias ll='ls -alF'
-alias la='ls -A'
+alias ll='ls -AlFG'
+alias la='ls -AG'
 alias grep='grep --color=auto'
 alias cls='clear'
 

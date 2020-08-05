@@ -316,7 +316,7 @@ nnoremap <Leader>gd :G diff<CR>
 " Plugin: COC-NVIM {{{
 "==============================================================================
 let g:coc_global_extensions = [ 
-      \ 'coc-json', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls' ]
+      \ 'coc-json', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls', 'coc-cmake' ]
 
 highlight link CocHighlightText CocUnderline
 
@@ -326,20 +326,39 @@ augroup coc_settings
   autocmd CursorHold * silent if exists('*CocActionAsync') | call CocActionAsync('highlight') | endif
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
-  autocmd FileType java setlocal formatexpr=CocAction('formatSelected')
-  autocmd FileType rust,go setlocal formatexpr=CocAction('format')
+  autocmd FileType java,cpp,vim setlocal formatexpr=CocAction('formatSelected')
+  autocmd FileType rust,go,json setlocal formatexpr=CocAction('format')
 
   " <S-F6> == <F18>
-  autocmd FileType java,rust,vim,go nmap <buffer> <F18> <Plug>(coc-rename)
-  autocmd FileType java,rust,vim,go nmap <buffer><silent> <F6> <Plug>(coc-references)
+  " autocmd FileType java,rust,vim,go nmap <buffer> <F18> <Plug>(coc-rename)
+  " autocmd FileType java,rust,vim,go nmap <buffer><silent> <F6> <Plug>(coc-references)
 
-  autocmd FileType java,rust,vim,go nmap <buffer><silent> <C-]> <Plug>(coc-definition)
-  autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
-  autocmd FileType java,rust,go nmap <buffer><silent> gD <Plug>(coc-implementation)
-  autocmd FileType rust,go nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
-  autocmd FileType java,rust,vim,go nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
-  autocmd FileType java,rust,go nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
+  " autocmd FileType java,rust,vim,go nmap <buffer><silent> <C-]> <Plug>(coc-definition)
+  " autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
+  " autocmd FileType java,rust,go nmap <buffer><silent> gD <Plug>(coc-implementation)
+  " autocmd FileType rust,go nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
+  " autocmd FileType java,rust,vim,go nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
+  " autocmd FileType java,rust,go nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 augroup end
+
+" /usr/local/Cellar/llvm/10.0.0_3/bin/clang++ -Wall -std=c++17 hello.cpp -o hello
+
+nmap <silent> <C-]> <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gd <Plug>(coc-declaration)
+nmap <silent> gD <Plug>(coc-implementation)
+nmap <silent> <F6> <Plug>(coc-references)
+nmap <F18> <Plug>(coc-rename)
+noremap <silent><nowait> g0 :<C-u>CocList outline<CR>
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
 
 nmap <M-CR> <Plug>(coc-fix-current)
 
@@ -456,6 +475,9 @@ augroup filetype_settings
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
   autocmd BufEnter *.jsh setlocal filetype=java
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
+
+  " using cmake with 'build' as output directory
+  autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ 
 augroup END
 "}}}
 " Settings: COLORSCHEME {{{
