@@ -396,12 +396,6 @@ let g:loaded_ruby_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
 
-if g:is_unix
-  let g:python3_host_prog = '/usr/bin/python3'
-elseif g:is_win
-  let g:python3_host_prog = 'C:\\Python38\python.exe'
-endif
-
 augroup nvim_settings
   autocmd!
   autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank()

@@ -17,6 +17,7 @@
     // Each one of them will appear in the 'New Tab' dropdown,
     //   and can be invoked from the commandline with `wt.exe -p xxx`
     // To learn more about profiles, visit https://aka.ms/terminal-profile-settings
+    // "disabledProfileSources": ["Windows.Terminal.Azure"],
     "theme": "dark",
     "profiles": {
         "defaults": {
@@ -46,13 +47,40 @@
                 "hidden": false,
                 "name": "Ubuntu",
                 "source": "Windows.Terminal.Wsl",
-		"commandline": "wsl.exe ~ -d Ubuntu",
+		        "commandline": "wsl.exe ~ -d Ubuntu",
                 "fontFace": "MesloLGM Nerd Font Mono",
-                "fontSize": 10,
+                "fontSize": 10
+            },
+            {
+                "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
+                "name" : "Git Bash",
+                "commandline" : "C:/Program Files/Git/bin/bash.exe",
+                "icon" : "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
+                "startingDirectory" : "%USERPROFILE%",
+                "fontFace": "MesloLGM Nerd Font Mono",
+                "fontSize": 10
+            },
+            {
+                "guid": "{ece5cd36-703a-481b-bc31-f0f91af22a74}",
+                "name" : "VS2019 Dev",
+                "commandline" : "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 08e5e1d5}",
+                "icon" : "C:\\Users\\asidlo\\Pictures\\Icons\\vs2019.png",
+                "startingDirectory" : "%USERPROFILE%",
+                "fontFace": "MesloLGM Nerd Font Mono",
+                "fontSize": 10
+            },
+            {
+                "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
+                "name" : "Notes",
+                "commandline" : "powershell -noe -c \"nvim -S .\\AppData\\Local\\nvim-data\\sessions\\notes.vim\"",
+                "icon" : "C:\\Users\\asidlo\\Pictures\\Icons\\notepad.png",
+                "startingDirectory" : "%USERPROFILE%",
+                "fontFace": "MesloLGM Nerd Font Mono",
+                "fontSize": 10
             },
             {
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
-                "hidden": false,
+                "hidden": true,
                 "name": "Azure Cloud Shell",
                 "source": "Windows.Terminal.Azure"
             }
@@ -121,6 +149,22 @@
         {
             "command": "unbound",
             "keys": "ctrl+shift+6"
+        },
+        {
+            "command": {
+                "action": "newTab",
+                "profile": "Notes"
+
+            },
+            "keys": "ctrl+alt+n"
+        },
+        {
+            "command": {
+                "action": "newTab",
+                "profile": "Ubuntu"
+
+            },
+            "keys": "ctrl+alt+t"
         }
     ]
 }
