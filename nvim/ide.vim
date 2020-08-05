@@ -54,6 +54,13 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
 
+  " Need to load before vim-polyglot in order to avoid getting errors like
+  " Unknown function: go#config#GoplsMatcher
+  " See: https://github.com/fatih/vim-go/issues/2272
+  " See: https://github.com/fatih/vim-go/issues/2262
+  Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+  Plug 'AndrewRadev/splitjoin.vim'
+
   Plug 'sheerun/vim-polyglot'
   Plug 'godlygeek/tabular'
   Plug 'plasticboy/vim-markdown'
@@ -319,20 +326,22 @@ augroup coc_settings
   autocmd CursorHold * silent if exists('*CocActionAsync') | call CocActionAsync('highlight') | endif
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 
-  autocmd FileType java,c,vim setlocal formatexpr=CocAction('formatSelected')
+  autocmd FileType java setlocal formatexpr=CocAction('formatSelected')
   autocmd FileType rust,go setlocal formatexpr=CocAction('format')
 
   " <S-F6> == <F18>
-  autocmd FileType java,rust,vim,go,c nmap <buffer> <F18> <Plug>(coc-rename)
-  autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <F6> <Plug>(coc-references)
+  autocmd FileType java,rust,vim,go nmap <buffer> <F18> <Plug>(coc-rename)
+  autocmd FileType java,rust,vim,go nmap <buffer><silent> <F6> <Plug>(coc-references)
 
-  autocmd FileType java,rust,vim,go,c nmap <buffer><silent> <C-]> <Plug>(coc-definition)
-  autocmd FileType rust,c nmap <buffer><silent> gd <Plug>(coc-declaration)
-  autocmd FileType java,rust,go,c nmap <buffer><silent> gD <Plug>(coc-implementation)
-  autocmd FileType rust,go,c nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
-  autocmd FileType java,rust,vim,go,c nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
-  autocmd FileType java,rust,go,c nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
+  autocmd FileType java,rust,vim,go nmap <buffer><silent> <C-]> <Plug>(coc-definition)
+  autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
+  autocmd FileType java,rust,go nmap <buffer><silent> gD <Plug>(coc-implementation)
+  autocmd FileType rust,go nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
+  autocmd FileType java,rust,vim,go nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
+  autocmd FileType java,rust,go nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 augroup end
+
+nmap <M-CR> <Plug>(coc-fix-current)
 
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
 nmap <silent> [d <Plug>(coc-diagnostic-prev)
@@ -374,10 +383,31 @@ abbreviate CA CocAction
 abbreviate CS CocStatus
 
 " }}}
+" Plugin: VIM-GO {{{
+"==============================================================================
+" Disable go def mapping so we can delegate it to the coc lsp = 0
+let g:go_def_mapping_enabled = 0
+
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+
+"}}}
 " Plugin: ECHODOC {{{
 "==============================================================================
 let g:echodoc#enable_at_startup = 1
 let g:echodoc#type = 'signature'
+
+" }}}
+" Plugin: VIM-MARKDOWN {{{
+"==============================================================================
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_override_foldtext = 0
+" let g:vim_markdown_new_list_item_indent = 0
 
 " }}}
 " Settings: NX {{{
