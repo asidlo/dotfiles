@@ -477,7 +477,8 @@ augroup filetype_settings
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
 
   " using cmake with 'build' as output directory
-  autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ 
+  " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
+  autocmd FileType c,cpp setlocal makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
 augroup END
 "}}}
 " Settings: COLORSCHEME {{{

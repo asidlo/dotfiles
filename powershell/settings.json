@@ -151,6 +151,10 @@
             "keys": "ctrl+shift+6"
         },
         {
+            "command": "unbound",
+            "keys": "alt+enter"
+        },
+        {
             "command": {
                 "action": "newTab",
                 "profile": "Notes"
