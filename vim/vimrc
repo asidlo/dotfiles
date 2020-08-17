@@ -149,6 +149,7 @@ Plug 'AndrewRadev/splitjoin.vim'
 
 " Plug 'prabirshrestha/vim-lsp'
 " Plug 'neovim/nvim-lsp'
+" Plug 'natebosch/vim-lsc'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 Plug 'Shougo/echodoc.vim'
@@ -609,6 +610,48 @@ cnoremap <c-n> <down>
 " }}}
 "==============================================================================
 " PLUGINS {{{
+"==============================================================================
+" VIM-LSC {{{
+"==============================================================================
+"" NOTES: would be nice to add support for scopes similar to coc-nvim so you
+"" could utilize text objects for other lsp functions such as codeactions,
+"" formatting, etc example
+"" xmap if call lsc#reference#funcobj()
+"" omap if <Plug>(lsc-ifunc)
+""
+"" " avoid suppressing error messages from the plugin
+"set shortmess-=F
+"set completeopt+=preview
+
+"let g:lsc_server_commands = {
+"      \   'cpp': {
+"      \     'command': 'clangd',
+"      \     'suppress_stderr': v:true
+"      \   },
+"      \   'rust': {
+"      \     'command': 'rls',
+"      \     'workspace_config': {
+"      \       'clippy_preference': 'on',
+"      \     },
+"      \   },
+"      \ }
+
+"let g:lsc_auto_map = { 
+"      \   'defaults': v:true, 
+"      \   'FindReferences': '<F6>', 
+"      \   'Rename': '<S-F6>',
+"      \   'DocumentSymbol': 'g0'
+"      \ }
+
+"" highlight lscReference cterm=underline ctermfg=253 gui=underline guifg=#F8F8F2
+"augroup lsc_customization
+"  autocmd!
+"  autocmd CompleteDone * silent! pclose
+"  autocmd FileType c,cpp setlocal formatprg=clang-format\ -style=file\ --fallback-style=Microsoft
+"augroup END
+
+"let g:lsc_enable_diagnostics = v:false
+" }}}
 "==============================================================================
 " NVIM-LSP {{{
 "==============================================================================
