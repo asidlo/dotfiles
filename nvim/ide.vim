@@ -74,13 +74,12 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'ryanoasis/vim-devicons'
 
   Plug 'majutsushi/tagbar'
-  Plug 'ludovicchabant/vim-gutentags'
   Plug 'wincent/ferret'
 
   if g:is_mac
     Plug '/usr/local/opt/fzf'
   else
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf'
   endif
   Plug 'junegunn/fzf.vim'
 call plug#end()
@@ -90,6 +89,7 @@ call plug#end()
 "==============================================================================
 set smartindent
 set expandtab
+set number
 set relativenumber
 set splitbelow
 set splitright
@@ -120,6 +120,15 @@ set shortmess+=c
 
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+
+"}}}
+" Plugin: TAGBAR {{{
+"==============================================================================
+if g:is_mac
+  let g:ctags_exe = '/usr/local/opt/universal-ctags/bin/ctags'
+else
+  let g:ctags_exe = 'ctags'
+endif
 
 "}}}
 " Plugin: FZF {{{
@@ -204,26 +213,7 @@ function! s:get_visual_selection()
 endfunction
 
 " Replace instances matching term in quickfix 'F19 == S-F7'
-nmap <F19> <Plug>(FerretAcks)
-
-" }}}
-" Plugin: GUTENTAGS {{{
-"==============================================================================
-if g:is_mac
-  let g:ctags_exe = '/usr/local/opt/universal-ctags/bin/ctags'
-else
-  let g:ctags_exe = 'ctags'
-endif
-
-let g:gutentags_ctags_executable=g:ctags_exe
-let g:gutentags_ctags_exclude=['.git', 'node_modules', '.idea']
-
-"}}}
-" Plugin: TAGBAR {{{
-"==============================================================================
-nnoremap yot :TagbarToggle<cr>
-nnoremap [ot :TagbarOpen<cr>
-nnoremap ]ot :TagbarClose<cr>
+nmap <S-F7> <Plug>(FerretAcks)
 
 " }}}
 " Plugin: AIRLINE {{{
@@ -328,17 +318,6 @@ augroup coc_settings
 
   autocmd FileType java,cpp,vim setlocal formatexpr=CocAction('formatSelected')
   autocmd FileType rust,go,json setlocal formatexpr=CocAction('format')
-
-  " <S-F6> == <F18>
-  " autocmd FileType java,rust,vim,go nmap <buffer> <F18> <Plug>(coc-rename)
-  " autocmd FileType java,rust,vim,go nmap <buffer><silent> <F6> <Plug>(coc-references)
-
-  " autocmd FileType java,rust,vim,go nmap <buffer><silent> <C-]> <Plug>(coc-definition)
-  " autocmd FileType rust nmap <buffer><silent> gd <Plug>(coc-declaration)
-  " autocmd FileType java,rust,go nmap <buffer><silent> gD <Plug>(coc-implementation)
-  " autocmd FileType rust,go nmap <buffer><silent> 1gD <Plug>(coc-type-definition)
-  " autocmd FileType java,rust,vim,go nnoremap <buffer><silent><nowait> g0 :<C-u>CocList outline<CR>
-  " autocmd FileType java,rust,go nnoremap <buffer><silent> K :call CocAction('doHover')<CR>
 augroup end
 
 " /usr/local/Cellar/llvm/10.0.0_3/bin/clang++ -Wall -std=c++17 hello.cpp -o hello
@@ -348,7 +327,7 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gd <Plug>(coc-declaration)
 nmap <silent> gD <Plug>(coc-implementation)
 nmap <silent> <F6> <Plug>(coc-references)
-nmap <F18> <Plug>(coc-rename)
+nmap <S-F6> <Plug>(coc-rename)
 noremap <silent><nowait> g0 :<C-u>CocList outline<CR>
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -426,7 +405,7 @@ let g:echodoc#type = 'signature'
 "==============================================================================
 let g:vim_markdown_folding_style_pythonic = 1
 let g:vim_markdown_override_foldtext = 0
-" let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_new_list_item_indent = 2
 
 " }}}
 " Settings: NX {{{
