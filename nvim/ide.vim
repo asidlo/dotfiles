@@ -516,3 +516,9 @@ nnoremap <leader>cd :cd %:p:h<cr>
 
 " Search for current word but dont jump to next result
 nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
+" Add date -> type XDATE lowercase followed by a char will autofill the date
+iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
+iab ddate <c-r>=strftime("%Y-%m-%d")<cr>
+cab ddate <c-r>=strftime("%Y_%m_%d")<cr>
+iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>
