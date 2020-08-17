@@ -165,33 +165,11 @@ function Get-ChildItemWide {
     Get-ChildItem | Format-Wide -AutoSize
 }
 
-function Invoke-FzfHistory {
-    # Needs to be either private scope or renamed since $result might conflict
-    # with some internal powershell function as it indents the '>' in the prompt
-    # on cancellation.
-    $private:result = Get-History | ForEach-Object { $_.CommandLine } | fzf
-    if ($null -ne $private:result) {
-        Write-Output "Invoking '$private:result'`n"
-        Invoke-Expression "$private:result"
-    }
-}
-
-function Invoke-Bat {
-    param(
-      [string] $FileName
-    )
-    $private:batCmd = Get-Command bat.exe | Select-Object -ExpandProperty Source
-
-    Invoke-Expression "$private:batCmd --paging=never $FileName"
-}
-
 #--------------------------------------------------------------
 # Aliases
 #--------------------------------------------------------------
-#Set-Alias -Name ls -value Get-ChildItemWide -Option AllScope
 Set-Alias -Name ls -Value Get-ChildItemColorFormatWide -Option AllScope
 Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias -Name cd -Value Set-LocationEnhanced -Option AllScope
 Set-Alias -Name which -Value where.exe
-Set-Alias -Name bat -Value Invoke-Bat
 Remove-Item Alias:curl
