@@ -405,7 +405,10 @@ let g:echodoc#type = 'signature'
 "==============================================================================
 let g:vim_markdown_folding_style_pythonic = 1
 let g:vim_markdown_override_foldtext = 0
-let g:vim_markdown_new_list_item_indent = 2
+
+" Dont insert indent when using 'o' & dont auto insert bullets on format
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_auto_insert_bullets = 0
 
 " }}}
 " Settings: NX {{{
