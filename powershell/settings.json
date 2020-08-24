@@ -31,7 +31,7 @@
                 // Make changes here to the powershell.exe profile.
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
                 "name": "Windows PowerShell",
-                "commandline": "powershell.exe -NoLogo",
+                "commandline": "powershell.exe",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10,
                 "hidden": false
@@ -50,7 +50,7 @@
                 "hidden": false,
                 "name": "Ubuntu",
                 "source": "Windows.Terminal.Wsl",
-		        "commandline": "wsl.exe ~ -d Ubuntu",
+		"commandline": "wsl.exe ~ -d Ubuntu",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
             },
@@ -63,9 +63,20 @@
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
             },
+	    {
+                "guid": "{7445dc20-f8d3-4b63-a200-015e92c7e229}",
+                "name" : "VS2017 Dev", 
+		"hidden": true,
+                "commandline" : "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\Common7\\Tools\\VsDevCmd.bat\"",
+                "icon" : "C:\\RTG_DEV\\src\\dotfiles\\powershell\\icons\\vs2017.png",
+                "startingDirectory" : "%USERPROFILE%",
+                "fontFace": "MesloLGM Nerd Font Mono",
+                "fontSize": 10
+            },
             {
                 "guid": "{ece5cd36-703a-481b-bc31-f0f91af22a74}",
                 "name" : "VS2019 Dev",
+		"hidden": false,
                 // Uses x64 since 64bit llvm was installed
                 // https://developercommunity.visualstudio.com/idea/943058/x64-developer-powershell-for-vs-2019.html
                 "commandline" : "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell -VsInstanceId 0dc35847 -DevCmdArguments '-arch=x64 -no_logo'}",
@@ -76,6 +87,7 @@
             },
             {
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
+		"hidden": false,
                 "name" : "Notes",
                 "commandline" : "powershell -noe -c \"nvim -S .\\AppData\\Local\\nvim-data\\sessions\\notes.vim\"",
                 "icon" : "C:\\Users\\asidlo\\Pictures\\Icons\\notepad.png",
