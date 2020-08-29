@@ -39,6 +39,7 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'tpope/vim-repeat'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-dispatch'
+  Plug 'tpope/vim-obsession'
 
   Plug 'airblade/vim-rooter'
   Plug 'airblade/vim-gitgutter'
@@ -50,12 +51,17 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   " Follow symlinks
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
+
+  Plug 'sheerun/vim-polyglot'
+  Plug 'godlygeek/tabular'
+  Plug 'plasticboy/vim-markdown'
 call plug#end()
 " }}}
 " Section: SETTINGS {{{
 "==============================================================================
 set smartindent
 set expandtab
+set number
 set relativenumber
 set splitbelow
 set splitright
@@ -65,6 +71,7 @@ set autowriteall
 set nobackup
 set nowritebackup
 set noswapfile
+set nowrap
 set linebreak
 set smartcase
 set undofile
@@ -118,6 +125,16 @@ nnoremap <Leader>gl :G log --oneline<CR>
 nnoremap <Leader>gb :!git branch -a<CR>
 nnoremap <Leader>gd :G diff<CR>
 " }}}
+" Plugin: VIM-MARKDOWN {{{
+"==============================================================================
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_override_foldtext = 0
+
+" Dont insert indent when using 'o' & dont auto insert bullets on format
+let g:vim_markdown_new_list_item_indent = 0
+let g:vim_markdown_auto_insert_bullets = 0
+
+" }}}
 " Settings: NETRW {{{
 "==============================================================================
 let g:netrw_dirhistmax = 0
@@ -165,12 +182,7 @@ augroup filetype_settings
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
   autocmd BufEnter *.jsh setlocal filetype=java
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
-
-  autocmd FileType c
-        \ setlocal tabstop=4 shiftwidth=4
-        \ formatprg=clang-format\ -style=file\ --fallback-style=Microsoft
-        \ textwidth=80
-        \ cindent cinoptions=:0,l1,t0,g0,(0
+  autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
 augroup END
 "}}}
 " Settings: COLORSCHEME {{{
@@ -208,3 +220,9 @@ nnoremap <leader>cd :cd %:p:h<cr>
 
 " Search for current word but dont jump to next result
 nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
+" Add date -> type XDATE lowercase followed by a char will autofill the date
+iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
+iab ddate <c-r>=strftime("%Y-%m-%d")<cr>
+cab ddate <c-r>=strftime("%Y_%m_%d")<cr>
+iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>
