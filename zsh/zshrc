@@ -3,22 +3,16 @@
 #==============================================================================
 # Variables {{{
 #==============================================================================
-# Ex: Linux NXDEV181 4.4.0-17763-Microsoft #864-Microsoft Thu Nov 07 15:22:00 PST 2019 x86_64 x86_64 x86_64 GNU/Linux
 local OS=$(uname -a)
 
 local MAC='Darwin'
 local LINUX='Linux'
-local WIN='Microsoft'
 
 # }}}
 # Functions {{{
 #==============================================================================
 function is_mac() {
   [[ $OS =~ $MAC ]] && return 0
-  return 1
-}
-function is_win() {
-  [[ $OS =~ $WIN ]] && return 0
   return 1
 }
 function is_linux() {
@@ -92,19 +86,6 @@ bindkey -M vicmd '/' fzf-history-widget
 # in the terminal.
 bindkey -s '^F' '^[[C' 
 
-# Search history in insert mode using <C-R>
-# bindkey '^r' history-incremental-search-backward
-
-# if is_mac; then
-  # Bind <A-[> to escape without moving, just like in linux
-  # bindkey -M viins '“' vi-cmd-mode
-  # Bind <A-H|J|K|L> respectively to escape so mac works like linux
-  # bindkey -M viins '˙' vi-cmd-mode
-  # bindkey -M viins '∆' vi-cmd-mode
-  # bindkey -M viins '˚' vi-cmd-mode
-  # bindkey -M viins '¬' vi-cmd-mode
-# fi
-
 # }}}
 # Completion {{{
 #==============================================================================
@@ -156,16 +137,11 @@ setopt prompt_subst     # allow funky stuff in prompt
 # Change the prompt character color if the last command had a nonzero exit code
 PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u $(git_branch)
 $vim_mode %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
-# %(?.%{$fg[white]%}.%{$fg[red]%})[$vim_mode%(?.%{$fg[white]%}.%{$fg[red]%})]%{$reset_color%} '
-
 
 # }}}
 # Misc {{{
 #==============================================================================
-if is_mac || is_linux; then
-  export PATH=$PATH:/usr/local/bin
-  export PATH=$PATH:$HOME/.vim/java/bin
-fi
+export PATH=$PATH:/usr/local/bin
 
 # Fix for wsl setting umask to 0000
 if test umask != '022'; then
@@ -202,15 +178,11 @@ fi
 if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
   if is_mac; then
     FZF_COPY_CMD='pbcopy'
-  elif is_win; then
-    FZF_COPY_CMD='copy.exe'
   else
     FZF_COPY_CMD='xclip -selection clipboard'
   fi
 
   export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
-  # Note in windows env vars use the following instead:
-  # git ls-files --cached --others --exclude-standard 2> null | fd --type f --type l %FD_OPTS%
   export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | $FD_EXE --type f --type l $FD_OPTS"
   export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
   export FZF_ALT_C_COMMAND="$FD_EXE --type d $FD_OPTS"
@@ -235,13 +207,11 @@ fi
 # JAVA_HOME
 is_mac && export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk-13.0.2.jdk/Contents/Home
 
-# Note: linux pattern is before the windows pattern since wsl would require the
-# linux location over the windows location.
 case $OS in
   *$MAC*)
     export CARGO_HOME=~/.cargo
     export GOROOT=(/usr/local/Cellar/go/*/libexec)
-    export GOPATH=~/Workspace/go
+    export GOPATH=~/Workspace
     export SDKMAN_DIR='/Users/asidlo/.sdkman'
 
     # Add all of the java homes for elasticsearch testing
@@ -255,13 +225,8 @@ case $OS in
   *$LINUX*)
     export CARGO_HOME=~/.cargo
     export GOROOT=/usr/local/go
-    export GOPATH=~/workspace/go
+    export GOPATH=~/workspace
     export SDKMAN_DIR="/home/asidlo/.sdkman"
-    ;;
-  *$WIN*)
-    export GOROOT=/c/Go
-    export GOPATH=/d/go
-    export SDKMAN_DIR="/c/Users/asidlo/.sdkman"
     ;;
 esac
 
@@ -278,30 +243,15 @@ alias la='ls -AG'
 alias grep='grep --color=auto'
 alias cls='clear'
 
-if is_win; then
-    local VIM_HOME='~/_vimfiles'
-else
-    local VIM_HOME='~/.vim'
-fi
-
-alias todo="$EDITOR $VIM_HOME/notes/README.md"
-
-
 if (( $+commands[tree] )); then
   alias tree='tree -C'
 fi
 
-# Note: windows pattern is before the linux pattern since wsl would require the
-# windows alias over the linux alias.
 case $OS in
   *$MAC*)
     alias ls='ls -G'
     alias copy='pbcopy'
     alias ctags=/usr/local/opt/universal-ctags/bin/ctags
-    ;;
-  *$WIN*)
-    alias copy='clip.exe'
-    alias ls='ls --color=auto'
     ;;
   *$LINUX*)
     alias copy='xclip -selection -c'
