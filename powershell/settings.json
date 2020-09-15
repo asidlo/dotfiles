@@ -62,13 +62,13 @@
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
             },
-            {
+	        {
                 "guid": "{7445dc20-f8d3-4b63-a200-015e92c7e229}",
-                "name": "VS2017 Dev",
-                "hidden": true,
-                "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\Common7\\Tools\\VsDevCmd.bat\"",
-                "icon": "C:\\RTG_DEV\\src\\dotfiles\\powershell\\icons\\vs2017.png",
-                "startingDirectory": "%USERPROFILE%",
+                "name" : "VS2017 Dev", 
+		        "hidden": false,
+                "commandline" : "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\Common7\\Tools\\VsDevCmd.bat\"",
+                "icon" : "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\vs2017.png",
+                "startingDirectory" : "%USERPROFILE%",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
             },
@@ -79,7 +79,7 @@
                 // Uses x64 since 64bit llvm was installed
                 // https://developercommunity.visualstudio.com/idea/943058/x64-developer-powershell-for-vs-2019.html
                 "commandline": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell -VsInstanceId 0dc35847 -DevCmdArguments '-arch=x64 -no_logo'}",
-                "icon": "C:\\Users\\asidlo\\Pictures\\Icons\\vs2019.png",
+                "icon": "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\vs2019.png",
                 "startingDirectory": "%USERPROFILE%",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
@@ -88,18 +88,18 @@
                 "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
                 "name": "VS2019 Cmd",
                 "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\"",
-                "icon": "C:\\Users\\asidlo\\Pictures\\Icons\\vs2019.png",
+                "icon": "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\vs2019.png",
                 "startingDirectory": "%USERPROFILE%",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
             },
             {
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
-                "hidden": false,
-                "name": "Notes",
-                "commandline": "powershell -noe -c \"nvim -S .\\AppData\\Local\\nvim-data\\sessions\\notes.vim\"",
-                "icon": "C:\\Users\\asidlo\\Pictures\\Icons\\notepad.png",
-                "startingDirectory": "%USERPROFILE%",
+		        "hidden": true,
+                "name" : "Notes",
+                "commandline" : "powershell -noe -c \"nvim -S .\\AppData\\Local\\nvim-data\\sessions\\notes.vim\"",
+                "icon": "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\notepad.png",
+                "startingDirectory" : "%USERPROFILE%",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
             },
