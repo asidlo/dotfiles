@@ -46,7 +46,7 @@ else
 endif
 
 call plug#begin(expand(g:vim_dir . '/plugged'))
-  Plug 'dracula/vim', { 'as': 'dracula' }
+  Plug 'morhetz/gruvbox'
   Plug 'itchyny/lightline.vim'
 
   Plug 'tpope/vim-fugitive'
@@ -112,10 +112,11 @@ set tags=./tags,tags,~/.local/share/nvim/include/systags
 
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+
 "}}}
 " Plugin: LIGHTLINE {{{
 "==============================================================================
-let g:lightline = { 'colorscheme': 'dracula' }
+let g:lightline = { 'colorscheme': 'gruvbox' }
 "}}}
 " Plugin: GITGUTTER {{{
 "==============================================================================
@@ -151,6 +152,14 @@ let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_auto_insert_bullets = 0
 
 " }}}
+" Settings: NX {{{
+"==============================================================================
+augroup nx_logs
+  autocmd!
+  autocmd BufEnter agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log setlocal syntax=nxlog
+augroup END
+
+" }}}
 " Settings: NETRW {{{
 "==============================================================================
 let g:netrw_dirhistmax = 0
@@ -159,23 +168,6 @@ let g:netrw_winsize = 25
 let g:netrw_liststyle = 3
 
 " }}}
-" Settings: NVIM {{{
-"==============================================================================
-" Disable python2, ruby, and node providers
-let g:loaded_python_provider = 0
-let g:loaded_ruby_provider = 0
-let g:loaded_perl_provider = 0
-let g:loaded_node_provider = 0
-let g:python3_host_prog = '/usr/bin/python3'
-
-augroup nvim_settings
-  autocmd!
-  autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank()
-  autocmd TermOpen,TermEnter term://* startinsert!
-  autocmd TermEnter term://* setlocal nonumber norelativenumber signcolumn=no
-augroup END
-
-"}}}
 " Settings: MISC {{{
 "==============================================================================
 augroup file_history
@@ -197,26 +189,17 @@ augroup filetype_settings
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
   autocmd BufEnter *.jsh setlocal filetype=java
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
   autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
 augroup END
 "}}}
 " Settings: COLORSCHEME {{{
 "==============================================================================
-augroup dracula_customization
+augroup gruvbox_customization
   autocmd!
-  autocmd ColorScheme dracula highlight SpellBad gui=undercurl
-  autocmd ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
+  autocmd ColorScheme gruvbox highlight SpellBad gui=undercurl
+  autocmd ColorScheme gruvbox highlight Search guibg=NONE gui=underline term=underline cterm=underline
 augroup END
-
-try
-  let g:dracula_inverse = 0
-  colorscheme dracula
-catch
-  colorscheme default
-endtry
-
-"}}}
+" }}}
 "==============================================================================
 "Yank till end of line
 nnoremap Y y$
