@@ -8,7 +8,6 @@
     "diagnostic.infoSign": "",
     "diagnostic.warningSign": "",
     "diagnostic.hintSign": "",
-    "java.enabled": false,
     "languageserver": {
         "golang": {
             "command": "gopls",

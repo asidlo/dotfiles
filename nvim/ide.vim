@@ -320,8 +320,6 @@ augroup coc_settings
   autocmd FileType rust,go,json setlocal formatexpr=CocAction('format')
 augroup end
 
-" /usr/local/Cellar/llvm/10.0.0_3/bin/clang++ -Wall -std=c++17 hello.cpp -o hello
-
 nmap <silent> <C-]> <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gd <Plug>(coc-declaration)
@@ -458,9 +456,10 @@ augroup filetype_settings
   autocmd BufEnter *.jsh setlocal filetype=java
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
 
+  " /usr/local/Cellar/llvm/10.0.0_3/bin/clang++ -Wall -std=c++17 hello.cpp -o hello
   " using cmake with 'build' as output directory
-  " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
-  autocmd FileType c,cpp setlocal makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
+  autocmd FileType c,cpp setlocal makeprg=make\ -C\ build commentstring=//\ %s
+  " autocmd FileType c,cpp setlocal makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
 augroup END
 "}}}
 " Settings: COLORSCHEME {{{
