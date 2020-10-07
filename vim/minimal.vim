@@ -18,19 +18,35 @@ else
   let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
 endif
 
+if g:is_win
+  let g:vim_dir = expand('~/vimfiles')
+else
+  let g:vim_dir = expand('~/.vim')
+endif
+
 let mapleader = ','
 
 " }}}
 " Section: PLUGINS {{{
 "==============================================================================
-if empty(glob(stdpath('data') . '/site/autoload/plug.vim'))
-  silent execute '!curl -fLo ' . expand(stdpath('data') . '/site/autoload/plug.vim') . ' --create-dirs ' .
-    \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+if !g:is_win
+  if empty(glob(g:vim_dir . '/autoload/plug.vim'))
+    silent execute '!curl -fLo ' . expand(g:vim_dir . '/autoload/plug.vim') . ' --create-dirs ' .
+      \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+else
+  if empty(glob(g:vim_dir . '/autoload/plug.vim'))
+    let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+    let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -OutFile "' . expand(g:vim_dir . '/autoload/plug.vim') . '"'
+    silent execute '!powershell -command New-Item -ItemType Directory -Path "' . expand(g:vim_dir . '/autoload') . '"'
+    silent execute '!powershell -command ' . g:vim_plug_powershell_download_cmd
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
 endif
 
-call plug#begin(expand(stdpath('data') . '/plugged'))
-  Plug 'dracula/vim', { 'as': 'dracula' }
+call plug#begin(expand(g:vim_dir . '/plugged'))
+  Plug 'morhetz/gruvbox'
   Plug 'itchyny/lightline.vim'
 
   Plug 'tpope/vim-fugitive'
@@ -55,15 +71,6 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'sheerun/vim-polyglot'
   Plug 'godlygeek/tabular'
   Plug 'plasticboy/vim-markdown'
-
-  Plug 'wincent/ferret'
-
-  if g:is_mac
-    Plug '/usr/local/opt/fzf'
-  else
-    Plug 'junegunn/fzf'
-  endif
-  Plug 'junegunn/fzf.vim'
 call plug#end()
 " }}}
 " Section: SETTINGS {{{
@@ -105,10 +112,11 @@ set tags=./tags,tags,~/.local/share/nvim/include/systags
 
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+
 "}}}
 " Plugin: LIGHTLINE {{{
 "==============================================================================
-let g:lightline = { 'colorscheme': 'dracula' }
+let g:lightline = { 'colorscheme': 'gruvbox' }
 "}}}
 " Plugin: GITGUTTER {{{
 "==============================================================================
@@ -144,101 +152,12 @@ let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_auto_insert_bullets = 0
 
 " }}}
-" Plugin: FZF {{{
+" Settings: NX {{{
 "==============================================================================
-let g:fzf_action = {
-  \ 'ctrl-s': 'split',
-  \ 'ctrl-v': 'vsplit' }
-
-nnoremap <Leader>N :Files<cR>
-nnoremap <Leader>n :GFiles<cr>
-nnoremap <Leader>b :Buffers<cr>
-nnoremap <Leader>E :History<cr>
-nnoremap <Leader>x :Maps<cr>
-nnoremap <Leader>X :Commands<cr>
-
-" Dracula adds the CursorLine highlight to fzf
-let g:fzf_colors =
-  \ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
-
-" Disable preview with windows since fzf.vim internally uses a bash script to
-" render preview window even though I can do the same with cmd using bat
-if g:is_win
-  let g:fzf_preview_window = ''
-endif
-
-function! s:fzf_statusline()
-  " Override statusline as you like
-  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
-  let s:fg = s:palette.normal.middle[0][0]
-  let s:bg = s:palette.normal.middle[0][1]
-  execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
-  execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
-  execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
-  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
-endfunction
-
-autocmd! User FzfStatusLine call <SID>fzf_statusline()
-
-" }}}
-" Plugin: FERRET {{{
-"==============================================================================
-" If you want to do a global replace, you need to search for the term to add it
-" to the ferret quickfix, then all instances in the quickfix will be subject to
-" the replacement matching when using FerretAcks
-let g:FerretMap = 0
-
-" having issues with ferret hanging on windows with nvim using async and job cancel
-" this will disable the async feature to make searches sync on win nvim
-" see: https://github.com/wincent/ferret/issues/60
-if g:is_win && g:is_nvim
-  let g:FerretNvim = 0
-  let g:FerretJob = 0
-endif
-
-" Searches whole project, even through ignored files
-nnoremap \ :Ack<space>
-
-" Search for current word
-nmap * <Plug>(FerretAckWord)
-
-" Need to use <C-U> to escape visual mode and not enter search
-vmap * :<C-U>call <SID>ferret_vack()<CR>
-
-function! s:ferret_vack() abort
-  let l:selection = s:get_visual_selection()
-  for l:char in [' ', '(', ')']
-      let l:selection = escape(l:selection, l:char)
-  endfor
-  execute ':Ack ' . l:selection
-endfunction
-
-" https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
-function! s:get_visual_selection() abort
-  let [line_start, column_start] = getpos("'<")[1:2]
-  let [line_end, column_end] = getpos("'>")[1:2]
-  let lines = getline(line_start, line_end)
-  if len(lines) == 0
-      return ''
-  endif
-  let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-  let lines[0] = lines[0][column_start - 1:]
-  return join(lines, "\n")
-endfunction
-
-" Replace instances matching term in quickfix 'F19 == S-F7'
-nmap <S-F6> <Plug>(FerretAcks)
+augroup nx_logs
+  autocmd!
+  autocmd BufEnter agent-service*.log,base-service*.log,gateway-service*.log,compute-service*.log,control-service*.log setlocal syntax=nxlog
+augroup END
 
 " }}}
 " Settings: NETRW {{{
@@ -249,23 +168,6 @@ let g:netrw_winsize = 25
 let g:netrw_liststyle = 3
 
 " }}}
-" Settings: NVIM {{{
-"==============================================================================
-" Disable python2, ruby, and node providers
-let g:loaded_python_provider = 0
-let g:loaded_ruby_provider = 0
-let g:loaded_perl_provider = 0
-let g:loaded_node_provider = 0
-let g:python3_host_prog = '/usr/bin/python3'
-
-augroup nvim_settings
-  autocmd!
-  autocmd TextYankPost * silent! lua require'vim.highlight'.on_yank()
-  autocmd TermOpen,TermEnter term://* startinsert!
-  autocmd TermEnter term://* setlocal nonumber norelativenumber signcolumn=no
-augroup END
-
-"}}}
 " Settings: MISC {{{
 "==============================================================================
 augroup file_history
@@ -287,28 +189,17 @@ augroup filetype_settings
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
   autocmd BufEnter *.jsh setlocal filetype=java
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
-  " using cmake with 'build' as output directory
-  " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
   autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
 augroup END
 "}}}
 " Settings: COLORSCHEME {{{
 "==============================================================================
-augroup dracula_customization
+augroup gruvbox_customization
   autocmd!
-  autocmd ColorScheme dracula highlight SpellBad gui=undercurl
-  autocmd ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
+  autocmd ColorScheme gruvbox highlight SpellBad gui=undercurl
+  autocmd ColorScheme gruvbox highlight Search guibg=NONE gui=underline term=underline cterm=underline
 augroup END
-
-try
-  let g:dracula_inverse = 0
-  colorscheme dracula
-catch
-  colorscheme default
-endtry
-
-"}}}
+" }}}
 "==============================================================================
 "Yank till end of line
 nnoremap Y y$
@@ -326,30 +217,11 @@ noremap k gk
 " Change pwd to current directory
 nnoremap <leader>cd :cd %:p:h<cr>
 
+" Search for current word but dont jump to next result
+nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 iab ddate <c-r>=strftime("%Y-%m-%d")<cr>
 cab ddate <c-r>=strftime("%Y_%m_%d")<cr>
 iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>
-
-command! -bar -nargs=1 -complete=file WriteQF
-            \ call writefile([json_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
-
-command! -bar -nargs=1 -complete=file ReadQF
-            \ call setqflist([], ' ', json_decode(get(readfile(<f-args>), 0, '')))
-
-" https://www.reddit.com/r/vim/comments/9iwr41/store_quickfix_list_as_a_file_and_load_it/
-function! s:qf_to_filename(qf) abort
-  for i in range(len(a:qf.items))
-    let d = a:qf.items[i]
-    if bufexists(d.bufnr)
-      let d.filename = fnamemodify(bufname(d.bufnr), ':p')
-    endif
-    silent! call remove(d, 'bufnr')
-    let a:qf.items[i] = d
-  endfor
-  return a:qf
-endfunction
-
-command! -nargs=0 Scriptnames
-            \ call fzf#run({'source': split(execute('scriptnames'), '\n'), 'down': '30%'})
