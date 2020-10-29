@@ -152,6 +152,13 @@ let g:fzf_action = {
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
 
+nnoremap <Leader>N :Files<cR>
+nnoremap <Leader>n :GFiles<cr>
+nnoremap <Leader>b :Buffers<cr>
+nnoremap <Leader>E :History<cr>
+nnoremap <Leader>x :Maps<cr>
+nnoremap <Leader>X :Commands<cr>
+
 " Dracula adds the CursorLine highlight to fzf
 let g:fzf_colors =
   \ { 'fg':      ['fg', 'Normal'],
