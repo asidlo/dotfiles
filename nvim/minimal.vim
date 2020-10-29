@@ -86,6 +86,8 @@ set smartcase
 set undofile
 set noshowmode
 set hidden
+set autoread
+set autowrite
 
 set textwidth=119
 set mouse=a
@@ -149,13 +151,6 @@ let g:vim_markdown_auto_insert_bullets = 0
 let g:fzf_action = {
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
-
-nnoremap <Leader>N :Files<cR>
-nnoremap <Leader>n :GFiles<cr>
-nnoremap <Leader>b :Buffers<cr>
-nnoremap <Leader>E :History<cr>
-nnoremap <Leader>x :Maps<cr>
-nnoremap <Leader>X :Commands<cr>
 
 " Dracula adds the CursorLine highlight to fzf
 let g:fzf_colors =
@@ -287,11 +282,47 @@ augroup filetype_settings
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
   autocmd BufEnter *.jsh setlocal filetype=java
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
+
+  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatexpr=JavaFormatexpr()
+  " autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatprg=google-java-format\ -i\ --aosp\ %
+  autocmd BufEnter *.java compiler javac
+
   " using cmake with 'build' as output directory
   " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
   autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
 augroup END
+
+command! JavaImports :call <SID>java_format_imports()
+command! -range JavaFormat <line1>,<line2>call <SID>java_format_cmd()
+
+function! s:java_format_imports() abort
+  let s:cmd = 'google-java-format -a --fix-imports-only ' . expand('%:p')
+  let s:lines = systemlist(s:cmd)
+  call setline(1, s:lines)
+endfunction
+
+function! s:java_format_cmd() range abort
+  if a:firstline == a:lastline
+    echom 'Formatting file: ' . expand('%:p')
+    let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports ' . expand('%:p')
+  else
+    echom 'Formatting lines[' . a:firstline . ' - ' . a:lastline . ']' . ' from file: ' . expand('%:p')
+    let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' ' . expand('%:p')
+  endif
+
+  echom s:cmd
+  let s:lines = systemlist(s:cmd)
+  call setline(1, s:lines)
+endfunction
+
+function! JavaFormatexpr() abort
+  let s:endline = v:lnum + v:count - 1
+  let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . v:lnum . ':' . s:endline . ' ' . expand('%:p')
+  echom s:cmd
+  let s:lines = systemlist(s:cmd)
+  call setline(1, s:lines)
+endfunction
+
 "}}}
 " Settings: COLORSCHEME {{{
 "==============================================================================
