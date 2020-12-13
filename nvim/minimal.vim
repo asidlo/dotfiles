@@ -305,7 +305,15 @@ command! -range JavaFormat <line1>,<line2>call <SID>java_format_cmd()
 function! s:java_format_imports() abort
   let s:cmd = 'google-java-format -a --fix-imports-only ' . expand('%:p')
   let s:lines = systemlist(s:cmd)
-  call setline(1, s:lines)
+  if len(s:lines) != line('$')
+    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
+    if len(getqflist()) != 0
+      copen
+      cfirst
+    endif
+  else
+    setline(1, s:lines)
+  endif
 endfunction
 
 function! s:java_format_cmd() range abort
@@ -317,17 +325,32 @@ function! s:java_format_cmd() range abort
     let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' ' . expand('%:p')
   endif
 
-  echom s:cmd
   let s:lines = systemlist(s:cmd)
-  call setline(1, s:lines)
+  if len(s:lines) != line('$')
+    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
+    if len(getqflist()) != 0
+      copen
+      cfirst
+    endif
+  else
+    setline(1, s:lines)
+  endif
 endfunction
 
 function! JavaFormatexpr() abort
   let s:endline = v:lnum + v:count - 1
   let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . v:lnum . ':' . s:endline . ' ' . expand('%:p')
-  echom s:cmd
   let s:lines = systemlist(s:cmd)
-  call setline(1, s:lines)
+  " google-java-format returns entire buffer regardless of range, so if len is different, errors occured
+  if len(s:lines) != line('$')
+    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
+    if len(getqflist()) != 0
+      copen
+      cfirst
+    endif
+  else
+    setline(1, s:lines)
+  endif
 endfunction
 
 "}}}
