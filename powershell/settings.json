@@ -9,6 +9,8 @@
 {
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "defaultProfile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+    "largePasteWarning": false,
+    "multiLinePasteWarning": false,
     // You can add more global application settings here.
     // To learn more about global settings, visit https://aka.ms/terminal-global-settings
     // If enabled, selections are automatically copied to your clipboard.
@@ -65,7 +67,7 @@
 	        {
                 "guid": "{7445dc20-f8d3-4b63-a200-015e92c7e229}",
                 "name" : "VS2017 Dev", 
-		        "hidden": false,
+		        "hidden": true,
                 "commandline" : "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\Common7\\Tools\\VsDevCmd.bat\"",
                 "icon" : "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\vs2017.png",
                 "startingDirectory" : "%USERPROFILE%",
@@ -88,17 +90,18 @@
                 "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
                 "name": "VS2019 Cmd",
                 "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\"",
-                "icon": "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\vs2019.png",
+                "icon": "%USERPROFILE%\\Workspace\\src\\github.com\\asidlo\\dotfiles\\powershell\\icons\\vs2019.png",
                 "startingDirectory": "%USERPROFILE%",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
             },
             {
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
-		        "hidden": true,
+		        "hidden": false,
                 "name" : "Notes",
-                "commandline" : "powershell -noe -c \"nvim -S .\\AppData\\Local\\nvim-data\\sessions\\notes.vim\"",
-                "icon": "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\notepad.png",
+                // "commandline" : "powershell -noe -c \"nvim -S .\\AppData\\Local\\nvim-data\\sessions\\notes.vim\"",
+                "commandline" : "nvim -S .\\AppData\\Local\\nvim-data\\sessions\\notes.vim",
+                "icon": "%USERPROFILE%\\Workspace\\src\\github.com\\asidlo\\dotfiles\\powershell\\icons\\notepad.png",
                 "startingDirectory" : "%USERPROFILE%",
                 "fontFace": "MesloLGM Nerd Font Mono",
                 "fontSize": 10
