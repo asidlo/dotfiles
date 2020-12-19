@@ -212,6 +212,7 @@ case $OS in
   *$LINUX*)
     export GOROOT=/usr/local/go
     export GOPATH=~/workspace
+    export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
     ;;
 esac
 
