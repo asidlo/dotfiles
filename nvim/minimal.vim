@@ -278,7 +278,7 @@ augroup filetype_settings
   autocmd FileType json syntax match Comment +\/\/.\+$+
   autocmd FileType json setlocal commentstring=//\ %s
   autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
-  autocmd FileType markdown setlocal textwidth=79 tabstop=2 shiftwidth=2
+  autocmd FileType markdown,text setlocal textwidth=79 tabstop=2 shiftwidth=2
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
   autocmd BufEnter *.jsh setlocal filetype=java
