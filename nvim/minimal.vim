@@ -48,6 +48,9 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'jiangmiao/auto-pairs'
   Plug 'vim-scripts/ReplaceWithRegister'
 
+  Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
+
   " Follow symlinks
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
@@ -243,12 +246,21 @@ endfunction
 nmap <S-F6> <Plug>(FerretAcks)
 
 " }}}
+" Plugin: UltiSnips {{{
+"==============================================================================
+" Better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" }}}
 " Settings: NETRW {{{
 "==============================================================================
 let g:netrw_dirhistmax = 0
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
 
 " }}}
 " Settings: NVIM {{{
