@@ -309,6 +309,7 @@ augroup filetype_settings
   " using cmake with 'build' as output directory
   " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
   autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
+  autocmd FileType c,cpp setlocal formatprg=clang-format
   autocmd BufEnter gitconfig setlocal filetype=gitconfig
 augroup END
 
