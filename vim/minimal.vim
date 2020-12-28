@@ -26,7 +26,7 @@ endif
 
 let s:undo_dir = g:vim_dir . '/undo'
 if empty(glob(s:undo_dir))
-  mkdir(s:undo_dir, 'p')
+  call mkdir(s:undo_dir, 'p')
 endif
 
 let mapleader = ','
@@ -220,18 +220,18 @@ if g:is_win
   let g:fzf_preview_window = ''
 endif
 
-function! s:fzf_statusline()
-  " Override statusline as you like
-  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
-  let s:fg = s:palette.normal.middle[0][0]
-  let s:bg = s:palette.normal.middle[0][1]
-  execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
-  execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
-  execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
-  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
-endfunction
+" function! s:fzf_statusline()
+"   " Override statusline as you like
+"   let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
+"   let s:fg = s:palette.normal.middle[0][0]
+"   let s:bg = s:palette.normal.middle[0][1]
+"   execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
+"   execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
+"   execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
+"   setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+" endfunction
 
-autocmd! User FzfStatusLine call <SID>fzf_statusline()
+" autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
 " }}}
 " Plugin: FERRET {{{
