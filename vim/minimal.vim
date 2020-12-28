@@ -9,14 +9,9 @@ let g:is_linux = has('unix') && !has('macunix')
 let g:is_nvim = has('nvim')
 let g:is_gui = has('gui_running')
 
-" Vim on windows doesn't have uname so results in error message even though we
-" already know its not macos
-if !g:is_nvim && g:is_win
-  let g:is_mac = 0
-else
-  " Has some issues with vim detecting macunix/mac
-  let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
-endif
+" Has some issues with vim detecting macunix/mac
+let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
+let g:is_msys = has('unix') && substitute(system('uname -o'), '\n', '', '') == 'Msys'
 
 if g:is_win
   let g:vim_dir = expand('~/vimfiles')
@@ -116,6 +111,7 @@ set autowrite
 set novisualbell
 set belloff=all
 set scrolloff=0
+set laststatus=2
 
 set textwidth=119
 set mouse=a
