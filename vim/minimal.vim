@@ -51,7 +51,7 @@ else
 endif
 
 call plug#begin(expand(g:vim_dir . '/plugged'))
-  Plug 'morhetz/gruvbox'
+  Plug 'dracula/vim', { 'as': 'dracula' }
   Plug 'itchyny/lightline.vim'
 
   Plug 'tpope/vim-fugitive'
@@ -150,7 +150,7 @@ set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 "}}}
 " Plugin: LIGHTLINE {{{
 "==============================================================================
-let g:lightline = { 'colorscheme': 'gruvbox' }
+let g:lightline = { 'colorscheme': 'dracula' }
 "}}}
 " Plugin: GITGUTTER {{{
 "==============================================================================
@@ -220,18 +220,18 @@ if g:is_win
   let g:fzf_preview_window = ''
 endif
 
-" function! s:fzf_statusline()
-"   " Override statusline as you like
-"   let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
-"   let s:fg = s:palette.normal.middle[0][0]
-"   let s:bg = s:palette.normal.middle[0][1]
-"   execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
-"   execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
-"   execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
-"   setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
-" endfunction
+function! s:fzf_statusline()
+  " Override statusline as you like
+  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
+  let s:fg = s:palette.normal.middle[0][0]
+  let s:bg = s:palette.normal.middle[0][1]
+  execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
+  execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
+  execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+endfunction
 
-" autocmd! User FzfStatusLine call <SID>fzf_statusline()
+autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
 " }}}
 " Plugin: FERRET {{{
@@ -387,11 +387,19 @@ endfunction
 "}}}
 " Settings: COLORSCHEME {{{
 "==============================================================================
-augroup gruvbox_customization
+augroup dracula_customization
   autocmd!
-  autocmd ColorScheme gruvbox highlight SpellBad gui=undercurl
-  autocmd ColorScheme gruvbox highlight Search guibg=NONE gui=underline term=underline cterm=underline
+  autocmd ColorScheme dracula highlight SpellBad gui=undercurl
+  autocmd ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
 augroup END
+
+try
+  let g:dracula_inverse = 0
+  colorscheme dracula
+catch
+  colorscheme default
+endtry
+
 " }}}
 "==============================================================================
 "Yank till end of line
