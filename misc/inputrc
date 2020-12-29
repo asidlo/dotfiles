@@ -2,13 +2,13 @@
 # Also need to manually set clink specific settings
 # > clink set history_io 1
 set bell-style none
-set editing-mode vi
-set show-mode-in-prompt on
+# set editing-mode vi
+# set show-mode-in-prompt on
 
 set completion-ignore-case on
 set show-all-if-ambiguous on
 set visible-stats on
 
-set keymap vi-move
-"dd": kill-whole-line
-"yy": copy-line-to-clipboard
+# set keymap vi-move
+# "dd": kill-whole-line
+# "yy": copy-line-to-clipboard
