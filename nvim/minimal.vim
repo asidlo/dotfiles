@@ -61,6 +61,10 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
 
   Plug 'wincent/ferret'
 
+  Plug 'neovim/nvim-lsp'
+  Plug 'neovim/nvim-lspconfig'
+  Plug 'nvim-lua/completion-nvim'
+
   if g:is_mac
     Plug '/usr/local/opt/fzf'
   else
@@ -96,7 +100,8 @@ set textwidth=119
 set mouse=a
 set tabstop=4
 set shiftwidth=4
-set completeopt=menuone,longest
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
 set clipboard=unnamed
 set wildmode=longest:full,full
 set updatetime=100
@@ -216,10 +221,10 @@ endif
 nnoremap \ :Ack<space>
 
 " Search for current word
-nmap * <Plug>(FerretAckWord)
+nmap <F6> <Plug>(FerretAckWord)
 
 " Need to use <C-U> to escape visual mode and not enter search
-vmap * :<C-U>call <SID>ferret_vack()<CR>
+vmap <F6> :<C-U>call <SID>ferret_vack()<CR>
 
 function! s:ferret_vack() abort
   let l:selection = s:get_visual_selection()
@@ -252,6 +257,13 @@ nmap <S-F6> <Plug>(FerretAcks)
 let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" }}}
+" Plugin: VIM-LSC {{{
+"==============================================================================
+let g:completion_enable_snippet = 'UltiSnips'
+let g:completion_matching_strategy_list = ['fuzzy', 'substring', 'exact', 'all']
+let g:completion_matching_ignore_case = 1
 
 " }}}
 " Settings: NETRW {{{
@@ -398,17 +410,14 @@ noremap k gk
 " Change pwd to current directory
 nnoremap <leader>cd :cd %:p:h<cr>
 
+" Search for current word but dont jump to next result
+nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 iab ddate <c-r>=strftime("%Y-%m-%d")<cr>
 cab ddate <c-r>=strftime("%Y_%m_%d")<cr>
 iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>
-
-command! -bar -nargs=1 -complete=file WriteQF
-            \ call writefile([json_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
-
-command! -bar -nargs=1 -complete=file ReadQF
-            \ call setqflist([], ' ', json_decode(get(readfile(<f-args>), 0, '')))
 
 " https://www.reddit.com/r/vim/comments/9iwr41/store_quickfix_list_as_a_file_and_load_it/
 function! s:qf_to_filename(qf) abort
@@ -423,5 +432,13 @@ function! s:qf_to_filename(qf) abort
   return a:qf
 endfunction
 
+command! -bar -nargs=1 -complete=file WriteQF
+            \ call writefile([json_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
+
+command! -bar -nargs=1 -complete=file ReadQF
+            \ call setqflist([], ' ', json_decode(get(readfile(<f-args>), 0, '')))
+
 command! -nargs=0 Scriptnames
             \ call fzf#run({'source': split(execute('scriptnames'), '\n'), 'down': '30%'})
+
+lua require("lsp")
