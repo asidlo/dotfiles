@@ -55,11 +55,6 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
 
-  Plug 'neovim/nvim-lsp'
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'nvim-lua/completion-nvim'
-  Plug 'nvim-lua/lsp_extensions.nvim'
-
   " Need to load before vim-polyglot in order to avoid getting errors like
   " Unknown function: go#config#GoplsMatcher
   " See: https://github.com/fatih/vim-go/issues/2272
@@ -76,7 +71,7 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   if g:is_mac
     Plug '/usr/local/opt/fzf'
   else
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'junegunn/fzf'
   endif
   Plug 'junegunn/fzf.vim'
 call plug#end()
@@ -112,7 +107,7 @@ set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 set clipboard=unnamed
 set wildmode=longest:full,full
-set updatetime=300
+set updatetime=100
 set signcolumn=yes
 set cmdheight=2
 
@@ -196,8 +191,18 @@ if g:is_win
   let g:fzf_preview_window = ''
 endif
 
-" By default uses popup window
-" let g:fzf_layout = { 'down': '40%' }
+function! s:fzf_statusline()
+  " Override statusline as you like
+  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
+  let s:fg = s:palette.normal.middle[0][0]
+  let s:bg = s:palette.normal.middle[0][1]
+  execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
+  execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
+  execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+endfunction
+
+autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
 " }}}
 " Plugin: FERRET {{{
@@ -257,30 +262,6 @@ let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
 " }}}
-" Plugin: VIM-GO {{{
-"==============================================================================
-" Disable go def mapping so we can delegate it to the coc lsp = 0
-let g:go_def_mapping_enabled = 0
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types = 1
-
-" }}}
-" Plugin: NVIM-LSP {{{
-"==============================================================================
-lua require("lsp")
-augroup lsp_settings
-  autocmd!
-  autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
-  autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs
-    \ :lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
-augroup END
-" 
-" }}}
 " Settings: NETRW {{{
 "==============================================================================
 let g:netrw_dirhistmax = 0
@@ -326,11 +307,6 @@ augroup filetype_settings
   autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
   autocmd FileType markdown,text setlocal textwidth=79 tabstop=2 shiftwidth=2
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
-  autocmd BufEnter *.jsh setlocal filetype=java
-
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatexpr=JavaFormatexpr()
-  " autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatprg=google-java-format\ -i\ --aosp\ %
-  autocmd BufEnter *.java compiler javac
 
   " using cmake with 'build' as output directory
   " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
@@ -338,57 +314,6 @@ augroup filetype_settings
   autocmd FileType c,cpp setlocal formatprg=clang-format
   autocmd BufEnter gitconfig setlocal filetype=gitconfig
 augroup END
-
-command! JavaImports :call <SID>java_format_imports()
-command! -range JavaFormat <line1>,<line2>call <SID>java_format_cmd()
-
-function! s:java_format_imports() abort
-  let s:cmd = 'google-java-format -a --fix-imports-only ' . expand('%:p')
-  let s:lines = systemlist(s:cmd)
-  if !v:shell_error
-    call setline(1, s:lines)
-  else
-    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
-    if len(getqflist()) != 0
-      cfirst
-    endif
-  endif
-endfunction
-
-function! s:java_format_cmd() range abort
-  if a:firstline == a:lastline
-    echom 'Formatting file: ' . expand('%:p')
-    let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports ' . expand('%:p')
-  else
-    echom 'Formatting lines[' . a:firstline . ' - ' . a:lastline . ']' . ' from file: ' . expand('%:p')
-    let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' ' . expand('%:p')
-  endif
-
-  let s:lines = systemlist(s:cmd)
-  if !v:shell_error
-    call setline(1, s:lines)
-  else
-    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
-    if len(getqflist()) != 0
-      cfirst
-    endif
-  endif
-endfunction
-
-function! JavaFormatexpr() abort
-  call setqflist([])
-  let s:endline = v:lnum + v:count - 1
-  let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . v:lnum . ':' . s:endline . ' ' . expand('%:p')
-  let s:lines = systemlist(s:cmd)
-  if !v:shell_error
-    call setline(1, s:lines)
-  else
-    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
-    if len(getqflist()) != 0
-      cfirst
-    endif
-  endif
-endfunction
 
 "}}}
 " Settings: COLORSCHEME {{{
@@ -432,3 +357,11 @@ iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 iab ddate <c-r>=strftime("%Y-%m-%d")<cr>
 cab ddate <c-r>=strftime("%Y_%m_%d")<cr>
 iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>
+
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1

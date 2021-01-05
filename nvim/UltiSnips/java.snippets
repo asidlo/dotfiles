@@ -1,0 +1,18 @@
+snippet pkg "package" b
+package `!p
+def get_package_name(base_dir_name):
+  # Get absolute path of the package (without filename)
+  absolute_path = path.split("/")
+  src_dir_index = 0
+
+  # Find index of 'base_dir_name' element
+  while absolute_path[src_dir_index] != base_dir_name:
+    src_dir_index+=1
+
+  # Create a 'package ' string, joining with dots
+  package_string = ".".join(absolute_path[src_dir_index+1:len(absolute_path) - 1])
+  return package_string
+
+# snip.rv is UltiSnips' return value we want to paste between
+snip.rv = get_package_name("java") + ";"`
+endsnippet

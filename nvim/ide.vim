@@ -74,7 +74,6 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'ryanoasis/vim-devicons'
 
   Plug 'majutsushi/tagbar'
-  Plug 'wincent/ferret'
 
   if g:is_mac
     Plug '/usr/local/opt/fzf'
@@ -105,6 +104,8 @@ set smartcase
 set undofile
 set noshowmode
 set hidden
+set autoread
+set autowrite
 
 set textwidth=119
 set mouse=a
@@ -165,55 +166,19 @@ if g:is_win
   let g:fzf_preview_window = ''
 endif
 
-" }}}
-" Plugin: FERRET {{{
-"==============================================================================
-" If you want to do a global replace, you need to search for the term to add it
-" to the ferret quickfix, then all instances in the quickfix will be subject to
-" the replacement matching when using FerretAcks
-let g:FerretMap = 0
-
-" having issues with ferret hanging on windows with nvim using async and job cancel
-" this will disable the async feature to make searches sync on win nvim
-" see: https://github.com/wincent/ferret/issues/60
-if g:is_win && g:is_nvim
-  let g:FerretNvim = 0
-  let g:FerretJob = 0
-endif
-
-" Searches whole project, even through ignored files
-nnoremap \ :Ack<space>
-
-" Search for current word
-nmap <F7> <Plug>(FerretAckWord)
-
-" Need to use <C-U> to escape visual mode and not enter search
-vmap <F7> :<C-U>call <SID>ferret_vack()<CR>
-
-function! s:ferret_vack() abort
-  let l:selection = s:get_visual_selection()
-  for l:char in [' ', '(', ')']
-      let l:selection = escape(l:selection, l:char)
-  endfor
-  execute ':Ack ' . l:selection
+function! s:fzf_statusline()
+  " Override statusline as you like
+  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
+  let s:fg = s:palette.normal.middle[0][0]
+  let s:bg = s:palette.normal.middle[0][1]
+  execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
+  execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
+  execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
 endfunction
 
-" https://stackoverflow.com/questions/1533565/how-to-get-visually-selected-text-in-vimscript
-function! s:get_visual_selection()
-  " Why is this not a built-in Vim script function?!
-  let [line_start, column_start] = getpos("'<")[1:2]
-  let [line_end, column_end] = getpos("'>")[1:2]
-  let lines = getline(line_start, line_end)
-  if len(lines) == 0
-      return ''
-  endif
-  let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
-  let lines[0] = lines[0][column_start - 1:]
-  return join(lines, "\n")
-endfunction
+autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
-" Replace instances matching term in quickfix 'F19 == S-F7'
-nmap <S-F7> <Plug>(FerretAcks)
 
 " }}}
 " Plugin: AIRLINE {{{
@@ -306,7 +271,7 @@ nnoremap <Leader>gd :G diff<CR>
 " Plugin: COC-NVIM {{{
 "==============================================================================
 let g:coc_global_extensions = [ 
-      \ 'coc-json', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls', 'coc-cmake' ]
+      \ 'coc-json', 'coc-vimlsp', 'coc-java', 'coc-snippets', 'coc-rls']
 
 highlight link CocHighlightText CocUnderline
 
@@ -424,6 +389,7 @@ let g:loaded_python_provider = 0
 let g:loaded_ruby_provider = 0
 let g:loaded_perl_provider = 0
 let g:loaded_node_provider = 0
+let g:python3_host_prog = '/usr/bin/python3'
 
 augroup nvim_settings
   autocmd!
@@ -451,15 +417,16 @@ augroup filetype_settings
   autocmd FileType json syntax match Comment +\/\/.\+$+
   autocmd FileType json setlocal commentstring=//\ %s
   autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
-  autocmd FileType markdown setlocal textwidth=79 tabstop=2 shiftwidth=2
+  autocmd FileType markdown,text setlocal textwidth=79 tabstop=2 shiftwidth=2
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
   autocmd BufEnter *.jsh setlocal filetype=java
   autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
 
-  " /usr/local/Cellar/llvm/10.0.0_3/bin/clang++ -Wall -std=c++17 hello.cpp -o hello
   " using cmake with 'build' as output directory
-  autocmd FileType c,cpp setlocal makeprg=make\ -C\ build commentstring=//\ %s
-  " autocmd FileType c,cpp setlocal makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
+  " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
+  autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
+  autocmd FileType c,cpp setlocal formatprg=clang-format
+  autocmd BufEnter gitconfig setlocal filetype=gitconfig
 augroup END
 "}}}
 " Settings: COLORSCHEME {{{
