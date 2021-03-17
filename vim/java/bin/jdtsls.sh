@@ -17,7 +17,7 @@ JDTLS_TARGET_REPO="$WORKSPACE_HOME/lib/eclipse.jdt.ls"
 JDTLS_JAR="$JDTLS_TARGET_REPO/plugins/org.eclipse.equinox.launcher_*.jar"
 JAVA_MAJOR_VERSION=$(java -version 2>&1 | head -n 1 | cut -d' ' -f3 | sed -e 's/^"//g' -e 's/"$//g' | cut -d'.' -f1)
 DEFAULT_DATA_DIR="$HOME/.local/share/eclipse"
-DEBUGGER_SETTINGS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044'
+DEBUGGER_SETTINGS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1045'
 GRADLE_HOME=$(brew --prefix gradle)
 OPT_ARGS="$@"
 
@@ -31,6 +31,7 @@ fi
 if (( $JAVA_MAJOR_VERSION > 8 )); then
     java \
         $DEBUGGER_SETTINGS \
+        -Dsyntaxserver=true \
         -Declipse.application=org.eclipse.jdt.ls.core.id1 \
         -Dosgi.bundles.defaultStartLevel=4 \
         -Declipse.product=org.eclipse.jdt.ls.core.product \
@@ -48,6 +49,7 @@ if (( $JAVA_MAJOR_VERSION > 8 )); then
 elif (( $JAVA_MAJOR_VERSION == 8 )); then
     java \
         $DEBUGGER_SETTINGS \
+        -Dsyntaxserver=true \
         -Declipse.application=org.eclipse.jdt.ls.core.id1 \
         -Dosgi.bundles.defaultStartLevel=4 \
         -Declipse.product=org.eclipse.jdt.ls.core.product \

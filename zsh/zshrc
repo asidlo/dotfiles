@@ -1,6 +1,24 @@
 #==============================================================================
 # Author: Andrew Sidlo
 #==============================================================================
+# Plugins {{{
+#==============================================================================
+export PATH=$PATH:/usr/local/bin
+
+# Fix for wsl setting umask to 0000
+if test umask != '022'; then
+  umask 022
+fi
+
+if ! (( $+commands[antibody] )); then
+  >&2 echo "Antibody not found. Install antibody and add it to PATH"
+  return 1
+fi
+
+source <(antibody init)
+antibody bundle < ~/.zsh_plugins.txt
+
+# }}}
 # Variables {{{
 #==============================================================================
 local OS=$(uname -a)
@@ -32,35 +50,25 @@ zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43
 # }}}
 # Vim-Mode {{{
 #==============================================================================
-bindkey -v
-vim_ins_mode="%{$fg[yellow]%}[INS]%{$reset_color%}"
-vim_cmd_mode="%{$fg[cyan]%}[CMD]%{$reset_color%}"
-vim_mode=$vim_ins_mode
-
-function zle-keymap-select {
-    vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
-    zle reset-prompt
-}
-zle -N zle-keymap-select
-
-function zle-line-finish {
-    vim_mode=$vim_ins_mode
-}
-zle -N zle-line-finish
-
-# Make Vi mode transitions faster (KEYTIMEOUT is in hundredths of a second)
-# 0.6 is slower than 1
-export KEYTIMEOUT=1
-
-# Better searching in command mode
-bindkey -M vicmd '/' fzf-history-widget
-
-
-# Use C-F to complete recent command
-# Note: need to use -s if binding to non widget, in this case we are binding to
-# the right arrow key. You can discover key bindings by hitting <C-V><KEYCOMBO>
-# in the terminal.
-bindkey -s '^F' '^[[C' 
+# bindkey -v
+# vim_ins_mode="%{$fg[yellow]%}[INS]%{$reset_color%}"
+# vim_cmd_mode="%{$fg[cyan]%}[CMD]%{$reset_color%}"
+# vim_mode=$vim_ins_mode
+# 
+# function zle-keymap-select {
+#     vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
+#     zle reset-prompt
+# }
+# zle -N zle-keymap-select
+# 
+# function zle-line-finish {
+#     vim_mode=$vim_ins_mode
+# }
+# zle -N zle-line-finish
+# 
+# # Make Vi mode transitions faster (KEYTIMEOUT is in hundredths of a second)
+# # 0.6 is slower than 1
+# export KEYTIMEOUT=1
 
 # }}}
 # Completion {{{
@@ -70,6 +78,12 @@ autoload -U compinit && compinit
 
 # Highlight menu selection
 zstyle ':completion:*' menu select
+
+# Use C-F to complete recent command
+# Note: need to use -s if binding to non widget, in this case we are binding to
+# the right arrow key. You can discover key bindings by hitting <C-V><KEYCOMBO>
+# in the terminal.
+bindkey -s '^F' '^[[C' 
 
 # }}}
 # Keybindings {{{
@@ -83,6 +97,9 @@ bindkey '^[c' fzf-cd-widget
 
 bindkey '' fzf-file-widget
 bindkey '' fzf-history-widget 
+
+# Better searching in command mode
+bindkey -M vicmd '/' fzf-history-widget
 
 # }}}
 # Pushd {{{
@@ -124,39 +141,18 @@ autoload -U add-zsh-hook
 setopt prompt_subst     # allow funky stuff in prompt
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git*' formats " (%b) %m%u%c "
-zstyle ':vcs_info:git*' check-for-changes false
-zstyle ':vcs_info:git*' get-revision true
-zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
-
-# https://github.com/zsh-users/zsh/blob/master/Misc/vcs_info-examples
-+vi-git-untracked(){
-    if [[ $(git rev-parse --is-inside-work-tree 2> /dev/null) == 'true' ]] && \
-        git status --porcelain | grep '??' &> /dev/null ; then
-        # This will show the marker if there are any untracked files in repo.
-        # If instead you want to show the marker only if there are untracked
-        # files in $PWD, use:
-        #[[ -n $(git ls-files --others --exclude-standard) ]] ; then
-        hook_com[staged]+='T'
-    fi
-}
+zstyle ':vcs_info:git*' formats " on %{$fg[green]%}%b%{$reset_color%}"
 
 precmd() { vcs_info }
 
 # Use % as the non-root prompt character; # for root
 # Change the prompt character color if the last command had a nonzero exit code
+# Add back %~%u instead of $(shrink_path -f) if removing the shrink_path plugin
+
+# PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}$(shrink_path -f)%{$reset_color%}${vcs_info_msg_0_}
+# $vim_mode %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
 PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u%{$reset_color%}${vcs_info_msg_0_}
-$vim_mode %(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
-
-# }}}
-# Misc {{{
-#==============================================================================
-export PATH=$PATH:/usr/local/bin
-
-# Fix for wsl setting umask to 0000
-if test umask != '022'; then
-  umask 022
-fi
+%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
 
 # }}}
 # Exports {{{
@@ -210,8 +206,11 @@ fi
 
 case $OS in
   *$MAC*)
-    export GOROOT=(/usr/local/Cellar/go/*/libexec)
+    # brew --prefix gradle
+    export GOROOT=/usr/local/opt/go/libexec
     export GOPATH=~/Workspace
+    export JAVA_HOME=$(/usr/libexec/java_home)
+    export GRADLE_HOME=/usr/local/opt/gradle
     ;;
   *$LINUX*)
     export GOROOT=/usr/local/go
@@ -226,6 +225,10 @@ esac
 
 export CARGO_HOME=~/.cargo
 export PATH=$PATH:$CARGO_HOME/bin
+
+export NNN_PLUG='o:fzopen;c:fzcd;p:preview-tui'
+export NNN_FCOLORS='c1e2042e006033f7c6d6abc4'
+export NNN_FIFO='/tmp/nnn.fifo'
 
 # }}}
 # Aliases {{{
@@ -253,21 +256,7 @@ case $OS in
     ;;
 esac
 
-# }}}
-# Plugins {{{
-#==============================================================================
-if ! (( $+commands[antibody] )); then
-  >&2 echo "Antibody not found. Install antibody and add it to PATH"
-  return 1
-fi
-
-source <(antibody init)
-antibody bundle < ~/.zsh_plugins.txt
-
-# Abbreviations using plugin 'momo-lab/zsh-abbrev-alias'
-abbrev-alias -g g='git'
-abbrev-alias -g py='python'
-abbrev-alias -g py3='python3'
+alias nnn='nnn -de'
 
 # }}}
 #==============================================================================
