@@ -1,7 +1,7 @@
 local ts = require('nvim-treesitter.configs')
 
 ts.setup{
-  ensure_installed = {'java', 'go', 'lua', 'rust', 'c', 'cpp', 'json', 'bash', 'python', 'jsonc' },
+  -- ensure_installed = {'java', 'lua'},
   highlight = {
     enable = true,
   },

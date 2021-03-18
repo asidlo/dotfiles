@@ -23,6 +23,7 @@
     // To learn more about profiles, visit https://aka.ms/terminal-profile-settings
     // "disabledProfileSources": ["Windows.Terminal.Azure"],
     "theme": "dark",
+    "bellStyle": "none",
     "profiles": {
         "defaults": {
             "colorScheme": "Dracula"
@@ -53,7 +54,7 @@
                 "source": "Windows.Terminal.Wsl",
                 "commandline": "wsl.exe ~ -d Ubuntu",
                 "fontFace": "MesloLGM Nerd Font Mono",
-                "fontSize": 10
+                "fontSize": 11
             },
             {
                 "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
