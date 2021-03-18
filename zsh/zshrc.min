@@ -1,0 +1,49 @@
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+setopt autocd 
+setopt extendedglob 
+setopt nomatch 
+setopt notify 
+setopt auto_pushd 
+setopt pushd_ignore_dups 
+setopt pushd_silent 
+setopt pushd_to_home
+setopt append_history 
+setopt hist_ignore_all_dups
+setopt hist_reduce_blanks
+setopt hist_verify 
+setopt inc_append_history
+setopt share_history 
+setopt hist_ignore_space
+setopt bang_hist
+unsetopt hist_ignore_space
+setopt chase_links
+setopt correct
+setopt extended_glob
+setopt glob_dots
+unsetopt rm_star_silent
+unsetopt beep
+bindkey -e
+autoload -Uz compinit && compinit
+autoload -U colors && colors
+setopt prompt_subst
+PS1='%{$fg[cyan]%}%n%{$reset_color%} at %{$fg[magenta]%}%m%{$reset_color%} in %{$fg[blue]%}%~%u%{$reset_color%}
+%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} '
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+if ! (( $+commands[antibody] )); then
+  >&2 echo "Antibody not found. Install antibody and add it to PATH"
+  return 1
+fi
+
+source <(antibody init)
+antibody bundle zsh-users/zsh-completions 
+antibody bundle zsh-users/zsh-syntax-highlighting
+antibody bundle zsh-users/zsh-history-substring-search
+antibody bundle zsh-users/zsh-autosuggestions
+
+[ -f ~/.zsh_aliases ] && source ~/.zsh_aliases
