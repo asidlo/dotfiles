@@ -1,0 +1,2 @@
+export JAVA_HOME=/opt/zulu11.38.12-sa-fx-jdk11.0.6.0.101-linux_x64
+export PATH=$PATH:$JAVA_HOME/bin

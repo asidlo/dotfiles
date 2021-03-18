@@ -45,5 +45,3 @@ antibody bundle zsh-users/zsh-completions
 antibody bundle zsh-users/zsh-syntax-highlighting
 antibody bundle zsh-users/zsh-history-substring-search
 antibody bundle zsh-users/zsh-autosuggestions
-
-[ -f ~/.zsh_aliases ] && source ~/.zsh_aliases
