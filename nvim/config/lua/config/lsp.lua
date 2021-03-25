@@ -73,7 +73,8 @@ end
 -- see :h lsp-handler
 -- function(err, method, result, client_id, bufnr, config)
 local status_callback = vim.schedule_wrap(function(_, _, result)
-  vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
+  -- vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
+  print(result.message)
 end)
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -104,7 +105,7 @@ lspconfig.gopls.setup{
 lspconfig.jdtls.setup{
   cmd = { 'jdtls.sh' },
   on_attach = on_attach,
-  root_dir = lspconfig.util.root_pattern('.git', 'gradlew', 'mvnw'),
+  root_dir = lspconfig.util.root_pattern('.git', 'gradlew', 'mvnw', '.java', '.groovy', '.gradle'),
   handlers = {
     ['language/status'] = status_callback,
   },

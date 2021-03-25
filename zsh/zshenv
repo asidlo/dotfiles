@@ -1,4 +1,35 @@
-export JAVA_HOME=/opt/zulu11.38.12-sa-fx-jdk11.0.6.0.101-linux_x64
-export PATH=$PATH:$JAVA_HOME/bin
-export PATH=$PATH:~/.local/bin
+local OS=$(uname -a)
+local MAC='Darwin'
+local LINUX='Linux'
+
+if (( $+commands[tree] )); then
+  alias tree='tree -C'
+fi
+
+case $OS in
+  *$MAC*)
+    alias ls='ls -G'
+    alias copy='pbcopy'
+    alias ctags=/usr/local/opt/universal-ctags/bin/ctags
+    ;;
+  *$LINUX*)
+    alias copy='xclip -selection -c'
+    alias ls='ls --color=auto'
+    alias fd='fdfind'
+    alias bat='batcat'
+	export JAVA_HOME=/opt/java/zulu11.38.12-sa-fx-jdk11.0.6.0.101
+	export GRADLE_HOME=/opt/gradle/6.8.3
+	export PATH=/opt/bin:$PATH
+    ;;
+esac
+
+alias ll='ls -AlFG'
+alias l='ls'
+alias la='ls -AG'
+alias grep='grep --color=auto'
+alias cls='clear'
+
+[[ -v $GRADLE_HOME ]] && export PATH=$GRADLE_HOME/bin:$PATH
+[[ -v $JAVA_HOME ]] && export PATH=$JAVA_HOME/bin:$PATH
+
 source "$HOME/.cargo/env"

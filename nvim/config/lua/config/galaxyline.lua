@@ -61,30 +61,30 @@ local ts_statusline = function(config)
   return ' ' .. string.format('%s', vim.fn['nvim_treesitter#statusline'](config))
 end
 
-gls.left[6] = {
-  Treesitter = {
-    -- remember to increase the string length
-    -- icon filename.ext > icon class > icon function
-    condition =  function() return vim.fn['nvim_treesitter#statusline']() ~= vim.NIL end,
-    provider = ts_statusline,
-    highlight = {colors.green,colors.bg,'bold'}
-  }
-}
-
 -- gls.left[6] = {
---   Vista = {
---     provider = function() return ext.vista_nearest(' ') end,
---     condition = function()
---       for _, client in ipairs(lsp_clients()) do
---         if has_document_symbol_support(client) or has_document_definition_support(client) then
---           return true
---         end
---       end
---       return false
---     end,
+--   Treesitter = {
+--     -- remember to increase the string length
+--     -- icon filename.ext > icon class > icon function
+--     condition =  function() return vim.fn['nvim_treesitter#statusline']() ~= vim.NIL end,
+--     provider = ts_statusline,
 --     highlight = {colors.green,colors.bg,'bold'}
 --   }
 -- }
+
+gls.left[6] = {
+  Vista = {
+    provider = function() return ext.vista_nearest(' ') end,
+    condition = function()
+      for _, client in ipairs(lsp_clients()) do
+        if has_document_symbol_support(client) or has_document_definition_support(client) then
+          return true
+        end
+      end
+      return false
+    end,
+    highlight = {colors.green,colors.bg,'bold'}
+  }
+}
 
 -- gls.left[8] = {
 --   DiagnosticError = {
