@@ -77,7 +77,7 @@ gls.left[6] = {
     condition = function()
       for _, client in ipairs(lsp_clients()) do
         if has_document_symbol_support(client) or has_document_definition_support(client) then
-          return true
+          return ext.vista_nearest('') ~= ''
         end
       end
       return false

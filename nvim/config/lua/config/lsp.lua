@@ -47,6 +47,10 @@ local on_attach = function(client, _)
     vim.api.nvim_buf_set_keymap(0, 'n', 'g=', '<Cmd>lua vim.lsp.buf.formatting()<CR>', {noremap = true, silent = true})
   end
 
+	if has_document_definition_support(client) or has_document_symbol_support(client) then
+		vim.fn['vista#RunForNearestMethodOrFunction']()
+	end
+
   vim.api.nvim_buf_set_option(0, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
   vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
