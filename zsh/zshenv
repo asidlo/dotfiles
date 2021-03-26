@@ -11,6 +11,8 @@ case $OS in
     alias ls='ls -G'
     alias copy='pbcopy'
     alias ctags=/usr/local/opt/universal-ctags/bin/ctags
+	export PATH=$PATH:/usr/local/bin
+	export JAVA_HOME=$(/usr/libexec/java_home)
     ;;
   *$LINUX*)
     alias copy='xclip -selection -c'
@@ -19,17 +21,54 @@ case $OS in
     alias bat='batcat'
 	export JAVA_HOME=/opt/java/zulu11.38.12-sa-fx-jdk11.0.6.0.101
 	export GRADLE_HOME=/opt/gradle/6.8.3
-	export PATH=/opt/bin:$PATH
+	export PATH=$GRADLE_HOME/bin:$PATH
+	export PATH=$JAVA_HOME/bin:$PATH
     ;;
 esac
+
+if (( $+commands[nvim] )); then
+  export VISUAL=nvim
+  export EDITOR=nvim
+else
+  export VISUAL=vim
+  export EDITOR=vim
+fi
+
+export GOPATH=$HOME/.local/go
+export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:$HOME/.local/bin
+export NNN_PLUG='o:fzopen;c:fzcd;p:preview-tui'
+export NNN_FCOLORS='c1e2042e006033f7c6d6abc4'
+export NNN_FIFO='/tmp/nnn.fifo'
+
+if (( $+commands[fd] )) && (( $+commands[fzf] )) && (( $+commands[bat] )); then
+  export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
+  export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | fd --type f --type l $FD_OPTS"
+  export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+  export FZF_ALT_C_COMMAND="fd --type d $FD_OPTS"
+  export FZF_DEFAULT_OPTS="
+	--color=fg:#c2bebe,bg:-1,hl:#8be9fd
+	--color=fg+:#f8f8f2,bg+:-1,hl+:#ff79c6
+	--color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
+	--color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
+	--height 50% -1 --reverse --multi --inline-info
+	--preview='bat --color=always --style=numbers {}'
+	--preview-window='right:hidden'
+	--bind='F2:toggle-preview'
+	--bind='ctrl-d:half-page-down'
+	--bind='ctrl-u:half-page-up'
+	--bind='ctrl-a:select-all+accept'
+	--bind='ctrl-y:execute-silent(echo {+} | copy)'
+  "
+else
+  >&2 echo "[fzf|fd|bat]+ not found. Install all and add to PATH" 
+fi
 
 alias ll='ls -AlFG'
 alias l='ls'
 alias la='ls -AG'
 alias grep='grep --color=auto'
 alias cls='clear'
-
-[[ -v $GRADLE_HOME ]] && export PATH=$GRADLE_HOME/bin:$PATH
-[[ -v $JAVA_HOME ]] && export PATH=$JAVA_HOME/bin:$PATH
+alias nnn='nnn -de'
 
 source "$HOME/.cargo/env"

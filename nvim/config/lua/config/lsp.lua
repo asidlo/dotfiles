@@ -84,6 +84,14 @@ end)
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+-- https://github.com/neovim/neovim/issues/12970
+vim.lsp.util.apply_text_document_edit = function(text_document_edit, index)
+	local text_document = text_document_edit.textDocument
+	local bufnr = vim.uri_to_bufnr(text_document.uri)
+
+	vim.lsp.util.apply_text_edits(text_document_edit.edits, bufnr)
+end
+
 lspconfig.rust_analyzer.setup{
   on_attach = on_attach,
   capabilities = capabilities

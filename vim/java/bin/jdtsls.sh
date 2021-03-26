@@ -13,7 +13,7 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 WORKSPACE_HOME=$(dirname $SCRIPT_DIR)
 
-JDTLS_TARGET_REPO="$WORKSPACE_HOME/share/eclipse.jdt.ls"
+JDTLS_TARGET_REPO="/opt/eclipse.jdt.ls"
 JDTLS_JAR="$JDTLS_TARGET_REPO/plugins/org.eclipse.equinox.launcher_*.jar"
 JAVA_MAJOR_VERSION=$(java -version 2>&1 | head -n 1 | cut -d' ' -f3 | sed -e 's/^"//g' -e 's/"$//g' | cut -d'.' -f1)
 DEFAULT_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share/eclipse}"

@@ -101,6 +101,7 @@ set signcolumn=yes
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 set listchars=tab:>-,trail:-,nbsp:+
+set cmdheight=2
 
 "}}}
 " Plugin: GITGUTTER {{{
