@@ -117,7 +117,7 @@ gls.left[6] = {
 --   }
 -- }
 
--- gls.mid[1] = {
+-- gls.right[1] = {
 --   ShowLspClient = {
 --     provider = 'GetLspClient',
 --     condition = function ()
@@ -128,18 +128,18 @@ gls.left[6] = {
 --       return true
 --     end,
 --     icon = ' LSP:',
---     highlight = {colors.yellow,colors.bg,'bold'}
+--     highlight = {colors.yellow,colors.bg},
 --   }
 -- }
 
-gls.right[1] = {
+gls.right[2] = {
   DiagnosticError = {
     provider = 'DiagnosticError',
     icon = ' ',
     highlight = {colors.red,colors.bg}
   }
 }
-gls.right[2] = {
+gls.right[3] = {
   DiagnosticWarn = {
     provider = 'DiagnosticWarn',
     icon = ' ',
@@ -147,7 +147,7 @@ gls.right[2] = {
   }
 }
 
-gls.right[3] = {
+gls.right[4] = {
   DiagnosticHint = {
     provider = 'DiagnosticHint',
     icon = ' ',
@@ -155,7 +155,7 @@ gls.right[3] = {
   }
 }
 
-gls.right[4] = {
+gls.right[5] = {
   DiagnosticInfo = {
     provider = 'DiagnosticInfo',
     icon = ' ',
@@ -163,7 +163,7 @@ gls.right[4] = {
   }
 }
 
-gls.right[5] = {
+gls.right[6] = {
   GitIcon = {
     provider = function() return ' ' end,
     -- condition = function() return vim.bo.filetype ~= 'help' or condition.check_git_workspace end,
@@ -173,7 +173,7 @@ gls.right[5] = {
   }
 }
 
-gls.right[6] = {
+gls.right[7] = {
   GitBranch = {
     provider = function() return trim(vcs.get_git_branch()) end,
     condition = condition.check_git_workspace,
@@ -181,7 +181,7 @@ gls.right[6] = {
   }
 }
 
-gls.right[7] = {
+gls.right[8] = {
   DiffAdd = {
     provider = function() return trim(vcs.diff_add()) end,
     condition = condition.hide_in_width,
@@ -189,7 +189,7 @@ gls.right[7] = {
     highlight = {colors.green,colors.bg},
   }
 }
-gls.right[8] = {
+gls.right[9] = {
   DiffModified = {
     provider = function() return trim(vcs.diff_modified()) end,
     condition = condition.hide_in_width,
@@ -197,7 +197,7 @@ gls.right[8] = {
     highlight = {colors.orange,colors.bg},
   }
 }
-gls.right[9] = {
+gls.right[10] = {
   DiffRemove = {
     provider = function() return trim(vcs.diff_remove()) end,
     condition = condition.hide_in_width,
@@ -206,7 +206,7 @@ gls.right[9] = {
   }
 }
 
-gls.right[10] = {
+gls.right[11] = {
   LineInfo = {
     provider = 'LineColumn',
     separator_highlight = {'NONE',colors.bg},
@@ -215,7 +215,7 @@ gls.right[10] = {
   },
 }
 
-gls.right[11] = {
+gls.right[12] = {
   Percent = {
     provider = function() return trim(fileinfo.current_line_percent()) end,
     separator_highlight = {'NONE',colors.bg},
@@ -224,7 +224,7 @@ gls.right[11] = {
   }
 }
 
-gls.right[12] = {
+gls.right[13] = {
   FileEncode = {
     provider = function() return trim(fileinfo.get_file_encode()) end,
     condition = condition.hide_in_width and condition.buffer_not_empty,
@@ -234,7 +234,7 @@ gls.right[12] = {
   }
 }
 
-gls.right[13] = {
+gls.right[14] = {
   FileFormat = {
     provider = 'FileFormat',
     condition = condition.hide_in_width and condition.buffer_not_empty,
@@ -244,7 +244,7 @@ gls.right[13] = {
   }
 }
 
-gls.right[14] = {
+gls.right[15] = {
   RightBar = {
     provider = function() return '▊' end,
     separator = ' ',
