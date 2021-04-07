@@ -135,6 +135,28 @@ lspconfig.jdtls.setup{
   }
 }
 
+-- lspconfig.efm.setup {
+-- 	filetypes = { 'lua' },
+-- 	init_options = { documentFormatting = true },
+-- 	handlers = {
+-- 		['textDocument/formatting'] = function()
+-- 			local buf = vim.api.nvim_get_current_buf()
+-- 			local bufname = vim.api.nvim_buf_get_name(buf)
+-- 			local lines = vim.fn.systemlist('lua-format '..bufname)
+-- 			vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+-- 		end
+-- 	},
+-- 	-- settings = {
+-- 	-- 	rootMarkers = { '.git/' },
+-- 	-- 	languages = {
+-- 	-- 		lua = {
+-- 	-- 			formatCommand = 'lua-format -i --no-keep-simple-function-one-line --no-break-after-operator --column-limit=150 --break-after-table-1b',
+-- 	-- 			formatStdin = true
+-- 	-- 		}
+-- 	-- 	}
+-- 	-- }
+-- }
+
 local system_name
 if vim.fn.has("mac") == 1 then
   system_name = "macOS"

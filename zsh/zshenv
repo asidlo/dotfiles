@@ -15,7 +15,7 @@ case $OS in
     alias ls='ls --color=auto'
     alias fd='fdfind'
     alias bat='batcat'
-	export JAVA_HOME=/opt/java/zulu11.38.12-sa-fx-jdk11.0.6.0.101
+	export JAVA_HOME=/opt/java/zulu8.52.0.24-sa-jdk8.0.282
 	export GRADLE_HOME=/opt/gradle/6.8.3
     ;;
 esac
@@ -55,6 +55,10 @@ export PATH=$PATH:$GOPATH/bin
 [[ -v GRADLE_HOME ]] && export PATH=$PATH:$GRADLE_HOME/bin
 
 export PATH=$PATH:~/.local/bin
+
+# Add docker to path if using wsl
+local DOCKER_HOME=/mnt/c/ProgramData/DockerDesktop
+[[ $(uname -r) =~ "WSL" ]] && [ -d $DOCKER_HOME ] && export PATH=$PATH:$DOCKER_HOME/version-bin
 
 # Fd, bat, fzf
 if [[ $OS =~ $LINUX ]]; then
