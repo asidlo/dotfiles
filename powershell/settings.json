@@ -8,7 +8,7 @@
 // For documentation on these settings, see: https://aka.ms/terminal-documentation
 {
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "defaultProfile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+    "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
     "largePasteWarning": false,
     "multiLinePasteWarning": false,
     // You can add more global application settings here.
@@ -23,7 +23,7 @@
     // To learn more about profiles, visit https://aka.ms/terminal-profile-settings
     // "disabledProfileSources": ["Windows.Terminal.Azure"],
     "theme": "dark",
-    "bellStyle": "none",
+	"bellStyle": "none",
     "profiles": {
         "defaults": {
             "colorScheme": "Dracula"
@@ -68,7 +68,7 @@
 	        {
                 "guid": "{7445dc20-f8d3-4b63-a200-015e92c7e229}",
                 "name" : "VS2017 Dev", 
-		        "hidden": true,
+		        "hidden": false,
                 "commandline" : "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\Common7\\Tools\\VsDevCmd.bat\"",
                 "icon" : "%USERPROFILE%\\Documents\\dotfiles\\powershell\\icons\\vs2017.png",
                 "startingDirectory" : "%USERPROFILE%",
@@ -90,6 +90,7 @@
             {
                 "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
                 "name": "VS2019 Cmd",
+				"hidden": true,
                 "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\"",
                 "icon": "%USERPROFILE%\\Workspace\\src\\github.com\\asidlo\\dotfiles\\powershell\\icons\\vs2019.png",
                 "startingDirectory": "%USERPROFILE%",
@@ -193,7 +194,7 @@
         {
             "command": {
                 "action": "newTab",
-                "profile": "Ubuntu"
+                "profile": "Windows PowerShell"
             },
             "keys": "ctrl+alt+t"
         },
