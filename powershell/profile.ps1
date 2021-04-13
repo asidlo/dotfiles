@@ -5,7 +5,8 @@
 # Import Powershell Modules
 Import-Module PSReadLine 
 Import-Module posh-git           # Install with: `Install-Module -Name posh-git`
-Import-Module Get-ChildItemColor 
+Import-Module Get-ChildItemColor # could add -Scope CurrentUser for local install non admin
+Import-Module DockerCompletion
 # Import-Module pscx
 
 # How to see all functions provided by a module
