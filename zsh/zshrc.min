@@ -151,3 +151,5 @@ PROMPT+=$'\n'                                                        # newline
 PROMPT+='%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} ' # % (red if error white otherwise)
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
+
+alias luamake=/Users/asidlo/.local/src/lua-language-server/3rd/luamake/luamake

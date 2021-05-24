@@ -9,6 +9,7 @@ case $OS in
     alias ctags=/usr/local/opt/universal-ctags/bin/ctags
 	export PATH=$PATH:/usr/local/bin
 	export JAVA_HOME=$(/usr/libexec/java_home)
+	export GOROOT=/usr/local/opt/go/libexec
     ;;
   *$LINUX*)
     alias copy='xclip -selection -c'
@@ -17,6 +18,7 @@ case $OS in
     alias bat='batcat'
 	export JAVA_HOME=/opt/java/zulu8.52.0.24-sa-jdk8.0.282
 	export GRADLE_HOME=/opt/gradle/6.8.3
+	export GOROOT=/opt/go
     ;;
 esac
 
@@ -47,7 +49,6 @@ export NNN_FCOLORS='c1e2042e006033f7c6d6abc4'
 export NNN_FIFO='/tmp/nnn.fifo'
 
 export GOPATH=$HOME/.local/go
-export GOROOT=/opt/go
 export PATH=$PATH:$GOROOT/bin
 export PATH=$PATH:$GOPATH/bin
 
@@ -55,10 +56,6 @@ export PATH=$PATH:$GOPATH/bin
 [[ -v GRADLE_HOME ]] && export PATH=$PATH:$GRADLE_HOME/bin
 
 export PATH=$PATH:~/.local/bin
-
-# Add docker to path if using wsl
-local DOCKER_HOME=/mnt/c/ProgramData/DockerDesktop
-[[ $(uname -r) =~ "WSL" ]] && [ -d $DOCKER_HOME ] && export PATH=$PATH:$DOCKER_HOME/version-bin
 
 # Fd, bat, fzf
 if [[ $OS =~ $LINUX ]]; then
