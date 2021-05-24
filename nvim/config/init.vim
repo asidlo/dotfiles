@@ -19,7 +19,10 @@ endif
 
 call plug#begin(expand(stdpath('data') . '/plugged'))
 	Plug 'dracula/vim', { 'as': 'dracula' }
-	Plug 'glepnir/galaxyline.nvim', {'branch': 'main'}
+	" Plug 'glepnir/galaxyline.nvim', {'branch': 'main'}
+	" Plug 'hoob3rt/lualine.nvim'
+	Plug 'vim-airline/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
 
 	Plug 'tpope/vim-fugitive'
 	Plug 'tpope/vim-commentary'
@@ -57,13 +60,17 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
 
 	Plug 'glepnir/lspsaga.nvim'
 
-	Plug 'liuchengxu/vista.vim'
+	" Plug 'liuchengxu/vista.vim'
+	Plug 'simrat39/symbols-outline.nvim'
 
 	Plug 'hrsh7th/nvim-compe'
 	Plug 'norcalli/snippets.nvim'
 
 	Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 	Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+
+	Plug 'folke/which-key.nvim'
+	Plug 'folke/lua-dev.nvim'
 
 call plug#end()
 
@@ -102,6 +109,9 @@ set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 set listchars=tab:>-,trail:-,nbsp:+
 set cmdheight=2
+set timeoutlen=500
+
+setlocal spell spelllang=en_us
 
 "}}}
 " Plugin: GITGUTTER {{{
@@ -220,11 +230,81 @@ set foldexpr=nvim_treesitter#foldexpr()
 "==============================================================================
 nnoremap <C-n> :NvimTreeToggle<CR>
 let g:nvim_tree_width_allow_resize = 1
+let g:nvim_tree_show_icons = {
+			\ 'git': 0,
+			\ 'folders': 1,
+			\ 'files': 1
+			\}
+
+" }}}
+" Plugin: AIRLINE {{{
+"==============================================================================
+let g:airline_theme='dracula'
+
+let g:airline_detect_spell=0
+let g:airline_powerline_fonts = 1
+" let g:airline_symbols_ascii = 1
+
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+" Disable tagbar for performance
+let g:airline#extensions#tagbar#enabled = 0
+
+let g:airline#extensions#nvimlsp#enabled = 1
+
+if !exists('g:airline_symbols')
+let g:airline_symbols = {}
+endif
+
+" let g:airline_symbols.whitespace='_'
+let g:airline_symbols.whitespace=''
+let g:airline_symbols.linenr = ''
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.notexists = ' ??'
+
+" let g:airline_symbols.space = "\ua0"
+
+" powerline symbols
+" https://www.nerdfonts.com/cheat-sheet
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+" let g:airline_symbols.branch = '@'
+let g:airline_symbols.readonly = ''
+" let g:airline_symbols.linenr = ''
+" let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.dirty=' M'
+" let g:airline_symbols.whitespace='/s'
+" let g:airline_symbols.crypt='0x'
+" let g:airline_symbols.notexists=' ?'
+
+" let airline#extensions#ale#show_line_numbers = 0
+" let g:airline#extensions#ale#warning_symbol = "\uf071 "
+" let g:airline#extensions#ale#error_symbol = "\uf05e "
+" let g:lightline#ale#indicator_checking = "\uf110"
+" let g:lightline#ale#indicator_infos = "\uf129 "
+" let g:lightline#ale#indicator_ok = "\uf00c"
+
+let g:airline#extensions#default#section_truncate_width = {
+	\ 'c': 50,
+	\ }
+
+let g:airline#extensions#tabline#fnamemod = ':t'
+
+"Reduces the space occupied by section z
+let g:airline_section_z = "%3p%% %l:%c"
+
+" }}}
+" Plugin: LUALINE {{{
+"==============================================================================
+" lua require('config.lualine')
 
 " }}}
 " Plugin: GALAXYLINE {{{
 "==============================================================================
-lua require('config.galaxyline')
+" lua require('config.galaxyline')
 
 " }}}
 " Plugin: LSP-CONFIG {{{
@@ -242,17 +322,31 @@ lua require('config.lspsaga')
 lua require('config.nvim-compe')
 
 " }}}
+" Plugin: WHICH-KEY {{{
+"==============================================================================
+lua require('config.which-key')
+
+" }}}
+" Plugin: SYMBOLS-OUTLINE {{{
+"==============================================================================
+lua require('config.symbols-outline')
+" TODO: deal with yellow bg for highlight until option for override exists
+let g:symbols_outline = {
+		\ "highlight_hovered_item": v:false,
+		\}
+
+" }}}
 " Plugin: VISTA {{{
 "==============================================================================
 " How each level is indented and what to prepend.
 " This could make the display more compact or more spacious.
 " e.g., more compact: ["▸ ", ""]
 " Note: this option only works the LSP executives, doesn't work for `:Vista ctags`.
-let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+" let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 
 " Executive used when opening vista sidebar without specifying it.
 " See all the avaliable executives via `:echo g:vista#executives`.
-let g:vista_default_executive = 'nvim_lsp'
+" let g:vista_default_executive = 'nvim_lsp'
 
 " By default vista.vim never run if you don't call it explicitly.
 "
@@ -305,7 +399,7 @@ augroup filetype_settings
 	autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
 	autocmd BufEnter *.jsh setlocal filetype=java
 	autocmd FileType java,groovy setlocal foldlevel=2 tabstop=4 shiftwidth=4 colorcolumn=120
-	autocmd BufAdd jdt://* call luaeval("require('lsp.jdtls').open_jdt_link(_A)", expand('<amatch>')) 
+	autocmd BufEnter jdt://* call luaeval("require('lsp.jdtls').open_jdt_link(_A)", expand('<amatch>'))
 	autocmd BufEnter gitconfig setlocal filetype=gitconfig
 
 	autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs

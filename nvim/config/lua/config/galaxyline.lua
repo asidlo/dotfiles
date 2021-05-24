@@ -6,32 +6,62 @@ local vcs = require('galaxyline.provider_vcs')
 local ext = require('galaxyline.provider_extensions')
 local gls = gl.section
 
-gl.short_line_list = {'NvimTree','vista','dbui','packer'}
+gl.short_line_list = {'NvimTree','dbui','packer'}
+
+local separators = {bLeft = '  ', bRight = ' ', uLeft = ' ', uTop = ' '}
+
+local mode_map = {
+	n = { color = colors.violet, label = 'NRM', description = 'Normal' },
+	no = {color = colors.violet, label = 'OPP', description = 'Operator-pending'},
+	nov = {color = colors.violet, label = 'OPP', description = 'Operator-pending (forced charwise o_v)'},
+	noV = {color = colors.violet, label = 'OPP', description = 'Operator-pending (forced linewise o_V)'},
+	['no'] = {color = colors.violet, label = 'OPP', description = 'Operator-pending (forced blockwise o_CTRL-V)'},
+	niI = {color = colors.violet, label = 'NRM', description = 'Normal using i_CTRL-O in Insert-mode'},
+	niR = {color = colors.violet, label = 'NRM', description = 'Normal using i_CTRL-O in Replace-mode'},
+	niV = {color = colors.violet, label = 'NRM', description = 'Normal using |i_CTRL-O| in |Virtual-Replace-mode|'},
+	v = {color = colors.blue, label = 'VIS', description = 'Visual by character'},
+	V = {color = colors.blue, label = 'VIS', description = 'Visual by line'},
+	[''] = {color = colors.blue, label = 'VIS', description = 'Visual blockwise'},
+	s = {color = colors.yellow, label = 'SEL', description = 'Select by character'},
+	S = {color = colors.yellow, label = 'SEL', description = 'Select by line'},
+	[''] = {color = colors.yellow, label = 'SEL', description = 'Select blockwise'},
+	i = {color = colors.green, label = 'INS', description = 'Insert'},
+	ic = {color = colors.green, label = 'CPL', description = 'Insert mode completion |compl-generic|'},
+	ix = {color = colors.green, label = 'CPL', description = 'Insert mode |i_CTRL-X| completion'},
+	R = {color = colors.red, label = 'REP', description = 'Replace |R|'},
+	Rc = {color = colors.red, label = 'REP', description = 'Replace mode completion |compl-generic|'},
+	Rv = {color = colors.red, label = 'REP', description = 'Virtual Replace |gR|'},
+	Rx = {color = colors.red, label = 'REP', description = 'Replace mode |i_CTRL-X| completion'},
+	c	 = {color = colors.green, label = 'COM', description = 'Command-line editing'},
+	cv = {color = colors.red, label = 'EXM', description = 'Vim Ex mode |gQ|'},
+	ce	= {color = colors.red, label = 'EXM', description = 'Normal Ex mode |Q|'},
+	r	 ={color = colors.fg, label = 'ENT', description = 'Hit-enter prompt'},
+	rm = {color = colors.fg, label = 'MOR', description = 'The -- more -- prompt'},
+	['r?'] = {color = colors.fg, label = 'CFM', description = '|:confirm| query of some sort'},
+	['!']	= {color = colors.fg, label = 'SHE', description = 'Shell or external command is executing'},
+	t	 = {color = colors.green, label = 'TER', description = 'Terminal mode: keys go to the job'}
+}
+-- gls.left[1] = {
+--   LeftBar = {
+--     provider = function() return '▊ ' end,
+--     highlight = {colors.blue,colors.bg}
+--   },
+-- }
 
 gls.left[1] = {
-  LeftBar = {
-    provider = function() return '▊ ' end,
-    highlight = {colors.blue,colors.bg}
-  },
-}
-
-gls.left[2] = {
   ViMode = {
     provider = function()
       -- auto change color according the vim mode
-      local mode_color = {n = colors.red, i = colors.green,v=colors.blue,
-                          [''] = colors.blue,V=colors.blue,
-                          c = colors.magenta,no = colors.red,s = colors.orange,
-                          S=colors.orange,[''] = colors.orange,
-                          ic = colors.yellow,R = colors.violet,Rv = colors.violet,
-                          cv = colors.red,ce=colors.red, r = colors.cyan,
-                          rm = colors.cyan, ['r?'] = colors.cyan,
-                          ['!']  = colors.red,t = colors.red}
-      vim.api.nvim_command('hi GalaxyViMode guifg='..mode_color[vim.fn.mode()])
-      return '  '
-      -- return '  '
+			local mode = vim.fn.mode()
+			local mode_opts = mode_map[mode]
+			if mode_opts == nil then
+				error("Undefined mode: "..mode)
+			end
+
+      vim.api.nvim_command('hi GalaxyViMode guibg='..mode_opts.color)
+			return '  '..mode_opts.label
     end,
-    highlight = {colors.red,colors.bg,'bold'},
+    highlight = {colors.bg,colors.bg,'bold'},
   },
 }
 -- gls.left[3] = {
@@ -41,18 +71,19 @@ gls.left[2] = {
 --     highlight = {colors.fg,colors.bg}
 --   }
 -- }
-gls.left[4] ={
+gls.left[2] ={
   FileIcon = {
-    provider = 'FileIcon',
+		provider = {function() return '  ' end, 'FileIcon'},
     condition = condition.buffer_not_empty,
     highlight = {require('galaxyline.provider_fileinfo').get_file_icon_color,colors.bg},
   },
 }
 
-gls.left[5] = {
+gls.left[3] = {
   FileName = {
     provider = 'FileName',
     condition = condition.buffer_not_empty,
+		separator = separators.bLeft,
     highlight = {colors.fg,colors.bg,'bold'}
   }
 }
@@ -71,20 +102,20 @@ end
 --   }
 -- }
 
-gls.left[6] = {
-  Vista = {
-    provider = function() return ext.vista_nearest(' ') end,
-    condition = function()
-      for _, client in ipairs(lsp_clients()) do
-        if has_document_symbol_support(client) or has_document_definition_support(client) then
-          return ext.vista_nearest('') ~= ''
-        end
-      end
-      return false
-    end,
-    highlight = {colors.green,colors.bg,'bold'}
-  }
-}
+-- gls.left[6] = {
+--   Vista = {
+--     provider = function() return ext.vista_nearest(' ') end,
+--     condition = function()
+--       for _, client in ipairs(lsp_clients()) do
+--         if has_document_symbol_support(client) or has_document_definition_support(client) then
+--           return ext.vista_nearest('') ~= ''
+--         end
+--       end
+--       return false
+--     end,
+--     highlight = {colors.green,colors.bg,'bold'}
+--   }
+-- }
 
 -- gls.left[8] = {
 --   DiagnosticError = {

@@ -16,6 +16,7 @@ vim.o.updatetime = 300
 vim.o.cmdheight = 2
 vim.o.shortmess = vim.o.shortmess..'c'
 vim.o.wildignore = '*.o,*~,*.pyc,*.class,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store'
+vim.o.timeoutlen = 500
 
 vim.o.foldmethod = 'expr'
 vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
@@ -37,6 +38,7 @@ vim.bo.shiftwidth = 4
 vim.o.tabstop = 4
 vim.bo.tabstop = 4
 
+vim.wo.spell = true
 vim.wo.wrap = false
 vim.wo.number = true
 vim.wo.relativenumber = true
@@ -55,5 +57,15 @@ vim.g.loaded_tutor_mode_plugin = 1
 vim.g.loaded_2html_plugin = 1
 vim.g.did_install_default_menus = 1
 vim.g.did_install_syntax_menu = 1
+
+vim.g.symbols_outline = {
+	highlight_hovered_item = true,
+}
+
+vim.g.nvim_tree_show_icons = {
+	git = 0,
+	folders = 1,
+	files = 1
+}
 
 vim.g.mapleader = ','

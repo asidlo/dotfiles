@@ -30,24 +30,37 @@ return packer.startup(function(use)
       vim.g.nvim_tree_width_allow_resize = 1
     end
   }
-  use {
-    'glepnir/galaxyline.nvim',
-      branch = 'main',
-      config = "require('config.galaxyline')",
-      requires = {'kyazdani42/nvim-web-devicons', opt = true}
-  }
+  -- use {
+  --   'glepnir/galaxyline.nvim',
+  --     branch = 'main',
+  --     config = "require('config.galaxyline')",
+  --     requires = {'kyazdani42/nvim-web-devicons', opt = true}
+  -- }
+	use {
+		'hoob3rt/lualine.nvim',
+		config = "require('config.lualine')",
+		requires = {
+			{'kyazdani42/nvim-web-devicons', opt = true},
+			{'ryanoasis/vim-devicons', opt = true}
+		}
+	}
   use {
     'neovim/nvim-lspconfig',
     config = "require('config.lsp')",
-    requires = { 'nvim-lua/lsp_extensions.nvim' }
+    requires = { {'nvim-lua/lsp_extensions.nvim' }, {'folke/lua-dev.nvim'} }
   }
   use {
     'glepnir/lspsaga.nvim',
     config = "require('config.lspsaga')"
   }
   use {
-    'liuchengxu/vista.vim',
+    'simrat39/symbols-outline.nvim',
+		config = "require('config.symbols-outline')"
   }
+	use {
+		'folke/which-key.nvim',
+		config = "require('config.which-key')"
+	}
   use {
     'hrsh7th/nvim-compe',
     config = "require('config.nvim-compe')",
