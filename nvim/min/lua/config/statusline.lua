@@ -8,7 +8,7 @@ local fileinfo = require('galaxyline.provider_fileinfo')
 local gls = gl.section
 gl.short_line_list = { 'packer', 'NvimTree', 'Outline', 'LspTrouble' }
 
-local separators = {bLeft = '  ', bRight = ' ', uLeft = ' ', uTop = ' '}
+local separators = {bLeft = ' ', bRight = ' ', uLeft = ' ', uTop = ' '}
 
 local colors = {
     bg = theme.bg,
@@ -274,7 +274,7 @@ gls.left[5] = {
             if tbl[vim.bo.filetype] then return false end
             return true
         end,
-        icon = ' ',
+        icon = '  ',
         highlight = {colors.middlegrey, colors.bg},
         separator = ' ',
         separator_highlight = {colors.section_bg, colors.bg}
