@@ -4,6 +4,7 @@ local condition = require 'galaxyline.condition'
 local diagnostic = require 'galaxyline.provider_diagnostic'
 local theme = require('galaxyline.theme').default
 local fileinfo = require('galaxyline.provider_fileinfo')
+local lsp = require('galaxyline.provider_lsp')
 
 local gls = gl.section
 gl.short_line_list = { 'packer', 'NvimTree', 'Outline', 'LspTrouble' }
@@ -271,10 +272,15 @@ gls.left[5] = {
         provider = 'GetLspClient',
         condition = function()
             local tbl = {['dashboard'] = true, [''] = true}
-            if tbl[vim.bo.filetype] then return false end
+            if tbl[vim.bo.filetype] then
+                return false
+            end
+            if lsp.get_lsp_client('none') == 'none' then
+                return false
+            end
             return true
         end,
-        icon = '  ',
+        icon = '   ',
         highlight = {colors.middlegrey, colors.bg},
         separator = ' ',
         separator_highlight = {colors.section_bg, colors.bg}
