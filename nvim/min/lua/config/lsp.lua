@@ -63,7 +63,7 @@ local on_attach = function(client, _)
 	-- vim.api.nvim_set_keymap('x', '<M-CR>', '<Cmd>Telescope lsp_range_code_actions<CR>', {noremap = true, silent = true})
 
 	set_buf_keymap(0, 'n', 'K', "<Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>")
-	set_keymap('i', '<C-K>', "<Cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>")
+	set_keymap('i', '<M-k>', "<Cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>")
 
 	-- set_keymap(0, 'n', '<F18>', "<Cmd>lua require('lspsaga.rename').rename()<CR>")
 	-- vim.api.nvim_set_keymap('n', '<M-CR>', "<Cmd>lua require('lspsaga.codeaction').code_action()<CR>", {noremap = true, silent = true})
@@ -73,8 +73,8 @@ local on_attach = function(client, _)
 	set_keymap('n', 'g]', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()<CR>")
 	set_keymap('n', '<M-Space>', "<Cmd>lua require'lspsaga.diagnostic'.show_line_diagnostics()<CR>")
 	set_keymap('n', 'gK', "<Cmd>lua require'lspsaga.provider'.preview_definition()<CR>")
-	set_buf_keymap(0, 'n', '<C-F>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>")
-	set_buf_keymap(0, 'n', '<C-B>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>")
+	set_buf_keymap(0, 'n', '<M-f>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>")
+	set_buf_keymap(0, 'n', '<M-b>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>")
 
 	if client.resolved_capabilities.document_range_formatting then
 		-- Note that v:lua only supports global functions
@@ -132,6 +132,7 @@ lspconfig.rust_analyzer.setup {
 lspconfig.gopls.setup {
 	on_attach = on_attach,
 	cmd = {'gopls', '-remote=auto'},
+	root_dir = lspconfig.util.root_pattern('go.mod', '.git'),
 	settings = {
 		gopls = {
 			analyses = {

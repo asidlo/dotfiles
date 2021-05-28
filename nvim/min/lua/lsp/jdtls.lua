@@ -63,10 +63,10 @@ function M.open_jdt_link(uri)
 	end
 
 	vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(result, '\n', true))
-	vim.api.nvim_buf_set_option(0, 'filetype', 'java')
-	vim.api.nvim_buf_set_option(0, 'modifiable', false)
-	vim.api.nvim_buf_set_option(0, 'modified', false)
-	vim.api.nvim_buf_set_option(0, 'readonly', true)
+	vim.api.nvim_buf_set_option(buf, 'filetype', 'java')
+	vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+	vim.api.nvim_buf_set_option(buf, 'modified', false)
+	vim.api.nvim_buf_set_option(buf, 'readonly', true)
 
   -- for some reason, the client keeps getting detached from the buffer
 	vim.lsp.buf_attach_client(buf, client.id)

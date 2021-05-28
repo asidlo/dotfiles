@@ -1,1 +1,1 @@
-set_keymap('n', '<C-l>', '<Cmd>SymbolsOutline<CR>')
+set_keymap('n', '<M-l>', '<Cmd>SymbolsOutline<CR>')

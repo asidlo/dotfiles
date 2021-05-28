@@ -73,5 +73,5 @@ set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', {
 set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', {
 	expr = true
 })
-set_keymap('i', '<C-L>', "<cmd>lua return require'snippets'.expand_or_advance(1)<CR>")
-set_keymap('i', '<C-H>', "<cmd>lua return require'snippets'.advance_snippet(-1)<CR>")
+set_keymap('i', '<M-l>', "<cmd>lua return require'snippets'.expand_or_advance(1)<CR>")
+set_keymap('i', '<M-h>', "<cmd>lua return require'snippets'.advance_snippet(-1)<CR>")

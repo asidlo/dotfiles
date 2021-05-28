@@ -47,8 +47,8 @@ local function save_profiles(threshold)
 end
 
 time("Luarocks path setup", true)
-local package_path_str = "/Users/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?.lua;/Users/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?/init.lua;/Users/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?.lua;/Users/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?/init.lua"
-local install_cpath_pattern = "/Users/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/lua/5.1/?.so"
+local package_path_str = "/home/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?.lua;/home/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/share/lua/5.1/?/init.lua;/home/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?.lua;/home/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/luarocks/rocks-5.1/?/init.lua"
+local install_cpath_pattern = "/home/asidlo/.cache/nvim/packer_hererocks/2.1.0-beta3/lib/lua/5.1/?.so"
 if not string.find(package.path, package_path_str, 1, true) then
   package.path = package.path .. ';' .. package_path_str
 end
@@ -73,189 +73,159 @@ time("Defining packer_plugins", true)
 _G.packer_plugins = {
   ReplaceWithRegister = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/ReplaceWithRegister"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/ReplaceWithRegister"
   },
   dracula = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/dracula"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/dracula"
   },
   ["git-messenger.vim"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/git-messenger.vim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/git-messenger.vim"
   },
   ["lsp_extensions.nvim"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/lsp_extensions.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/lsp_extensions.nvim"
   },
   ["lspsaga.nvim"] = {
     config = { "require('config.lspsaga')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/lspsaga.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/lspsaga.nvim"
   },
   ["lua-dev.nvim"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/lua-dev.nvim"
-  },
-  ["lualine.nvim"] = {
-    config = { "require('config.lualine')" },
-    loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/lualine.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/lua-dev.nvim"
   },
   ["nvim-compe"] = {
     config = { "require('config.compe')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/nvim-compe"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-compe"
+  },
+  ["nvim-hardline"] = {
+    config = { "\27LJ\2\n2\0\0\3\0\3\0\0056\0\0\0'\2\1\0B\0\2\0029\0\2\0L\0\2\0\nsetup\rhardline\frequire\0" },
+    loaded = true,
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-hardline"
   },
   ["nvim-lspconfig"] = {
     config = { "require('config.lsp')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/nvim-lspconfig"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-lspconfig"
   },
   ["nvim-tree.lua"] = {
     config = { "require('config.tree')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/nvim-tree.lua"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-tree.lua"
   },
   ["nvim-treesitter"] = {
     config = { "require('config.treesitter')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/nvim-treesitter"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-treesitter"
   },
   ["nvim-treesitter-textobjects"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/nvim-treesitter-textobjects"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-treesitter-textobjects"
   },
   ["nvim-web-devicons"] = {
-    loaded = false,
-    needs_bufread = false,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/opt/nvim-web-devicons"
+    loaded = true,
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-web-devicons"
   },
   ["packer.nvim"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/packer.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/packer.nvim"
   },
   ["plenary.nvim"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/plenary.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/plenary.nvim"
   },
   ["popup.nvim"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/popup.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/popup.nvim"
   },
   ["snippets.nvim"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/snippets.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/snippets.nvim"
   },
   ["symbols-outline.nvim"] = {
     config = { "require('config.outline')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/symbols-outline.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/symbols-outline.nvim"
   },
   tabular = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/tabular"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/tabular"
   },
   ["telescope.nvim"] = {
     config = { "require('config.telescope')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/telescope.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/telescope.nvim"
   },
   ["vim-bbye"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-bbye"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-bbye"
   },
   ["vim-commentary"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-commentary"
-  },
-  ["vim-devicons"] = {
-    loaded = false,
-    needs_bufread = false,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/opt/vim-devicons"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-commentary"
   },
   ["vim-dispatch"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-dispatch"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-dispatch"
   },
   ["vim-fugitive"] = {
     config = { "require('config.fugitive')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-fugitive"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-fugitive"
   },
   ["vim-gitgutter"] = {
     config = { "require('config.gitgutter')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-gitgutter"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-gitgutter"
   },
   ["vim-markdown"] = {
     config = { "require('config.markdown')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-markdown"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-markdown"
   },
   ["vim-obsession"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-obsession"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-obsession"
   },
   ["vim-repeat"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-repeat"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-repeat"
   },
   ["vim-rooter"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-rooter"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-rooter"
   },
   ["vim-surround"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-surround"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-surround"
   },
   ["vim-symlink"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-symlink"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-symlink"
   },
   ["vim-unimpaired"] = {
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/vim-unimpaired"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/vim-unimpaired"
   },
   ["which-key.nvim"] = {
     config = { "require('config.whichkey')" },
     loaded = true,
-    path = "/Users/asidlo/.local/share/nvim/site/pack/packer/start/which-key.nvim"
+    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/which-key.nvim"
   }
 }
 
 time("Defining packer_plugins", false)
--- Config for: which-key.nvim
-time("Config for which-key.nvim", true)
-require('config.whichkey')
-time("Config for which-key.nvim", false)
--- Config for: nvim-compe
-time("Config for nvim-compe", true)
-require('config.compe')
-time("Config for nvim-compe", false)
--- Config for: telescope.nvim
-time("Config for telescope.nvim", true)
-require('config.telescope')
-time("Config for telescope.nvim", false)
--- Config for: nvim-lspconfig
-time("Config for nvim-lspconfig", true)
-require('config.lsp')
-time("Config for nvim-lspconfig", false)
--- Config for: vim-fugitive
-time("Config for vim-fugitive", true)
-require('config.fugitive')
-time("Config for vim-fugitive", false)
+-- Config for: nvim-hardline
+time("Config for nvim-hardline", true)
+try_loadstring("\27LJ\2\n2\0\0\3\0\3\0\0056\0\0\0'\2\1\0B\0\2\0029\0\2\0L\0\2\0\nsetup\rhardline\frequire\0", "config", "nvim-hardline")
+time("Config for nvim-hardline", false)
 -- Config for: nvim-treesitter
 time("Config for nvim-treesitter", true)
 require('config.treesitter')
 time("Config for nvim-treesitter", false)
--- Config for: lualine.nvim
-time("Config for lualine.nvim", true)
-require('config.lualine')
-time("Config for lualine.nvim", false)
--- Config for: vim-gitgutter
-time("Config for vim-gitgutter", true)
-require('config.gitgutter')
-time("Config for vim-gitgutter", false)
 -- Config for: nvim-tree.lua
 time("Config for nvim-tree.lua", true)
 require('config.tree')
@@ -264,14 +234,38 @@ time("Config for nvim-tree.lua", false)
 time("Config for lspsaga.nvim", true)
 require('config.lspsaga')
 time("Config for lspsaga.nvim", false)
--- Config for: symbols-outline.nvim
-time("Config for symbols-outline.nvim", true)
-require('config.outline')
-time("Config for symbols-outline.nvim", false)
 -- Config for: vim-markdown
 time("Config for vim-markdown", true)
 require('config.markdown')
 time("Config for vim-markdown", false)
+-- Config for: symbols-outline.nvim
+time("Config for symbols-outline.nvim", true)
+require('config.outline')
+time("Config for symbols-outline.nvim", false)
+-- Config for: which-key.nvim
+time("Config for which-key.nvim", true)
+require('config.whichkey')
+time("Config for which-key.nvim", false)
+-- Config for: vim-gitgutter
+time("Config for vim-gitgutter", true)
+require('config.gitgutter')
+time("Config for vim-gitgutter", false)
+-- Config for: telescope.nvim
+time("Config for telescope.nvim", true)
+require('config.telescope')
+time("Config for telescope.nvim", false)
+-- Config for: nvim-compe
+time("Config for nvim-compe", true)
+require('config.compe')
+time("Config for nvim-compe", false)
+-- Config for: nvim-lspconfig
+time("Config for nvim-lspconfig", true)
+require('config.lsp')
+time("Config for nvim-lspconfig", false)
+-- Config for: vim-fugitive
+time("Config for vim-fugitive", true)
+require('config.fugitive')
+time("Config for vim-fugitive", false)
 if should_profile then save_profiles() end
 
 END
