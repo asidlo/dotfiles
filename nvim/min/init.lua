@@ -309,4 +309,4 @@ packer.startup(function()
     }
 end)
 
-
+vim.cmd('let g:nvim_tree_width_allow_resize = 1')
