@@ -379,7 +379,7 @@ gls.right[7] = {
     GitRoot = {
         provider = { GetGitRoot },
         condition = function()
-            return has_width_gt(50) and condition.check_git_workspace
+            return has_width_gt(50) and condition.check_git_workspace()
         end,
         icon = '  ',
         highlight = { colors.fg, colors.section_bg },
@@ -391,6 +391,7 @@ gls.right[8] = {
     PerCent = {
         provider = 'LinePercent',
         separator = ' ',
+        condition = buffer_not_empty,
         separator_highlight = {colors.section_bg, colors.section_bg},
         highlight = { colors.darkgrey, colors.blue },
     },
