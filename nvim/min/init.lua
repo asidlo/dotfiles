@@ -266,12 +266,12 @@ packer.startup(function()
         },
         config = "require('config.lsp')"
     }
-    -- use {
-    --     'glepnir/galaxyline.nvim',
-    --     branch = 'main',
-    --     requires = {'kyazdani42/nvim-web-devicons', opt = true},
-    --     config = "require('config.galaxyline')"
-    -- }
+    use {
+        'glepnir/galaxyline.nvim',
+        branch = 'main',
+        requires = {'kyazdani42/nvim-web-devicons', opt = true},
+        config = "require('config.statusline')"
+    }
     use {
         'kyazdani42/nvim-tree.lua',
         requires = {'kyazdani42/nvim-web-devicons'},
