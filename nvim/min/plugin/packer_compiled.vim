@@ -101,11 +101,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-compe"
   },
-  ["nvim-hardline"] = {
-    config = { "\27LJ\2\n2\0\0\3\0\3\0\0056\0\0\0'\2\1\0B\0\2\0029\0\2\0L\0\2\0\nsetup\rhardline\frequire\0" },
-    loaded = true,
-    path = "/home/asidlo/.local/share/nvim/site/pack/packer/start/nvim-hardline"
-  },
   ["nvim-lspconfig"] = {
     config = { "require('config.lsp')" },
     loaded = true,
@@ -218,10 +213,10 @@ _G.packer_plugins = {
 }
 
 time("Defining packer_plugins", false)
--- Config for: nvim-hardline
-time("Config for nvim-hardline", true)
-try_loadstring("\27LJ\2\n2\0\0\3\0\3\0\0056\0\0\0'\2\1\0B\0\2\0029\0\2\0L\0\2\0\nsetup\rhardline\frequire\0", "config", "nvim-hardline")
-time("Config for nvim-hardline", false)
+-- Config for: which-key.nvim
+time("Config for which-key.nvim", true)
+require('config.whichkey')
+time("Config for which-key.nvim", false)
 -- Config for: nvim-treesitter
 time("Config for nvim-treesitter", true)
 require('config.treesitter')
@@ -230,34 +225,6 @@ time("Config for nvim-treesitter", false)
 time("Config for nvim-tree.lua", true)
 require('config.tree')
 time("Config for nvim-tree.lua", false)
--- Config for: lspsaga.nvim
-time("Config for lspsaga.nvim", true)
-require('config.lspsaga')
-time("Config for lspsaga.nvim", false)
--- Config for: vim-markdown
-time("Config for vim-markdown", true)
-require('config.markdown')
-time("Config for vim-markdown", false)
--- Config for: symbols-outline.nvim
-time("Config for symbols-outline.nvim", true)
-require('config.outline')
-time("Config for symbols-outline.nvim", false)
--- Config for: which-key.nvim
-time("Config for which-key.nvim", true)
-require('config.whichkey')
-time("Config for which-key.nvim", false)
--- Config for: vim-gitgutter
-time("Config for vim-gitgutter", true)
-require('config.gitgutter')
-time("Config for vim-gitgutter", false)
--- Config for: telescope.nvim
-time("Config for telescope.nvim", true)
-require('config.telescope')
-time("Config for telescope.nvim", false)
--- Config for: nvim-compe
-time("Config for nvim-compe", true)
-require('config.compe')
-time("Config for nvim-compe", false)
 -- Config for: nvim-lspconfig
 time("Config for nvim-lspconfig", true)
 require('config.lsp')
@@ -266,6 +233,30 @@ time("Config for nvim-lspconfig", false)
 time("Config for vim-fugitive", true)
 require('config.fugitive')
 time("Config for vim-fugitive", false)
+-- Config for: vim-markdown
+time("Config for vim-markdown", true)
+require('config.markdown')
+time("Config for vim-markdown", false)
+-- Config for: symbols-outline.nvim
+time("Config for symbols-outline.nvim", true)
+require('config.outline')
+time("Config for symbols-outline.nvim", false)
+-- Config for: vim-gitgutter
+time("Config for vim-gitgutter", true)
+require('config.gitgutter')
+time("Config for vim-gitgutter", false)
+-- Config for: nvim-compe
+time("Config for nvim-compe", true)
+require('config.compe')
+time("Config for nvim-compe", false)
+-- Config for: telescope.nvim
+time("Config for telescope.nvim", true)
+require('config.telescope')
+time("Config for telescope.nvim", false)
+-- Config for: lspsaga.nvim
+time("Config for lspsaga.nvim", true)
+require('config.lspsaga')
+time("Config for lspsaga.nvim", false)
 if should_profile then save_profiles() end
 
 END
