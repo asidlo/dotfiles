@@ -146,7 +146,7 @@ local GetGitRoot = function()
     end
 
     local git_root = git_dir:gsub('/.git/?$', '')
-    return get_basename(git_root)
+    return get_basename(git_root)..' '
 end
 
 -- local LspStatus = function()
@@ -385,7 +385,7 @@ gls.right[7] = {
     GitRoot = {
         provider = { GetGitRoot },
         condition = function()
-            return has_width_gt(50) and condition.check_git_workspace()
+            return has_width_gt(50) and condition.check_git_workspace() 
         end,
         icon = '  ',
         highlight = { colors.fg, colors.section_bg },
@@ -393,12 +393,10 @@ gls.right[7] = {
         separator_highlight = {colors.section_bg, colors.bg}
     },
 }
-gls.right[8] = {
+gls.right[9] = {
     PerCent = {
-        provider = 'LinePercent',
-        separator = ' ',
+        provider = function() return ' '..fileinfo.current_line_percent() end,
         condition = buffer_not_empty,
-        separator_highlight = {colors.section_bg, colors.section_bg},
         highlight = { colors.darkgrey, colors.blue },
     },
 }
