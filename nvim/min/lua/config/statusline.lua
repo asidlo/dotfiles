@@ -1,7 +1,6 @@
 vim.cmd [[packadd nvim-web-devicons]]
 local gl = require 'galaxyline'
 local condition = require 'galaxyline.condition'
-local diagnostic = require 'galaxyline.provider_diagnostic'
 local theme = require('galaxyline.theme').default
 local fileinfo = require('galaxyline.provider_fileinfo')
 local lsp = require('galaxyline.provider_lsp')
@@ -295,12 +294,6 @@ gls.left[6] = {
         -- separator_highlight = {colors.bg, colors.bg}
     },
 }
-gls.left[7] = {
-    Space = {
-        provider = function() return ' ' end,
-        highlight = {colors.section_bg, colors.bg}
-    }
-}
 gls.left[8] = {
     DiagnosticWarn = {
         provider = { 'DiagnosticWarn' },
@@ -310,17 +303,20 @@ gls.left[8] = {
         -- separator_highlight = {colors.bg, colors.bg}
     },
 }
-gls.left[9] = {
-    Space = {
-        provider = function() return ' ' end,
-        highlight = {colors.section_bg, colors.bg}
-    }
-}
 gls.left[10] = {
     DiagnosticInfo = {
         provider = { 'DiagnosticInfo' },
         icon = '  ',
         highlight = { colors.blue, colors.bg },
+        -- separator = ' ',
+        -- separator_highlight = {colors.section_bg, colors.bg}
+    },
+}
+gls.left[12] = {
+    DiagnosticHint = {
+        provider = { 'DiagnosticHint' },
+        icon = '  ',
+        highlight = { colors.middlegrey, colors.bg },
         -- separator = ' ',
         -- separator_highlight = {colors.section_bg, colors.bg}
     },
@@ -385,7 +381,7 @@ gls.right[7] = {
     GitRoot = {
         provider = { GetGitRoot },
         condition = function()
-            return has_width_gt(50) and condition.check_git_workspace() 
+            return has_width_gt(50) and condition.check_git_workspace()
         end,
         icon = '  ',
         highlight = { colors.fg, colors.section_bg },
