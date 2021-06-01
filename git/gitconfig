@@ -2,24 +2,22 @@
 	name = asidlo
 	email = sidlo.andrew@gmail.com
 [core]
-	editor = nvim
 	excludesfile = ~/.gitignore
 [log]
 	date = iso
 [fetch]
 	prune = true
+	pruneTags = true
 [commit]
 	verbose = true
+[merge]
+	ff = only
+[pull]
+	rebase = true
 [diff]
 	tool = vimdiff
 [difftool]
 	prompt = 0
-[color "diff"]
-	commit = yellow bold
-[color]
-	ui = true
-[pull]
-	rebase = false
 [alias]
 	a = add
 	au = add -u # Update all tracked files
