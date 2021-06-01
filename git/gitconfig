@@ -2,7 +2,6 @@
 	name = asidlo
 	email = sidlo.andrew@gmail.com
 [core]
-	editor = nvim
 	excludesfile = ~/.gitignore
 [log]
 	date = iso
