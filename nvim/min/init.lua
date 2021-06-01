@@ -169,7 +169,7 @@ local autocmds = {
         {[[FileType go setlocal noexpandtab tabstop=4 shiftwidth=4]]},
         {[[FileType cpp setlocal makeprg=clang++\ -Wall\ -std=c++17]]},
         {[[FileType c,cpp setlocal formatprg=clang-format commentstring=\/\/\ %s]]},
-        {[[BufEnter gitconfig setlocal filetype=gitconfig]]},
+        {[[BufEnter *gitconfig setlocal filetype=gitconfig]]},
         {[[FileType gitcommit setlocal spell]]}
     },
     file_history = {{[[BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]}},

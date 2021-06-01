@@ -151,7 +151,7 @@ augroup filetype_settings
 	autocmd FileType c,cpp setlocal makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
 	autocmd FileType c,cpp setlocal formatprg=clang-format 
 	autocmd FileType c,cpp setlocal cindent cinoptions=:0,l1,t0,g0,(0 textwidth=80 tabstop=8 shiftwidth=8 softtabstop=8
-	autocmd BufEnter gitconfig setlocal filetype=gitconfig
+	autocmd BufEnter *gitconfig setlocal filetype=gitconfig
 augroup END
 
 " }}}
@@ -160,7 +160,7 @@ augroup END
 augroup dracula_customization
 	autocmd!
 	autocmd ColorScheme dracula highlight SpellBad gui=undercurl
-	autocmd ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
+	autocmd ColorScheme dracula highlight Search ctermbg=NONE guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
 augroup END
 
 try
