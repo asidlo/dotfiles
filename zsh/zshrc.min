@@ -34,18 +34,18 @@ autoload -Uz compinit && compinit
 autoload -U colors && colors
 setopt prompt_subst
 
-if ! (( $+commands[antibody] )); then
-  >&2 echo "Antibody not found. Install antibody and add it to PATH"
-  return 1
+if (( $+commands[antibody] )); then
+	source <(antibody init)
+	antibody bundle zsh-users/zsh-completions 
+	antibody bundle zsh-users/zsh-syntax-highlighting
+	antibody bundle zsh-users/zsh-history-substring-search
+	antibody bundle zsh-users/zsh-autosuggestions
+	antibody bundle romkatv/gitstatus
+	source $(antibody home)/https-COLON--SLASH--SLASH-github.com-SLASH-romkatv-SLASH-gitstatus/gitstatus.plugin.zsh
+else
+  >&2 echo "$fg[yellow]WARN$reset_color: Antibody not found. Install antibody and add it to PATH"
 fi
 
-source <(antibody init)
-antibody bundle zsh-users/zsh-completions 
-antibody bundle zsh-users/zsh-syntax-highlighting
-antibody bundle zsh-users/zsh-history-substring-search
-antibody bundle zsh-users/zsh-autosuggestions
-antibody bundle romkatv/gitstatus
-source $(antibody home)/https-COLON--SLASH--SLASH-github.com-SLASH-romkatv-SLASH-gitstatus/gitstatus.plugin.zsh
 
 # Simple Zsh prompt with Git status.
 
@@ -134,14 +134,18 @@ function gitstatus_prompt_update() {
   GITSTATUS_PROMPT_LEN=$(($(echo $GITSTATUS_PROMPT | sed 's/%F{[a-zA-Z]*}\|%f//g' | wc -m) - 1))
 }
 
-# Start gitstatusd instance with name "MY". The same name is passed to
-# gitstatus_query in gitstatus_prompt_update. The flags with -1 as values
-# enable staged, unstaged, conflicted and untracked counters.
-gitstatus_stop 'MY' && gitstatus_start -s -1 -u -1 -c -1 -d -1 'MY'
+if typeset -f gitstatus_stop > /dev/null && typeset -f gitstatus_start > /dev/null; then
+	# Start gitstatusd instance with name "MY". The same name is passed to
+	# gitstatus_query in gitstatus_prompt_update. The flags with -1 as values
+	# enable staged, unstaged, conflicted and untracked counters.
+	gitstatus_stop 'MY' && gitstatus_start -s -1 -u -1 -c -1 -d -1 'MY'
 
-# On every prompt, fetch git status and set GITSTATUS_PROMPT.
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd gitstatus_prompt_update
+	# On every prompt, fetch git status and set GITSTATUS_PROMPT.
+	autoload -Uz add-zsh-hook
+	add-zsh-hook precmd gitstatus_prompt_update
+else
+	>&2 echo "$fg[yellow]WARN$reset_color: gitstatus_start|gitstatus_stop not found; install gitstatus plugin"
+fi
 
 PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
 PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
@@ -151,5 +155,3 @@ PROMPT+=$'\n'                                                        # newline
 PROMPT+='%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} ' # % (red if error white otherwise)
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
-
-alias luamake=/Users/asidlo/.local/src/lua-language-server/3rd/luamake/luamake

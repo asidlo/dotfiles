@@ -1,3 +1,5 @@
+autoload -U colors && colors
+
 local OS=$(uname -a)
 local MAC='Darwin'
 local LINUX='Linux'
@@ -22,6 +24,8 @@ case $OS in
     ;;
 esac
 
+alias luamake=/Users/asidlo/.local/src/lua-language-server/3rd/luamake/luamake
+
 if (( $+commands[tree] )); then
   alias tree='tree -C'
 fi
@@ -36,12 +40,13 @@ alias nnn='nnn -de'
 if (( $+commands[nvim] )); then
   export VISUAL=nvim
   export EDITOR=nvim
+  export MANPAGER="$EDITOR +Man!"
 else
   export VISUAL=vim
   export EDITOR=vim
+  export MANPAGER="vim -M +MANPAGER -"
 fi
 
-export MANPAGER="$EDITOR +Man!"
 export MANWIDTH=999
 
 export NNN_PLUG='o:fzopen;c:fzcd;p:preview-tui'
@@ -85,7 +90,7 @@ if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE]
     --bind='ctrl-a:select-all+accept'
   "
 else
-  >&2 echo "[fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
+  >&2 echo "$fg[yellow]WARN$reset_color: [fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
 fi
 
-source "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
