@@ -1,7 +1,6 @@
 vim.cmd [[packadd nvim-web-devicons]]
 local gl = require 'galaxyline'
 local condition = require 'galaxyline.condition'
-local theme = require('galaxyline.theme').default
 local fileinfo = require('galaxyline.provider_fileinfo')
 local lsp = require('galaxyline.provider_lsp')
 
@@ -11,17 +10,20 @@ gl.short_line_list = { 'packer', 'NvimTree', 'Outline', 'LspTrouble' }
 local separators = {bLeft = '', bRight = ' ', uLeft = ' ', uTop = ' '}
 
 local colors = {
-    bg = theme.bg,
-    fg = theme.fg,
+    bg = '#282a36',
+    fg = '#f8f8f2',
+    cyan = '#8be9fd',
+    green = '#50fa7b',
+    purple = '#bd93f9',
+    orange = '#ffb86c',
+    red = '#ff5555',
+    yellow = '#f1fa8c',
+    pink = '#ff79c6',
+    comment = '#6272a4',
+    selection = '#44475a',
     section_bg = '#38393f',
-    blue = theme.blue,
-    green = theme.green,
-    purple = theme.magenta,
-    orange = theme.orange,
-    red = theme.red,
-    yellow = theme.yellow,
-    darkgrey = '#2c323d',
-    middlegrey = '#8791A5',
+    -- middlegrey = '#8791A5',
+    -- darkgrey = '#2c323d',
 }
 
 -- Local helper functions
@@ -49,9 +51,9 @@ end
 local mode_color = function()
     local mode_colors = {
         [110] = colors.green,
-        [105] = colors.blue,
+        [105] = colors.cyan,
         [99] = colors.green,
-        [116] = colors.blue,
+        [116] = colors.cyan,
         [118] = colors.purple,
         [22] = colors.purple,
         [86] = colors.purple,
@@ -209,7 +211,7 @@ gls.left[2] = {
         condition = buffer_not_empty,
         highlight = {
             require('galaxyline.provider_fileinfo').get_file_icon,
-            colors.section_bg,
+            colors.selection,
         },
     },
 }
@@ -234,16 +236,16 @@ gls.left[3] = {
         condition = function()
             return is_file() and checkwidth()
         end,
-        highlight = { colors.middlegrey, colors.section_bg },
+        highlight = { colors.comment, colors.selection },
     },
 }
 gls.left[4] = {
     FileName = {
         provider = get_current_file_name,
         condition = buffer_not_empty,
-        highlight = { colors.fg, colors.section_bg },
+        highlight = { colors.fg, colors.selection },
         separator = separators.bLeft,
-        separator_highlight = { colors.section_bg, colors.bg },
+        separator_highlight = { colors.selection, colors.bg },
     },
 }
 -- gls.left[5] = {
@@ -280,9 +282,9 @@ gls.left[5] = {
             return true
         end,
         icon = '   ',
-        highlight = {colors.middlegrey, colors.bg},
+        highlight = {colors.comment, colors.bg},
         separator = ' ',
-        separator_highlight = {colors.section_bg, colors.bg}
+        separator_highlight = {colors.selection, colors.bg}
     }
 }
 gls.left[6] = {
@@ -307,18 +309,18 @@ gls.left[10] = {
     DiagnosticInfo = {
         provider = { 'DiagnosticInfo' },
         icon = '  ',
-        highlight = { colors.blue, colors.bg },
+        highlight = { colors.cyan, colors.bg },
         -- separator = ' ',
-        -- separator_highlight = {colors.section_bg, colors.bg}
+        -- separator_highlight = {colors.selection, colors.bg}
     },
 }
 gls.left[12] = {
     DiagnosticHint = {
         provider = { 'DiagnosticHint' },
         icon = '  ',
-        highlight = { colors.middlegrey, colors.bg },
+        highlight = { colors.comment, colors.bg },
         -- separator = ' ',
-        -- separator_highlight = {colors.section_bg, colors.bg}
+        -- separator_highlight = {colors.selection, colors.bg}
     },
 }
 -- gls.left[14] = {
@@ -338,7 +340,7 @@ gls.right[1] = {
         icon = '+',
         highlight = { colors.green, colors.bg },
         separator = ' ',
-        separator_highlight = { colors.section_bg, colors.bg },
+        separator_highlight = { colors.comment, colors.bg },
     },
 }
 gls.right[2] = {
@@ -362,7 +364,7 @@ gls.right[4] = {
         provider = function()
             return ' '
         end,
-        highlight = { colors.section_bg, colors.bg },
+        -- highlight = { colors.selection, colors.bg },
     },
 }
 gls.right[6] = {
@@ -374,7 +376,7 @@ gls.right[6] = {
             'GitBranch',
         },
         condition = condition.check_git_workspace,
-        highlight = { colors.middlegrey, colors.bg },
+        highlight = { colors.comment, colors.bg },
     },
 }
 gls.right[7] = {
@@ -384,22 +386,22 @@ gls.right[7] = {
             return has_width_gt(50) and condition.check_git_workspace()
         end,
         icon = '  ',
-        highlight = { colors.fg, colors.section_bg },
+        highlight = { colors.fg, colors.selection },
         separator = separators.uTop,
-        separator_highlight = {colors.section_bg, colors.bg}
+        separator_highlight = {colors.selection, colors.bg}
     },
 }
 gls.right[9] = {
     PerCent = {
         provider = function() return ' '..fileinfo.current_line_percent() end,
         condition = buffer_not_empty,
-        highlight = { colors.darkgrey, colors.blue },
+        highlight = { colors.bg, colors.cyan },
     },
 }
 -- gls.right[9] = {
 --     ScrollBar = {
 --         provider = 'ScrollBar',
---         highlight = {colors.purple, colors.section_bg}
+--         highlight = {colors.purple, colors.selection}
 --     }
 -- }
 
@@ -417,7 +419,7 @@ gls.short_line_left[1] = {
         end,
         highlight = {
             require('galaxyline.provider_fileinfo').get_file_icon,
-            colors.section_bg,
+            colors.selection,
         },
     },
 }
@@ -425,18 +427,18 @@ gls.short_line_left[2] = {
     FileName = {
         provider = get_current_file_name,
         condition = buffer_not_empty,
-        highlight = { colors.fg, colors.section_bg },
+        highlight = { colors.fg, colors.selection },
         separator = '',
-        separator_highlight = { colors.section_bg, colors.bg },
+        separator_highlight = { colors.selection, colors.bg },
     },
 }
 
 gls.short_line_right[1] = {
     BufferIcon = {
         provider = 'BufferIcon',
-        highlight = { colors.yellow, colors.section_bg },
+        highlight = { colors.yellow, colors.selection },
         separator = '',
-        separator_highlight = { colors.section_bg, colors.bg },
+        separator_highlight = { colors.selection, colors.bg },
     },
 }
 
