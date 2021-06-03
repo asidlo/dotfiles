@@ -1,5 +1,5 @@
 local ts = require('nvim-treesitter.configs')
-local parser = require "nvim-treesitter.parsers".get_parser_configs()
+-- local parser = require "nvim-treesitter.parsers".get_parser_configs()
 
 local plugins = {
 	'bash',
@@ -21,7 +21,7 @@ local plugins = {
 -- parser.markdown = {
 --   install_info = {
 --     url = 'https://github.com/ikatyang/tree-sitter-markdown', -- local path or git repo
---     files = {'src/parser.c'}
+--     files = { 'src/parser.c', 'src/scanner.cc', '-DTREE_SITTER_MARKDOWN_AVOID_CRASH=1' }
 --   },
 --   filetype = 'markdown', -- if filetype does not agrees with parser name
 -- }

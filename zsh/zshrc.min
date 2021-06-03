@@ -43,7 +43,7 @@ if (( $+commands[antibody] )); then
 	antibody bundle romkatv/gitstatus
 	source $(antibody home)/https-COLON--SLASH--SLASH-github.com-SLASH-romkatv-SLASH-gitstatus/gitstatus.plugin.zsh
 else
-  >&2 echo "$fg[yellow]WARN$reset_color: Antibody not found. Install antibody and add it to PATH"
+  >&2 echo "$fg[yellow]WARN$reset_color: Antibody not found. Install via: curl -sfL git.io/antibody | sh -s - -b /usr/local/bin"
 fi
 
 

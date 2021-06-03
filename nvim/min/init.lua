@@ -294,11 +294,11 @@ packer.startup(function()
         requires = {'nvim-treesitter/nvim-treesitter-textobjects'},
         config = "require('config.treesitter')"
     }
-    use {
-        'plasticboy/vim-markdown',
-        requires = {'godlygeek/tabular'},
-        config = "require('config.markdown')"
-    }
+    -- use {
+    --     'plasticboy/vim-markdown',
+    --     requires = {'godlygeek/tabular'},
+    --     config = "require('config.markdown')"
+    -- }
     use {
         'nvim-telescope/telescope.nvim',
         requires = {
