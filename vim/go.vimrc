@@ -34,6 +34,7 @@ set nocompatible
 set list
 set listchars=tab:>-,trail:-
 set smarttab
+set ignorecase
 set smartcase
 set nowrap
 set linebreak
@@ -59,6 +60,7 @@ set clipboard=unnamed
 set wildmode=longest:full,full
 set wildmenu
 set cmdheight=2
+set backspace=indent,eol,start
 
 set hlsearch
 set incsearch
@@ -85,15 +87,6 @@ noremap <down> gj
 noremap j gj
 noremap k gk
 
-if executable('rg')
-	set grepformat=%f:%l:%c:%m,%f:%l:%m
-	set grepprg=rg\ -S\ --vimgrep\ --no-ignore-vcs\ --no-heading\ --hidden\ -g\ !tags
-	let g:ctrlp_user_command = 'rg %s --files --no-ignore-vcs --hidden --glob ""'
-	let g:ctrlp_use_caching = 0
-else
-	let g:ctrlp_clear_cache_on_exit = 0
-endif
-
 let g:netrw_dirhistmax = 0
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
@@ -109,17 +102,28 @@ augroup END
 augroup gruvbox_custom
 	autocmd!
 	autocmd ColorScheme gruvbox highlight SpellBad gui=undercurl
-	autocmd ColorScheme gruvbox highlight Search ctermbg=NONE guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline
+	autocmd ColorScheme gruvbox highlight Search ctermbg=NONE guibg=NONE ctermfg=yellow guifg=yellow gui=underline term=underline cterm=underline
+	autocmd ColorScheme gruvbox highlight SignColumn ctermbg=NONE guibg=NONE
 augroup END
 
-try
-	colorscheme gruvbox
-	let g:lightline = { 'colorscheme': 'gruvbox' }
-catch
-	colorscheme default
-	let g:lightline = { 'colorscheme': 'default' }
-endtry
+colorscheme gruvbox
+let g:lightline = { 'colorscheme': 'gruvbox' }
 
+if executable('rg')
+	set grepformat=%f:%l:%c:%m,%f:%l:%m
+	set grepprg=rg\ -S\ --vimgrep\ --no-heading
+	let g:ctrlp_user_command = 'rg %s --files --glob ""'
+	let g:ctrlp_use_caching = 0
+else
+	let g:ctrlp_clear_cache_on_exit = 0
+endif
+
+let g:ctrlp_map = '<Leader>f'
+nnoremap <Leader>e :CtrlPMRUFiles<CR>
+nnoremap <Leader>b :CtrlPBuffer<CR>
+
+let g:gitgutter_set_sign_backgrounds = 1
+let g:gitgutter_preview_win_floating = 1
 
 " For walkthrough, use the following github repo as example:
 " - https://github.com/fatih/vim-go-tutorial#quick-setup
@@ -138,7 +142,6 @@ let g:go_highlight_extra_types = 1
 " Open :GoDeclsDir with ctrl-g
 nmap <C-g> :GoDeclsDir<cr>
 imap <C-g> <esc>:<C-u>GoDeclsDir<cr>
-
 
 augroup go
 	autocmd!
