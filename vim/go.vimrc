@@ -106,8 +106,13 @@ augroup gruvbox_custom
 	autocmd ColorScheme gruvbox highlight SignColumn ctermbg=NONE guibg=NONE
 augroup END
 
-colorscheme gruvbox
-let g:lightline = { 'colorscheme': 'gruvbox' }
+try
+    colorscheme gruvbox
+    let g:lightline = { 'colorscheme': 'gruvbox' }
+catch
+    colorscheme default
+    let g:lightline = { 'colorscheme': 'default' }
+endtry
 
 if executable('rg')
 	set grepformat=%f:%l:%c:%m,%f:%l:%m
