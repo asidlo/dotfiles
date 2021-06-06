@@ -8,8 +8,8 @@ case $OS in
 *$MAC*)
 	alias ls='ls -G'
 	alias copy='pbcopy'
-	alias ctags=/usr/local/opt/universal-ctags/bin/ctags
-	export PATH=$PATH:/usr/local/bin
+    export PATH=/usr/local/sbin:$PATH
+	export PATH=/usr/local/bin:$PATH
 	export JAVA_HOME=$(/usr/libexec/java_home)
 	export GOROOT=/usr/local/opt/go/libexec
 	;;
