@@ -21,9 +21,9 @@ Import-Module DockerCompletion
 #--------------------------------------------------------------
 
 # Vi Mode (needs to be before other options)
-Set-PSReadLineOption -EditMode Vi 
-Set-PSReadLineOption -ViModeIndicator Cursor
-Set-PSReadLineKeyHandler -Chord Ctrl+[ -Function ViCommandMode
+# Set-PSReadLineOption -EditMode Vi 
+# Set-PSReadLineOption -ViModeIndicator Cursor
+# Set-PSReadLineKeyHandler -Chord Ctrl+[ -Function ViCommandMode
 
 # Turn off annoying bell
 Set-PSReadlineOption -BellStyle None
@@ -160,10 +160,6 @@ function Set-LocationEnhanced {
 
 function Stop-NxJavaProcesses {
     jps -l | Select-String "nexidia" | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru} 
-}
-
-function Get-ChildItemWide {
-    Get-ChildItem | Format-Wide -AutoSize
 }
 
 #--------------------------------------------------------------
