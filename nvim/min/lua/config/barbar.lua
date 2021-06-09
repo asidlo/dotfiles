@@ -9,12 +9,12 @@ vim.api.nvim_command('hi BufferInactiveTarget guibg=#282a36')
 
 local barbar_tree ={}
 barbar_tree.open = function ()
-   require'bufferline.state'.set_offset(31, 'FileTree')
-   require'nvim-tree'.find_file(true)
+	require'bufferline.state'.set_offset(31, 'FileTree')
+	require'nvim-tree'.find_file(true)
 end
 barbar_tree.close = function ()
-   require'bufferline.state'.set_offset(0)
-   require'nvim-tree'.close()
+	require'bufferline.state'.set_offset(0)
+	require'nvim-tree'.close()
 end
 
 return barbar_tree

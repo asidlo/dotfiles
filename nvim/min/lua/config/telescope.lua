@@ -10,8 +10,8 @@
 --	   }
 -- }
 
-set_keymap('n', '<Leader>f', '<Cmd>Telescope find_files<CR>')
-set_keymap('n', '<Leader>n', '<Cmd>Telescope git_files<CR>')
+set_keymap('n', '<Leader>F', '<Cmd>Telescope find_files<CR>')
+set_keymap('n', '<Leader>f', '<Cmd>Telescope git_files<CR>')
 set_keymap('n', '<Leader>b', '<Cmd>Telescope buffers<CR>')
 set_keymap('n', '<Leader>e', '<Cmd>Telescope oldfiles<CR>')
 set_keymap('n', '<Leader>x', '<Cmd>Telescope keymaps<CR>')
