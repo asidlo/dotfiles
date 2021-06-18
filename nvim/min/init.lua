@@ -183,6 +183,20 @@ set_keymap('n', 'k', 'gk')
 set_keymap('n', '<Leader>cd', '<Cmd>cd %:p:h<CR>')
 set_keymap('n', '<Leader>p', '<Cmd>lua stdout()<CR>')
 
+set_keymap('t', '<Esc>', '<C-\\><C-n>')
+set_keymap('t', '<A-h>', '<C-\\><C-N><C-w>h')
+set_keymap('t', '<A-j>', '<C-\\><C-N><C-w>j')
+set_keymap('t', '<A-k>', '<C-\\><C-N><C-w>k')
+set_keymap('t', '<A-l>', '<C-\\><C-N><C-w>l')
+set_keymap('i', '<A-h>', '<C-\\><C-N><C-w>h')
+set_keymap('i', '<A-j>', '<C-\\><C-N><C-w>j')
+set_keymap('i', '<A-k>', '<C-\\><C-N><C-w>k')
+set_keymap('i', '<A-l>', '<C-\\><C-N><C-w>l')
+set_keymap('n', '<A-h>', '<C-\\><C-N><C-w>h')
+set_keymap('n', '<A-j>', '<C-\\><C-N><C-w>j')
+set_keymap('n', '<A-k>', '<C-\\><C-N><C-w>k')
+set_keymap('n', '<A-l>', '<C-\\><C-N><C-w>l')
+
 --- Prints content of register to stdout. If register is null then '*' register is used
 --- @param reg string register to print to stdout
 function _G.stdout(reg)
