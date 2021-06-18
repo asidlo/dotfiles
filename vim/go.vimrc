@@ -87,6 +87,8 @@ noremap <down> gj
 noremap j gj
 noremap k gk
 
+let g:markdown_fenced_languages = {'bash', 'json', 'javascript', 'python', 'java', 'groovy', 'go', 'rust'}
+
 let g:netrw_dirhistmax = 0
 let g:netrw_banner = 0
 let g:netrw_winsize = 25

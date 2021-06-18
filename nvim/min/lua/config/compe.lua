@@ -16,17 +16,6 @@ compe.setup {
 	}
 }
 
-set_keymap('i', '<C-Space>', 'compe#complete()', {
-	noremap = true,
-	silent = true,
-	expr = true
-})
-set_keymap('i', '<CR>', 'compe#confirm({"select": v:true, "keys": "<CR>"})', {
-	noremap = true,
-	silent = true,
-	expr = true
-})
-
 local function check_back_space()
 	local col = vim.fn.col('.') - 1
 	if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
@@ -61,17 +50,12 @@ function _G.s_tab_complete()
 	end
 end
 
-set_keymap('i', '<Tab>', 'v:lua.tab_complete()', {
-	expr = true
-})
-set_keymap('s', '<Tab>', 'v:lua.tab_complete()', {
-	expr = true
-})
-set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', {
-	expr = true
-})
-set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', {
-	expr = true
-})
+set_keymap('i', '<C-Space>', 'compe#complete()', { noremap = true, silent = true, expr = true })
+set_keymap('i', '<CR>', 'compe#confirm({"select": v:true, "keys": "<CR>"})', { noremap = true, silent = true, expr = true })
+set_keymap('i', '<C-e>', 'compe#close("<c-e>")', { silent = true, noremap = true, expr = true })
+set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { silent = true, noremap = true, expr = true })
+set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { silent = true, noremap = true, expr = true })
+set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { silent = true, noremap = true, expr = true })
+set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { silent = true, noremap = true, expr = true })
 set_keymap('i', '<M-l>', "<cmd>lua return require'snippets'.expand_or_advance(1)<CR>")
 set_keymap('i', '<M-h>', "<cmd>lua return require'snippets'.advance_snippet(-1)<CR>")

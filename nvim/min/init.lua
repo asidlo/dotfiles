@@ -48,6 +48,8 @@ vim.g.colors_name = 'dracula'
 vim.g.python3_host_prog = '/usr/bin/python3'
 vim.g.mapleader = ','
 
+vim.g.markdown_fenced_languages = {'bash', 'json', 'javascript', 'python', 'java', 'groovy', 'go', 'rust'}
+
 --- Creates key mappings to reduce typing
 ---@param mode string 'n' | 'v' | 'i'...etc
 ---@param map string keys to be mapped
@@ -153,6 +155,8 @@ local autocmds = {
 		{[[FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0]]},
 		{[[FileType zsh setlocal foldmethod=marker ]]},
 		{[[FileType markdown,text,asciidoc setlocal textwidth=79 expandtab tabstop=4 shiftwidth=4 spell]]},
+		{"FileType markdown nmap ]] :execute '/^--\\+' <bar> :noh<CR>"},
+		{"FileType markdown nmap [[ :execute '?^--\\+' <bar> :noh<CR>"},
 		{[[FileType java,groovy setlocal foldlevel=2 colorcolumn=120 expandtab tabstop=4 shiftwidth=4]]},
 		{[[FileType rust setlocal expandtab tabstop=4 shiftwidth=4]]},
 		{[[FileType go setlocal noexpandtab tabstop=4 shiftwidth=4]]},
