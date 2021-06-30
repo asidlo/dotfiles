@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <key name="Software">
 	<key name="ConEmu">
-		<key name=".Vanilla" modified="2021-06-22 11:30:06" build="210422">
+		<key name=".Vanilla" modified="2021-06-30 11:58:39" build="210627">
 			<value name="Language" type="string" data="en"/>
 			<value name="StartType" type="hex" data="02"/>
 			<value name="CmdLine" type="string" data=""/>
@@ -10,15 +10,15 @@
 			<value name="StartFarFolders" type="hex" data="00"/>
 			<value name="StartFarEditors" type="hex" data="00"/>
 			<value name="StartCreateDelay" type="ulong" data="100"/>
-			<value name="ColorTable00" type="dword" data="00000000"/>
+			<value name="ColorTable00" type="dword" data="00362a28"/>
 			<value name="ColorTable01" type="dword" data="00f993bd"/>
 			<value name="ColorTable02" type="dword" data="007bfa50"/>
 			<value name="ColorTable03" type="dword" data="00fde98b"/>
 			<value name="ColorTable04" type="dword" data="005555ff"/>
 			<value name="ColorTable05" type="dword" data="00c679ff"/>
-			<value name="ColorTable06" type="dword" data="008cfaf1"/>
-			<value name="ColorTable07" type="dword" data="00bebebe"/>
-			<value name="ColorTable08" type="dword" data="00867c78"/>
+			<value name="ColorTable06" type="dword" data="006cb8ff"/>
+			<value name="ColorTable07" type="dword" data="00f2f8f8"/>
+			<value name="ColorTable08" type="dword" data="005a4744"/>
 			<value name="ColorTable09" type="dword" data="00f993bd"/>
 			<value name="ColorTable10" type="dword" data="007bfa50"/>
 			<value name="ColorTable11" type="dword" data="00fde98b"/>
@@ -26,10 +26,10 @@
 			<value name="ColorTable13" type="dword" data="00c679ff"/>
 			<value name="ColorTable14" type="dword" data="008cfaf1"/>
 			<value name="ColorTable15" type="dword" data="00f2f8f8"/>
-			<value name="TextColorIdx" type="hex" data="0F"/>
+			<value name="TextColorIdx" type="hex" data="00"/>
 			<value name="BackColorIdx" type="hex" data="00"/>
-			<value name="PopTextColorIdx" type="hex" data="0F"/>
-			<value name="PopBackColorIdx" type="hex" data="08"/>
+			<value name="PopTextColorIdx" type="hex" data="00"/>
+			<value name="PopBackColorIdx" type="hex" data="00"/>
 			<value name="ExtendFonts" type="hex" data="00"/>
 			<value name="ExtendFontNormalIdx" type="hex" data="01"/>
 			<value name="ExtendFontBoldIdx" type="hex" data="0C"/>
@@ -137,11 +137,11 @@
 			<value name="Cascaded" type="hex" data="01"/>
 			<value name="IntegralSize" type="hex" data="00"/>
 			<value name="WindowMode" type="dword" data="0000051f"/>
-			<value name="ConWnd X" type="long" data="1653"/>
-			<value name="ConWnd Y" type="long" data="213"/>
+			<value name="ConWnd X" type="long" data="1619"/>
+			<value name="ConWnd Y" type="long" data="230"/>
 			<value name="LastMonitor" type="string" data="0,0,3440,1400"/>
-			<value name="ConWnd Width" type="dword" data="00000084"/>
-			<value name="ConWnd Height" type="dword" data="00000024"/>
+			<value name="ConWnd Width" type="dword" data="000000a0"/>
+			<value name="ConWnd Height" type="dword" data="0000002c"/>
 			<value name="16bit Height" type="ulong" data="0"/>
 			<value name="QuakeStyle" type="hex" data="00"/>
 			<value name="Restore2ActiveMon" type="hex" data="00"/>
@@ -602,8 +602,8 @@
 				<value name="DndRKey" type="hex" data="A2"/>
 				<value name="WndDragKey" type="dword" data="00121101"/>
 			</key>
-			<key name="Tasks" modified="2021-06-22 11:30:06" build="210422">
-				<value name="Count" type="long" data="21"/>
+			<key name="Tasks" modified="2021-06-30 11:27:12" build="210627">
+				<value name="Count" type="long" data="23"/>
 				<key name="Task1" modified="2020-11-07 09:57:39" build="201011">
 					<value name="Name" type="string" data="{Shells::cmd}"/>
 					<value name="Flags" type="dword" data="00000001"/>
@@ -622,7 +622,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd.exe /k "%ConEmuBaseDir%\CmdInit.cmd" -new_console:a'/>
 				</key>
-				<key name="Task3" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task3" modified="2021-06-30 11:33:34" build="210627">
 					<value name="Name" type="string" data="{Shells::PowerShell}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -631,34 +631,43 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data="powershell.exe"/>
 				</key>
-				<key name="Task4" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task4" modified="2021-06-30 11:33:34" build="210627">
 					<value name="Name" type="string" data="{Shells::PowerShell (Admin)}"/>
 					<value name="Flags" type="dword" data="00000004"/>
-					<value name="Hotkey" type="dword" data="00000000"/>
+					<value name="Hotkey" type="dword" data="00101150"/>
 					<value name="GuiArgs" type="string" data='/dir "%CD%"'/>
 					<value name="Active" type="long" data="0"/>
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data="powershell.exe -new_console:a"/>
 				</key>
-				<key name="Task5" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task5" modified="2021-06-30 11:32:55" build="210627">
 					<value name="Name" type="string" data="{Shells::Git bash}"/>
 					<value name="Flags" type="dword" data="00000004"/>
-					<value name="Hotkey" type="dword" data="00000000"/>
+					<value name="Hotkey" type="dword" data="00101142"/>
 					<value name="GuiArgs" type="string" data='/dir "%CD%"'/>
 					<value name="Active" type="long" data="0"/>
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='set "PATH=%ConEmuDir%\..\Git\usr\bin;%PATH%" &amp; %ConEmuDir%\..\Git\git-cmd.exe --no-cd --command=%ConEmuBaseDirShort%\conemu-msys2-64.exe /usr/bin/bash.exe -l -i -new_console:p'/>
 				</key>
-				<key name="Task6" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task6" modified="2021-06-30 11:32:55" build="210627">
 					<value name="Name" type="string" data="{Shells::WSL}"/>
 					<value name="Flags" type="dword" data="00000004"/>
-					<value name="Hotkey" type="dword" data="00000000"/>
+					<value name="Hotkey" type="dword" data="0010114c"/>
 					<value name="GuiArgs" type="string" data=""/>
 					<value name="Active" type="long" data="0"/>
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='%windir%\system32\wsl.exe -cur_console:t:"WSL":pm:/mnt ~'/>
 				</key>
-				<key name="Task7" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task7" modified="2021-06-30 11:32:55" build="210627">
+					<value name="Name" type="string" data="{Shells::Notes}"/>
+					<value name="Flags" type="dword" data="00000004"/>
+					<value name="Hotkey" type="dword" data="0010114e"/>
+					<value name="GuiArgs" type="string" data=""/>
+					<value name="Active" type="long" data="0"/>
+					<value name="Count" type="long" data="1"/>
+					<value name="Cmd1" type="string" data='%windir%\system32\wsl.exe -cur_console:t:"Notes":pm:/mnt ~ nvim -S ~/.local/share/nvim/sessions/notes.vim'/>
+				</key>
+				<key name="Task8" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{Shells::Ubuntu}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -667,7 +676,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='%windir%\system32\wsl.exe  --distribution Ubuntu -cur_console:p:t:"Ubuntu":m:/mnt --cd \\wsl$\Ubuntu\home\asidlo'/>
 				</key>
-				<key name="Task8" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task9" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{VS::15.0x86}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -676,7 +685,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd /k ""%ConEmuDrive%\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat"" x86 -new_console:t:"VS 15.0" -new_console:C:"%CommonProgramFiles(x86)%\microsoft shared\MSEnv\VSFileHandler.dll,38"'/>
 				</key>
-				<key name="Task9" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task10" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{VS::15.0x64}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -685,7 +694,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd /k ""%ConEmuDrive%\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat"" x64 -new_console:t:"VS 15.0" -new_console:C:"%CommonProgramFiles(x86)%\microsoft shared\MSEnv\VSFileHandler.dll,38"'/>
 				</key>
-				<key name="Task10" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task11" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{VS::10.0x86}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -694,7 +703,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd /k ""C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" x86 -new_console:t:"VS 10.0" -new_console:C:"%CommonProgramFiles(x86)%\microsoft shared\MSEnv\VSFileHandler.dll,16"'/>
 				</key>
-				<key name="Task11" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task12" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{VS::2017}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -703,7 +712,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd /k ""C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\Tools\VsDevCmd.bat"" -new_console:t:"VS 2017" -new_console:C:"%CommonProgramFiles(x86)%\microsoft shared\MSEnv\VSFileHandler.dll"'/>
 				</key>
-				<key name="Task12" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task13" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{VS::2017x86}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -712,7 +721,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd /k ""C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat"" x86 -new_console:t:"VS 2017" -new_console:C:"%CommonProgramFiles(x86)%\microsoft shared\MSEnv\VSFileHandler.dll"'/>
 				</key>
-				<key name="Task13" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task14" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{VS::10.0x64}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -721,7 +730,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd /k ""C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"" x64 -new_console:t:"VS 10.0" -new_console:C:"%CommonProgramFiles(x86)%\microsoft shared\MSEnv\VSFileHandler.dll,16"'/>
 				</key>
-				<key name="Task14" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task15" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{VS::2017x64}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -730,7 +739,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd /k ""C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat"" x64 -new_console:t:"VS 2017" -new_console:C:"%CommonProgramFiles(x86)%\microsoft shared\MSEnv\VSFileHandler.dll"'/>
 				</key>
-				<key name="Task15" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task16" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{Mattersight::MEB}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00101131"/>
@@ -739,7 +748,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd.exe -new_console:a:t:"MEB":d:"C:\Program Files\Mattersight\CallCapture Enlighten Bridge"'/>
 				</key>
-				<key name="Task16" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task17" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{Mattersight::MSS}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00101132"/>
@@ -748,7 +757,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd.exe -new_console:a:t:"MSS":d:"C:\Program Files\Mattersight\CallCapture MattersightSIPService"'/>
 				</key>
-				<key name="Task17" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task18" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{Mattersight::RCE}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00101133"/>
@@ -757,7 +766,7 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd.exe -new_console:a:t:"RCE":d:"C:\Program Files\Mattersight\CallCapture RtpCaptureEngine"'/>
 				</key>
-				<key name="Task18" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task19" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{Mattersight::RTB}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00101134"/>
@@ -766,16 +775,16 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='cmd.exe -new_console:a:t:"RTB":d:"C:\Program Files\Mattersight\Real Time Bus"'/>
 				</key>
-				<key name="Task19" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task20" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{Mattersight::TEST}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00101135"/>
 					<value name="GuiArgs" type="string" data=""/>
 					<value name="Active" type="long" data="0"/>
 					<value name="Count" type="long" data="1"/>
-					<value name="Cmd1" type="string" data='cmd.exe -new_console:a:t:"TEST":d:"D:\RTG_DEV\src\demo\mattersight\tools\MEB_Tester_v2'/>
+					<value name="Cmd1" type="string" data='cmd.exe -new_console:a:t:"TEST":d:"C:\Program Files\Mattersight\MEB_Tester_v2"'/>
 				</key>
-				<key name="Task20" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task21" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{RTG::NICETestUser}"/>
 					<value name="Flags" type="dword" data="00000006"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -784,7 +793,16 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data="cmd.exe -cur_console:n:u:FAST-TALK\NICETestUser:N!C3test"/>
 				</key>
-				<key name="Task21" modified="2021-06-22 11:30:06" build="210422">
+				<key name="Task22" modified="2021-06-30 11:32:55" build="210627">
+					<value name="Name" type="string" data="{RTG::SRC}"/>
+					<value name="Flags" type="dword" data="00000004"/>
+					<value name="Hotkey" type="dword" data="00101152"/>
+					<value name="GuiArgs" type="string" data='/dir "D:\RTG_DEV\src\rtg"'/>
+					<value name="Active" type="long" data="0"/>
+					<value name="Count" type="long" data="1"/>
+					<value name="Cmd1" type="string" data='set "PATH=%ConEmuDir%\..\Git\usr\bin;%PATH%" &amp; %ConEmuDir%\..\Git\git-cmd.exe --no-cd --command=%ConEmuBaseDirShort%\conemu-msys2-64.exe /usr/bin/bash.exe -l -i -new_console:p:t:"RTG_SRC"'/>
+				</key>
+				<key name="Task23" modified="2021-06-30 11:27:12" build="210627">
 					<value name="Name" type="string" data="{Putty}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -806,15 +824,15 @@
 					<value name="PopTextColorIdx" type="hex" data="00"/>
 					<value name="PopBackColorIdx" type="hex" data="00"/>
 					<value name="ColorTable00" type="dword" data="00362a28"/>
-					<value name="ColorTable01" type="dword" data="00bc4354"/>
-					<value name="ColorTable02" type="dword" data="003dde66"/>
-					<value name="ColorTable03" type="dword" data="00fbd677"/>
-					<value name="ColorTable04" type="dword" data="003c3cee"/>
-					<value name="ColorTable05" type="dword" data="00f993bd"/>
+					<value name="ColorTable01" type="dword" data="00f993bd"/>
+					<value name="ColorTable02" type="dword" data="007bfa50"/>
+					<value name="ColorTable03" type="dword" data="00fde98b"/>
+					<value name="ColorTable04" type="dword" data="005555ff"/>
+					<value name="ColorTable05" type="dword" data="00c679ff"/>
 					<value name="ColorTable06" type="dword" data="006cb8ff"/>
 					<value name="ColorTable07" type="dword" data="00f2f8f8"/>
 					<value name="ColorTable08" type="dword" data="005a4744"/>
-					<value name="ColorTable09" type="dword" data="00a47262"/>
+					<value name="ColorTable09" type="dword" data="00f993bd"/>
 					<value name="ColorTable10" type="dword" data="007bfa50"/>
 					<value name="ColorTable11" type="dword" data="00fde98b"/>
 					<value name="ColorTable12" type="dword" data="005555ff"/>
@@ -823,6 +841,16 @@
 					<value name="ColorTable15" type="dword" data="00f2f8f8"/>
 				</key>
 			</key>
+			<value name="CmdLineHistory" type="multi">
+				<line data="{Shells::Notes}"/>
+				<line data="{RTG::SRC}"/>
+				<line data="{Shells::WSL}"/>
+				<line data="{Shells::Git bash}"/>
+				<line data="{Shells::cmd}"/>
+				<line data="powershell.exe"/>
+				<line data="{Shells::PowerShell (Admin)}"/>
+				<line data="{Shells::cmd (Admin)}"/>
+			</value>
 		</key>
 	</key>
 </key>

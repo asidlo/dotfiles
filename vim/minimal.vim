@@ -81,6 +81,9 @@ set undodir=~/.vim/undo
 set cscopetag
 set cscopeverbose
 
+set termguicolors
+set t_Co=256
+
 " }}}
 " Plugin: LIGHTLINE {{{
 "==============================================================================
