@@ -361,7 +361,7 @@ gls.right[4] = {
 	-- highlight = { colors.selection, colors.bg },
 	},
 }
-gls.right[6] = {
+gls.right[5] = {
 	GitBranch = {
 		provider = {
 			function()
@@ -371,6 +371,16 @@ gls.right[6] = {
 		},
 		condition = condition.check_git_workspace,
 		highlight = { colors.comment, colors.bg },
+	},
+}
+-- Space required after branch name since GitRoot disappears on smaller buffers
+gls.right[6] = {
+	Space = {
+		provider = function() return ' ' end,
+		-- condition = function()
+		-- 	return not has_width_gt(50) and condition.check_git_workspace()
+		-- end,
+	-- highlight = { colors.selection, colors.bg },
 	},
 }
 gls.right[7] = {
@@ -385,7 +395,7 @@ gls.right[7] = {
 		separator_highlight = {colors.selection, colors.bg}
 	},
 }
-gls.right[9] = {
+gls.right[8] = {
 	PerCent = {
 		provider = function() return ' '..fileinfo.current_line_percent() end,
 		condition = buffer_not_empty,

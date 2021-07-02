@@ -270,8 +270,8 @@ packer.startup(function()
 				'glepnir/lspsaga.nvim',
 				config = "require('config.lspsaga')"
 			}
-	},
-	config = "require('config.lsp')"
+		},
+		config = "require('config.lsp')"
 	}
 	use {
 		'glepnir/galaxyline.nvim',
@@ -320,4 +320,5 @@ packer.startup(function()
 			}
 		end
 	}
+	use { 'norcalli/nvim-colorizer.lua', config = "require('colorizer').setup()" }
 end)
