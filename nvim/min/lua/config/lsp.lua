@@ -159,9 +159,17 @@ lspconfig.jdtls.setup {
 			advancedOrganizeImportsSupport = true,
 			generateConstructorsPromptSupport = true,
 			generateDelegateMethodsPromptSupport = true,
-			inferSelectionSupport = {'extractMethod', 'extractVariable'}
+			inferSelectionSupport = {'extractMethod', 'extractVariable'},
+			resolveAdditionalTextEditsSupport = true
 		}
-	}
+	},
+	settings = {
+		java = {
+			signitureHelp = { enabled = true },
+			contentProvider = { preferred = 'fernflower' }
+		}
+	},
+	capabilities = capabilities
 }
 
 local system_name
