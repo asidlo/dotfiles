@@ -62,11 +62,22 @@
 	lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
 	lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
+	# ss -> git status -s
+	# a = added to stage
+	# u = untracked
+	# d = deleted
+	ls = ls-files
+	lss = ! git status --porcelain | awk '{print $2}'
+	lsa = diff --name-only --staged
+	lsm = ls-files --modified
+	lsu = ls-files --others --exclude-standard
+	lsd = ls-files --deleted
+
 	s = status
 	ss = status -s
 
 	# standup - last 1 week written by me
-	sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author sidlo.andrew@gmail.com
+	sup = ! git log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author $(git config user.email)
 
 	# Get all aliases defined in gitconfig
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
