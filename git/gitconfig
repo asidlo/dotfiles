@@ -72,6 +72,9 @@
 	lsm = ls-files --modified
 	lsu = ls-files --others --exclude-standard
 	lsd = ls-files --deleted
+	lsc = diff --name-only --diff-filter=U
+
+	conflicts = diff --check
 
 	s = status
 	ss = status -s
