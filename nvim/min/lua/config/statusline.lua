@@ -48,15 +48,6 @@ local function has_value(tab, val)
 	return false
 end
 
-local function value_not_found(tab, val)
-	for _, value in ipairs(tab) do
-		if value[1] == val then
-			return false
-		end
-	end
-	return true
-end
-
 local mode_color = function()
 	local mode_colors = {
 		[110] = colors.green,
@@ -99,7 +90,7 @@ local function get_current_file_name()
 	end
 	if vim.bo.modifiable then
 		if vim.bo.modified then
-			return file .. '  '
+			return file .. '   '
 		end
 	end
 	return file .. ' '
@@ -253,6 +244,42 @@ gls.left[4] = {
 		-- separator_highlight = { colors.selection, colors.bg },
 	},
 }
+gls.left[5] = {
+	DiagnosticError = {
+		provider = { 'DiagnosticError' },
+		icon = '  ',
+		highlight = { colors.red, colors.selection },
+		-- separator = ' ',
+		-- separator_highlight = {colors.bg, colors.bg}
+	},
+}
+gls.left[6] = {
+	DiagnosticWarn = {
+		provider = { 'DiagnosticWarn' },
+		icon = '  ',
+		highlight = { colors.orange, colors.selection },
+		-- separator = ' ',
+		-- separator_highlight = {colors.bg, colors.bg}
+	},
+}
+gls.left[7] = {
+	DiagnosticInfo = {
+		provider = { 'DiagnosticInfo' },
+		icon = '  ',
+		highlight = { colors.cyan, colors.selection },
+		-- separator = ' ',
+		-- separator_highlight = {colors.selection, colors.bg}
+	},
+}
+gls.left[8] = {
+	DiagnosticHint = {
+		provider = { 'DiagnosticHint' },
+		icon = '  ',
+		highlight = { colors.fg, colors.selection },
+		-- separator = ' ',
+		-- separator_highlight = {colors.selection, colors.bg}
+	},
+}
 -- gls.left[5] = {
 --     WhiteSpace = {
 --         provider = trailing_whitespace,
@@ -273,7 +300,7 @@ gls.left[4] = {
 --         highlight = { colors.middlegrey, colors.bg },
 --     },
 -- }
-gls.left[5] = {
+gls.mid[1] = {
 	ShowLspClient = {
 		provider = 'GetLspClient',
 		condition = function()
@@ -291,42 +318,6 @@ gls.left[5] = {
 		separator = ' ',
 		separator_highlight = {colors.selection, colors.selection}
 	}
-}
-gls.left[6] = {
-	DiagnosticError = {
-		provider = { 'DiagnosticError' },
-		icon = '  ',
-		highlight = { colors.red, colors.selection },
-		-- separator = ' ',
-		-- separator_highlight = {colors.bg, colors.bg}
-	},
-}
-gls.left[8] = {
-	DiagnosticWarn = {
-		provider = { 'DiagnosticWarn' },
-		icon = '  ',
-		highlight = { colors.orange, colors.selection },
-		-- separator = ' ',
-		-- separator_highlight = {colors.bg, colors.bg}
-	},
-}
-gls.left[10] = {
-	DiagnosticInfo = {
-		provider = { 'DiagnosticInfo' },
-		icon = '  ',
-		highlight = { colors.cyan, colors.selection },
-		-- separator = ' ',
-		-- separator_highlight = {colors.selection, colors.bg}
-	},
-}
-gls.left[12] = {
-	DiagnosticHint = {
-		provider = { 'DiagnosticHint' },
-		icon = '  ',
-		highlight = { colors.fg, colors.selection },
-		-- separator = ' ',
-		-- separator_highlight = {colors.selection, colors.bg}
-	},
 }
 -- gls.left[14] = {
 --     LspStatus = {
@@ -421,28 +412,30 @@ gls.right[8] = {
 
 -- Short status line
 -- TODO: Figure out how to not display inactive for gl.short_line_list
+-- gls.short_line_left[1] = {
+-- 	ShortLineInactive = {
+-- 		provider = function()
+-- 			local ft = vim.bo.filetype
+-- 			for _, value in ipairs(gl.short_line_list) do
+-- 					if value[1] == ft then
+-- 						return '  '..string.upper(ft)..' '
+-- 					end
+-- 				end
+-- 			return '  INACTIVE '
+-- 		end,
+-- 		highlight = {colors.bg, colors.purple, 'bold'}
+-- 	}
+-- }
 gls.short_line_left[1] = {
-	ShortLineInactive = {
-		provider = function() return '  INACTIVE ' end,
-		highlight = {colors.bg, colors.purple, 'bold'}
-	}
-}
-gls.short_line_left[2] = {
 	ShortLineFileIcon = {
 		provider = { function() return '  ' end, 'FileIcon' },
-		-- condition = function()
-		-- 	return buffer_not_empty and has_value(
-		-- 		gl.short_line_list,
-		-- 		vim.bo.filetype
-		-- 	)
-		-- end,
 		highlight = {
 			require('galaxyline.provider_fileinfo').get_file_icon,
 			colors.selection,
 		},
 	},
 }
-gls.short_line_left[3] = {
+gls.short_line_left[2] = {
 	ShortLineFileName = {
 		provider = {function() return string.format(' %s', get_current_file_name()) end},
 		condition = buffer_not_empty,
