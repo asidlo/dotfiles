@@ -68,9 +68,12 @@
 	lsm = ls-files --modified
 	lsu = ls-files --others --exclude-standard
 	lsd = ls-files --deleted
+	lsc = diff --name-only --diff-filter=U
 
 	s = status
 	ss = status -s
+
+	conflicts = diff --check
 
 	# standup - last 1 week written by me
 	sup = ! git log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author $(git config user.email)

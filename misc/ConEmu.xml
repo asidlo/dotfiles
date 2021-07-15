@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <key name="Software">
 	<key name="ConEmu">
-		<key name=".Vanilla" modified="2021-06-30 11:58:39" build="210627">
+		<key name=".Vanilla" modified="2021-07-14 22:53:05" build="210627">
 			<value name="Language" type="string" data="en"/>
 			<value name="StartType" type="hex" data="02"/>
 			<value name="CmdLine" type="string" data=""/>
@@ -49,7 +49,7 @@
 			<value name="ClipboardDeleteLeftWord" type="hex" data="02"/>
 			<value name="TrueColorerSupport" type="hex" data="01"/>
 			<value name="VividColors" type="hex" data="01"/>
-			<value name="FadeInactive" type="hex" data="01"/>
+			<value name="FadeInactive" type="hex" data="00"/>
 			<value name="FadeInactiveLow" type="hex" data="00"/>
 			<value name="FadeInactiveHigh" type="hex" data="D0"/>
 			<value name="ConVisible" type="hex" data="00"/>
@@ -137,11 +137,11 @@
 			<value name="Cascaded" type="hex" data="01"/>
 			<value name="IntegralSize" type="hex" data="00"/>
 			<value name="WindowMode" type="dword" data="0000051f"/>
-			<value name="ConWnd X" type="long" data="1619"/>
-			<value name="ConWnd Y" type="long" data="230"/>
+			<value name="ConWnd X" type="long" data="2111"/>
+			<value name="ConWnd Y" type="long" data="142"/>
 			<value name="LastMonitor" type="string" data="0,0,3440,1400"/>
-			<value name="ConWnd Width" type="dword" data="000000a0"/>
-			<value name="ConWnd Height" type="dword" data="0000002c"/>
+			<value name="ConWnd Width" type="dword" data="00000080"/>
+			<value name="ConWnd Height" type="dword" data="0000002f"/>
 			<value name="16bit Height" type="ulong" data="0"/>
 			<value name="QuakeStyle" type="hex" data="00"/>
 			<value name="Restore2ActiveMon" type="hex" data="00"/>
@@ -210,7 +210,7 @@
 			<value name="FarGotoEditorPath" type="string" data='far.exe /e%1:%2 "%3"'/>
 			<value name="HighlightMouseRow" type="hex" data="00"/>
 			<value name="HighlightMouseCol" type="hex" data="00"/>
-			<value name="FixFarBorders" type="hex" data="01"/>
+			<value name="FixFarBorders" type="hex" data="00"/>
 			<value name="Anti-aliasing2" type="hex" data="00"/>
 			<value name="FixFarBordersRanges" type="string" data="2013-25C4;"/>
 			<value name="ExtendUCharMap" type="hex" data="01"/>
@@ -404,7 +404,7 @@
 			<value name="Update.DownloadPath" type="string" data="%TEMP%\ConEmu"/>
 			<value name="Update.LeavePackages" type="hex" data="00"/>
 			<value name="Update.PostUpdateCmd" type="string" data="echo Last successful update&gt;ConEmuUpdate.info &amp;&amp; date /t&gt;&gt;ConEmuUpdate.info &amp;&amp; time /t&gt;&gt;ConEmuUpdate.info"/>
-			<key name="HotKeys" modified="2020-11-07 10:16:15" build="201011">
+			<key name="HotKeys" modified="2021-07-07 16:24:28" build="210627">
 				<value name="KeyMacroVersion" type="hex" data="02"/>
 				<value name="Multi.Modifier" type="dword" data="000000a2"/>
 				<value name="Multi.ArrowsModifier" type="dword" data="0000005b"/>
@@ -505,7 +505,7 @@
 				<value name="Key.JumpActiveMonitor" type="dword" data="00000000"/>
 				<value name="Key.JumpPrevMonitor" type="dword" data="00105b25"/>
 				<value name="Key.JumpNextMonitor" type="dword" data="00105b27"/>
-				<value name="Key.FullScreen" type="dword" data="0000120d"/>
+				<value name="Key.FullScreen" type="dword" data="00000000"/>
 				<value name="Key.SysMenu" type="dword" data="00001220"/>
 				<value name="Key.SysMenu2" type="dword" data="00001102"/>
 				<value name="Key.DebugProcess" type="dword" data="00105b44"/>
@@ -527,7 +527,7 @@
 				<value name="FontSmallerKey" type="dword" data="000011d1"/>
 				<value name="FontOriginalKey" type="dword" data="00001104"/>
 				<value name="PasteFileKey" type="dword" data="00101146"/>
-				<value name="PastePathKey" type="dword" data="00101144"/>
+				<value name="PastePathKey" type="dword" data="00000000"/>
 				<value name="PasteCygwinKey" type="dword" data="00005d2d"/>
 				<value name="KeyMacro01" type="dword" data="00000000"/>
 				<value name="KeyMacro01.Text" type="string" data=""/>
@@ -602,8 +602,8 @@
 				<value name="DndRKey" type="hex" data="A2"/>
 				<value name="WndDragKey" type="dword" data="00121101"/>
 			</key>
-			<key name="Tasks" modified="2021-06-30 11:27:12" build="210627">
-				<value name="Count" type="long" data="23"/>
+			<key name="Tasks" modified="2021-07-07 15:21:16" build="210627">
+				<value name="Count" type="long" data="24"/>
 				<key name="Task1" modified="2020-11-07 09:57:39" build="201011">
 					<value name="Name" type="string" data="{Shells::cmd}"/>
 					<value name="Flags" type="dword" data="00000001"/>
@@ -658,10 +658,10 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='%windir%\system32\wsl.exe -cur_console:t:"WSL":pm:/mnt ~'/>
 				</key>
-				<key name="Task7" modified="2021-06-30 11:32:55" build="210627">
+				<key name="Task7" modified="2021-06-30 12:19:31" build="210627">
 					<value name="Name" type="string" data="{Shells::Notes}"/>
 					<value name="Flags" type="dword" data="00000004"/>
-					<value name="Hotkey" type="dword" data="0010114e"/>
+					<value name="Hotkey" type="dword" data="0012114e"/>
 					<value name="GuiArgs" type="string" data=""/>
 					<value name="Active" type="long" data="0"/>
 					<value name="Count" type="long" data="1"/>
@@ -802,7 +802,16 @@
 					<value name="Count" type="long" data="1"/>
 					<value name="Cmd1" type="string" data='set "PATH=%ConEmuDir%\..\Git\usr\bin;%PATH%" &amp; %ConEmuDir%\..\Git\git-cmd.exe --no-cd --command=%ConEmuBaseDirShort%\conemu-msys2-64.exe /usr/bin/bash.exe -l -i -new_console:p:t:"RTG_SRC"'/>
 				</key>
-				<key name="Task23" modified="2021-06-30 11:27:12" build="210627">
+				<key name="Task23" modified="2021-07-07 15:24:27" build="210627">
+					<value name="Name" type="string" data="{RTG::DEV}"/>
+					<value name="Flags" type="dword" data="00000004"/>
+					<value name="Hotkey" type="dword" data="00101144"/>
+					<value name="GuiArgs" type="string" data='/dir "D:\RTG_DEV\src\rtg\deployment\dev\build\dist\rtg\bin"'/>
+					<value name="Active" type="long" data="0"/>
+					<value name="Count" type="long" data="1"/>
+					<value name="Cmd1" type="string" data='set "PATH=%ConEmuDir%\..\Git\usr\bin;%PATH%" &amp; %ConEmuDir%\..\Git\git-cmd.exe --no-cd --command=%ConEmuBaseDirShort%\conemu-msys2-64.exe /usr/bin/bash.exe -l -i -new_console:p:t:"RTG_DEV"'/>
+				</key>
+				<key name="Task24" modified="2021-07-07 15:21:16" build="210627">
 					<value name="Name" type="string" data="{Putty}"/>
 					<value name="Flags" type="dword" data="00000004"/>
 					<value name="Hotkey" type="dword" data="00000000"/>
@@ -842,13 +851,13 @@
 				</key>
 			</key>
 			<value name="CmdLineHistory" type="multi">
+				<line data="{Shells::PowerShell (Admin)}"/>
 				<line data="{Shells::Notes}"/>
 				<line data="{RTG::SRC}"/>
 				<line data="{Shells::WSL}"/>
 				<line data="{Shells::Git bash}"/>
 				<line data="{Shells::cmd}"/>
 				<line data="powershell.exe"/>
-				<line data="{Shells::PowerShell (Admin)}"/>
 				<line data="{Shells::cmd (Admin)}"/>
 			</value>
 		</key>
