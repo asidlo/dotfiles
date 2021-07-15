@@ -48,6 +48,15 @@ local function has_value(tab, val)
 	return false
 end
 
+local function value_not_found(tab, val)
+	for _, value in ipairs(tab) do
+		if value[1] == val then
+			return false
+		end
+	end
+	return true
+end
+
 local mode_color = function()
 	local mode_colors = {
 		[110] = colors.green,
@@ -240,8 +249,8 @@ gls.left[4] = {
 		provider = get_current_file_name,
 		condition = buffer_not_empty,
 		highlight = { colors.fg, colors.selection },
-		separator = separators.bLeft,
-		separator_highlight = { colors.selection, colors.bg },
+		-- separator = separators.bLeft,
+		-- separator_highlight = { colors.selection, colors.bg },
 	},
 }
 -- gls.left[5] = {
@@ -277,17 +286,17 @@ gls.left[5] = {
 			end
 			return true
 		end,
-		icon = '   ',
-		highlight = {colors.comment, colors.bg},
+		icon = '    ',
+		highlight = {colors.fg, colors.selection},
 		separator = ' ',
-		separator_highlight = {colors.selection, colors.bg}
+		separator_highlight = {colors.selection, colors.selection}
 	}
 }
 gls.left[6] = {
 	DiagnosticError = {
 		provider = { 'DiagnosticError' },
 		icon = '  ',
-		highlight = { colors.red, colors.bg },
+		highlight = { colors.red, colors.selection },
 		-- separator = ' ',
 		-- separator_highlight = {colors.bg, colors.bg}
 	},
@@ -296,7 +305,7 @@ gls.left[8] = {
 	DiagnosticWarn = {
 		provider = { 'DiagnosticWarn' },
 		icon = '  ',
-		highlight = { colors.orange, colors.bg },
+		highlight = { colors.orange, colors.selection },
 		-- separator = ' ',
 		-- separator_highlight = {colors.bg, colors.bg}
 	},
@@ -305,7 +314,7 @@ gls.left[10] = {
 	DiagnosticInfo = {
 		provider = { 'DiagnosticInfo' },
 		icon = '  ',
-		highlight = { colors.cyan, colors.bg },
+		highlight = { colors.cyan, colors.selection },
 		-- separator = ' ',
 		-- separator_highlight = {colors.selection, colors.bg}
 	},
@@ -314,7 +323,7 @@ gls.left[12] = {
 	DiagnosticHint = {
 		provider = { 'DiagnosticHint' },
 		icon = '  ',
-		highlight = { colors.comment, colors.bg },
+		highlight = { colors.fg, colors.selection },
 		-- separator = ' ',
 		-- separator_highlight = {colors.selection, colors.bg}
 	},
@@ -334,9 +343,9 @@ gls.right[1] = {
 		provider = 'DiffAdd',
 		condition = checkwidth,
 		icon = '+',
-		highlight = { colors.green, colors.bg },
+		highlight = { colors.green, colors.selection },
 		separator = ' ',
-		separator_highlight = { colors.comment, colors.bg },
+		separator_highlight = { colors.fg, colors.selection },
 	},
 }
 gls.right[2] = {
@@ -344,7 +353,7 @@ gls.right[2] = {
 		provider = 'DiffModified',
 		condition = checkwidth,
 		icon = '~',
-		highlight = { colors.orange, colors.bg },
+		highlight = { colors.orange, colors.selection },
 	},
 }
 gls.right[3] = {
@@ -352,13 +361,13 @@ gls.right[3] = {
 		provider = 'DiffRemove',
 		condition = checkwidth,
 		icon = '-',
-		highlight = { colors.red, colors.bg },
+		highlight = { colors.red, colors.selection },
 	},
 }
 gls.right[4] = {
 	Space = {
 		provider = function() return ' ' end,
-	-- highlight = { colors.selection, colors.bg },
+		highlight = { colors.selection, colors.selection },
 	},
 }
 gls.right[5] = {
@@ -370,13 +379,14 @@ gls.right[5] = {
 			'GitBranch',
 		},
 		condition = condition.check_git_workspace,
-		highlight = { colors.comment, colors.bg },
+		highlight = { colors.fg, colors.selection },
 	},
 }
 -- Space required after branch name since GitRoot disappears on smaller buffers
 gls.right[6] = {
 	Space = {
 		provider = function() return ' ' end,
+		highlight = { colors.selection, colors.selection },
 		-- condition = function()
 		-- 	return not has_width_gt(50) and condition.check_git_workspace()
 		-- end,
@@ -391,8 +401,8 @@ gls.right[7] = {
 		end,
 		icon = '  ',
 		highlight = { colors.fg, colors.selection },
-		separator = separators.uTop,
-		separator_highlight = {colors.selection, colors.bg}
+		-- separator = separators.uTop,
+		-- separator_highlight = {colors.selection, colors.bg}
 	},
 }
 gls.right[8] = {
@@ -410,37 +420,44 @@ gls.right[8] = {
 -- }
 
 -- Short status line
+-- TODO: Figure out how to not display inactive for gl.short_line_list
 gls.short_line_left[1] = {
-	FileIcon = {
+	ShortLineInactive = {
+		provider = function() return '  INACTIVE ' end,
+		highlight = {colors.bg, colors.purple, 'bold'}
+	}
+}
+gls.short_line_left[2] = {
+	ShortLineFileIcon = {
 		provider = { function() return '  ' end, 'FileIcon' },
-		condition = function()
-			return buffer_not_empty and has_value(
-				gl.short_line_list,
-				vim.bo.filetype
-			)
-		end,
+		-- condition = function()
+		-- 	return buffer_not_empty and has_value(
+		-- 		gl.short_line_list,
+		-- 		vim.bo.filetype
+		-- 	)
+		-- end,
 		highlight = {
 			require('galaxyline.provider_fileinfo').get_file_icon,
 			colors.selection,
 		},
 	},
 }
-gls.short_line_left[2] = {
-	FileName = {
-		provider = get_current_file_name,
+gls.short_line_left[3] = {
+	ShortLineFileName = {
+		provider = {function() return string.format(' %s', get_current_file_name()) end},
 		condition = buffer_not_empty,
 		highlight = { colors.fg, colors.selection },
-		separator = '',
-		separator_highlight = { colors.selection, colors.bg },
+		separator = '',
+		separator_highlight = { colors.selection, colors.selection },
 	},
 }
 
 gls.short_line_right[1] = {
-	BufferIcon = {
-		provider = 'BufferIcon',
-		highlight = { colors.yellow, colors.selection },
+	ShortLineBufferIcon = {
+		provider = { function() return ' ' end, 'BufferIcon' },
+		highlight = { colors.fg, colors.selection },
 		separator = '',
-		separator_highlight = { colors.selection, colors.bg },
+		-- separator_highlight = { colors.cyan, colors.cyan },
 	},
 }
 
