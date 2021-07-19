@@ -31,50 +31,31 @@ end
 
 local lspconfig = require('lspconfig')
 
-local on_attach = function(client, _)
-	-- Keybindings for LSPs
-	-- Note these are in on_attach so that they don't override bindings in a non-LSP setting
-	-- vim.api.nvim_buf_set_keymap(0, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', {noremap = true, silent = true})
-	-- vim.api.nvim_set_keymap('n', '<C-K>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', {noremap = true, silent = true})
-
-	set_buf_keymap(0, 'n', '<F18>', '<Cmd>lua vim.lsp.buf.rename()<CR>')
-	set_keymap('n', '<M-CR>', '<Cmd>lua vim.lsp.buf.code_action()<CR>')
-	set_keymap('x', '<M-CR>', '<Cmd>lua vim.lsp.buf.range_code_action()<CR>')
-
-	-- vim.api.nvim_set_keymap('n', 'g[', '<Cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', {noremap = true, silent = true})
-	-- vim.api.nvim_set_keymap('n', 'g]', '<Cmd>lua vim.lsp.diagnostic.goto_next()<CR>', {noremap = true, silent = true})
-
-	set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.declaration()<CR>')
-	set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.implementation()<CR>')
-	set_keymap('n', '<C-]>', '<Cmd>lua vim.lsp.buf.definition()<CR>')
-	set_keymap('n', '1gD', '<Cmd>lua vim.lsp.buf.type_definition()<CR>')
-	set_buf_keymap(0, 'n', '<F6>', '<Cmd>lua vim.lsp.buf.references()<CR>')
-
-	-- set_keymap('n', 'g0', '<Cmd>lua vim.lsp.buf.document_symbol()<CR>')
-	-- set_keymap('n', 'gW', '<Cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
-	-- set_keymap('n', '<M-Space>', "<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
-
-	-- vim.api.nvim_buf_set_keymap(0, 'n', '<F6>', '<Cmd>Telescope lsp_references<CR>', {noremap = true, silent = true})
-
-	set_keymap('n', 'g0', '<Cmd>Telescope lsp_document_symbols<CR>')
-	set_keymap('n', 'gW', '<Cmd>Telescope lsp_workspace_symbols<CR>')
-
-	-- vim.api.nvim_set_keymap('n', '<M-CR>', '<Cmd>Telescope lsp_code_actions<CR>', {noremap = true, silent = true})
-	-- vim.api.nvim_set_keymap('x', '<M-CR>', '<Cmd>Telescope lsp_range_code_actions<CR>', {noremap = true, silent = true})
-
-	set_buf_keymap(0, 'n', 'K', "<Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>")
-	set_keymap('i', '<M-k>', "<Cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>")
-
-	-- set_keymap(0, 'n', '<F18>', "<Cmd>lua require('lspsaga.rename').rename()<CR>")
-	-- vim.api.nvim_set_keymap('n', '<M-CR>', "<Cmd>lua require('lspsaga.codeaction').code_action()<CR>", {noremap = true, silent = true})
-	-- vim.api.nvim_set_keymap('x', '<M-CR>', "<Cmd>'<,'>lua require('lspsaga.codeaction').range_code_action()<CR>", {noremap = true, silent = true})
-
-	set_keymap('n', 'g[', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()<CR>")
-	set_keymap('n', 'g]', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()<CR>")
-	set_keymap('n', '<M-Space>', "<Cmd>lua require'lspsaga.diagnostic'.show_line_diagnostics()<CR>")
-	set_keymap('n', 'gK', "<Cmd>lua require'lspsaga.provider'.preview_definition()<CR>")
-	set_buf_keymap(0, 'n', '<M-f>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>")
-	set_buf_keymap(0, 'n', '<M-b>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>")
+local on_attach = function(client, bufnr)
+	set_buf_keymap(bufnr, 'n', '<F18>', '<Cmd>lua vim.lsp.buf.rename()<CR>')
+	set_buf_keymap(bufnr, 'n', '<M-CR>', '<Cmd>lua vim.lsp.buf.code_action()<CR>')
+	set_buf_keymap(bufnr, 'x', '<M-CR>', '<Cmd>lua vim.lsp.buf.range_code_action()<CR>')
+	set_buf_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.declaration()<CR>')
+	set_buf_keymap(bufnr, 'n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>')
+	set_buf_keymap(bufnr, 'n', '<C-]>', '<Cmd>lua vim.lsp.buf.definition()<CR>')
+	set_buf_keymap(bufnr, 'n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>')
+	set_buf_keymap(bufnr, 'n', 'gt', '<Cmd>lua vim.lsp.buf.type_definition()<CR>')
+	set_buf_keymap(bufnr, 'n', 'g0', '<Cmd>Telescope lsp_document_symbols<CR>')
+	set_buf_keymap(bufnr, 'n', '<Leader>ws', '<Cmd>Telescope lsp_workspace_symbols<CR>')
+	set_buf_keymap(bufnr, 'n', '<Leader>wl', '<Cmd>lua dump(vim.lsp.buf.list_workspace_folders()<CR>')
+	set_buf_keymap(bufnr, 'n', '<Leader>wa', '<Cmd>lua dump(vim.lsp.buf.add_workspace_folder()<CR>')
+	set_buf_keymap(bufnr, 'n', '<Leader>wd', '<Cmd>lua dump(vim.lsp.buf.remove_workspace_folder()<CR>')
+	set_buf_keymap(bufnr, 'n', 'K', "<Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>")
+	set_buf_keymap(bufnr, 'i', '<M-k>', "<Cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>")
+	-- set_buf_keymap(bufnr, 'n', '<F18>', "<Cmd>lua require('lspsaga.rename').rename()<CR>")
+	-- set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua require('lspsaga.codeaction').code_action()<CR>")
+	-- set_buf_keymap(bufnr, 'x', '<M-CR>', "<Cmd>'<,'>lua require('lspsaga.codeaction').range_code_action()<CR>")
+	set_buf_keymap(bufnr, 'n', '[d', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()<CR>")
+	set_buf_keymap(bufnr, 'n', ']d', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()<CR>")
+	set_buf_keymap(bufnr, 'n', '<M-Space>', "<Cmd>lua require'lspsaga.diagnostic'.show_line_diagnostics()<CR>")
+	set_buf_keymap(bufnr, 'n', 'gK', "<Cmd>lua require'lspsaga.provider'.preview_definition()<CR>")
+	set_buf_keymap(bufnr, 'n', '<M-f>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>")
+	set_buf_keymap(bufnr, 'n', '<M-b>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>")
 
 	if client.resolved_capabilities.document_range_formatting then
 		-- Note that v:lua only supports global functions
@@ -93,10 +74,10 @@ local on_attach = function(client, _)
 	-- Set autocommands conditional on server_capabilities
 	if client.resolved_capabilities.document_highlight then
 		vim.api.nvim_command [[
-	  :hi LspReferenceRead guibg=NONE gui=underline term=underline cterm=underline
-	  :hi LspReferenceText guibg=NONE gui=underline term=underline cterm=underline
-	  :hi LspReferenceWrite guibg=NONE gui=underline term=underline cterm=underline
-	]]
+			:hi LspReferenceRead guibg=NONE gui=underline term=underline cterm=underline
+			:hi LspReferenceText guibg=NONE gui=underline term=underline cterm=underline
+			:hi LspReferenceWrite guibg=NONE gui=underline term=underline cterm=underline
+		]]
 		nvim_create_augroups({
 			lsp_document_highlight = {
 				{'CursorHold <buffer> lua vim.lsp.buf.document_highlight()'},
@@ -106,15 +87,12 @@ local on_attach = function(client, _)
 	end
 end
 
--- see :h lsp-handler
--- function(err, method, result, client_id, bufnr, config)
-local status_callback = vim.schedule_wrap(function(_, _, result)
-	-- vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
-	print(result.message)
-end)
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+local function make_capabilities()
+	local capabilities = vim.lsp.protocol.make_client_capabilities()
+	capabilities.textDocument.completion.completionItem.snippetSupport = true
+	capabilities.workspace.configuration = true
+	return capabilities
+end
 
 -- https://github.com/neovim/neovim/issues/12970
 vim.lsp.util.apply_text_document_edit = function(text_document_edit, _)
@@ -126,7 +104,7 @@ end
 
 lspconfig.rust_analyzer.setup {
 	on_attach = on_attach,
-	capabilities = capabilities
+	capabilities = make_capabilities()
 }
 
 lspconfig.gopls.setup {
@@ -140,18 +118,43 @@ lspconfig.gopls.setup {
 			},
 			staticcheck = true
 		}
-	}
+	},
+	capabilities = make_capabilities()
 }
 
+local jar_patterns = {
+	-- '/dev/microsoft/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
+	-- '/dev/dgileadi/vscode-java-decompiler/server/*.jar',
+	-- '/dev/microsoft/vscode-java-test/server/*.jar',
+}
+
+local bundles = {}
+for _, jar_pattern in ipairs(jar_patterns) do
+	for _, bundle in ipairs(vim.split(vim.fn.glob(home .. jar_pattern), '\n')) do
+		if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then
+			table.insert(bundles, bundle)
+		end
+	end
+end
+
 lspconfig.jdtls.setup {
-	cmd = {'jdtls.sh'},
+	autostart = false,
 	on_attach = on_attach,
-	root_dir = lspconfig.util.root_pattern('.git', 'gradlew', 'mvnw', '.java', '.groovy', '.gradle'),
+	cmd = {'jdtls.sh', os.getenv('HOME') .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
+	root_dir = lspconfig.util.root_pattern('gradlew', 'pom.xml', '.git'),
+	flags = {
+		allow_incremental_sync = true,
+		server_side_fuzzy_completion = true
+	},
 	handlers = {
-		['language/status'] = status_callback
+		['language/status'] = vim.schedule_wrap(function(_, _, result)
+			vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
+		end)
 	},
 	init_options = {
+		bundles = bundles,
 		extendedClientCapabilities = {
+			progressReportProvider = true,
 			classFileContentsSupport = true,
 			generateToStringPromptSupport = true,
 			hashCodeEqualsPromptSupport = true,
@@ -159,17 +162,57 @@ lspconfig.jdtls.setup {
 			advancedOrganizeImportsSupport = true,
 			generateConstructorsPromptSupport = true,
 			generateDelegateMethodsPromptSupport = true,
-			inferSelectionSupport = {'extractMethod', 'extractVariable'},
+			moveRefactoringSupport = true,
+			inferSelectionSupport = {'extractMethod', 'extractVariable', 'extractConstant'},
 			resolveAdditionalTextEditsSupport = true
 		}
 	},
 	settings = {
 		java = {
-			signitureHelp = { enabled = true },
-			contentProvider = { preferred = 'fernflower' }
+			signatureHelp = { enabled = true };
+			contentProvider = { preferred = 'fernflower' };
+			format = {
+				insertSpaces = true,
+				tabSize = 4
+			},
+			completion = {
+				favoriteStaticMembers = {
+					"org.hamcrest.MatcherAssert.assertThat",
+					"org.hamcrest.Matchers.*",
+					"org.hamcrest.CoreMatchers.*",
+					"org.junit.jupiter.api.Assertions.*",
+					"java.util.Objects.requireNonNull",
+					"java.util.Objects.requireNonNullElse",
+					"org.mockito.Mockito.*"
+				}
+			},
+			sources = {
+				organizeImports = {
+					starThreshold = 9999;
+					staticStarThreshold = 9999;
+				}
+			},
+			codeGeneration = {
+				toString = {
+					template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"
+				}
+			},
+			configuration = {
+				runtimes = {
+					{
+						name = 'JavaSE-11',
+						path = os.getenv('HOME') .. '/.sdkman/candidates/java/11.0.11-zulu/',
+					},
+					{
+						name = 'JavaSE-1.8',
+						path = os.getenv('HOME') .. '/.sdkman/candidates/java/8.0.292-zulu',
+						default = true
+					},
+				}
+			}
 		}
 	},
-	capabilities = capabilities
+	capabilities = make_capabilities()
 }
 
 local system_name
@@ -212,7 +255,8 @@ local luadev = require("lua-dev").setup({
 					}
 				}
 			}
-		}
+		},
+		capabilities = make_capabilities()
 	}
 })
 lspconfig.sumneko_lua.setup(luadev)

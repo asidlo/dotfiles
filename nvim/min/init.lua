@@ -222,6 +222,7 @@ local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.n
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
 	vim.fn.system({'git', 'clone', 'https://github.com/wbthomason/packer.nvim', install_path})
+	-- Should have packer in separate file and require it here, then run PackerSync
 end
 
 -- Packages
@@ -235,35 +236,24 @@ packer.init {
 
 packer.startup(function()
 	use 'wbthomason/packer.nvim'
-	use {
-		'dracula/vim',
-		as = 'dracula'
-	}
+
+	use {'dracula/vim', as = 'dracula'}
+
 	use {'tpope/vim-commentary'}
 	use {'tpope/vim-unimpaired'}
 	use {'tpope/vim-repeat'}
 	use {'tpope/vim-surround'}
 	use {'tpope/vim-dispatch'}
 	use {'tpope/vim-obsession'}
-	use {
-		'tpope/vim-fugitive',
-		config = "require('config.fugitive')"
-	}
+	use {'tpope/vim-fugitive', config = "require('config.fugitive')"}
 	use {'airblade/vim-rooter'}
-	use {
-		'airblade/vim-gitgutter',
-		config = "require('config.gitgutter')"
-	}
+	use {'airblade/vim-gitgutter', config = "require('config.gitgutter')"}
 	use {'rhysd/git-messenger.vim'}
-	use {'vim-scripts/ReplaceWithRegister'}
 	use {'moll/vim-bbye'}
 	use {'aymericbeaumet/vim-symlink'}
-	use {
-		'folke/which-key.nvim',
-		config = "require('config.whichkey')"
-	}
-	use {
-		'neovim/nvim-lspconfig',
+
+	use { 'folke/which-key.nvim', config = "require('config.whichkey')" }
+	use { 'neovim/nvim-lspconfig',
 		requires = {
 			{'nvim-lua/lsp_extensions.nvim'},
 			{'folke/lua-dev.nvim'},
@@ -275,8 +265,7 @@ packer.startup(function()
 		config = "require('config.lsp')"
 	}
 	use {
-		'glepnir/galaxyline.nvim',
-		branch = 'main',
+		'glepnir/galaxyline.nvim', branch = 'main',
 		requires = {'kyazdani42/nvim-web-devicons', opt = true},
 		config = "require('config.statusline')"
 	}
@@ -291,9 +280,7 @@ packer.startup(function()
 	}
 	use {
 		'hrsh7th/nvim-compe',
-		requires = {
-			'norcalli/snippets.nvim',
-		},
+		requires = { 'norcalli/snippets.nvim' },
 		config = "require('config.compe')"
 	}
 	use {
@@ -313,13 +300,8 @@ packer.startup(function()
 	use {
 		"folke/trouble.nvim",
 		requires = {"kyazdani42/nvim-web-devicons"},
-		config = function()
-			require("trouble").setup {
-			-- your configuration comes here
-			-- or leave it empty to use the default settings
-			-- refer to the configuration section below
-			}
-		end
+		config = 'require("trouble").setup()'
 	}
 	use { 'norcalli/nvim-colorizer.lua', config = "require('colorizer').setup()" }
+	use { 'sheerun/vim-polyglot' }
 end)
