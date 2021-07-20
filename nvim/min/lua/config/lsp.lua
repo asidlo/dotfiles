@@ -141,7 +141,7 @@ lspconfig.jdtls.setup {
 	autostart = false,
 	on_attach = on_attach,
 	cmd = {'jdtls.sh', os.getenv('HOME') .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
-	root_dir = lspconfig.util.root_pattern('gradlew', 'pom.xml', '.git'),
+	root_dir = lspconfig.util.root_pattern('gradlew', 'pom.xml', '.git', '*.java'),
 	flags = {
 		allow_incremental_sync = true,
 		server_side_fuzzy_completion = true
@@ -202,11 +202,11 @@ lspconfig.jdtls.setup {
 					{
 						name = 'JavaSE-11',
 						path = os.getenv('HOME') .. '/.sdkman/candidates/java/11.0.11-zulu/',
+						default = true
 					},
 					{
 						name = 'JavaSE-1.8',
 						path = os.getenv('HOME') .. '/.sdkman/candidates/java/8.0.292-zulu',
-						default = true
 					},
 				}
 			}
