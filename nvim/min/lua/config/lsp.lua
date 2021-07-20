@@ -147,9 +147,9 @@ lspconfig.jdtls.setup {
 		server_side_fuzzy_completion = true
 	},
 	handlers = {
-		['language/status'] = vim.schedule_wrap(function(_, _, result)
-			vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
-		end)
+		-- ['language/status'] = vim.schedule_wrap(function(_, _, result)
+		-- 	vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
+		-- end)
 	},
 	init_options = {
 		bundles = bundles,

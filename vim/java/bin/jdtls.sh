@@ -25,10 +25,15 @@ JDTLS_JAR="$JDTLS_TARGET_REPO/plugins/org.eclipse.equinox.launcher_*.jar"
 JDT8LS_JAR="$JDT8LS_TARGET_REPO/plugins/org.eclipse.equinox.launcher_*.jar"
 JAVA_VERSION=$(java -version 2>&1 | head -n 1 | cut -d' ' -f3 | sed -e 's/^"//g' -e 's/"$//g')
 JAVA_MAJOR_VERSION=$(echo $JAVA_VERSION | cut -d'.' -f1)
-DEFAULT_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share/eclipse}"
 DEBUGGER_SETTINGS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044'
 # GRADLE_HOME=$(brew --prefix gradle)
-OPT_ARGS="$@"
+# OPT_ARGS="$@"
+
+if [ $# -eq 0 ]; then
+    DEFAULT_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share/eclipse}"
+else
+    DEFAULT_DATA_DIR=$1
+fi
 
 TARGET_OS=$(uname -a)
 if [[ $TARGET_OS =~ 'Darwin' ]]; then
@@ -52,8 +57,7 @@ if (( $JAVA_MAJOR_VERSION > 8 )); then
         --add-modules=ALL-SYSTEM \
         --add-opens java.base/java.util=ALL-UNNAMED \
         --add-opens java.base/java.lang=ALL-UNNAMED \
-        -data $DEFAULT_DATA_DIR \
-        $OPT_ARGS
+        -data $DEFAULT_DATA_DIR
 elif [[ $(echo $JAVA_VERSION | cut -d'.' -f1,2) == "1.8" ]]; then
     java \
         $DEBUGGER_SETTINGS \
@@ -65,8 +69,7 @@ elif [[ $(echo $JAVA_VERSION | cut -d'.' -f1,2) == "1.8" ]]; then
         -Xmx1G \
         -jar $(echo "$JDT8LS_JAR") \
         -configuration "$JDT8LS_TARGET_REPO/$JDTLS_CONFIG" \
-        -data $DEFAULT_DATA_DIR \
-        $OPT_ARGS
+        -data $DEFAULT_DATA_DIR
 else
     echo "ERROR: JDK 8+ is required to use eclipse.jdt.ls"
     exit 1
