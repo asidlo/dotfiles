@@ -33,7 +33,10 @@ local lspconfig = require('lspconfig')
 
 local on_attach = function(client, bufnr)
     -- local cfg = {bind = true, use_lspsaga = true}
-    require"lsp_signature".on_attach()
+    require('lsp_signature').on_attach()
+    require('lspkind').init {
+        preset = 'codicons',
+    }
     set_buf_keymap(bufnr, 'n', '<F18>', '<Cmd>lua vim.lsp.buf.rename()<CR>')
     set_buf_keymap(bufnr, 'n', '<M-CR>', '<Cmd>lua vim.lsp.buf.code_action()<CR>')
     set_buf_keymap(bufnr, 'x', '<M-CR>', '<Cmd>lua vim.lsp.buf.range_code_action()<CR>')

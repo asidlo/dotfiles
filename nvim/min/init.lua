@@ -223,7 +223,6 @@ packer.startup(function()
 
     use {'dracula/vim', as = 'dracula'}
 
-    use {'tpope/vim-commentary'}
     use {'tpope/vim-unimpaired'}
     use {'tpope/vim-repeat'}
     use {'tpope/vim-surround'}
@@ -235,13 +234,14 @@ packer.startup(function()
     use {'rhysd/git-messenger.vim'}
     use {'moll/vim-bbye'}
     use {'aymericbeaumet/vim-symlink'}
+    use {'mtdl9/vim-log-highlighting'}
 
     use {'folke/which-key.nvim', config = "require('config.whichkey')"}
     use {
         'neovim/nvim-lspconfig',
         requires = {
             {'nvim-lua/lsp_extensions.nvim'}, {'folke/lua-dev.nvim'},
-            {'glepnir/lspsaga.nvim', config = "require('config.lspsaga')"}
+            {'glepnir/lspsaga.nvim', config = "require('config.lspsaga')"}, {'onsails/lspkind-nvim'}
         },
         config = "require('config.lsp')"
     }
@@ -273,6 +273,11 @@ packer.startup(function()
     }
     use {"folke/trouble.nvim", requires = {"kyazdani42/nvim-web-devicons"}, config = 'require("trouble").setup()'}
     use {'norcalli/nvim-colorizer.lua', config = "require('colorizer').setup()"}
-    use {'mtdl9/vim-log-highlighting'}
     use {'ray-x/lsp_signature.nvim'}
+    use {'b3nj5m1n/kommentary'}
+    use {
+        "folke/todo-comments.nvim",
+        requires = {"nvim-lua/plenary.nvim"},
+        config = "require('config.todo')"
+    }
 end)
