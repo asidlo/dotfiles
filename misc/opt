@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+eval $(op signin my)
+
+ENTRY=$(op list items | jq -c '.[] | {title: (.overview.title), url: (.overview.url), uuid: (.uuid)}' | fzf)
+
+if [ ! -z "$ENTRY" ]; then
+	ITEM=$(echo $ENTRY | jq '.uuid' | tr -d '"')
+	TOKEN=$(op get totp "$ITEM")
+	echo $ENTRY | jq ". | {title: (.title), url: (.url), token: $TOKEN}"
+fi
