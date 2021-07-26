@@ -1,10 +1,30 @@
 #!/usr/bin/env bash
-
 eval $(op signin my)
 
 ENTRY=$(op list items | jq -c '.[] | {title: (.overview.title), url: (.overview.url), uuid: (.uuid)}' | fzf)
 
+OS=$(uname -a | tr '[:lower:]' '[:upper:]')
+MAC='DARWIN'
+LINUX='LINUX'
+WSL='MICROSOFT'
+
 if [ ! -z "$ENTRY" ]; then
 	ITEM_ID=$(echo $ENTRY | jq '.uuid' | tr -d '"')
-	op get item "$ITEM_ID" --fields title,url,username,password | jq '.'
+	ITEM=$(op get item "$ITEM_ID" --fields title,url,username,password)
+
+	case $OS in
+	*$MAC*)
+		echo $ITEM | jq '.password' | tr -d '"' | pbcopy
+		;;
+	*$LINUX*)
+		if [[ $OS =~ $WSL ]]; then
+			echo $ITEM | jq '.password' | tr -d '"' | win32yank.exe -i
+		else
+			echo $ITEM | jq '.password' | tr -d '"' | xclip -selection -c
+		fi
+		;;
+	esac
+
+	echo "Copied password to clipboard!"
+	echo $ITEM | jq '. | {title: (.title), url: (.url), username: (.username), password: "*****"}'
 fi
