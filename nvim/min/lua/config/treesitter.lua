@@ -35,7 +35,8 @@ ts.setup {
 		enable = true
 	},
 	indent = {
-		enable = true
+		enable = true,
+		disable = {'java', 'json'}
 	},
 	textobjects = {
 		select = {

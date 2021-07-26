@@ -1,44 +1,38 @@
 local M = {}
 
 local function get_client()
-	local clients = vim.lsp.get_active_clients()
-	for _, client in pairs(clients) do
-		if client.name == 'jdtls' then
-			return client
-		end
-	end
+    local clients = vim.lsp.get_active_clients()
+    for _, client in pairs(clients) do if client.name == 'jdtls' then return client end end
 end
 
 local function has_extended_support(client)
-	return client.config.init_options and client.config.init_options.extendedClientCapabilities
+    return client.config.init_options and client.config.init_options.extendedClientCapabilities
 end
 
 local function has_classfile_support(client)
-	return has_extended_support(client) and client.config.init_options.extendedClientCapabilities.classFileContentsSupport
+    return has_extended_support(client) and client.config.init_options.extendedClientCapabilities.classFileContentsSupport
 end
 
 local function handle_request(client, method, params, bufnr)
-	local response = nil
-	local cb = function(err, _, result)
-		response = {err, result}
-	end
+    local response = nil
+    local cb = function(err, _, result)
+        response = {err, result}
+    end
 
-	local ok, request_id = client.request(method, params, cb, bufnr)
-	assert(ok, 'Request method='..method..'; params='..vim.inspect(params)..' failed, check if the client'..'('..client.name..') is shutdown?')
+    local ok, request_id = client.request(method, params, cb, bufnr)
+    assert(ok, string.format('Request method=%s; params=%s failed, check if the client(%s) is shutdown', method, vim.inspect(params), client.name))
 
-	local wait_ok, reason = vim.wait(1000, function() return response end)
-	local wait_failure = {
-		[-1] = 'timeout';
-		[-2] = 'interrupted';
-		[-3] = 'error'
-	}
+    local wait_ok, reason = vim.wait(1000, function()
+        return response
+    end)
+    local wait_failure = {[-1] = 'timeout', [-2] = 'interrupted', [-3] = 'error'}
 
-	if wait_ok then
-		return response[1], response[2]
-	else
-		client.cancel_request(request_id)
-		return 'Request error occured while waiting, reason='..wait_failure[reason], nil
-	end
+    if wait_ok then
+        return response[1], response[2]
+    else
+        client.cancel_request(request_id)
+        return 'Request error occured while waiting, reason=' .. wait_failure[reason], nil
+    end
 end
 
 -- Reads the uri into the current buffer
@@ -46,31 +40,58 @@ end
 -- This requires at least one open buffer that is connected to the jdtls
 -- language server.
 --
---@param uri string in the form of a `jdt://` uri
+-- @param uri string in the form of a `jdt://` uri
 function M.open_jdt_link(uri)
-	local client = get_client()
-	assert(client, 'Must have jdtls client connected to buffer to load JDT URI')
+    local client = get_client()
+    assert(client, 'Must have jdtls client connected to buffer to load JDT URI')
 
-	if not has_classfile_support(client) then
-		error('Must have client.config.init_options.extendedClientCapabilities.classFileContentsSupport enabled')
-	end
+    if not has_classfile_support(client) then
+        error('Must have client.config.init_options.extendedClientCapabilities.classFileContentsSupport enabled')
+    end
 
-	local buf = vim.api.nvim_get_current_buf()
+    local buf = vim.api.nvim_get_current_buf()
 
-	local err, result = handle_request(client, 'java/classFileContents', { uri = uri }, buf)
-	if err then
-		error('Unable to complete request; error='..vim.inspect(err))
-	end
+    local err, result = handle_request(client, 'java/classFileContents', {uri = uri}, buf)
+    if err then error('Unable to complete request; error=' .. vim.inspect(err)) end
 
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(result, '\n', true))
-	vim.api.nvim_buf_set_option(buf, 'filetype', 'java')
-	vim.api.nvim_buf_set_option(buf, 'modifiable', false)
-	vim.api.nvim_buf_set_option(buf, 'modified', false)
-	vim.api.nvim_buf_set_option(buf, 'readonly', true)
+    vim.api.nvim_buf_set_option(buf, 'modifiable', true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(result, '\n', true))
+    vim.api.nvim_buf_set_option(buf, 'filetype', 'java')
+    vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+    vim.api.nvim_buf_set_option(buf, 'modified', false)
+    vim.api.nvim_buf_set_option(buf, 'readonly', true)
 
-  -- for some reason, the client keeps getting detached from the buffer
-	vim.lsp.buf_attach_client(buf, client.id)
+    -- for some reason, the client keeps getting detached from the buffer
+    vim.lsp.buf_attach_client(buf, client.id)
 end
+
+function M.organize_imports()
+    local client = get_client()
+    assert(client, 'Must have jdtls client connected to buffer to load JDT URI')
+
+    local buf = vim.api.nvim_get_current_buf()
+
+    local err, resp = handle_request(client, 'java/organizeImports', vim.lsp.util.make_range_params(), buf)
+    if err then error('Unable to complete java/organizeImport request; error=' .. vim.inspect(err)) end
+
+    if resp then vim.lsp.util.apply_workspace_edit(resp) end
+end
+
+-- executeCommandProvider = {
+--     commands = {
+--         "java.edit.organizeImports", "java.project.refreshDiagnostics", "java.project.import", "java.project.removeFromSourcePath",
+--         "java.project.listSourcePaths", "java.project.provideSemanticTokens", "java.project.resolveStackTraceLocation", "java.project.getAll",
+--         "java.project.isTestFile", "java.project.getClasspaths ", "java.project.getSemanticTokensLegend", "java.project.getSettings",
+--         "java.project.updateSourceAttachment", "java.project.resolveSourceAttachment", "java.project.addToSourcePath"
+--     }
+-- }
+-- config.capabilities.textDocument.codeAction.codeActionLiteralSupport
+-- codeActionKind = {
+--     valueSet = {
+--         "", "Empty", "QuickFix", "Refactor", "RefactorExtract", "RefactorInline", "RefactorRewrite", "Source", "SourceOrganizeImports", "quickfix",
+--         "refactor", "refactor.extract", "refactor.inline", "refactor.rewrite", "source", "source.organizeImports"
+--     }
+-- }
 
 -- -- Until https://github.com/neovim/neovim/pull/11607 is merged
 -- local function execute_command(command, callback)

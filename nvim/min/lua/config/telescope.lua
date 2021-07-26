@@ -1,5 +1,4 @@
 -- local actions = require('telescope.actions')
-
 -- require('telescope').setup {
 --	   defaults = {
 --		   mappings = {
@@ -9,6 +8,18 @@
 --		   }
 --	   }
 -- }
+
+require('telescope').setup {
+    pickers = {
+        find_files = {
+            find_command = {
+                'fd', '-I', '--follow', '--exclude', '.git', '--exclude', 'node_modules', '--exclude', '*.class'
+            },
+            hidden = true,
+            follow = true
+        }
+    }
+}
 
 set_keymap('n', '<Leader>F', '<Cmd>Telescope find_files<CR>')
 set_keymap('n', '<Leader>f', '<Cmd>Telescope git_files<CR>')
