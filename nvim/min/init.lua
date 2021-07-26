@@ -157,7 +157,8 @@ local autocmds = {
         {[[ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline]]}
     },
     lsp_settings = {
-        {[[BufAdd jdt://* call luaeval("require('lsp.jdtls').open_jdt_link(_A)", expand('<amatch>'))]]}, {
+        -- {[[BufAdd jdt://* call luaeval("require('lsp.jdtls').open_jdt_link(_A)", expand('<amatch>'))]]},
+        {"FileType java lua require('config.jdtls').start_or_attach()"}, {
             [[CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs :lua require'lsp_extensions'.inlay_hints{ prefix = '-> ', highlight = 'Comment', enabled = {'TypeHint', 'ChainingHint', 'ParameterHint'} }]]
         }
     }
@@ -275,9 +276,6 @@ packer.startup(function()
     use {'norcalli/nvim-colorizer.lua', config = "require('colorizer').setup()"}
     use {'ray-x/lsp_signature.nvim'}
     use {'b3nj5m1n/kommentary'}
-    use {
-        "folke/todo-comments.nvim",
-        requires = {"nvim-lua/plenary.nvim"},
-        config = "require('config.todo')"
-    }
+    use {"folke/todo-comments.nvim", requires = {"nvim-lua/plenary.nvim"}, config = "require('config.todo')"}
+    use {'mfussenegger/nvim-jdtls'}
 end)

@@ -126,74 +126,74 @@ lspconfig.jsonls.setup {
     commands = {Format = {function() vim.lsp.buf.range_formatting({}, {0, 0}, {vim.fn.line("$"), 0}) end}}
 }
 
-local jar_patterns = {
-    -- '/dev/microsoft/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
-    -- '/dev/dgileadi/vscode-java-decompiler/server/*.jar',
-    -- '/dev/microsoft/vscode-java-test/server/*.jar',
-}
-
-local home = os.getenv('HOME')
-local bundles = {}
-for _, jar_pattern in ipairs(jar_patterns) do
-    for _, bundle in ipairs(vim.split(vim.fn.glob(home .. jar_pattern), '\n')) do
-        if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then table.insert(bundles, bundle) end
-    end
-end
-
-lspconfig.jdtls.setup {
-    autostart = false,
-    on_attach = on_attach,
-    cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
-    root_dir = lspconfig.util.root_pattern('gradlew', 'pom.xml', '.git', '*.java'),
-    flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
-    handlers = {
-        ['language/status'] = vim.schedule_wrap(function(_, _, result)
-            vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
-        end),
-        ['java.action.organizeImports'] = function() print('hello') end
-    },
-    init_options = {
-        bundles = bundles,
-        extendedClientCapabilities = {
-            progressReportProvider = true,
-            classFileContentsSupport = true,
-            generateToStringPromptSupport = true,
-            hashCodeEqualsPromptSupport = true,
-            advancedExtractRefactoringSupport = true,
-            advancedOrganizeImportsSupport = true,
-            generateConstructorsPromptSupport = true,
-            generateDelegateMethodsPromptSupport = true,
-            moveRefactoringSupport = true,
-            inferSelectionSupport = {'extractMethod', 'extractVariable', 'extractConstant'},
-            resolveAdditionalTextEditsSupport = true
-        }
-    },
-    settings = {
-        java = {
-            signatureHelp = {enabled = true},
-            contentProvider = {preferred = 'fernflower'},
-            format = {insertSpaces = true, tabSize = 4},
-            completion = {
-                favoriteStaticMembers = {
-                    "org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*", "org.hamcrest.CoreMatchers.*",
-                    "org.junit.jupiter.api.Assertions.*", "java.util.Objects.requireNonNull",
-                    "java.util.Objects.requireNonNullElse", "org.mockito.Mockito.*"
-                }
-            },
-            sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}},
-            codeGeneration = {
-                toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
-            },
-            configuration = {
-                runtimes = {
-                    {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true},
-                    {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
-                }
-            }
-        }
-    },
-    capabilities = make_capabilities()
-}
+-- local jar_patterns = {
+--     -- '/dev/microsoft/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
+--     -- '/dev/dgileadi/vscode-java-decompiler/server/*.jar',
+--     -- '/dev/microsoft/vscode-java-test/server/*.jar',
+-- }
+--
+-- local home = os.getenv('HOME')
+-- local bundles = {}
+-- for _, jar_pattern in ipairs(jar_patterns) do
+--     for _, bundle in ipairs(vim.split(vim.fn.glob(home .. jar_pattern), '\n')) do
+--         if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then table.insert(bundles, bundle) end
+--     end
+-- end
+--
+-- lspconfig.jdtls.setup {
+--     autostart = false,
+--     on_attach = on_attach,
+--     cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
+--     root_dir = lspconfig.util.root_pattern('gradlew', 'pom.xml', '.git', '*.java'),
+--     flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
+--     --[[ handlers = {
+--         ['language/status'] = vim.schedule_wrap(function(_, _, result)
+--             vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
+--         end),
+--         ['java.action.organizeImports'] = function() print('hello') end
+--     }, ]]
+--     init_options = {
+--         bundles = bundles,
+--         extendedClientCapabilities = {
+--             progressReportProvider = true,
+--             classFileContentsSupport = true,
+--             generateToStringPromptSupport = true,
+--             hashCodeEqualsPromptSupport = true,
+--             advancedExtractRefactoringSupport = true,
+--             advancedOrganizeImportsSupport = true,
+--             generateConstructorsPromptSupport = true,
+--             generateDelegateMethodsPromptSupport = true,
+--             moveRefactoringSupport = true,
+--             inferSelectionSupport = {'extractMethod', 'extractVariable', 'extractConstant'},
+--             resolveAdditionalTextEditsSupport = true
+--         }
+--     },
+--     settings = {
+--         java = {
+--             signatureHelp = {enabled = true},
+--             contentProvider = {preferred = 'fernflower'},
+--             format = {insertSpaces = true, tabSize = 4},
+--             completion = {
+--                 favoriteStaticMembers = {
+--                     "org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*", "org.hamcrest.CoreMatchers.*",
+--                     "org.junit.jupiter.api.Assertions.*", "java.util.Objects.requireNonNull",
+--                     "java.util.Objects.requireNonNullElse", "org.mockito.Mockito.*"
+--                 }
+--             },
+--             sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}},
+--             codeGeneration = {
+--                 toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
+--             },
+--             configuration = {
+--                 runtimes = {
+--                     {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true},
+--                     {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
+--                 }
+--             }
+--         }
+--     },
+--     capabilities = make_capabilities()
+-- }
 
 local system_name
 if vim.fn.has("mac") == 1 then
