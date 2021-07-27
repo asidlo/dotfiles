@@ -105,7 +105,9 @@ ls.snippets = {
             c(2, {t({"void"}), i(nil, {""}), t({"String"}), t({"char"}), t({"int"}), t({"double"}), t({"boolean"})}),
             t({" "}), i(3, {"myFunc"}), t({"("}), i(4), t({")"}), c(5, {t({""}), sn(nil, {t({"", " throws "}), i(1)})}),
             t({" {", "\t"}), i(0), t({"", "}"})
-        }), ls.parser.parse_snippet({trig = 'psvm'}, "private static void main(String[] args) {\n\t$0\n}")
+        }), ls.parser.parse_snippet({trig = 'psvm'}, "private static void main(String[] args) {\n\t$0\n}"),
+        ls.parser.parse_snippet({trig = 'psf'}, "private static final $0"),
+        ls.parser.parse_snippet({trig = 'pf'}, "private final $0"),
     },
     rust = {ls.parser.parse_snippet({trig = "fn"}, "/// $1\nfn $2($3) ${4:-> $5 }\\{\n\t$0\n\\}")}
 }

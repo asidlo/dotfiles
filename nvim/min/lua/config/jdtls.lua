@@ -63,41 +63,35 @@ local on_attach = function(client, bufnr)
     end
 end
 
+local home = os.getenv('HOME')
+
 local jar_patterns = {
-    -- '/dev/microsoft/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
-    -- '/dev/dgileadi/vscode-java-decompiler/server/*.jar',
-    -- '/dev/microsoft/vscode-java-test/server/*.jar',
+    home .. '/.local/src/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
+    home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.plugin/target/*.jar',
+    home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/target/*.jar',
+    home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/lib/*.jar',
 }
 
-local home = os.getenv('HOME')
 local bundles = {}
 for _, jar_pattern in ipairs(jar_patterns) do
-    for _, bundle in ipairs(vim.split(vim.fn.glob(home .. jar_pattern), '\n')) do
+    for _, bundle in ipairs(vim.split(vim.fn.glob(jar_pattern), '\n')) do
         if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then table.insert(bundles, bundle) end
     end
 end
 
+local extendedClientCapabilities = jdtls.extendedClientCapabilities
+extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
+
 function M.start_or_attach()
-    jdtls.start_or_attach({
-        on_attach = on_attach,
+    local config = {
         cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
         flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
-        init_options = {
-            bundles = bundles,
-            extendedClientCapabilities = {
-                progressReportProvider = true,
-                classFileContentsSupport = true,
-                generateToStringPromptSupport = true,
-                hashCodeEqualsPromptSupport = true,
-                advancedExtractRefactoringSupport = true,
-                advancedOrganizeImportsSupport = true,
-                generateConstructorsPromptSupport = true,
-                generateDelegateMethodsPromptSupport = true,
-                moveRefactoringSupport = true,
-                inferSelectionSupport = {'extractMethod', 'extractVariable', 'extractConstant'},
-                resolveAdditionalTextEditsSupport = true
-            }
+        capabilities = {
+            workspace = {configuration = true},
+            textDocument = {completion = {completionItem = {snippetSupport = true}}}
         },
+        on_attach = on_attach,
+        init_options = {bundles = bundles, extendedClientCapabilities = extendedClientCapabilities},
         settings = {
             java = {
                 signatureHelp = {enabled = true},
@@ -118,12 +112,17 @@ function M.start_or_attach()
                 configuration = {
                     runtimes = {
                         {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true},
-                        {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
+                        -- {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
                     }
                 }
             }
         }
-    })
+    }
+    config.on_init = function(client, _)
+        client.notify('workspace/didChangeConfiguration', {settings = config.settings})
+    end
+
+    jdtls.start_or_attach(config)
 end
 
 return M

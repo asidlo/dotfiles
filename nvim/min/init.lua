@@ -278,4 +278,5 @@ packer.startup(function()
     use {'b3nj5m1n/kommentary'}
     use {"folke/todo-comments.nvim", requires = {"nvim-lua/plenary.nvim"}, config = "require('config.todo')"}
     use {'mfussenegger/nvim-jdtls'}
+    use {'mfussenegger/nvim-dap'}
 end)
