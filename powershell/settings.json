@@ -1,4 +1,4 @@
-{
+{ // %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "copyFormatting": "none",
     "copyOnSelect": false,
@@ -53,7 +53,7 @@
                 "fontSize": 11,
                 "guid": "{7445dc20-f8d3-4b63-a200-015e92c7e229}",
                 "hidden": true,
-                "icon": "%USERPROFILE%\\Workspace\\src\\github.com\\asidlo\\dotfiles\\powershell\\icons\\vs2017.png",
+                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2017.png",
                 "name": "VS2017 Dev",
                 "startingDirectory": "%USERPROFILE%"
             },
@@ -63,7 +63,7 @@
                 "fontSize": 11,
                 "guid": "{ece5cd36-703a-481b-bc31-f0f91af22a74}",
                 "hidden": true,
-                "icon": "%USERPROFILE%\\Workspace\\src\\github.com\\asidlo\\dotfiles\\powershell\\icons\\vs2019.png",
+                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2019.png",
                 "name": "VS2019 Powershell",
                 "startingDirectory": "%USERPROFILE%"
             },
@@ -72,7 +72,7 @@
                 "fontFace": "MesloLGM Nerd Font",
                 "fontSize": 11,
                 "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
-                "icon": "%USERPROFILE%\\Workspace\\src\\github.com\\asidlo\\dotfiles\\powershell\\icons\\vs2019.png",
+                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2019.png",
                 "name": "VS2019 Cmd",
                 "startingDirectory": "%USERPROFILE%"
             },
@@ -82,7 +82,7 @@
                 "fontSize": 11,
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
                 "hidden": false,
-                "icon": "%USERPROFILE%\\Workspace\\src\\github.com\\asidlo\\dotfiles\\powershell\\icons\\notepad.png",
+                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\notepad.png",
                 "name": "Notes",
                 "startingDirectory": "%USERPROFILE%"
             },
