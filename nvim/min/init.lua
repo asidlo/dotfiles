@@ -227,14 +227,11 @@ packer.startup(function()
     use {'tpope/vim-unimpaired'}
     use {'tpope/vim-repeat'}
     use {'tpope/vim-surround'}
-    use {'tpope/vim-dispatch'}
     use {'tpope/vim-obsession'}
     use {'tpope/vim-fugitive', config = "require('config.fugitive')"}
     use {'airblade/vim-rooter'}
-    use {'airblade/vim-gitgutter', config = "require('config.gitgutter')"}
-    use {'rhysd/git-messenger.vim'}
-    use {'moll/vim-bbye'}
-    use {'aymericbeaumet/vim-symlink'}
+    -- use {'moll/vim-bbye'}
+    -- use {'aymericbeaumet/vim-symlink'}
     use {'mtdl9/vim-log-highlighting'}
 
     use {'folke/which-key.nvim', config = "require('config.whichkey')"}
@@ -275,8 +272,18 @@ packer.startup(function()
     use {"folke/trouble.nvim", requires = {"kyazdani42/nvim-web-devicons"}, config = 'require("trouble").setup()'}
     use {'norcalli/nvim-colorizer.lua', config = "require('colorizer').setup()"}
     use {'ray-x/lsp_signature.nvim'}
-    use {'b3nj5m1n/kommentary'}
+    use {
+        'b3nj5m1n/kommentary',
+        config = function()
+            require('kommentary.config').configure_language('lua', {prefer_single_line_comments = true})
+        end
+    }
     use {"folke/todo-comments.nvim", requires = {"nvim-lua/plenary.nvim"}, config = "require('config.todo')"}
     use {'mfussenegger/nvim-jdtls'}
     use {'mfussenegger/nvim-dap'}
+    use {
+        'lewis6991/gitsigns.nvim',
+        requires = {'nvim-lua/plenary.nvim'},
+        config = function() require('gitsigns').setup() end
+    }
 end)
