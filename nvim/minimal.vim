@@ -1,24 +1,13 @@
 "==============================================================================
 " Author: Andrew Sidlo
-" Description: Neovim minimal configuration file
+" Description: Neovim configuration file
 "==============================================================================
 " Section: VARIABLES {{{
 "==============================================================================
-let g:is_win = has('win32') || has('win64')
-let g:is_linux = has('unix') && !has('macunix')
-let g:is_nvim = has('nvim')
-let g:is_gui = has('gui_running')
-
-" Vim on windows doesn't have uname so results in error message even though we
-" already know its not macos
-if !g:is_nvim && g:is_win
-  let g:is_mac = 0
-else
-  " Has some issues with vim detecting macunix/mac
-  let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
-endif
-
 let mapleader = ','
+
+" Has some issues with vim detecting macunix/mac
+let g:is_mac = has('macunix') || substitute(system('uname -s'), '\n', '', '') == 'Darwin'
 
 " }}}
 " Section: PLUGINS {{{
@@ -48,9 +37,26 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   Plug 'jiangmiao/auto-pairs'
   Plug 'vim-scripts/ReplaceWithRegister'
 
+  Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
+
   " Follow symlinks
   Plug 'moll/vim-bbye'
   Plug 'aymericbeaumet/vim-symlink'
+
+  Plug 'neovim/nvim-lsp'
+  Plug 'neovim/nvim-lspconfig'
+  Plug 'nvim-lua/completion-nvim'
+  Plug 'nvim-lua/lsp_extensions.nvim'
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+
+  " Need to load before vim-polyglot in order to avoid getting errors like
+  " Unknown function: go#config#GoplsMatcher
+  " See: https://github.com/fatih/vim-go/issues/2272
+  " See: https://github.com/fatih/vim-go/issues/2262
+  " Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+  " Plug 'AndrewRadev/splitjoin.vim'
 
   Plug 'sheerun/vim-polyglot'
   Plug 'godlygeek/tabular'
@@ -61,9 +67,11 @@ call plug#begin(expand(stdpath('data') . '/plugged'))
   if g:is_mac
     Plug '/usr/local/opt/fzf'
   else
-    Plug 'junegunn/fzf'
+    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   endif
   Plug 'junegunn/fzf.vim'
+
+  Plug 'mcchrish/nnn.vim'
 call plug#end()
 " }}}
 " Section: SETTINGS {{{
@@ -88,15 +96,17 @@ set noshowmode
 set hidden
 set autoread
 set autowrite
+set nofoldenable
 
 set textwidth=119
 set mouse=a
 set tabstop=4
 set shiftwidth=4
-set completeopt=menuone,longest
+set completeopt=menuone,noinsert,noselect
+set shortmess+=c
 set clipboard=unnamed
 set wildmode=longest:full,full
-set updatetime=100
+set updatetime=300
 set signcolumn=yes
 set cmdheight=2
 
@@ -107,10 +117,12 @@ set tags=./tags,tags,~/.local/share/nvim/include/systags
 
 set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+
 "}}}
 " Plugin: LIGHTLINE {{{
 "==============================================================================
 let g:lightline = { 'colorscheme': 'dracula' }
+
 "}}}
 " Plugin: GITGUTTER {{{
 "==============================================================================
@@ -135,6 +147,7 @@ nnoremap <Leader>gs :G status -s<CR>
 nnoremap <Leader>gl :G log --oneline<CR>
 nnoremap <Leader>gb :!git branch -a<CR>
 nnoremap <Leader>gd :G diff<CR>
+
 " }}}
 " Plugin: VIM-MARKDOWN {{{
 "==============================================================================
@@ -146,11 +159,23 @@ let g:vim_markdown_new_list_item_indent = 0
 let g:vim_markdown_auto_insert_bullets = 0
 
 " }}}
+" Plugin: NNN {{{
+"==============================================================================
+let g:nnn#layout = { 'window' : { 'width': 0.9, 'height': 0.6 } }
+
+" }}}
 " Plugin: FZF {{{
 "==============================================================================
 let g:fzf_action = {
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit' }
+
+nnoremap <Leader>N :Files<cR>
+nnoremap <Leader>n :GFiles<cr>
+nnoremap <Leader>b :Buffers<cr>
+nnoremap <Leader>E :History<cr>
+nnoremap <Leader>x :Maps<cr>
+nnoremap <Leader>X :Commands<cr>
 
 " Dracula adds the CursorLine highlight to fzf
 let g:fzf_colors =
@@ -167,25 +192,6 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 
-" Disable preview with windows since fzf.vim internally uses a bash script to
-" render preview window even though I can do the same with cmd using bat
-if g:is_win
-  let g:fzf_preview_window = ''
-endif
-
-function! s:fzf_statusline()
-  " Override statusline as you like
-  let s:palette = g:lightline#colorscheme#{g:lightline.colorscheme}#palette
-  let s:fg = s:palette.normal.middle[0][0]
-  let s:bg = s:palette.normal.middle[0][1]
-  execute 'highlight fzf1 guifg=' . s:fg . ' guibg=' .s:bg
-  execute 'highlight fzf2 guifg=' . s:fg . ' guibg=' .s:bg
-  execute 'highlight fzf3 guifg=' . s:fg . ' guibg=' .s:bg
-  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
-endfunction
-
-autocmd! User FzfStatusLine call <SID>fzf_statusline()
-
 " }}}
 " Plugin: FERRET {{{
 "==============================================================================
@@ -194,22 +200,14 @@ autocmd! User FzfStatusLine call <SID>fzf_statusline()
 " the replacement matching when using FerretAcks
 let g:FerretMap = 0
 
-" having issues with ferret hanging on windows with nvim using async and job cancel
-" this will disable the async feature to make searches sync on win nvim
-" see: https://github.com/wincent/ferret/issues/60
-if g:is_win && g:is_nvim
-  let g:FerretNvim = 0
-  let g:FerretJob = 0
-endif
-
 " Searches whole project, even through ignored files
 nnoremap \ :Ack<space>
 
 " Search for current word
-nmap * <Plug>(FerretAckWord)
+nmap <F6> <Plug>(FerretAckWord)
 
 " Need to use <C-U> to escape visual mode and not enter search
-vmap * :<C-U>call <SID>ferret_vack()<CR>
+vmap <F6> :<C-U>call <SID>ferret_vack()<CR>
 
 function! s:ferret_vack() abort
   let l:selection = s:get_visual_selection()
@@ -233,15 +231,65 @@ function! s:get_visual_selection() abort
 endfunction
 
 " Replace instances matching term in quickfix 'F19 == S-F7'
-nmap <S-F6> <Plug>(FerretAcks)
+nmap <F18> <Plug>(FerretAcks)
+
+" }}}
+" Plugin: UltiSnips {{{
+"==============================================================================
+" Better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" }}}
+" Plugin: VIM-GO {{{
+"==============================================================================
+" Disable go def mapping so we can delegate it to the coc lsp = 0
+let g:go_def_mapping_enabled = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+
+" }}}
+" Plugin: NVIM-LSP {{{
+"==============================================================================
+if has('nvim-0.5')
+  lua require('util')
+  lua require('config.lsp')
+  lua require('config.treesitter')
+  augroup lsp_settings
+    autocmd!
+    autocmd BufReadCmd jdt://* call <SID>jdtls_open_file(expand("<amatch>"))
+    " autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+    autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs
+      \ :lua require'lsp_extensions'.inlay_hints{ prefix = '', highlight = "Comment", enabled = {"TypeHint", "ChainingHint", "ParameterHint"} }
+  augroup END
+endif
+
+function! s:jdtls_open_file(url) abort
+  call luaeval("require'lsp.jdtls'.open_jdt_link(_A)", a:url)
+endfunction
+" 
+" }}}
+" Plugin: NVIM-COMPLETION {{{
+"==============================================================================
+let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
+let g:completion_confirm_key = "\<C-y>"
+
+" }}}
+" Plugin: NVIM-TREESITTER {{{
+"==============================================================================
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
 
 " }}}
 " Settings: NETRW {{{
 "==============================================================================
-let g:netrw_dirhistmax = 0
-let g:netrw_banner = 0
-let g:netrw_winsize = 25
-let g:netrw_liststyle = 3
+let g:loaded_netrwPlugin = 1
 
 " }}}
 " Settings: NVIM {{{
@@ -274,22 +322,23 @@ augroup END
 "==============================================================================
 augroup filetype_settings
   autocmd!
-  autocmd FileType vim setlocal tabstop=2 shiftwidth=2 foldmethod=marker
+  autocmd FileType vim setlocal tabstop=2 shiftwidth=2 foldmethod=marker foldenable
+  autocmd FileType lua setlocal tabstop=2 shiftwidth=2
   autocmd FileType json syntax match Comment +\/\/.\+$+
   autocmd FileType json setlocal commentstring=//\ %s
   autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
-  autocmd FileType markdown setlocal textwidth=79 tabstop=2 shiftwidth=2
+  autocmd FileType markdown,text setlocal textwidth=79 tabstop=2 shiftwidth=2
   autocmd FileType zsh setlocal foldmethod=marker tabstop=4 shiftwidth=4
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120
   autocmd BufEnter *.jsh setlocal filetype=java
 
-  autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatexpr=JavaFormatexpr()
-  " autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatprg=google-java-format\ -i\ --aosp\ %
+  autocmd FileType java,groovy setlocal foldlevel=2 tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatexpr=JavaFormatexpr()
+  " autocmd FileType java,groovy setlocal tabstop=4 shiftwidth=4 expandtab colorcolumn=120 formatprg=google-java-format.sh\ -i\ --aosp\ %
   autocmd BufEnter *.java compiler javac
 
   " using cmake with 'build' as output directory
   " autocmd FileType c,cpp setlocal makeprg=make\ -C\ build\ -Wall\ -std=c++17
   autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 makeprg=clang++\ -Wall\ -std=c++17 commentstring=//\ %s
+  autocmd FileType c,cpp setlocal formatprg=clang-format
   autocmd BufEnter gitconfig setlocal filetype=gitconfig
 augroup END
 
@@ -297,31 +346,51 @@ command! JavaImports :call <SID>java_format_imports()
 command! -range JavaFormat <line1>,<line2>call <SID>java_format_cmd()
 
 function! s:java_format_imports() abort
-  let s:cmd = 'google-java-format -a --fix-imports-only ' . expand('%:p')
+  let s:cmd = 'google-java-format.sh -a --fix-imports-only ' . expand('%:p')
   let s:lines = systemlist(s:cmd)
-  call setline(1, s:lines)
+  if !v:shell_error
+    call setline(1, s:lines)
+  else
+    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
+    if len(getqflist()) != 0
+      cfirst
+    endif
+  endif
 endfunction
 
 function! s:java_format_cmd() range abort
   if a:firstline == a:lastline
     echom 'Formatting file: ' . expand('%:p')
-    let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports ' . expand('%:p')
+    let s:cmd = 'google-java-format.sh -a --skip-sorting-imports --skip-removing-unused-imports ' . expand('%:p')
   else
     echom 'Formatting lines[' . a:firstline . ' - ' . a:lastline . ']' . ' from file: ' . expand('%:p')
-    let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' ' . expand('%:p')
+    let s:cmd = 'google-java-format.sh -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . a:firstline . ':' . a:lastline . ' ' . expand('%:p')
   endif
 
-  echom s:cmd
   let s:lines = systemlist(s:cmd)
-  call setline(1, s:lines)
+  if !v:shell_error
+    call setline(1, s:lines)
+  else
+    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
+    if len(getqflist()) != 0
+      cfirst
+    endif
+  endif
 endfunction
 
 function! JavaFormatexpr() abort
+  call setqflist([])
   let s:endline = v:lnum + v:count - 1
-  let s:cmd = 'google-java-format -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . v:lnum . ':' . s:endline . ' ' . expand('%:p')
-  echom s:cmd
+  let s:cmd = 'google-java-format.sh -a --skip-sorting-imports --skip-removing-unused-imports --lines ' . v:lnum . ':' . s:endline . ' ' . expand('%:p')
   let s:lines = systemlist(s:cmd)
-  call setline(1, s:lines)
+  if !v:shell_error
+    call setline(1, s:lines)
+  else
+    call setqflist([], 'r', {'context': {'cmd': s:cmd}, 'lines': s:lines})
+    if len(getqflist()) != 0
+      cfirst
+    endif
+  endif
 endfunction
 
 "}}}
@@ -358,30 +427,11 @@ noremap k gk
 " Change pwd to current directory
 nnoremap <leader>cd :cd %:p:h<cr>
 
+" Search for current word but dont jump to next result
+nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>
+
 " Add date -> type XDATE lowercase followed by a char will autofill the date
 iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>
 iab ddate <c-r>=strftime("%Y-%m-%d")<cr>
 cab ddate <c-r>=strftime("%Y_%m_%d")<cr>
 iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>
-
-command! -bar -nargs=1 -complete=file WriteQF
-            \ call writefile([json_encode(s:qf_to_filename(getqflist({'all': 1})))], <f-args>)
-
-command! -bar -nargs=1 -complete=file ReadQF
-            \ call setqflist([], ' ', json_decode(get(readfile(<f-args>), 0, '')))
-
-" https://www.reddit.com/r/vim/comments/9iwr41/store_quickfix_list_as_a_file_and_load_it/
-function! s:qf_to_filename(qf) abort
-  for i in range(len(a:qf.items))
-    let d = a:qf.items[i]
-    if bufexists(d.bufnr)
-      let d.filename = fnamemodify(bufname(d.bufnr), ':p')
-    endif
-    silent! call remove(d, 'bufnr')
-    let a:qf.items[i] = d
-  endfor
-  return a:qf
-endfunction
-
-command! -nargs=0 Scriptnames
-            \ call fzf#run({'source': split(execute('scriptnames'), '\n'), 'down': '30%'})

@@ -1,0 +1,4 @@
+-- vim.api.nvim_set_keymap('n', '<Leader>gs', '<Cmd>G status -s<CR>', { noremap = true })
+-- vim.api.nvim_set_keymap('n', '<Leader>gl', '<Cmd>G log --oneline<CR>', { noremap = true })
+-- vim.api.nvim_set_keymap('n', '<Leader>gb', '<Cmd>!git branch -a<CR>', { noremap = true })
+-- vim.api.nvim_set_keymap('n', '<Leader>gd', '<Cmd>G diff<CR>', { noremap = true })

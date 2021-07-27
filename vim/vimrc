@@ -656,10 +656,10 @@ cnoremap <c-n> <down>
 " NVIM-LSP {{{
 "==============================================================================
 " lua << EOF
-"   local nvim_lsp = require'nvim_lsp'
-"   nvim_lsp.rls.setup{}
-"   nvim_lsp.vimls.setup{}
-"   nvim_lsp.clangd.setup {
+"   local lsp_config = require'lsp_config'
+"   lsp_config.rls.setup{}
+"   lsp_config.vimls.setup{}
+"   lsp_config.clangd.setup {
 "     cmd = {"/usr/local/Cellar/llvm/10.0.0_3/bin/clangd", "--background-index"}
 "   }
 

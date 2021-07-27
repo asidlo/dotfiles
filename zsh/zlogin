@@ -1,0 +1,26 @@
+local OS=$(uname -a)
+local MAC='Darwin'
+local LINUX='Linux'
+
+alias ll='ls -AlFG'
+alias la='ls -AG'
+alias grep='grep --color=auto'
+alias cls='clear'
+
+if (( $+commands[tree] )); then
+  alias tree='tree -C'
+fi
+
+case $OS in
+  *$MAC*)
+    alias ls='ls -G'
+    alias copy='pbcopy'
+    alias ctags=/usr/local/opt/universal-ctags/bin/ctags
+    ;;
+  *$LINUX*)
+    alias copy='xclip -selection -c'
+    alias ls='ls --color=auto'
+    alias fd='fdfind'
+    alias bat='batcat'
+    ;;
+esac

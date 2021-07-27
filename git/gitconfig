@@ -1,74 +1,86 @@
 [user]
-  name = asidlo
-  email = sidlo.andrew@gmail.com
+	name = asidlo
+	email = sidlo.andrew@gmail.com
 [core]
-  editor = nvim
-  excludesfile = ~/.gitignore
+	excludesfile = ~/.gitignore
 [log]
-  date = iso
+	date = iso
 [fetch]
-  prune = true
+	prune = true
+	pruneTags = true
 [commit]
-  verbose = true
-[diff]
-  tool = vimdiff
-[difftool]
-  prompt = 0
-[color "diff"]
-  commit = yellow bold
-[color]
-  ui = true
+	verbose = true
+[merge]
+	ff = only
 [pull]
-	rebase = false
+	rebase = true
+[diff]
+	tool = vimdiff
+[difftool]
+	prompt = 0
 [alias]
-  a = add
-  au = add -u # Update all tracked files
-  aa = add -A # Add all files to staging
+	a = add
+	au = add -u # Update all tracked files
+	aa = add -A # Add all files to staging
 
-  b = branch
-  bc = rev-parse --abbrev-ref HEAD
-  ba = branch -a
+	b = branch
+	bc = rev-parse --abbrev-ref HEAD
+	ba = branch -a
 
-  co = checkout
-  cob = checkout -b
+	co = checkout
+	cob = checkout -b
 
-  c = commit
-  ca = commit --amend
-  can = commit --amend --no-edit
-  cmsg = commit -m
+	c = commit
+	ca = commit --amend
+	can = commit --amend --no-edit
+	cmsg = commit -m
 
-  d = diff
-  dh = diff HEAD
+	d = diff
+	dh = diff HEAD
 
-  # l = log
-  # o = oneline
-  # d = date [r = relative, s = short]
-  # a = author
-  l = log
-  lo = log --oneline
-  loa = log --oneline --decorate --pretty='* %C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-  lod = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
-  lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
-  lods = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
-  load = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-  loadr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
-  loads = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
+	# l = log
+	# o = oneline
+	# d = date [r = relative, s = short]
+	# a = author
+	l = log
+	lo = log --oneline
+	loa = log --oneline --decorate --pretty='* %C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+	lod = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
+	lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
+	lods = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
+	load = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+	loadr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
+	loads = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
 
-  # g = graph
-  lg = log --graph
-  lgo = log --graph --oneline
-  lgod = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)'
-  lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=short
-  lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=relative
-  lgoad = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
-  lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
-  lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
+	# g = graph
+	lg = log --graph
+	lgo = log --graph --oneline
+	lgod = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)'
+	lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=short
+	lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=relative
+	lgoad = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
+	lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
+	lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
-  s = status
-  ss = status -s
+	# ss -> git status -s
+	# a = added to stage
+	# u = untracked
+	# d = deleted
+	ls = ls-files
+	lss = ! git status --porcelain | awk '{print $2}'
+	lsa = diff --name-only --staged
+	lsm = ls-files --modified
+	lsu = ls-files --others --exclude-standard
+	lsd = ls-files --deleted
+	lsc = diff --name-only --diff-filter=U
 
-  # standup - last 1 week written by me
-  sup = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author sidlo.andrew@gmail.com
+	conflicts = diff --check
 
-  # Get all aliases defined in gitconfig
-  alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+	s = status
+	ss = status -s
+
+	# standup - last 1 week written by me
+	sup = ! git log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author $(git config user.email)
+
+	# Get all aliases defined in gitconfig
+	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /

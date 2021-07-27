@@ -2,3 +2,4 @@
 /vim/spell/
 /vim/view/
 !/vim/java/bin
+.DS_Store

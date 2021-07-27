@@ -5,6 +5,8 @@
     "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
     "largePasteWarning": false,
     "multiLinePasteWarning": false,
+    "theme": "dark",
+    "bellStyle": "none",
     "profiles": {
         "defaults": {
             "colorScheme": "Dracula"
@@ -378,6 +380,5 @@
             "white": "#C0C0C0",
             "yellow": "#808000"
         }
-    ],
-    "theme": "dark"
+    ]
 }
