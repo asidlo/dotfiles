@@ -154,6 +154,7 @@ local autocmds = {
     file_history = {{[[BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif]]}},
     dracula_customization = {
         {[[ColorScheme dracula highlight SpellBad gui=undercurl]]},
+        {[[ColorScheme dracula highlight DraculaDiffDelete guibg=DraculaFg]]},
         {[[ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline]]}
     },
     lsp_settings = {
