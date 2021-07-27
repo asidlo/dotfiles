@@ -1,31 +1,38 @@
 #!/usr/bin/env bash
 
-eval $(op signin my)
+set -e
 
 OS=$(uname -a | tr '[:lower:]' '[:upper:]')
 MAC='DARWIN'
 LINUX='LINUX'
 WSL='MICROSOFT'
 
+SIGNIN=$(op signin my)
+eval "$SIGNIN"
+
 ENTRY=$(op list items | jq -c '.[] | {title: (.overview.title), url: (.overview.url), uuid: (.uuid)}' | fzf)
 
-if [ ! -z "$ENTRY" ]; then
-	ITEM=$(echo $ENTRY | jq '.uuid' | tr -d '"')
+if [ -n "$ENTRY" ]; then
+	ITEM=$(echo "$ENTRY" | jq '.uuid' | tr -d '"')
 	TOKEN=$(op get totp "$ITEM")
 
 	case $OS in
 	*$MAC*)
-		echo $TOKEN | pbcopy
+		echo "$TOKEN" | pbcopy
 		;;
 	*$LINUX*)
 		if [[ $OS =~ $WSL ]]; then
-			echo $TOKEN | win32yank.exe -i
+			echo "$TOKEN" | clip.exe
 		else
-			echo $TOKEN | xclip -selection -c
+			echo "$TOKEN" | xclip -selection -c
 		fi
+		;;
+	*)
+		>&2 echo "Unable to detect OS to determine clipboard executable"
+		exit 1
 		;;
 	esac
 
 	echo "Copied token to clipboard!"
-	echo $ENTRY | jq '. | {title: (.title), url: (.url), token: "****"}'
+	echo "$ENTRY" | jq '. | {title: (.title), url: (.url), token: "****"}'
 fi

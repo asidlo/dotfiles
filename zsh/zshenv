@@ -15,10 +15,10 @@ case $OS in
 	export GOROOT=/usr/local/opt/go/libexec
 	;;
 *$LINUX*)
-	if [ -f /opt/win32yank/win32yank.exe ]; then
-		alias copy='xclip -selection -c'
+	if (( $+commands[clip.exe] )); then
+		alias copy=clip.exe
 	else
-		alias copy='win32yank -i'
+		alias copy='xclip -selection -c'
 	fi
 	alias ls='ls --color=auto'
 	alias fd='fdfind'
@@ -92,5 +92,4 @@ else
 	>&2 echo "$fg[yellow]WARN$reset_color: [fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
 fi
 
-[ -f /opt/win32yank/win32yank.exe ] && export PATH=$PATH:/opt/win32yank
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
