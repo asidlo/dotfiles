@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <key name="Software">
 	<key name="ConEmu">
-		<key name=".Vanilla" modified="2021-07-14 22:53:05" build="210627">
+		<key name=".Vanilla" modified="2021-07-16 17:52:16" build="210627">
 			<value name="Language" type="string" data="en"/>
 			<value name="StartType" type="hex" data="02"/>
 			<value name="CmdLine" type="string" data=""/>
@@ -136,12 +136,12 @@
 			<value name="AutoSaveSizePos" type="hex" data="01"/>
 			<value name="Cascaded" type="hex" data="01"/>
 			<value name="IntegralSize" type="hex" data="00"/>
-			<value name="WindowMode" type="dword" data="0000051f"/>
-			<value name="ConWnd X" type="long" data="2111"/>
-			<value name="ConWnd Y" type="long" data="142"/>
-			<value name="LastMonitor" type="string" data="0,0,3440,1400"/>
-			<value name="ConWnd Width" type="dword" data="00000080"/>
-			<value name="ConWnd Height" type="dword" data="0000002f"/>
+			<value name="WindowMode" type="dword" data="00000520"/>
+			<value name="ConWnd X" type="long" data="550"/>
+			<value name="ConWnd Y" type="long" data="66"/>
+			<value name="LastMonitor" type="string" data="0,0,1680,1010"/>
+			<value name="ConWnd Width" type="dword" data="00000088"/>
+			<value name="ConWnd Height" type="dword" data="00000031"/>
 			<value name="16bit Height" type="ulong" data="0"/>
 			<value name="QuakeStyle" type="hex" data="00"/>
 			<value name="Restore2ActiveMon" type="hex" data="00"/>
@@ -404,7 +404,7 @@
 			<value name="Update.DownloadPath" type="string" data="%TEMP%\ConEmu"/>
 			<value name="Update.LeavePackages" type="hex" data="00"/>
 			<value name="Update.PostUpdateCmd" type="string" data="echo Last successful update&gt;ConEmuUpdate.info &amp;&amp; date /t&gt;&gt;ConEmuUpdate.info &amp;&amp; time /t&gt;&gt;ConEmuUpdate.info"/>
-			<key name="HotKeys" modified="2021-07-07 16:24:28" build="210627">
+			<key name="HotKeys" modified="2021-07-16 17:52:16" build="210627">
 				<value name="KeyMacroVersion" type="hex" data="02"/>
 				<value name="Multi.Modifier" type="dword" data="000000a2"/>
 				<value name="Multi.ArrowsModifier" type="dword" data="0000005b"/>
@@ -506,7 +506,7 @@
 				<value name="Key.JumpPrevMonitor" type="dword" data="00105b25"/>
 				<value name="Key.JumpNextMonitor" type="dword" data="00105b27"/>
 				<value name="Key.FullScreen" type="dword" data="00000000"/>
-				<value name="Key.SysMenu" type="dword" data="00001220"/>
+				<value name="Key.SysMenu" type="dword" data="00000000"/>
 				<value name="Key.SysMenu2" type="dword" data="00001102"/>
 				<value name="Key.DebugProcess" type="dword" data="00105b44"/>
 				<value name="Key.DumpProcess" type="dword" data="00000000"/>
