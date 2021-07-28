@@ -8,12 +8,18 @@
 --		   }
 --	   }
 -- }
+local is_unix = function() return vim.fn.has('unix') == 1 and vim.fn.has('macunix') == 0 end
+
+local fd_cmd = function()
+    if is_unix() then return 'fdfind' end
+    return 'fd'
+end
 
 require('telescope').setup {
     pickers = {
         find_files = {
             find_command = {
-                'fd', '-I', '--follow', '--exclude', '.git', '--exclude', 'node_modules', '--exclude', '*.class'
+                fd_cmd(), '-I', '--follow', '--exclude', '.git', '--exclude', 'node_modules', '--exclude', '*.class'
             },
             hidden = true,
             follow = true

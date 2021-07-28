@@ -237,7 +237,15 @@ packer.startup(function()
     use {'tpope/vim-repeat'}
     use {'tpope/vim-surround'}
     use {'tpope/vim-obsession'}
-    use {'tpope/vim-fugitive', config = "require('config.fugitive')"}
+    use {
+        'tpope/vim-fugitive',
+        config = function()
+            set_keymap('n', '<Leader>gs', '<Cmd>G status -s<CR>')
+            set_keymap('n', '<Leader>gl', '<Cmd>G log --oneline<CR>')
+            set_keymap('n', '<Leader>gb', '<Cmd>!git branch -a<CR>')
+            set_keymap('n', '<Leader>gd', '<Cmd>G diff<CR>')
+        end
+    }
     use {'airblade/vim-rooter'}
     use {'moll/vim-bbye'}
     use {'aymericbeaumet/vim-symlink'}
@@ -302,13 +310,5 @@ packer.startup(function()
         'lewis6991/gitsigns.nvim',
         requires = {'nvim-lua/plenary.nvim'},
         config = function() require('gitsigns').setup() end
-    }
-    use {
-        'sindrets/diffview.nvim',
-        config = function()
-            require('diffview').setup()
-            set_keymap('n', '<Leader>do', '<Cmd>DiffviewOpen<CR>')
-            set_keymap('n', '<Leader>dc', '<Cmd>DiffviewClose<CR>')
-        end
     }
 end)
