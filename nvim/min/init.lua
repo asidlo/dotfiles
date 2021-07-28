@@ -53,6 +53,14 @@ vim.g.mapleader = ','
 
 vim.g.markdown_fenced_languages = {'bash', 'json', 'javascript', 'python', 'java', 'groovy', 'go', 'rust'}
 
+local disabled_built_ins = {
+    "netrw", "netrwPlugin", "netrwSettings", "netrwFileHandlers", "gzip", "zip", "zipPlugin", "tar", "tarPlugin",
+    "getscript", "getscriptPlugin", "vimball", "vimballPlugin", "2html_plugin", "logipat", "rrhelper",
+    "spellfile_plugin", "matchit"
+}
+
+for _, plugin in pairs(disabled_built_ins) do vim.g["loaded_" .. plugin] = 1 end
+
 --- Creates key mappings to reduce typing
 ---@param mode string 'n' | 'v' | 'i'...etc
 ---@param map string keys to be mapped
@@ -231,8 +239,8 @@ packer.startup(function()
     use {'tpope/vim-obsession'}
     use {'tpope/vim-fugitive', config = "require('config.fugitive')"}
     use {'airblade/vim-rooter'}
-    -- use {'moll/vim-bbye'}
-    -- use {'aymericbeaumet/vim-symlink'}
+    use {'moll/vim-bbye'}
+    use {'aymericbeaumet/vim-symlink'}
     use {'mtdl9/vim-log-highlighting'}
 
     use {'folke/which-key.nvim', config = "require('config.whichkey')"}
@@ -270,7 +278,15 @@ packer.startup(function()
         requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
         config = "require('config.telescope')"
     }
-    use {"folke/trouble.nvim", requires = {"kyazdani42/nvim-web-devicons"}, config = 'require("trouble").setup()'}
+    use {
+        "folke/trouble.nvim",
+        requires = {"kyazdani42/nvim-web-devicons"},
+        config = function()
+            require('trouble').setup()
+            set_keymap('n', '<Leader>tt', '<Cmd>TroubleToggle<CR>')
+            set_keymap('n', '<Leader>tr', '<Cmd>TroubleRefresh<CR>')
+        end
+    }
     use {'norcalli/nvim-colorizer.lua', config = "require('colorizer').setup()"}
     use {'ray-x/lsp_signature.nvim'}
     use {
@@ -286,5 +302,13 @@ packer.startup(function()
         'lewis6991/gitsigns.nvim',
         requires = {'nvim-lua/plenary.nvim'},
         config = function() require('gitsigns').setup() end
+    }
+    use {
+        'sindrets/diffview.nvim',
+        config = function()
+            require('diffview').setup()
+            set_keymap('n', '<Leader>do', '<Cmd>DiffviewOpen<CR>')
+            set_keymap('n', '<Leader>dc', '<Cmd>DiffviewClose<CR>')
+        end
     }
 end)
