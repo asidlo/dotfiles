@@ -314,4 +314,13 @@ packer.startup(function()
         requires = {'nvim-lua/plenary.nvim'},
         config = function() require('gitsigns').setup() end
     }
+    -- TODO: AS - Figure out how to configure on_attach with rust-tools plugin
+    -- use {
+    --     'simrat39/rust-tools.nvim',
+    --     requires = {
+    --         {'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope.nvim'},
+    --         {'mfussenegger/nvim-dap'}
+    --     },
+    --     config = function() require('rust-tools').setup() end
+    -- }
 end)
