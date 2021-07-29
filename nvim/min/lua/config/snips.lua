@@ -109,7 +109,7 @@ ls.snippets = {
         ls.parser.parse_snippet({trig = 'psf'}, "private static final $0"),
         ls.parser.parse_snippet({trig = 'pf'}, "private final $0"),
     },
-    rust = {ls.parser.parse_snippet({trig = "fn"}, "/// $1\nfn $2($3) ${4:-> $5 }\\{\n\t$0\n\\}")}
+    -- rust = {ls.parser.parse_snippet({trig = "fn"}, "/// $1\nfn $2($3) ${4:-> $5 }\\{\n\t$0\n\\}")}
 }
 
 require("luasnip/loaders/from_vscode").lazy_load({

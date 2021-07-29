@@ -6,8 +6,8 @@ local on_attach = function(client, bufnr)
     require'jdtls.setup'.add_commands()
     require'jdtls'.setup_dap()
     require('lsp_signature').on_attach()
-    require('lspkind').init {preset = 'codicons'}
-    set_buf_keymap(bufnr, 'n', '<F18>', '<Cmd>lua vim.lsp.buf.rename()<CR>')
+    require('lspkind').init()
+    set_buf_keymap(bufnr, 'n', 'gR', '<Cmd>lua vim.lsp.buf.rename()<CR>')
     set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua require('jdtls').code_action()<CR>")
     set_buf_keymap(bufnr, 'v', '<M-CR>', "<Esc><Cmd>lua require('jdtls').code_action(true)<CR>")
     set_buf_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.declaration()<CR>')
@@ -17,9 +17,7 @@ local on_attach = function(client, bufnr)
     set_buf_keymap(bufnr, 'n', 'gt', '<Cmd>lua vim.lsp.buf.type_definition()<CR>')
     set_buf_keymap(bufnr, 'n', 'g0', '<Cmd>Telescope lsp_document_symbols<CR>')
     set_buf_keymap(bufnr, 'n', '<Leader>ws', '<Cmd>Telescope lsp_workspace_symbols<CR>')
-    set_buf_keymap(bufnr, 'n', '<Leader>wl', '<Cmd>lua dump(vim.lsp.buf.list_workspace_folders()<CR>')
-    set_buf_keymap(bufnr, 'n', '<Leader>wa', '<Cmd>lua dump(vim.lsp.buf.add_workspace_folder()<CR>')
-    set_buf_keymap(bufnr, 'n', '<Leader>wd', '<Cmd>lua dump(vim.lsp.buf.remove_workspace_folder()<CR>')
+    set_buf_keymap(bufnr, 'n', '<Leader>wl', '<Cmd>lua dump(vim.lsp.buf.list_workspace_folders())<CR>')
     set_buf_keymap(bufnr, 'n', 'K', "<Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>")
     set_buf_keymap(bufnr, 'i', '<M-k>', "<Cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>")
 
@@ -69,7 +67,7 @@ local jar_patterns = {
     home .. '/.local/src/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
     home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.plugin/target/*.jar',
     home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/target/*.jar',
-    home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/lib/*.jar',
+    home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/lib/*.jar'
 }
 
 local bundles = {}
@@ -111,7 +109,7 @@ function M.start_or_attach()
                 },
                 configuration = {
                     runtimes = {
-                        {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true},
+                        {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true}
                         -- {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
                     }
                 }
