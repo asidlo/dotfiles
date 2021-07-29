@@ -18,9 +18,11 @@ end
 require('telescope').setup {
     pickers = {
         find_files = {
+            -- TODO: AS - remove once we can pass a list of excluded members and uncomment no_ignore
             find_command = {
                 fd_cmd(), '-I', '--follow', '--exclude', '.git', '--exclude', 'node_modules', '--exclude', '*.class'
             },
+            -- no_ignore = true,
             hidden = true,
             follow = true
         }

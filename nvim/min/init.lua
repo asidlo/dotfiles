@@ -300,7 +300,9 @@ packer.startup(function()
     use {
         'b3nj5m1n/kommentary',
         config = function()
-            require('kommentary.config').configure_language('lua', {prefer_single_line_comments = true})
+            local cfg = require('kommentary.config')
+            cfg.configure_language('lua', {prefer_single_line_comments = true})
+            cfg.configure_language('java', {prefer_single_line_comments = true})
         end
     }
     use {"folke/todo-comments.nvim", requires = {"nvim-lua/plenary.nvim"}, config = "require('config.todo')"}
