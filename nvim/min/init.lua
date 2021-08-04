@@ -136,8 +136,9 @@ local autocmds = {
         {[[ColorScheme dracula highlight Search guibg=NONE guifg=Yellow gui=underline term=underline cterm=underline]]}
     },
     lsp_settings = {
-        -- {[[BufAdd jdt://* call luaeval("require('lsp.jdtls').open_jdt_link(_A)", expand('<amatch>'))]]},
-        {"FileType java lua require('config.lsp').setup_jdtls()"}, {
+        {[[BufReadCmd jdt://* lua require('lsp.jdtls').open_jdt_link(vim.fn.expand('<amatch>'))]]},
+        -- {"FileType java lua require('config.lsp').setup_jdtls()"},
+        {
             [[CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs 
                 :lua require'lsp_extensions'.inlay_hints{ prefix = '-> ', highlight = 'Comment', enabled = {'TypeHint', 'ChainingHint', 'ParameterHint'} }]]
         }

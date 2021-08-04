@@ -1,6 +1,4 @@
 local compe = require('compe')
--- local snippets = require('snippets')
--- local utils = require('snippets.utils')
 local luasnip = require('luasnip')
 
 compe.setup {
@@ -19,21 +17,6 @@ compe.setup {
     }
 }
 
--- TODO: var creates a variable, should use sub to have user fill in for now
--- TODO: cl should get class name for the default via the buffername
--- snippets.snippets = {
---     java = {
---         psvm = utils.match_indentation 'public static void main(String[] args) {\t${0}\n}',
---         sout = 'System.out.println(${1:i});$0',
---         cl = utils.match_indentation 'public class ${=vim.fn.expand("%:t:r")} {\t$0\n}',
---         pu = 'public ${1:type} ${2:name}$0',
---         pr = 'private ${1:type} ${2:name}$0',
---         psf = 'private static final ${1:type} ${2:name}$0',
---         pf = 'private final ${1:type} ${2:name}$0',
---         f = 'final $0'
---     }
--- }
-
 local function check_back_space()
     local col = vim.fn.col('.') - 1
     if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
@@ -49,8 +32,6 @@ end
 function _G.tab_complete()
     if vim.fn.pumvisible() == 1 then
         return replace_termcodes('<C-n>')
-        -- elseif snippets.has_active_snippet() then
-        --     snippets.expand_or_advance(1)
     elseif luasnip.expand_or_jumpable() then
         return replace_termcodes("<cmd>lua require'luasnip'.expand_or_jump()<Cr>")
     elseif check_back_space() then
@@ -63,8 +44,6 @@ end
 function _G.s_tab_complete()
     if vim.fn.pumvisible() == 1 then
         return replace_termcodes('<C-p>')
-        -- elseif snippets.has_active_snippet() then
-        --     snippets.expand_or_advance(-1)
     elseif luasnip.jumpable(-1) then
         return replace_termcodes("<cmd>lua require'luasnip'.jump(-1)<CR>")
     else
@@ -79,5 +58,3 @@ set_keymap('i', '<Tab>', 'v:lua.tab_complete()', {silent = true, noremap = true,
 set_keymap('s', '<Tab>', 'v:lua.tab_complete()', {silent = true, noremap = true, expr = true})
 set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', {silent = true, noremap = true, expr = true})
 set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', {silent = true, noremap = true, expr = true})
--- set_keymap('i', '<C-k>', "<cmd>lua return require'snippets'.expand_or_advance(1)<CR>")
--- set_keymap('i', '<C-j>', "<cmd>lua return require'snippets'.advance_snippet(-1)<CR>")

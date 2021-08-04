@@ -277,22 +277,22 @@ gls.left[8] = {
 --         highlight = { colors.middlegrey, colors.bg },
 --     },
 -- }
-gls.mid[1] = {
-    ShowLspClient = {
-        provider = 'GetLspClient',
-        condition = function()
-            if not has_width_gt(50) then return false end
-            local tbl = {['dashboard'] = true, [''] = true}
-            if tbl[vim.bo.filetype] then return false end
-            if lsp.get_lsp_client('none') == 'none' then return false end
-            return true
-        end,
-        icon = '    ',
-        highlight = {colors.fg, colors.selection},
-        separator = ' ',
-        separator_highlight = {colors.selection, colors.selection}
-    }
-}
+-- gls.mid[1] = {
+--     ShowLspClient = {
+--         provider = 'GetLspClient',
+--         condition = function()
+--             if not has_width_gt(50) then return false end
+--             local tbl = {['dashboard'] = true, [''] = true}
+--             if tbl[vim.bo.filetype] then return false end
+--             if lsp.get_lsp_client('none') == 'none' then return false end
+--             return true
+--         end,
+--         icon = '    ',
+--         highlight = {colors.fg, colors.selection},
+--         separator = ' ',
+--         separator_highlight = {colors.selection, colors.selection}
+--     }
+-- }
 -- gls.left[14] = {
 --     LspStatus = {
 --         provider = { LspStatus },

@@ -64,6 +64,10 @@ local on_attach = function(client, bufnr)
         set_buf_keymap(0, 'n', 'g=', '<Cmd>lua vim.lsp.buf.formatting()<CR>')
     end
 
+    if client.name == 'jdtls' then
+        set_buf_keymap(bufnr, 'n', '<M-o>', "<Cmd>lua require('lsp.jdtls').organize_imports()<CR>")
+    end
+
     if client.name == 'jdt.ls' then
         require'jdtls.setup'.add_commands()
         require'jdtls'.setup_dap()
@@ -122,6 +126,65 @@ function M.setup_lspconfig()
         on_attach = on_attach,
         capabilities = capabilities,
         commands = {Format = {function() vim.lsp.buf.range_formatting({}, {0, 0}, {vim.fn.line("$"), 0}) end}}
+    }
+
+    local home = os.getenv('HOME')
+
+    lspconfig.jdtls.setup {
+        on_attach = on_attach,
+        cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
+        flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
+        handlers = {
+            ['textDocument/codeAction'] = function(a, b, actions)
+                -- new_buf({a, b, actions})
+                for _, action in ipairs(actions) do
+                    if action ~= vim.NIL then
+                        if action.command.command == 'java.apply.workspaceEdit' then
+                            local changes = {}
+                            local documentChanges = {}
+                            for _, argument in ipairs(action.command.arguments) do
+                                for _, change in ipairs(argument.changes) do
+                                    table.insert(changes, change)
+                                end
+                                if argument.documentChanges then
+                                    for _, documentChange in ipairs(argument.documentChanges) do
+                                        table.insert(documentChanges, documentChange)
+                                    end
+                                end
+                            end
+                            action.edit = {changes = changes, documentChanges = documentChanges}
+                            action.command = nil
+                        end
+                    end
+                end
+                -- new_buf({a, b, actions})
+                vim.lsp.handlers['textDocument/codeAction'](a, b, actions)
+            end
+        },
+        capabilities = capabilities,
+        extendedClientCapabilities = {
+            classFileContentsSupport = true,
+            generateToStringPromptSupport = true,
+            hashCodeEqualsPromptSupport = true,
+            generateConstructorsPromptSupport = true,
+            resolveAdditionalTextEditsSupport = true
+        },
+        settings = {
+            java = {
+                signatureHelp = {enabled = true},
+                contentProvider = {preferred = 'fernflower'},
+                format = {insertSpaces = true, tabSize = 4},
+                codeGeneration = {
+                    toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
+                },
+                configuration = {
+                    runtimes = {
+                        {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true}
+                        -- {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
+                    }
+                }
+            }
+        }
     }
 
     local system_name

@@ -1,13 +1,3 @@
--- local actions = require('telescope.actions')
--- require('telescope').setup {
---	   defaults = {
---		   mappings = {
---			   i = {
---				   ["<esc>"] = actions.close
---			   }
---		   }
---	   }
--- }
 local is_unix = function() return vim.fn.has('unix') == 1 and vim.fn.has('macunix') == 0 end
 
 local fd_cmd = function()

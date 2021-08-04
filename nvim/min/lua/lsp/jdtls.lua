@@ -1,8 +1,9 @@
 local M = {}
 
-function _G.has_document_symbol_support(client) return client.resolved_capabilities.document_symbol ~= nil end
+-- local function has_document_symbol_support(client) return client.resolved_capabilities.document_symbol ~= nil end
 
-function _G.has_document_definition_support(client) return client.resolved_capabilities.textDocument_definition ~= nil end
+-- local function has_document_definition_support(client) return
+--     client.resolved_capabilities.textDocument_definition ~= nil end
 
 local function get_client()
     local clients = vim.lsp.get_active_clients()
@@ -14,21 +15,20 @@ local function has_extended_support(client)
 end
 
 local function has_classfile_support(client)
-    return has_extended_support(client) and client.config.init_options.extendedClientCapabilities.classFileContentsSupport
+    return has_extended_support(client) and
+               client.config.init_options.extendedClientCapabilities.classFileContentsSupport
 end
 
 local function handle_request(client, method, params, bufnr)
     local response = nil
-    local cb = function(err, _, result)
-        response = {err, result}
-    end
+    local cb = function(err, _, result) response = {err, result} end
 
     local ok, request_id = client.request(method, params, cb, bufnr)
-    assert(ok, string.format('Request method=%s; params=%s failed, check if the client(%s) is shutdown', method, vim.inspect(params), client.name))
+    assert(ok,
+           string.format('Request method=%s; params=%s failed, check if the client(%s) is shutdown', method,
+                         vim.inspect(params), client.name))
 
-    local wait_ok, reason = vim.wait(1000, function()
-        return response
-    end)
+    local wait_ok, reason = vim.wait(1000, function() return response end)
     local wait_failure = {[-1] = 'timeout', [-2] = 'interrupted', [-3] = 'error'}
 
     if wait_ok then
@@ -46,6 +46,7 @@ end
 --
 -- @param uri string in the form of a `jdt://` uri
 function M.open_jdt_link(uri)
+    print('navigating to classfile=' .. uri)
     local client = get_client()
     assert(client, 'Must have jdtls client connected to buffer to load JDT URI')
 
