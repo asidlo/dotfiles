@@ -1,3 +1,8 @@
+local lspconfig = require('lspconfig')
+local jdtls = require('jdtls')
+
+local M = {}
+
 -- Until they release the `vim.lsp.util.formatexpr()`
 -- https://github.com/neovim/neovim/issues/12528
 -- https://github.com/neovim/neovim/pull/12547
@@ -29,14 +34,9 @@ function _G.lsp_formatexpr(start_line, end_line, timeout_ms)
     return 0
 end
 
-local lspconfig = require('lspconfig')
-
 local on_attach = function(client, bufnr)
     require('lsp_signature').on_attach({bind = true, use_lspsaga = true})
     require('lspkind').init()
-    -- set_buf_keymap(bufnr, 'n', 'gR', '<Cmd>lua vim.lsp.buf.rename()<CR>')
-    -- set_buf_keymap(bufnr, 'n', '<M-CR>', '<Cmd>lua vim.lsp.buf.code_action()<CR>')
-    -- set_buf_keymap(bufnr, 'x', '<M-CR>', '<Cmd>lua vim.lsp.buf.range_code_action()<CR>')
     set_buf_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.declaration()<CR>')
     set_buf_keymap(bufnr, 'n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>')
     set_buf_keymap(bufnr, 'n', '<C-]>', '<Cmd>lua vim.lsp.buf.definition()<CR>')
@@ -48,8 +48,6 @@ local on_attach = function(client, bufnr)
     set_buf_keymap(bufnr, 'n', 'K', "<Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>")
     set_buf_keymap(bufnr, 'i', '<M-k>', "<Cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>")
     set_buf_keymap(bufnr, 'n', 'gR', "<Cmd>lua require('lspsaga.rename').rename()<CR>")
-    set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua require('lspsaga.codeaction').code_action()<CR>")
-    set_buf_keymap(bufnr, 'x', '<M-CR>', "<Cmd>'<,'>lua require('lspsaga.codeaction').range_code_action()<CR>")
     set_buf_keymap(bufnr, 'n', '[d', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()<CR>")
     set_buf_keymap(bufnr, 'n', ']d', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_next()<CR>")
     set_buf_keymap(bufnr, 'n', '<M-Space>', "<Cmd>lua require'lspsaga.diagnostic'.show_line_diagnostics()<CR>")
@@ -66,8 +64,14 @@ local on_attach = function(client, bufnr)
         set_buf_keymap(0, 'n', 'g=', '<Cmd>lua vim.lsp.buf.formatting()<CR>')
     end
 
-    if client.name == 'jdtls' then
-        set_buf_keymap(bufnr, 'n', '<M-o>', '<Cmd>lua require("lsp.jdtls").organize_imports()<CR>')
+    if client.name == 'jdt.ls' then
+        require'jdtls.setup'.add_commands()
+        require'jdtls'.setup_dap()
+        set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua require('jdtls').code_action()<CR>")
+        set_buf_keymap(bufnr, 'v', '<M-CR>', "<Esc><Cmd>lua require('jdtls').code_action(true)<CR>")
+    else
+        set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua require('lspsaga.codeaction').code_action()<CR>")
+        set_buf_keymap(bufnr, 'x', '<M-CR>', "<Cmd>'<,'>lua require('lspsaga.codeaction').range_code_action()<CR>")
     end
 
     vim.api.nvim_buf_set_option(0, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -90,12 +94,9 @@ local on_attach = function(client, bufnr)
     end
 end
 
-local function make_capabilities()
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities.textDocument.completion.completionItem.snippetSupport = true
-    capabilities.workspace.configuration = true
-    return capabilities
-end
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities.workspace.configuration = true
 
 -- https://github.com/neovim/neovim/issues/12970
 vim.lsp.util.apply_text_document_edit = function(text_document_edit, _)
@@ -105,151 +106,176 @@ vim.lsp.util.apply_text_document_edit = function(text_document_edit, _)
     vim.lsp.util.apply_text_edits(text_document_edit.edits, bufnr)
 end
 
-lspconfig.rust_analyzer.setup {on_attach = on_attach, capabilities = make_capabilities()}
+function M.setup_lspconfig()
+    lspconfig.rust_analyzer.setup {on_attach = on_attach, capabilities = capabilities}
+    -- require('rust-tools').setup({tools = {server = {on_attach = on_attach}}})
 
-lspconfig.gopls.setup {
-    on_attach = on_attach,
-    cmd = {'gopls', '-remote=auto'},
-    root_dir = lspconfig.util.root_pattern('go.mod', '.git'),
-    settings = {gopls = {analyses = {unusedparams = true}, staticcheck = true}},
-    capabilities = make_capabilities()
-}
-
-lspconfig.jsonls.setup {
-    on_attach = on_attach,
-    capabilities = make_capabilities(),
-    commands = {Format = {function() vim.lsp.buf.range_formatting({}, {0, 0}, {vim.fn.line("$"), 0}) end}}
-}
-
--- local jar_patterns = {
---     -- '/dev/microsoft/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
---     -- '/dev/dgileadi/vscode-java-decompiler/server/*.jar',
---     -- '/dev/microsoft/vscode-java-test/server/*.jar',
--- }
---
--- local home = os.getenv('HOME')
--- local bundles = {}
--- for _, jar_pattern in ipairs(jar_patterns) do
---     for _, bundle in ipairs(vim.split(vim.fn.glob(home .. jar_pattern), '\n')) do
---         if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then table.insert(bundles, bundle) end
---     end
--- end
---
--- lspconfig.jdtls.setup {
---     autostart = false,
---     on_attach = on_attach,
---     cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
---     root_dir = lspconfig.util.root_pattern('gradlew', 'pom.xml', '.git', '*.java'),
---     flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
---     --[[ handlers = {
---         ['language/status'] = vim.schedule_wrap(function(_, _, result)
---             vim.api.nvim_command(string.format(":echohl Function | echo '%s' | echohl None", result.message))
---         end),
---         ['java.action.organizeImports'] = function() print('hello') end
---     }, ]]
---     init_options = {
---         bundles = bundles,
---         extendedClientCapabilities = {
---             progressReportProvider = true,
---             classFileContentsSupport = true,
---             generateToStringPromptSupport = true,
---             hashCodeEqualsPromptSupport = true,
---             advancedExtractRefactoringSupport = true,
---             advancedOrganizeImportsSupport = true,
---             generateConstructorsPromptSupport = true,
---             generateDelegateMethodsPromptSupport = true,
---             moveRefactoringSupport = true,
---             inferSelectionSupport = {'extractMethod', 'extractVariable', 'extractConstant'},
---             resolveAdditionalTextEditsSupport = true
---         }
---     },
---     settings = {
---         java = {
---             signatureHelp = {enabled = true},
---             contentProvider = {preferred = 'fernflower'},
---             format = {insertSpaces = true, tabSize = 4},
---             completion = {
---                 favoriteStaticMembers = {
---                     "org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*", "org.hamcrest.CoreMatchers.*",
---                     "org.junit.jupiter.api.Assertions.*", "java.util.Objects.requireNonNull",
---                     "java.util.Objects.requireNonNullElse", "org.mockito.Mockito.*"
---                 }
---             },
---             sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}},
---             codeGeneration = {
---                 toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
---             },
---             configuration = {
---                 runtimes = {
---                     {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true},
---                     {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
---                 }
---             }
---         }
---     },
---     capabilities = make_capabilities()
--- }
-
-local system_name
-if vim.fn.has("mac") == 1 then
-    system_name = "macOS"
-elseif vim.fn.has("unix") == 1 then
-    system_name = "Linux"
-elseif vim.fn.has('win32') == 1 then
-    system_name = "Windows"
-else
-    print("Unsupported system for sumneko")
-end
-
--- set the path to the sumneko installation; if you previously installed via the now deprecated :LspInstall, use
-local sumneko_root_path = vim.fn.expand('~/.local/src/lua-language-server')
-local sumneko_binary = sumneko_root_path .. "/bin/" .. system_name .. "/lua-language-server"
-
-local luadev = require("lua-dev").setup({
-    -- add any options here, or leave empty to use the default settings
-    lspconfig = {
-        cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"},
+    lspconfig.gopls.setup {
         on_attach = on_attach,
-        settings = {
-            Lua = {
-                runtime = {
-                    -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                    version = 'LuaJIT',
-                    -- Setup your lua path
-                    path = vim.split(package.path, ';')
-                },
-                diagnostics = {
-                    -- Get the language server to recognize the `vim` global
-                    globals = {'vim', 'use'}
-                },
-                workspace = {
-                    -- Make the server aware of Neovim runtime files
-                    library = {
-                        [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-                        [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
+        cmd = {'gopls', '-remote=auto'},
+        root_dir = lspconfig.util.root_pattern('go.mod', '.git'),
+        settings = {gopls = {analyses = {unusedparams = true}, staticcheck = true}},
+        capabilities = capabilities
+    }
+
+    lspconfig.jsonls.setup {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        commands = {Format = {function() vim.lsp.buf.range_formatting({}, {0, 0}, {vim.fn.line("$"), 0}) end}}
+    }
+
+    local system_name
+    if vim.fn.has("mac") == 1 then
+        system_name = "macOS"
+    elseif vim.fn.has("unix") == 1 then
+        system_name = "Linux"
+    elseif vim.fn.has('win32') == 1 then
+        system_name = "Windows"
+    else
+        print("Unsupported system for sumneko")
+    end
+
+    -- set the path to the sumneko installation; if you previously installed via the now deprecated :LspInstall, use
+    local sumneko_root_path = vim.fn.expand('~/.local/src/lua-language-server')
+    local sumneko_binary = sumneko_root_path .. "/bin/" .. system_name .. "/lua-language-server"
+
+    local luadev = require("lua-dev").setup({
+        -- add any options here, or leave empty to use the default settings
+        lspconfig = {
+            cmd = {sumneko_binary, "-E", sumneko_root_path .. "/main.lua"},
+            on_attach = on_attach,
+            settings = {
+                Lua = {
+                    runtime = {
+                        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                        version = 'LuaJIT',
+                        -- Setup your lua path
+                        path = vim.split(package.path, ';')
+                    },
+                    diagnostics = {
+                        -- Get the language server to recognize the `vim` global
+                        globals = {'vim', 'use'}
+                    },
+                    workspace = {
+                        -- Make the server aware of Neovim runtime files
+                        library = {
+                            [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                            [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
+                        }
                     }
                 }
-            }
-        },
-        capabilities = make_capabilities()
-    }
-})
-lspconfig.sumneko_lua.setup(luadev)
+            },
+            capabilities = capabilities
+        }
+    })
+    lspconfig.sumneko_lua.setup(luadev)
 
-lspconfig.efm.setup {
-    on_attach = on_attach,
-    init_options = {documentFormatting = true},
-    filetypes = {"lua"},
-    settings = {
-        rootMarkers = {".git/"},
-        languages = {
-            lua = {
-                {
-                    formatCommand = "lua-format -i --column-limit=120", -- --no-keep-simple-function-one-line --no-break-after-operator --column-limit=150 --break-after-table-lb",
-                    formatStdin = true
+    lspconfig.efm.setup {
+        on_attach = on_attach,
+        init_options = {documentFormatting = true},
+        filetypes = {"lua"},
+        settings = {
+            rootMarkers = {".git/"},
+            languages = {
+                lua = {
+                    {
+                        formatCommand = "lua-format -i --column-limit=120", -- --no-keep-simple-function-one-line --no-break-after-operator --column-limit=150 --break-after-table-lb",
+                        formatStdin = true
+                    }
                 }
             }
         }
     }
-}
+end
 
+function M.setup_jdtls()
+    local home = os.getenv('HOME')
+
+    local jar_patterns = {
+        home .. '/.local/src/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
+        home .. '/.local/src/vscode-java-test/server/*.jar'
+        -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.plugin/target/*.jar',
+        -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/target/*.jar',
+        -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/lib/*.jar'
+    }
+
+    local bundles = {}
+    for _, jar_pattern in ipairs(jar_patterns) do
+        for _, bundle in ipairs(vim.split(vim.fn.glob(jar_pattern), '\n')) do
+            if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then
+                table.insert(bundles, bundle)
+            end
+        end
+    end
+
+    local extendedClientCapabilities = jdtls.extendedClientCapabilities
+    extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
+    local config = {
+        cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
+        flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
+        capabilities = {
+            workspace = {configuration = true},
+            textDocument = {completion = {completionItem = {snippetSupport = true}}}
+        },
+        on_attach = on_attach,
+        init_options = {bundles = bundles, extendedClientCapabilities = extendedClientCapabilities},
+        settings = {
+            java = {
+                signatureHelp = {enabled = true},
+                contentProvider = {preferred = 'fernflower'},
+                format = {insertSpaces = true, tabSize = 4},
+                completion = {
+                    favoriteStaticMembers = {
+                        "org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*",
+                        "org.hamcrest.CoreMatchers.*", "org.junit.jupiter.api.Assertions.*",
+                        "java.util.Objects.requireNonNull", "java.util.Objects.requireNonNullElse",
+                        "org.mockito.Mockito.*"
+                    }
+                },
+                sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}},
+                codeGeneration = {
+                    toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
+                },
+                configuration = {
+                    runtimes = {
+                        {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true}
+                        -- {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
+                    }
+                }
+            }
+        }
+    }
+    config.on_init = function(client, _)
+        client.notify('workspace/didChangeConfiguration', {settings = config.settings})
+    end
+
+    local finders = require 'telescope.finders'
+    local sorters = require 'telescope.sorters'
+    local actions = require 'telescope.actions'
+    local pickers = require 'telescope.pickers'
+    require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
+        local opts = {}
+        pickers.new(opts, {
+            prompt_title = prompt,
+            finder = finders.new_table {
+                results = items,
+                entry_maker = function(entry)
+                    return {value = entry, display = label_fn(entry), ordinal = label_fn(entry)}
+                end
+            },
+            sorter = sorters.get_generic_fuzzy_sorter(),
+            attach_mappings = function(prompt_bufnr)
+                actions.select_default:replace(function()
+                    local selection = actions.get_selected_entry(prompt_bufnr)
+                    actions.close(prompt_bufnr)
+                    cb(selection.value)
+                end)
+                return true
+            end
+        }):find()
+    end
+
+    jdtls.start_or_attach(config)
+end
+
+return M

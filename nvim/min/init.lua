@@ -1,4 +1,5 @@
 -- Settings
+vim.opt.lazyredraw = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.termguicolors = true
@@ -92,31 +93,6 @@ function _G.new_buf(...)
     vim.cmd('b ' .. buf)
 end
 
-function _G.lsp_clients() return vim.lsp.buf_get_clients() end
-
-function _G.has_document_symbol_support(client) return client.resolved_capabilities.document_symbol ~= nil end
-
-function _G.has_document_definition_support(client) return client.resolved_capabilities.textDocument_definition ~= nil end
-
-function _G.lsp_handlers() return vim.tbl_keys(vim.lsp.handlers) end
-
-function _G.lsp_capabilities()
-    for i, v in pairs(lsp_clients()) do
-        print(string.format("lsp client id: %d", i))
-        dump(v.resolved_capabilities)
-    end
-end
-
-function _G.is_buffer_empty()
-    -- Check whether the current buffer is empty
-    return vim.fn.empty(vim.fn.expand('%:t')) == 1
-end
-
-function _G.has_width_gt(cols)
-    -- Check if the windows width is greater than a given number of columns
-    return vim.fn.winwidth(0) / 2 > cols
-end
-
 function _G.nvim_create_augroups(definitions)
     for group_name, definition in pairs(definitions) do
         vim.api.nvim_command('augroup ' .. group_name)
@@ -127,12 +103,6 @@ function _G.nvim_create_augroups(definitions)
         end
         vim.api.nvim_command('augroup END')
     end
-end
-
--- http://lua-users.org/wiki/StringTrim #6
-function _G.trim(s)
-    if s == nil then return nil end
-    return s:match '^()%s*$' and '' or s:match '^%s*(.*%S)'
 end
 
 -- Augroups
@@ -167,20 +137,34 @@ local autocmds = {
     },
     lsp_settings = {
         -- {[[BufAdd jdt://* call luaeval("require('lsp.jdtls').open_jdt_link(_A)", expand('<amatch>'))]]},
-        {"FileType java lua require('config.jdtls').start_or_attach()"}, {
-            [[CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs :lua require'lsp_extensions'.inlay_hints{ prefix = '-> ', highlight = 'Comment', enabled = {'TypeHint', 'ChainingHint', 'ParameterHint'} }]]
+        {"FileType java lua require('config.lsp').setup_jdtls()"}, {
+            [[CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs 
+                :lua require'lsp_extensions'.inlay_hints{ prefix = '-> ', highlight = 'Comment', enabled = {'TypeHint', 'ChainingHint', 'ParameterHint'} }]]
         }
     }
 }
 nvim_create_augroups(autocmds)
 
+-- Keep it centered
 set_keymap('n', 'Y', 'y$')
 set_keymap('n', 'n', 'nzzzv')
 set_keymap('n', 'N', 'Nzzzv')
+set_keymap('n', 'J', 'mzJ`z')
+
+-- Undo break points
+set_keymap('i', ',', ',<C-g>u')
+set_keymap('i', '.', '.<C-g>u')
+set_keymap('i', '!', '!<C-g>u')
+set_keymap('i', '?', '?<C-g>u')
+
+-- Jumplist mutations
+set_keymap('n', 'k', [[(v:count > 5 ? "m'" . v:count : "") . 'k']], {expr = true, noremap = true})
+set_keymap('n', 'j', [[(v:count > 5 ? "m'" . v:count : "") . 'j']], {expr = true, noremap = true})
+
 set_keymap('n', '<Up>', 'gk')
 set_keymap('n', '<Down>', 'gj')
-set_keymap('n', 'j', 'gj')
-set_keymap('n', 'k', 'gk')
+-- set_keymap('n', 'j', 'gj')
+-- set_keymap('n', 'k', 'gk')
 set_keymap('n', '<Leader>cd', '<Cmd>cd %:p:h | pwd<CR>')
 set_keymap('n', '<Leader>p', '<Cmd>lua stdout()<CR>')
 
@@ -198,25 +182,14 @@ set_keymap('n', '<A-j>', '<C-\\><C-N><C-w>j')
 set_keymap('n', '<A-k>', '<C-\\><C-N><C-w>k')
 set_keymap('n', '<A-l>', '<C-\\><C-N><C-w>l')
 
---- Prints content of register to stdout. If register is null then '*' register is used
---- @param reg string register to print to stdout
-function _G.stdout(reg)
-    if reg == nil then reg = '*' end
-    local num_spaces = tonumber(vim.o.tabstop)
-    local cb = string.gsub(vim.fn.getreg(reg), '\t', string.rep(' ', num_spaces))
-    print(cb)
-end
-
 -- https://jdhao.github.io/2020/03/14/nvim_search_replace_multiple_file/
 -- https://stackoverflow.com/a/51962260
 -- https://thoughtbot.com/blog/faster-grepping-in-vim
 vim.cmd('packadd cfilter')
 
 local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
     vim.fn.system({'git', 'clone', 'https://github.com/wbthomason/packer.nvim', install_path})
-    -- Should have packer in separate file and require it here, then run PackerSync
 end
 
 -- Packages
@@ -237,90 +210,73 @@ packer.startup(function()
     use {'tpope/vim-repeat'}
     use {'tpope/vim-surround'}
     use {'tpope/vim-obsession'}
-    use {
-        'tpope/vim-fugitive',
-        config = function()
-            set_keymap('n', '<Leader>gs', '<Cmd>G status -s<CR>')
-            set_keymap('n', '<Leader>gl', '<Cmd>G log --oneline<CR>')
-            set_keymap('n', '<Leader>gb', '<Cmd>!git branch -a<CR>')
-            set_keymap('n', '<Leader>gd', '<Cmd>G diff<CR>')
-        end
-    }
+    use {'tpope/vim-fugitive'}
     use {'airblade/vim-rooter'}
     use {'moll/vim-bbye'}
     use {'aymericbeaumet/vim-symlink'}
     use {'mtdl9/vim-log-highlighting'}
 
-    use {'folke/which-key.nvim', config = "require('config.whichkey')"}
+    use {'folke/which-key.nvim', config = function() require('config.whichkey') end}
     use {
         'neovim/nvim-lspconfig',
         requires = {
-            {'nvim-lua/lsp_extensions.nvim'}, {'folke/lua-dev.nvim'},
-            {'glepnir/lspsaga.nvim', config = "require('config.lspsaga')"}, {'onsails/lspkind-nvim'}
+            {'nvim-lua/lsp_extensions.nvim'}, {'folke/lua-dev.nvim'}, {'onsails/lspkind-nvim'},
+            {'mfussenegger/nvim-jdtls'}, {'mfussenegger/nvim-dap'}, {'ray-x/lsp_signature.nvim'},
+            {'glepnir/lspsaga.nvim'}
         },
-        config = "require('config.lsp')"
+        config = function() require('config.lsp').setup_lspconfig() end
     }
+    use {'glepnir/galaxyline.nvim', branch = 'main', config = function() require('config.statusline') end}
     use {
-        'glepnir/galaxyline.nvim',
-        branch = 'main',
-        requires = {'kyazdani42/nvim-web-devicons', opt = true},
-        config = "require('config.statusline')"
+        'kyazdani42/nvim-tree.lua',
+        requires = {'kyazdani42/nvim-web-devicons'},
+        config = function() require('config.tree') end
     }
-    use {'kyazdani42/nvim-tree.lua', requires = {'kyazdani42/nvim-web-devicons'}, config = "require('config.tree')"}
-    use {'simrat39/symbols-outline.nvim', config = "require('config.outline')"}
-    use {'L3MON4D3/LuaSnip', requires = {'rafamadriz/friendly-snippets'}, config = "require('config.snips')"}
+    use {'simrat39/symbols-outline.nvim', config = function() require('config.outline') end}
     use {
-        'hrsh7th/nvim-compe',
-        -- requires = { 'norcalli/snippets.nvim' },
-        requires = {'L3MON4D3/LuaSnip'},
-        config = "require('config.compe')"
+        'L3MON4D3/LuaSnip',
+        requires = {'rafamadriz/friendly-snippets'},
+        config = function() require('config.snips') end
     }
+    use {'hrsh7th/nvim-compe', requires = {'L3MON4D3/LuaSnip'}, config = function() require('config.compe') end}
     use {
         'nvim-treesitter/nvim-treesitter',
         run = ':TSUpdate',
         requires = {'nvim-treesitter/nvim-treesitter-textobjects'},
-        config = "require('config.treesitter')"
+        config = function() require('config.treesitter') end
     }
     use {
         'nvim-telescope/telescope.nvim',
         requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
-        config = "require('config.telescope')"
+        config = function() require('config.telescope') end
     }
     use {
-        "folke/trouble.nvim",
-        requires = {"kyazdani42/nvim-web-devicons"},
-        config = function()
-            require('trouble').setup()
-            set_keymap('n', '<Leader>tt', '<Cmd>TroubleToggle<CR>')
-            set_keymap('n', '<Leader>tr', '<Cmd>TroubleRefresh<CR>')
-        end
+        'folke/trouble.nvim',
+        requires = {'kyazdani42/nvim-web-devicons'},
+        config = function() require('config.trouble') end
     }
-    use {'norcalli/nvim-colorizer.lua', config = "require('colorizer').setup()"}
-    use {'ray-x/lsp_signature.nvim'}
+    use {'norcalli/nvim-colorizer.lua', config = function() require('colorizer').setup() end}
+    use {'b3nj5m1n/kommentary', config = function() require('config.kommentary') end}
     use {
-        'b3nj5m1n/kommentary',
-        config = function()
-            local cfg = require('kommentary.config')
-            cfg.configure_language('lua', {prefer_single_line_comments = true})
-            cfg.configure_language('java', {prefer_single_line_comments = true})
-            cfg.configure_language('rust', {prefer_single_line_comments = true})
-        end
+        'folke/todo-comments.nvim',
+        requires = {'nvim-lua/plenary.nvim'},
+        config = function() require('config.todo') end
     }
-    use {"folke/todo-comments.nvim", requires = {"nvim-lua/plenary.nvim"}, config = "require('config.todo')"}
-    use {'mfussenegger/nvim-jdtls'}
-    use {'mfussenegger/nvim-dap'}
     use {
         'lewis6991/gitsigns.nvim',
         requires = {'nvim-lua/plenary.nvim'},
         config = function() require('gitsigns').setup() end
     }
-    -- TODO: AS - Figure out how to configure on_attach with rust-tools plugin
-    -- use {
-    --     'simrat39/rust-tools.nvim',
-    --     requires = {
-    --         {'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope.nvim'},
-    --         {'mfussenegger/nvim-dap'}
-    --     },
-    --     config = function() require('rust-tools').setup() end
-    -- }
+    use {
+        'lukas-reineke/indent-blankline.nvim',
+        config = function()
+            -- vim.g.indentLine_enabled = 1
+            vim.g.indent_blankline_char = "▏"
+            vim.g.indent_blankline_filetype_exclude = {"help", "terminal", "dashboard"}
+            vim.g.indent_blankline_buftype_exclude = {"terminal"}
+            vim.g.indent_blankline_show_trailing_blankline_indent = false
+            vim.g.indent_blankline_show_first_indent_level = false
+            vim.g.indent_blankline_use_treesitter = true
+        end
+    }
 end)

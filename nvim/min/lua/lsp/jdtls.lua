@@ -1,5 +1,9 @@
 local M = {}
 
+function _G.has_document_symbol_support(client) return client.resolved_capabilities.document_symbol ~= nil end
+
+function _G.has_document_definition_support(client) return client.resolved_capabilities.textDocument_definition ~= nil end
+
 local function get_client()
     local clients = vim.lsp.get_active_clients()
     for _, client in pairs(clients) do if client.name == 'jdtls' then return client end end
