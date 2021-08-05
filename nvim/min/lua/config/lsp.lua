@@ -73,6 +73,9 @@ local on_attach = function(client, bufnr)
         require'jdtls'.setup_dap()
         set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua require('jdtls').code_action()<CR>")
         set_buf_keymap(bufnr, 'v', '<M-CR>', "<Esc><Cmd>lua require('jdtls').code_action(true)<CR>")
+    elseif client.name == 'jdtls' then
+        set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua vim.lsp.buf.code_action()<CR>")
+        set_buf_keymap(bufnr, 'x', '<M-CR>', "<Cmd>'<,'>lua vim.lsp.buf.range_code_action()<CR>")
     else
         set_buf_keymap(bufnr, 'n', '<M-CR>', "<Cmd>lua require('lspsaga.codeaction').code_action()<CR>")
         set_buf_keymap(bufnr, 'x', '<M-CR>', "<Cmd>'<,'>lua require('lspsaga.codeaction').range_code_action()<CR>")
@@ -101,6 +104,20 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.workspace.configuration = true
+
+local extra_capabilities = {
+    textDocument = {
+        codeAction = {
+            dataSupport = true,
+            resolveSupport = {properties = {'edit'}},
+            codeActionLiteralSupport = {
+                codeActionKind = {
+                    valueSet = {"source.generate.toString", "source.generate.hashCodeEquals", "source.organizeImports"}
+                }
+            }
+        }
+    }
+}
 
 -- https://github.com/neovim/neovim/issues/12970
 vim.lsp.util.apply_text_document_edit = function(text_document_edit, _)
@@ -135,7 +152,7 @@ function M.setup_lspconfig()
         cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
         flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
         handlers = {
-            ['textDocument/codeAction'] = function(a, b, actions)
+            ['textDocument/codeAction'] = function(_, methodethod, actions)
                 -- new_buf({a, b, actions})
                 for _, action in ipairs(actions) do
                     if action ~= vim.NIL then
@@ -158,16 +175,27 @@ function M.setup_lspconfig()
                     end
                 end
                 -- new_buf({a, b, actions})
-                vim.lsp.handlers['textDocument/codeAction'](a, b, actions)
+                vim.lsp.handlers['textDocument/codeAction'](nil, method, actions)
             end
+            -- ['textDocument/definition'] = function(_, method, params, client_id, bufnr, config)
+            --     vim.lsp.handlers['textDocument/definition'](nil, method, params, client_id, bufnr, config)
+            -- end
         },
-        capabilities = capabilities,
-        extendedClientCapabilities = {
-            classFileContentsSupport = true,
-            generateToStringPromptSupport = true,
-            hashCodeEqualsPromptSupport = true,
-            generateConstructorsPromptSupport = true,
-            resolveAdditionalTextEditsSupport = true
+        capabilities = capabilities, -- vim.tbl_deep_extend('keep', capabilities, extra_capabilities),
+        init_options = {
+            bundles = {},
+            extendedClientCapabilities = {
+                progressReportProvider = true,
+                classFileContentsSupport = true,
+                generateToStringPromptSupport = true,
+                hashCodeEqualsPromptSupport = true,
+                advancedExtractRefactoringSupport = true,
+                advancedOrganizeImportsSupport = true,
+                generateConstructorsPromptSupport = true,
+                generateDelegateMethodsPromptSupport = true,
+                moveRefactoringSupport = true,
+                inferSelectionSupport = {"extractMethod", "extractVariable", "extractConstant"}
+            }
         },
         settings = {
             java = {
@@ -282,6 +310,12 @@ function M.setup_jdtls()
         },
         on_attach = on_attach,
         init_options = {bundles = bundles, extendedClientCapabilities = extendedClientCapabilities},
+        handlers = {
+            ['textDocument/definition'] = function(_, method, params, client_id, bufnr, config)
+                dump(method, params, client_id, bufnr, config)
+                vim.lsp.handlers['textDocument/definition'](nil, method, params, client_id, bufnr, config)
+            end
+        },
         settings = {
             java = {
                 signatureHelp = {enabled = true},

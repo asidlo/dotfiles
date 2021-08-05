@@ -17,6 +17,8 @@ compe.setup {
     }
 }
 
+local function replace_termcodes(str) return vim.api.nvim_replace_termcodes(str, true, true, true) end
+
 local function check_back_space()
     local col = vim.fn.col('.') - 1
     if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
@@ -52,7 +54,8 @@ function _G.s_tab_complete()
 end
 
 set_keymap('i', '<C-Space>', 'compe#complete()', {noremap = true, silent = true, expr = true})
-set_keymap('i', '<CR>', 'compe#confirm({"select": v:true, "keys": "<CR>"})', {noremap = true, silent = true, expr = true})
+set_keymap('i', '<CR>', 'compe#confirm({"select": v:true, "keys": "<CR>"})',
+           {noremap = true, silent = true, expr = true})
 set_keymap('i', '<C-e>', 'compe#close("<c-e>")', {silent = true, expr = true})
 set_keymap('i', '<Tab>', 'v:lua.tab_complete()', {silent = true, noremap = true, expr = true})
 set_keymap('s', '<Tab>', 'v:lua.tab_complete()', {silent = true, noremap = true, expr = true})

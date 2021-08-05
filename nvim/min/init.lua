@@ -77,8 +77,6 @@ function _G.set_buf_keymap(buf, mode, map, key, opts)
     vim.api.nvim_buf_set_keymap(buf, mode, map, key, opts)
 end
 
-function _G.replace_termcodes(str) return vim.api.nvim_replace_termcodes(str, true, true, true) end
-
 function _G.dump(...)
     local objects = vim.tbl_map(vim.inspect, {...})
     print(unpack(objects))

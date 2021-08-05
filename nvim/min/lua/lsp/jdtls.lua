@@ -46,7 +46,6 @@ end
 --
 -- @param uri string in the form of a `jdt://` uri
 function M.open_jdt_link(uri)
-    print('navigating to classfile=' .. uri)
     local client = get_client()
     assert(client, 'Must have jdtls client connected to buffer to load JDT URI')
 
@@ -80,6 +79,18 @@ function M.organize_imports()
     if err then error('Unable to complete java/organizeImport request; error=' .. vim.inspect(err)) end
 
     if resp then vim.lsp.util.apply_workspace_edit(resp) end
+end
+
+function M.goto_definition()
+    local client = get_client()
+    assert(client, 'Must have jdtls client connected to buffer to load JDT URI')
+
+    local buf = vim.api.nvim_get_current_buf()
+
+    local err, resp = handle_request(client, 'textDocument/definition', vim.lsp.util.make_position_params(), buf)
+    if err then error('Unable to complete textDocument/definition request; error=' .. vim.inspect(err)) end
+
+    dump(resp)
 end
 
 -- executeCommandProvider = {

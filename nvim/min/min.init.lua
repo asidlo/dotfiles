@@ -90,8 +90,6 @@ function _G.set_buf_keymap(buf, mode, map, key, opts)
     vim.api.nvim_buf_set_keymap(buf, mode, map, key, opts)
 end
 
-function _G.replace_termcodes(str) return vim.api.nvim_replace_termcodes(str, true, true, true) end
-
 -- Until they release the `vim.lsp.util.formatexpr()`
 -- https://github.com/neovim/neovim/issues/12528
 -- https://github.com/neovim/neovim/pull/12547
