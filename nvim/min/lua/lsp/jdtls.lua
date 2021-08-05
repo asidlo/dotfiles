@@ -93,22 +93,6 @@ function M.goto_definition()
     dump(resp)
 end
 
--- executeCommandProvider = {
---     commands = {
---         "java.edit.organizeImports", "java.project.refreshDiagnostics", "java.project.import", "java.project.removeFromSourcePath",
---         "java.project.listSourcePaths", "java.project.provideSemanticTokens", "java.project.resolveStackTraceLocation", "java.project.getAll",
---         "java.project.isTestFile", "java.project.getClasspaths ", "java.project.getSemanticTokensLegend", "java.project.getSettings",
---         "java.project.updateSourceAttachment", "java.project.resolveSourceAttachment", "java.project.addToSourcePath"
---     }
--- }
--- config.capabilities.textDocument.codeAction.codeActionLiteralSupport
--- codeActionKind = {
---     valueSet = {
---         "", "Empty", "QuickFix", "Refactor", "RefactorExtract", "RefactorInline", "RefactorRewrite", "Source", "SourceOrganizeImports", "quickfix",
---         "refactor", "refactor.extract", "refactor.inline", "refactor.rewrite", "source", "source.organizeImports"
---     }
--- }
-
 -- -- Until https://github.com/neovim/neovim/pull/11607 is merged
 -- local function execute_command(command, callback)
 --	 vim.lsp.buf_request(0, 'workspace/executeCommand', command, function(err, _, resp)
