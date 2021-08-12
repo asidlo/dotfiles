@@ -145,6 +145,11 @@ function M.setup_lspconfig()
         commands = {Format = {function() vim.lsp.buf.range_formatting({}, {0, 0}, {vim.fn.line("$"), 0}) end}}
     }
 
+    lspconfig.pyright.setup {
+        on_attach = on_attach,
+        capabilities = capabilities
+    }
+
     local home = os.getenv('HOME')
 
     lspconfig.jdtls.setup {
