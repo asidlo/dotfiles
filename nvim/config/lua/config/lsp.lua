@@ -105,6 +105,8 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.workspace.configuration = true
 
+vim.lsp.set_log_level('debug')
+
 local extra_capabilities = {
     textDocument = {
         codeAction = {
@@ -135,11 +137,19 @@ function M.setup_lspconfig()
     }
     -- require('rust-tools').setup({tools = {server = {on_attach = on_attach}}})
 
+    -- https://github.com/golang/tools/blob/master/gopls/doc/settings.md#completion
+    -- https://github.com/golang/tools/blob/master/gopls/doc/analyzers.md
     lspconfig.gopls.setup {
         on_attach = on_attach,
         cmd = {'gopls', '-remote=auto'},
         root_dir = lspconfig.util.root_pattern('go.mod', '.git'),
-        settings = {gopls = {analyses = {unusedparams = true}, staticcheck = true}},
+        settings = {
+            gopls = {
+                experimentalPostfixCompletions = true,
+                analyses = {unusedparams = true, shadow = true},
+                staticcheck = true
+            }
+        },
         capabilities = capabilities
     }
 

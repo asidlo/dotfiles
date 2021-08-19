@@ -123,6 +123,8 @@ local autocmds = {
         {[[FileType json,jsonc setlocal foldlevel=2 expandtab tabstop=4 shiftwidth=4]]},
         {[[FileType rust setlocal expandtab tabstop=4 shiftwidth=4]]},
         {[[FileType go setlocal noexpandtab tabstop=4 shiftwidth=4]]},
+        {[[BufWritePre *.go lua vim.lsp.buf.formatting()]]},
+        {[[BufWritePre *.go lua require('lsp.gopls').goimports(1000)]]},
         {[[FileType cpp setlocal makeprg=clang++\ -Wall\ -std=c++17]]},
         {[[FileType c,cpp setlocal formatprg=clang-format commentstring=\/\/\ %s]]},
         {[[BufEnter *gitconfig setlocal filetype=gitconfig]]}, {[[FileType gitcommit setlocal spell]]}
