@@ -128,7 +128,11 @@ vim.lsp.util.apply_text_document_edit = function(text_document_edit, _)
 end
 
 function M.setup_lspconfig()
-    lspconfig.rust_analyzer.setup {on_attach = on_attach, capabilities = capabilities}
+    lspconfig.rust_analyzer.setup {
+        on_attach = on_attach,
+        capabilities = capabilities,
+        settings = {['rust-analyzer'] = {checkOnSave = {command = "clippy"}}}
+    }
     -- require('rust-tools').setup({tools = {server = {on_attach = on_attach}}})
 
     lspconfig.gopls.setup {
@@ -145,10 +149,7 @@ function M.setup_lspconfig()
         commands = {Format = {function() vim.lsp.buf.range_formatting({}, {0, 0}, {vim.fn.line("$"), 0}) end}}
     }
 
-    lspconfig.pyright.setup {
-        on_attach = on_attach,
-        capabilities = capabilities
-    }
+    lspconfig.pyright.setup {on_attach = on_attach, capabilities = capabilities}
 
     local home = os.getenv('HOME')
 

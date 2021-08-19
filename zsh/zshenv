@@ -61,6 +61,9 @@ export PATH=$PATH:$GOPATH/bin
 
 export PATH=$PATH:~/.local/bin
 
+LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
+[[ -d "$LUAROCKS_HOME/lua_modules/bin" ]] && export PATH=$PATH:"$LUAROCKS_HOME/lua_modules/bin"
+
 # Fd, bat, fzf
 if [[ $OS =~ $LINUX ]]; then
 	FD_EXE='fdfind'
