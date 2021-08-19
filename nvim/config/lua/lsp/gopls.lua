@@ -1,4 +1,6 @@
-function goimports(timeoutms)
+local M = {}
+
+function M.goimports(timeoutms)
     local context = {source = {organizeImports = true}}
     vim.validate {context = {context, "t", true}}
 
@@ -7,7 +9,7 @@ function goimports(timeoutms)
 
     -- See the implementation of the textDocument/codeAction callback
     -- (lua/vim/lsp/handler.lua) for how to do this properly.
-    local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, timeout_ms)
+    local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, timeoutms)
     if not result or next(result) == nil then return end
     local actions = result[1].result
     if not actions then return end
@@ -23,3 +25,5 @@ function goimports(timeoutms)
         vim.lsp.buf.execute_command(action)
     end
 end
+
+return M

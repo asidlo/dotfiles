@@ -105,7 +105,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.workspace.configuration = true
 
-vim.lsp.set_log_level('debug')
+-- vim.lsp.set_log_level('debug')
 
 local extra_capabilities = {
     textDocument = {
@@ -141,8 +141,8 @@ function M.setup_lspconfig()
     -- https://github.com/golang/tools/blob/master/gopls/doc/analyzers.md
     lspconfig.gopls.setup {
         on_attach = on_attach,
-        cmd = {'gopls', '-remote=auto'},
-        root_dir = lspconfig.util.root_pattern('go.mod', '.git'),
+        -- cmd = {'gopls', '-remote=auto'},
+        -- root_dir = lspconfig.util.root_pattern('go.mod', '.git', '*.go'),
         settings = {
             gopls = {
                 experimentalPostfixCompletions = true,
