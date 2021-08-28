@@ -280,4 +280,6 @@ packer.startup(function()
             vim.g.indent_blankline_use_treesitter = true
         end
     }
+    use {'folke/twilight.nvim', config = function() require('twilight').setup {} end}
+    use {'segeljakt/vim-silicon'}
 end)

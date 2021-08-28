@@ -34,6 +34,24 @@ function _G.lsp_formatexpr(start_line, end_line, timeout_ms)
     return 0
 end
 
+-- https://github.com/neovim/neovim/issues/14825
+vim.g.diagnostics_visible = true
+
+function _G.toggle_diagnostics()
+    if vim.g.diagnostics_visible then
+        vim.g.diagnostics_visible = false
+        vim.lsp.diagnostic.clear(0)
+        vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
+        print('Diagnostics are hidden')
+    else
+        vim.g.diagnostics_visible = true
+        vim.lsp.handlers["textDocument/publishDiagnostics"] =
+            vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics,
+                         {virtual_text = true, signs = true, underline = true, update_in_insert = false})
+        print('Diagnostics are visible')
+    end
+end
+
 local on_attach = function(client, bufnr)
     require('lsp_signature').on_attach({bind = true, use_lspsaga = true})
     require('lspkind').init()
@@ -55,17 +73,20 @@ local on_attach = function(client, bufnr)
     set_buf_keymap(bufnr, 'n', '<M-d>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>")
     set_buf_keymap(bufnr, 'n', '<M-u>', "<Cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>")
 
+    set_buf_keymap(bufnr, 'n', '<Leader>d', ':call v:lua.toggle_diagnostics()<CR>')
+
     if client.resolved_capabilities.document_range_formatting then
         -- Note that v:lua only supports global functions
-        vim.api.nvim_buf_set_option(0, 'formatexpr', 'v:lua.lsp_formatexpr()')
+        vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
     end
 
     if client.resolved_capabilities.document_formatting then
-        set_buf_keymap(0, 'n', 'g=', '<Cmd>lua vim.lsp.buf.formatting()<CR>')
+        set_buf_keymap(bufnr, 'n', 'g=', '<Cmd>lua vim.lsp.buf.formatting()<CR>')
     end
 
     if client.name == 'jdtls' then
         set_buf_keymap(bufnr, 'n', '<M-o>', "<Cmd>lua require('lsp.jdtls').organize_imports()<CR>")
+        set_buf_keymap(bufnr, 'n', '<Leader>r', '<Cmd>lua vim.lsp.buf.rename()<CR>')
     end
 
     if client.name == 'jdt.ls' then
@@ -82,8 +103,8 @@ local on_attach = function(client, bufnr)
     end
 
     vim.api.nvim_buf_set_option(0, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-    vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics,
-                                                                       {update_in_insert = true})
+    -- vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics,
+    --                                                                    {update_in_insert = true})
 
     -- Set autocommands conditional on server_capabilities
     if client.resolved_capabilities.document_highlight then
@@ -168,7 +189,7 @@ function M.setup_lspconfig()
         cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
         flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
         handlers = {
-            ['textDocument/codeAction'] = function(_, methodethod, actions)
+            ['textDocument/codeAction'] = function(_, method, actions)
                 -- new_buf({a, b, actions})
                 for _, action in ipairs(actions) do
                     if action ~= vim.NIL then
