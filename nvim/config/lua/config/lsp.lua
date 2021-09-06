@@ -185,6 +185,7 @@ function M.setup_lspconfig()
     local home = os.getenv('HOME')
 
     lspconfig.jdtls.setup {
+        autostart = false,
         on_attach = on_attach,
         cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
         flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
