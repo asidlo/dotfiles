@@ -42,22 +42,21 @@ done
 compinit -C
 
 # load colors and allows in prompt
-autoload -U colors && colors
-setopt prompt_subst
+# autoload -U colors && colors
+# setopt prompt_subst
 
 # Profiling tools for measuring zsh startup times
-zmodload zsh/zprof
+# zmodload zsh/zprof
 
-autoload -Uz vcs_info
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:*' actionformats " on %{$fg[green]%}%b%{$reset_color%} (%{$fg[red]%}%a%{$reset_color%})"
-zstyle ':vcs_info:git*' formats " on %{$fg[green]%}%b%{$reset_color%}"
+# autoload -Uz vcs_info
+# zstyle ':vcs_info:*' enable git
+# zstyle ':vcs_info:*' actionformats " on %{$fg[green]%}%b%{$reset_color%} (%{$fg[red]%}%a%{$reset_color%})"
+# zstyle ':vcs_info:git*' formats " on %{$fg[green]%}%b%{$reset_color%}"
 
-precmd() { vcs_info }
+# precmd() { vcs_info }
 
 if (( $+commands[antibody] )); then
 	source <(antibody init)
-	antibody bundle zsh-users/zsh-completions 
 	antibody bundle zsh-users/zsh-syntax-highlighting
 	antibody bundle zsh-users/zsh-history-substring-search
 	antibody bundle zsh-users/zsh-autosuggestions
@@ -65,16 +64,22 @@ else
 	>&2 echo "$fg[yellow]WARN$reset_color: Antibody not found. Install via: curl -sfL git.io/antibody | sh -s - -b /usr/local/bin"
 fi
 
-PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
-PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
-PROMPT+=' in %{$fg[blue]%}%~%u%{$reset_color%}'                      # in DIRECTORY
-PROMPT+='${vcs_info_msg_0_}'
+# PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
+# PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
+# PROMPT+=' in %{$fg[blue]%}%~%u%{$reset_color%}'                      # in DIRECTORY
+# PROMPT+='${vcs_info_msg_0_}'
 
-PROMPT+=$'\n'                                                        # newline
-PROMPT+='%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} ' # % (red if error white otherwise)
+# PROMPT+=$'\n'                                                        # newline
+# PROMPT+='%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} ' # % (red if error white otherwise)
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+
+if ! (( $commands[starship] )); then
+	echo "Installing starship shell prompt"
+	sh -c "$(curl -fsSL https://starship.rs/install.sh)"
+fi
+eval "$(starship init zsh)"

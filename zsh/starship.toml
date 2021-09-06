@@ -1,0 +1,36 @@
+[aws]
+symbol = "  "
+
+[conda]
+symbol = " "
+
+[directory]
+read_only = " "
+
+[docker_context]
+symbol = " "
+
+[git_branch]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[java]
+symbol = " "
+style = "bold red"
+
+[memory_usage]
+symbol = " "
+
+[package]
+symbol = " "
+
+[python]
+symbol = " "
+
+[rust]
+symbol = " "
+
+[shlvl]
+symbol = " "
