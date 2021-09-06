@@ -55,14 +55,14 @@ compinit -C
 
 # precmd() { vcs_info }
 
-if (( $+commands[antibody] )); then
-	source <(antibody init)
-	antibody bundle zsh-users/zsh-syntax-highlighting
-	antibody bundle zsh-users/zsh-history-substring-search
-	antibody bundle zsh-users/zsh-autosuggestions
-else
-	>&2 echo "$fg[yellow]WARN$reset_color: Antibody not found. Install via: curl -sfL git.io/antibody | sh -s - -b /usr/local/bin"
+if ! (( $+commands[antibody] )); then
+	echo "Installing antibody plugin manager"
+	sudo curl -sfL git.io/antibody | sudo sh -s - -b /usr/local/bin
 fi
+source <(antibody init)
+antibody bundle zsh-users/zsh-syntax-highlighting
+antibody bundle zsh-users/zsh-history-substring-search
+antibody bundle zsh-users/zsh-autosuggestions
 
 # PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
 # PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
