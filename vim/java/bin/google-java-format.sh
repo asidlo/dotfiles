@@ -8,4 +8,11 @@ fi
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 WORKSPACE_HOME=$(dirname $SCRIPT_DIR)
 
-java -jar "$WORKSPACE_HOME/lib/google-java-format.jar" "$@"
+# https://github.com/google/google-java-format/issues/538
+java \
+	--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED \
+	--add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED \
+	--add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED \
+	--add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED \
+	--add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED \
+	-jar "$WORKSPACE_HOME/lib/google-java-format.jar" "$@"
