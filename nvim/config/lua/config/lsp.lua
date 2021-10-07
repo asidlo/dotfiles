@@ -64,6 +64,7 @@ local on_attach = function(client, bufnr)
     set_buf_keymap(bufnr, 'n', '<Leader>ws', '<Cmd>Telescope lsp_workspace_symbols<CR>')
     set_buf_keymap(bufnr, 'n', '<Leader>wl', '<Cmd>lua dump(vim.lsp.buf.list_workspace_folders())<CR>')
     set_buf_keymap(bufnr, 'n', 'K', "<Cmd>lua require('lspsaga.hover').render_hover_doc()<CR>")
+    set_buf_keymap(bufnr, 'n', '<Leader>K', "<Cmd>lua require'lspsaga.provider'.preview_definition()<CR>")
     set_buf_keymap(bufnr, 'i', '<M-k>', "<Cmd>lua require('lspsaga.signaturehelp').signature_help()<CR>")
     set_buf_keymap(bufnr, 'n', 'gR', "<Cmd>lua require('lspsaga.rename').rename()<CR>")
     set_buf_keymap(bufnr, 'n', '[d', "<Cmd>lua require'lspsaga.diagnostic'.lsp_jump_diagnostic_prev()<CR>")
@@ -185,7 +186,7 @@ function M.setup_lspconfig()
     local home = os.getenv('HOME')
 
     lspconfig.jdtls.setup {
-        autostart = false,
+        -- autostart = false,
         on_attach = on_attach,
         cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
         flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
@@ -239,14 +240,17 @@ function M.setup_lspconfig()
             java = {
                 signatureHelp = {enabled = true},
                 contentProvider = {preferred = 'fernflower'},
-                format = {insertSpaces = true, tabSize = 4},
+                -- format = {insertSpaces = true, tabSize = 4, settings = {url = '~/.eclipse-java-style.xml', profile = 'GoogleStyle'}}, -- file:/eee/eee.xml
+                -- format = {insertSpaces = true, tabSize = 4},
+                format = {settings = {url = 'file://' .. home .. '/.eclipse-java-style.xml', profile = 'nexidia-rtig'}}, -- file:/eee/eee.xml
+                -- format = {settings = {url = 'https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml'}}, -- file:/eee/eee.xml
                 codeGeneration = {
                     toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
                 },
                 configuration = {
                     runtimes = {
-                        {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true}
-                        -- {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
+                        {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true},
+                        {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
                     }
                 }
             }
@@ -317,100 +321,100 @@ function M.setup_lspconfig()
     }
 end
 
-function M.setup_jdtls()
-    local home = os.getenv('HOME')
+-- function M.setup_jdtls()
+--     local home = os.getenv('HOME')
 
-    local jar_patterns = {
-        home .. '/.local/src/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
-        home .. '/.local/src/vscode-java-test/server/*.jar'
-        -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.plugin/target/*.jar',
-        -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/target/*.jar',
-        -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/lib/*.jar'
-    }
+--     local jar_patterns = {
+--         home .. '/.local/src/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar',
+--         home .. '/.local/src/vscode-java-test/server/*.jar'
+--         -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.plugin/target/*.jar',
+--         -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/target/*.jar',
+--         -- home .. '/.local/src/vscode-java-test/java-extension/com.microsoft.java.test.runner/lib/*.jar'
+--     }
 
-    local bundles = {}
-    for _, jar_pattern in ipairs(jar_patterns) do
-        for _, bundle in ipairs(vim.split(vim.fn.glob(jar_pattern), '\n')) do
-            if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then
-                table.insert(bundles, bundle)
-            end
-        end
-    end
+--     local bundles = {}
+--     for _, jar_pattern in ipairs(jar_patterns) do
+--         for _, bundle in ipairs(vim.split(vim.fn.glob(jar_pattern), '\n')) do
+--             if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then
+--                 table.insert(bundles, bundle)
+--             end
+--         end
+--     end
 
-    local extendedClientCapabilities = jdtls.extendedClientCapabilities
-    extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
-    local config = {
-        cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
-        flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
-        capabilities = {
-            workspace = {configuration = true},
-            textDocument = {completion = {completionItem = {snippetSupport = true}}}
-        },
-        on_attach = on_attach,
-        init_options = {bundles = bundles, extendedClientCapabilities = extendedClientCapabilities},
-        handlers = {
-            ['textDocument/definition'] = function(_, method, params, client_id, bufnr, config)
-                dump(method, params, client_id, bufnr, config)
-                vim.lsp.handlers['textDocument/definition'](nil, method, params, client_id, bufnr, config)
-            end
-        },
-        settings = {
-            java = {
-                signatureHelp = {enabled = true},
-                contentProvider = {preferred = 'fernflower'},
-                format = {insertSpaces = true, tabSize = 4},
-                completion = {
-                    favoriteStaticMembers = {
-                        "org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*",
-                        "org.hamcrest.CoreMatchers.*", "org.junit.jupiter.api.Assertions.*",
-                        "java.util.Objects.requireNonNull", "java.util.Objects.requireNonNullElse",
-                        "org.mockito.Mockito.*"
-                    }
-                },
-                sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}},
-                codeGeneration = {
-                    toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
-                },
-                configuration = {
-                    runtimes = {
-                        {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true}
-                        -- {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
-                    }
-                }
-            }
-        }
-    }
-    config.on_init = function(client, _)
-        client.notify('workspace/didChangeConfiguration', {settings = config.settings})
-    end
+--     local extendedClientCapabilities = jdtls.extendedClientCapabilities
+--     extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
+--     local config = {
+--         cmd = {'jdtls.sh', home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")},
+--         flags = {allow_incremental_sync = true, server_side_fuzzy_completion = true},
+--         capabilities = {
+--             workspace = {configuration = true},
+--             textDocument = {completion = {completionItem = {snippetSupport = true}}}
+--         },
+--         on_attach = on_attach,
+--         init_options = {bundles = bundles, extendedClientCapabilities = extendedClientCapabilities},
+--         handlers = {
+--             ['textDocument/definition'] = function(_, method, params, client_id, bufnr, config)
+--                 dump(method, params, client_id, bufnr, config)
+--                 vim.lsp.handlers['textDocument/definition'](nil, method, params, client_id, bufnr, config)
+--             end
+--         },
+--         settings = {
+--             java = {
+--                 signatureHelp = {enabled = true},
+--                 contentProvider = {preferred = 'fernflower'},
+--                 format = {insertSpaces = true, tabSize = 4},
+--                 completion = {
+--                     favoriteStaticMembers = {
+--                         "org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*",
+--                         "org.hamcrest.CoreMatchers.*", "org.junit.jupiter.api.Assertions.*",
+--                         "java.util.Objects.requireNonNull", "java.util.Objects.requireNonNullElse",
+--                         "org.mockito.Mockito.*"
+--                     }
+--                 },
+--                 sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}},
+--                 codeGeneration = {
+--                     toString = {template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}"}
+--                 },
+--                 configuration = {
+--                     runtimes = {
+--                         {name = 'JavaSE-11', path = home .. '/.sdkman/candidates/java/11.0.11-zulu/', default = true},
+--                         {name = 'JavaSE-1.8', path = home .. '/.sdkman/candidates/java/8.0.292-zulu'}
+--                     }
+--                 }
+--             }
+--         }
+--     }
+--     config.on_init = function(client, _)
+--         client.notify('workspace/didChangeConfiguration', {settings = config.settings})
+--     end
 
-    local finders = require 'telescope.finders'
-    local sorters = require 'telescope.sorters'
-    local actions = require 'telescope.actions'
-    local pickers = require 'telescope.pickers'
-    require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
-        local opts = {}
-        pickers.new(opts, {
-            prompt_title = prompt,
-            finder = finders.new_table {
-                results = items,
-                entry_maker = function(entry)
-                    return {value = entry, display = label_fn(entry), ordinal = label_fn(entry)}
-                end
-            },
-            sorter = sorters.get_generic_fuzzy_sorter(),
-            attach_mappings = function(prompt_bufnr)
-                actions.select_default:replace(function()
-                    local selection = actions.get_selected_entry(prompt_bufnr)
-                    actions.close(prompt_bufnr)
-                    cb(selection.value)
-                end)
-                return true
-            end
-        }):find()
-    end
+--     local finders = require 'telescope.finders'
+--     local sorters = require 'telescope.sorters'
+--     local actions = require 'telescope.actions'
+--     local pickers = require 'telescope.pickers'
+--     require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
+--         local opts = {}
+--         pickers.new(opts, {
+--             prompt_title = prompt,
+--             finder = finders.new_table {
+--                 results = items,
+--                 entry_maker = function(entry)
+--                     return {value = entry, display = label_fn(entry), ordinal = label_fn(entry)}
+--                 end
+--             },
+--             sorter = sorters.get_generic_fuzzy_sorter(),
+--             attach_mappings = function(prompt_bufnr)
+--                 actions.select_default:replace(function()
+--                     local selection = actions.get_selected_entry(prompt_bufnr)
+--                     actions.close(prompt_bufnr)
+--                     cb(selection.value)
+--                 end)
+--                 return true
+--             end
+--         }):find()
+--     end
 
-    jdtls.start_or_attach(config)
-end
+--     jdtls.start_or_attach(config)
+-- end
 
 return M

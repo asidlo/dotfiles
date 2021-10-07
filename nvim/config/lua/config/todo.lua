@@ -3,9 +3,9 @@ local todo = require('todo-comments')
 todo.setup {
     highlight = {
         keyword = 'fg',
-        pattern = [[.*<(KEYWORDS)(\([^\)]*\))?:]],
+        pattern = [[.*<(KEYWORDS) (\([^\)]*\))?:]],
     },
     search = {
-        pattern = [[\b(KEYWORDS)(\([^\)]*\))?:]],
+        pattern = [[\b(KEYWORDS) (\([^\)]*\))?:]],
     }
 }

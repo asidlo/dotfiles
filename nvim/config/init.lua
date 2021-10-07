@@ -55,9 +55,8 @@ vim.g.mapleader = ','
 vim.g.markdown_fenced_languages = {'bash', 'json', 'javascript', 'python', 'java', 'groovy', 'go', 'rust'}
 
 local disabled_built_ins = {
-    "netrw", "netrwPlugin", "netrwSettings", "netrwFileHandlers", "gzip", "zip", "zipPlugin", "tar", "tarPlugin",
-    "getscript", "getscriptPlugin", "vimball", "vimballPlugin", "2html_plugin", "logipat", "rrhelper",
-    "spellfile_plugin", "matchit"
+    "netrw", "netrwPlugin", "netrwSettings", "netrwFileHandlers", "getscript", "getscriptPlugin", "vimball",
+    "vimballPlugin", "2html_plugin", "logipat", "rrhelper", "spellfile_plugin", "matchit"
 }
 
 for _, plugin in pairs(disabled_built_ins) do vim.g["loaded_" .. plugin] = 1 end
@@ -120,6 +119,7 @@ local autocmds = {
         {"FileType markdown nmap ]] :execute '/^--\\+' <bar> :noh<CR>"},
         {"FileType markdown nmap [[ :execute '?^--\\+' <bar> :noh<CR>"},
         {[[FileType java,groovy setlocal foldlevel=2 colorcolumn=120 expandtab tabstop=4 shiftwidth=4]]},
+        -- {[[FileType java,groovy setlocal foldlevel=2 colorcolumn=120 expandtab tabstop=2 shiftwidth=2]]},
         {[[FileType json,jsonc setlocal foldlevel=2 expandtab tabstop=4 shiftwidth=4]]},
         {[[FileType rust setlocal expandtab tabstop=4 shiftwidth=4]]},
         {[[FileType go setlocal noexpandtab tabstop=4 shiftwidth=4]]},
