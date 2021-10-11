@@ -7,6 +7,8 @@ lvim.colorscheme = 'tokyonight'
 lvim.leader = 'space'
 lvim.keys.normal_mode['<C-s>'] = ':w<cr>'
 lvim.keys.insert_mode['<C-s>'] = '<Esc>:w<cr>'
+lvim.keys.normal_mode['[<Space>'] = [[maO<Esc>`a]]
+lvim.keys.normal_mode[']<Space>'] = [[mao<Esc>`a]]
 
 --LuaFormatter off
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
@@ -49,7 +51,9 @@ lvim.builtin.dap.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = 'left'
 lvim.builtin.nvimtree.show_icons.git = 0
-lvim.builtin.lualine.style = 'lvim'
+lvim.builtin.nvimtree.setup.view.auto_resize = true
+lvim.builtin.nvimtree.ignore = {'.git', 'node_modules', '.cache', '.DS_Store'}
+lvim.builtin.lualine.style = 'default'
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
@@ -59,6 +63,9 @@ lvim.builtin.treesitter.ensure_installed = {
 
 lvim.builtin.treesitter.ignore_install = {'haskell'}
 lvim.builtin.treesitter.highlight.enabled = true
+
+vim.g.nvim_tree_group_empty = 1
+vim.g.nvim_tree_gitignore = 1
 
 -- generic LSP settings
 -- you can set a custom on_attach function that will be used for all the language servers
@@ -137,7 +144,7 @@ lvim.plugins = {
       vim.g.indentLine_enabled = 1
       vim.g.indent_blankline_char = '▏'
       vim.g.indent_blankline_filetype_exclude = {
-        'help', 'terminal', 'dashboard', 'packer', 'lsp-installer'
+        'help', 'terminal', 'dashboard', 'packer', 'lsp-installer', 'lspinfo'
       }
       vim.g.indent_blankline_buftype_exclude = {'terminal'}
       vim.g.indent_blankline_show_trailing_blankline_indent = false
