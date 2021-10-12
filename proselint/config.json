@@ -1,0 +1,7 @@
+{
+  "checks": {
+    "annotations.misc": false,
+    "typographical.diacritical_marks": false,
+    "typography.symbols": false
+  }
+}

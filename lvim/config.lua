@@ -16,10 +16,9 @@ lvim.keys.normal_mode['<S-h>'] = nil
 lvim.keys.normal_mode[']b'] = '<Cmd>BufferNext<cr>'
 lvim.keys.normal_mode['[b'] = '<Cmd>BufferPrevious<cr>'
 
---LuaFormatter off
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 lvim.builtin.telescope.on_config_done = function()
-  local actions = require 'telescope.actions'
+  local actions = require('telescope.actions')
   -- for input mode
   lvim.builtin.telescope.defaults.mappings.i['<C-j>'] = actions.move_selection_next
   lvim.builtin.telescope.defaults.mappings.i['<C-k>'] = actions.move_selection_previous
@@ -29,31 +28,31 @@ lvim.builtin.telescope.on_config_done = function()
   lvim.builtin.telescope.defaults.mappings.n['<C-j>'] = actions.move_selection_next
   lvim.builtin.telescope.defaults.mappings.n['<C-k>'] = actions.move_selection_previous
 end
---LuaFormatter on
 
 local cmp = require('cmp')
-lvim.builtin.cmp.mapping["<CR>"].invoke = cmp.mapping.confirm({select = true})
+lvim.builtin.cmp.mapping['<CR>'].invoke = cmp.mapping.confirm({ select = true })
 
 -- Use which-key to add extra bindings with the leader-key prefix
 lvim.builtin.which_key.mappings['P'] = {
-  '<cmd>Telescope projects<CR>', 'Projects'
+  '<cmd>Telescope projects<CR>',
+  'Projects',
 }
 lvim.builtin.which_key.mappings['t'] = {
   name = '+Trouble',
-  r = {'<cmd>Trouble lsp_references<cr>', 'References'},
-  f = {'<cmd>Trouble lsp_definitions<cr>', 'Definitions'},
-  d = {'<cmd>Trouble lsp_document_diagnostics<cr>', 'Diagnostics'},
-  q = {'<cmd>Trouble quickfix<cr>', 'QuickFix'},
-  l = {'<cmd>Trouble loclist<cr>', 'LocationList'},
-  w = {'<cmd>Trouble lsp_workspace_diagnostics<cr>', 'Diagnostics'},
-  t = {'<cmd>TroubleToggle<cr>', 'Toggle Trouble'},
-  R = {'<cmd>TroubleRefresh<cr>', 'Refresh Trouble'}
+  r = { '<cmd>Trouble lsp_references<cr>', 'References' },
+  f = { '<cmd>Trouble lsp_definitions<cr>', 'Definitions' },
+  d = { '<cmd>Trouble lsp_document_diagnostics<cr>', 'Diagnostics' },
+  q = { '<cmd>Trouble quickfix<cr>', 'QuickFix' },
+  l = { '<cmd>Trouble loclist<cr>', 'LocationList' },
+  w = { '<cmd>Trouble lsp_workspace_diagnostics<cr>', 'Diagnostics' },
+  t = { '<cmd>TroubleToggle<cr>', 'Toggle Trouble' },
+  R = { '<cmd>TroubleRefresh<cr>', 'Refresh Trouble' },
 }
 lvim.builtin.which_key.mappings['S'] = {
   name = '+Session',
-  l = {'<Cmd>lua require("persistence").load({last=true})<cr>', 'Load last session'},
-  c = {'<Cmd>lua require("persistence").load()<cr>', 'Load current session'},
-  s = {'<Cmd>lua require("persistence").stop()<cr>', 'Stop current session'},
+  l = { '<Cmd>lua require("persistence").load({last=true})<cr>', 'Load last session' },
+  c = { '<Cmd>lua require("persistence").load()<cr>', 'Load current session' },
+  s = { '<Cmd>lua require("persistence").stop()<cr>', 'Stop current session' },
 }
 
 -- User Config for predefined plugins
@@ -67,16 +66,25 @@ lvim.builtin.nvimtree.show_icons.git = 0
 lvim.builtin.nvimtree.setup.view.auto_resize = false
 lvim.builtin.nvimtree.setup.view.nvim_tree_group_empty = 1
 lvim.builtin.nvimtree.nvim_tree_gitignore = 1
-lvim.builtin.nvimtree.ignore = {'.git', 'node_modules', '.cache', '.DS_Store'}
+lvim.builtin.nvimtree.ignore = { '.git', 'node_modules', '.cache', '.DS_Store' }
 lvim.builtin.lualine.style = 'default'
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
-  'bash', 'c', 'javascript', 'json', 'lua', 'python', 'typescript', 'css',
-  'rust', 'java', 'yaml'
+  'bash',
+  'c',
+  'javascript',
+  'json',
+  'lua',
+  'python',
+  'typescript',
+  'css',
+  'rust',
+  'java',
+  'yaml',
 }
 
-lvim.builtin.treesitter.ignore_install = {'haskell'}
+lvim.builtin.treesitter.ignore_install = { 'haskell' }
 lvim.builtin.treesitter.highlight.enabled = true
 
 vim.g.nvim_tree_group_empty = 1
@@ -108,50 +116,52 @@ vim.g.nvim_tree_gitignore = 1
 --   end
 -- end
 
--- set a formatter if you want to override the default lsp one (if it exists)
--- lvim.lang.python.formatters = {
---   {
---     exe = "black",
---   }
--- }
--- set an additional linter
--- lvim.lang.python.linters = {
---   {
---     exe = "flake8",
---   }
--- }
-
+lvim.lang.markdown.formatters = { { exe = 'markdownlint' } }
+-- cant get vale to work for some reason
+lvim.lang.markdown.linters = {
+  { exe = 'markdownlint', args = { '-c', '~/.markdownlint.json' } },
+  { exe = 'proselint' },
+}
 lvim.lang.lua.formatters = {
   {
-    exe = 'lua-format',
+    exe = 'stylua',
     args = {
-      '-i', '--break-after-table-lb', '--break-before-table-rb',
-      '--double-quote-to-single-quote', '--indent-width=2', '--tab-width=2',
-      '--continuation-indent-width=2'
-    }
-  }
+      '--indent-width',
+      '2',
+      '--quote-style',
+      'AutoPreferSingle',
+      '--indent-type',
+      'Spaces',
+    },
+  },
 }
 
--- LuaFormatter off
+lvim.lang.lua.linters = {
+  {
+    exe = 'luacheck',
+    args = { '--globals', 'lvim', '--globals', 'vim' },
+  },
+}
+
 -- Additional Plugins
 lvim.plugins = {
-  {'folke/tokyonight.nvim'},
-  {'tpope/vim-repeat'},
-  {'tpope/vim-surround', keys = {'c', 'd', 'y'}},
+  { 'folke/tokyonight.nvim' },
+  { 'tpope/vim-repeat' },
+  { 'tpope/vim-surround', keys = { 'c', 'd', 'y' } },
   {
     'folke/todo-comments.nvim',
     event = 'BufRead',
     config = function()
-      require('todo-comments').setup {
+      require('todo-comments').setup({
         highlight = {
           keyword = 'fg',
-          pattern = [[.*<(KEYWORDS) (\([^\)]*\))?:]]
+          pattern = [[.*<(KEYWORDS) (\([^\)]*\))?:]],
         },
-        search = {pattern = [[\b(KEYWORDS) (\([^\)]*\))?:]]}
-      }
-    end
+        search = { pattern = [[\b(KEYWORDS) (\([^\)]*\))?:]] },
+      })
+    end,
   },
-  {'folke/trouble.nvim', cmd = 'TroubleToggle'},
+  { 'folke/trouble.nvim', cmd = 'TroubleToggle' },
   {
     'lukas-reineke/indent-blankline.nvim',
     event = 'BufRead',
@@ -159,57 +169,66 @@ lvim.plugins = {
       vim.g.indentLine_enabled = 1
       vim.g.indent_blankline_char = '▏'
       vim.g.indent_blankline_filetype_exclude = {
-        'help', 'terminal', 'dashboard', 'packer', 'lsp-installer', 'lspinfo'
+        'help',
+        'terminal',
+        'dashboard',
+        'packer',
+        'lsp-installer',
+        'lspinfo',
       }
-      vim.g.indent_blankline_buftype_exclude = {'terminal'}
+      vim.g.indent_blankline_buftype_exclude = { 'terminal' }
       vim.g.indent_blankline_show_trailing_blankline_indent = false
       vim.g.indent_blankline_show_first_indent_level = false
       vim.g.indent_blankline_use_treesitter = true
-    end
+    end,
   },
-  {'simrat39/symbols-outline.nvim', cmd = 'SymbolsOutline'},
+  { 'simrat39/symbols-outline.nvim', cmd = 'SymbolsOutline' },
   {
     'nvim-telescope/telescope-project.nvim',
     event = 'BufWinEnter',
-    setup = function() vim.cmd [[packadd telescope.nvim]] end
+    setup = function()
+      vim.cmd([[packadd telescope.nvim]])
+    end,
   },
-  {'segeljakt/vim-silicon'},
+  { 'segeljakt/vim-silicon' },
   {
-    "ethanholz/nvim-lastplace",
-    event = "BufRead",
+    'ethanholz/nvim-lastplace',
+    event = 'BufRead',
     config = function()
-      require("nvim-lastplace").setup({
-        lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+      require('nvim-lastplace').setup({
+        lastplace_ignore_buftype = { 'quickfix', 'nofile', 'help' },
         lastplace_ignore_filetype = {
-          "gitcommit", "gitrebase", "svn", "hgcommit",
+          'gitcommit',
+          'gitrebase',
+          'svn',
+          'hgcommit',
         },
         lastplace_open_folds = true,
       })
     end,
   },
   {
-    "folke/persistence.nvim",
-      event = "VimEnter",
-      module = "persistence",
-      config = function()
-        require("persistence").setup {
-          dir = vim.fn.expand(vim.fn.stdpath "config" .. "/session/"),
-          options = { "buffers", "curdir", "tabpages", "winsize" },
-        }
+    'folke/persistence.nvim',
+    event = 'VimEnter',
+    module = 'persistence',
+    config = function()
+      require('persistence').setup({
+        dir = vim.fn.expand(vim.fn.stdpath('config') .. '/session/'),
+        options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
+      })
     end,
   },
 }
--- LuaFormatter on
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 lvim.autocommands.custom_groups = {
-  {'TermOpen,TermEnter', 'term://*', 'startinsert!'},
-  {'TermEnter', 'term://*', 'setlocal nonumber norelativenumber signcolumn=no'}
+  { 'TermOpen,TermEnter', 'term://*', 'startinsert!' },
+  { 'TermEnter', 'term://*', 'setlocal nonumber norelativenumber signcolumn=no' },
 }
 
 vim.opt.relativenumber = true
-vim.opt.wildmode = {'longest:full', 'full'}
-vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
+vim.opt.wildmode = { 'longest:full', 'full' }
+vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
 vim.opt.timeoutlen = 300
 vim.opt.foldenable = false
 vim.opt.foldmethod = 'expr'
@@ -220,7 +239,14 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.python3_host_prog = '/usr/bin/python3'
 vim.g.markdown_fenced_languages = {
-  'bash', 'json', 'javascript', 'python', 'java', 'groovy', 'go', 'rust'
+  'bash',
+  'json',
+  'javascript',
+  'python',
+  'java',
+  'groovy',
+  'go',
+  'rust',
 }
 
 if vim.fn.executable('rg') then
