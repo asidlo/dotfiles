@@ -1,5 +1,8 @@
 add_newline = false
 
+[jobs]
+symbol = "+"
+
 [aws]
 symbol = "  "
 
