@@ -10,6 +10,7 @@ lvim.keys.insert_mode['<C-s>'] = '<Esc>:w<cr>'
 lvim.keys.normal_mode['[<Space>'] = [[maO<Esc>`a]]
 lvim.keys.normal_mode[']<Space>'] = [[mao<Esc>`a]]
 lvim.keys.normal_mode['<F5>'] = '<Cmd>mode<cr>'
+lvim.keys.normal_mode['<Leader>D'] = ':call v:lua.toggle_diagnostics()<CR>'
 
 lvim.keys.normal_mode['<S-l>'] = nil
 lvim.keys.normal_mode['<S-h>'] = nil
@@ -19,12 +20,10 @@ lvim.keys.normal_mode['[b'] = '<Cmd>BufferPrevious<cr>'
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 lvim.builtin.telescope.on_config_done = function()
   local actions = require('telescope.actions')
-  -- for input mode
   lvim.builtin.telescope.defaults.mappings.i['<C-j>'] = actions.move_selection_next
   lvim.builtin.telescope.defaults.mappings.i['<C-k>'] = actions.move_selection_previous
   lvim.builtin.telescope.defaults.mappings.i['<C-n>'] = actions.cycle_history_next
   lvim.builtin.telescope.defaults.mappings.i['<C-p>'] = actions.cycle_history_prev
-  -- for normal mode
   lvim.builtin.telescope.defaults.mappings.n['<C-j>'] = actions.move_selection_next
   lvim.builtin.telescope.defaults.mappings.n['<C-k>'] = actions.move_selection_previous
 end
@@ -48,6 +47,10 @@ lvim.builtin.which_key.mappings['t'] = {
   t = { '<cmd>TroubleToggle<cr>', 'Toggle Trouble' },
   R = { '<cmd>TroubleRefresh<cr>', 'Refresh Trouble' },
 }
+lvim.builtin.which_key.mappings['T'] = {
+  name = '+Telescope',
+  D = { '<Cmd>TodoTelescope<cr>', 'Todo' },
+}
 lvim.builtin.which_key.mappings['S'] = {
   name = '+Session',
   l = { '<Cmd>lua require("persistence").load({last=true})<cr>', 'Load last session' },
@@ -68,8 +71,6 @@ lvim.builtin.nvimtree.setup.view.nvim_tree_group_empty = 1
 lvim.builtin.nvimtree.nvim_tree_gitignore = 1
 lvim.builtin.nvimtree.ignore = { '.git', 'node_modules', '.cache', '.DS_Store' }
 lvim.builtin.lualine.style = 'default'
-
--- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
   'bash',
   'c',
@@ -83,44 +84,20 @@ lvim.builtin.treesitter.ensure_installed = {
   'java',
   'yaml',
 }
-
 lvim.builtin.treesitter.ignore_install = { 'haskell' }
 lvim.builtin.treesitter.highlight.enabled = true
 
-vim.g.nvim_tree_group_empty = 1
-vim.g.nvim_tree_gitignore = 1
-
--- generic LSP settings
--- you can set a custom on_attach function that will be used for all the language servers
--- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
--- lvim.lsp.on_attach_callback = function(client, bufnr)
---   local function buf_set_option(...)
---     vim.api.nvim_buf_set_option(bufnr, ...)
---   end
---   --Enable completion triggered by <c-x><c-o>
---   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
--- end
--- you can overwrite the null_ls setup table (useful for setting the root_dir function)
--- lvim.lsp.null_ls.setup = {
---   root_dir = require("lspconfig").util.root_pattern("Makefile", ".git", "node_modules"),
--- }
--- or if you need something more advanced
--- lvim.lsp.null_ls.setup.root_dir = function(fname)
---   if vim.bo.filetype == "javascript" then
---     return require("lspconfig/util").root_pattern("Makefile", ".git", "node_modules")(fname)
---       or require("lspconfig/util").path.dirname(fname)
---   elseif vim.bo.filetype == "php" then
---     return require("lspconfig/util").root_pattern("Makefile", ".git", "composer.json")(fname) or vim.fn.getcwd()
---   else
---     return require("lspconfig/util").root_pattern("Makefile", ".git")(fname) or require("lspconfig/util").path.dirname(fname)
---   end
--- end
-
-lvim.lang.markdown.formatters = { { exe = 'markdownlint' } }
 -- cant get vale to work for some reason
 lvim.lang.markdown.linters = {
   { exe = 'markdownlint', args = { '-c', '~/.markdownlint.json' } },
   { exe = 'proselint' },
+}
+lvim.lang.markdown.formatters = { { exe = 'markdownlint' } }
+lvim.lang.lua.linters = {
+  {
+    exe = 'luacheck',
+    args = { '--globals', 'lvim', '--globals', 'vim' },
+  },
 }
 lvim.lang.lua.formatters = {
   {
@@ -136,12 +113,60 @@ lvim.lang.lua.formatters = {
   },
 }
 
-lvim.lang.lua.linters = {
-  {
-    exe = 'luacheck',
-    args = { '--globals', 'lvim', '--globals', 'vim' },
-  },
-}
+-- Until they release the `vim.lsp.util.formatexpr()`
+-- https://github.com/neovim/neovim/issues/12528
+-- https://github.com/neovim/neovim/pull/12547
+-- https://github.com/neovim/neovim/pull/13138
+--
+--- Implements an LSP `formatexpr`-compatible
+-- @param start_line 1-indexed line, defaults to |v:lnum|
+-- @param end_line 1-indexed line, calculated based on {start_line} and |v:count|
+-- @param timeout_ms optional, defaults to 500ms
+function _G.lsp_formatexpr(start_line, end_line, timeout_ms)
+  timeout_ms = timeout_ms or 500
+
+  if not start_line or not end_line then
+    if vim.fn.mode() == 'i' or vim.fn.mode() == 'R' then
+      -- `formatexpr` is also called when exceeding `textwidth` in insert mode
+      -- fall back to internal formatting
+      return 1
+    end
+    start_line = vim.v.lnum
+    end_line = start_line + vim.v.count - 1
+  end
+
+  if start_line > 0 and end_line > 0 then
+    local end_char = vim.fn.col('$')
+    vim.lsp.buf.range_formatting({}, { start_line, 0 }, { end_line, end_char })
+  end
+
+  -- do not run builtin formatter.
+  return 0
+end
+
+-- https://github.com/neovim/neovim/issues/14825
+vim.g.diagnostics_visible = true
+
+function _G.toggle_diagnostics()
+  if vim.g.diagnostics_visible then
+    vim.g.diagnostics_visible = false
+    vim.lsp.diagnostic.clear(0)
+    vim.lsp.handlers['textDocument/publishDiagnostics'] = function() end
+    print('Diagnostics are hidden')
+  else
+    vim.g.diagnostics_visible = true
+    vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+      virtual_text = true,
+      signs = true,
+      underline = true,
+      update_in_insert = false,
+    })
+    print('Diagnostics are visible')
+  end
+end
+
+-- TODO (AS): Not registering keybindings for lsp
+lvim.lsp.buffer_mappings.normal_mode['g='] = '<Cmd>lua vim.lsp.buf.formatting()<cr>'
 
 -- Additional Plugins
 lvim.plugins = {
