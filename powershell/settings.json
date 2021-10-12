@@ -77,7 +77,8 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "wsl.exe nvim -S ~/.local/share/nvim/sessions/notes.vim",
+                // "commandline": "wsl.exe nvim -S ~/.local/share/nvim/sessions/notes.vim",
+                "commandline": "wsl.exe cd ~/workspace/notes && lvim '+lua require(\"persistence\").load()'",
                 "fontFace": "MesloLGM Nerd Font",
                 "fontSize": 11,
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
