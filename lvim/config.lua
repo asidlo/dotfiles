@@ -9,6 +9,7 @@ lvim.keys.normal_mode['<C-s>'] = ':w<cr>'
 lvim.keys.insert_mode['<C-s>'] = '<Esc>:w<cr>'
 lvim.keys.normal_mode['[<Space>'] = [[maO<Esc>`a]]
 lvim.keys.normal_mode[']<Space>'] = [[mao<Esc>`a]]
+lvim.keys.normal_mode['<F5>'] = '<Cmd>mode<cr>'
 
 lvim.keys.normal_mode['<S-l>'] = nil
 lvim.keys.normal_mode['<S-h>'] = nil
