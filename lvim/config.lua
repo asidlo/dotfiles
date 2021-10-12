@@ -10,6 +10,11 @@ lvim.keys.insert_mode['<C-s>'] = '<Esc>:w<cr>'
 lvim.keys.normal_mode['[<Space>'] = [[maO<Esc>`a]]
 lvim.keys.normal_mode[']<Space>'] = [[mao<Esc>`a]]
 
+lvim.keys.normal_mode['<S-l>'] = nil
+lvim.keys.normal_mode['<S-h>'] = nil
+lvim.keys.normal_mode[']b'] = '<Cmd>BufferNext<cr>'
+lvim.keys.normal_mode['[b'] = '<Cmd>BufferPrevious<cr>'
+
 --LuaFormatter off
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 lvim.builtin.telescope.on_config_done = function()
@@ -120,6 +125,7 @@ lvim.lang.lua.formatters = {
 -- LuaFormatter off
 -- Additional Plugins
 lvim.plugins = {
+  {'folke/tokyonight.nvim'},
   {'tpope/vim-repeat'},
   {'tpope/vim-surround', keys = {'c', 'd', 'y'}},
   {
@@ -135,7 +141,6 @@ lvim.plugins = {
       }
     end
   },
-  {'folke/tokyonight.nvim'},
   {'folke/trouble.nvim', cmd = 'TroubleToggle'},
   {
     'lukas-reineke/indent-blankline.nvim',
