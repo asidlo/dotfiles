@@ -48,6 +48,12 @@ lvim.builtin.which_key.mappings['t'] = {
   t = {'<cmd>TroubleToggle<cr>', 'Toggle Trouble'},
   R = {'<cmd>TroubleRefresh<cr>', 'Refresh Trouble'}
 }
+lvim.builtin.which_key.mappings['S'] = {
+  name = '+Session',
+  l = {'<Cmd>lua require("persistence").load({last=true})<cr>', 'Load last session'},
+  c = {'<Cmd>lua require("persistence").load()<cr>', 'Load current session'},
+  s = {'<Cmd>lua require("persistence").stop()<cr>', 'Stop current session'},
+}
 
 -- User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -55,8 +61,11 @@ lvim.builtin.dashboard.active = true
 lvim.builtin.dap.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = 'left'
+lvim.builtin.nvimtree.show_icons.tree_width = 40
 lvim.builtin.nvimtree.show_icons.git = 0
-lvim.builtin.nvimtree.setup.view.auto_resize = true
+lvim.builtin.nvimtree.setup.view.auto_resize = false
+lvim.builtin.nvimtree.setup.view.nvim_tree_group_empty = 1
+lvim.builtin.nvimtree.nvim_tree_gitignore = 1
 lvim.builtin.nvimtree.ignore = {'.git', 'node_modules', '.cache', '.DS_Store'}
 lvim.builtin.lualine.style = 'default'
 
@@ -163,7 +172,31 @@ lvim.plugins = {
     event = 'BufWinEnter',
     setup = function() vim.cmd [[packadd telescope.nvim]] end
   },
-  {'segeljakt/vim-silicon'}
+  {'segeljakt/vim-silicon'},
+  {
+    "ethanholz/nvim-lastplace",
+    event = "BufRead",
+    config = function()
+      require("nvim-lastplace").setup({
+        lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+        lastplace_ignore_filetype = {
+          "gitcommit", "gitrebase", "svn", "hgcommit",
+        },
+        lastplace_open_folds = true,
+      })
+    end,
+  },
+  {
+    "folke/persistence.nvim",
+      event = "VimEnter",
+      module = "persistence",
+      config = function()
+        require("persistence").setup {
+          dir = vim.fn.expand(vim.fn.stdpath "config" .. "/session/"),
+          options = { "buffers", "curdir", "tabpages", "winsize" },
+        }
+    end,
+  },
 }
 -- LuaFormatter on
 
