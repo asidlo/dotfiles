@@ -179,7 +179,7 @@ lvim.plugins = {
     config = function()
       require('todo-comments').setup({
         highlight = {
-          keyword = 'fg',
+          keyword = 'wide',
           pattern = [[.*<(KEYWORDS) (\([^\)]*\))?:]],
         },
         search = { pattern = [[\b(KEYWORDS) (\([^\)]*\))?:]] },
