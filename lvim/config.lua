@@ -142,7 +142,7 @@ lvim.lang.markdown.linters = {
   { exe = 'markdownlint', args = { '-c', os.getenv('HOME') .. '/.markdownlint.json' } },
   { exe = 'proselint' },
 }
-lvim.lang.markdown.formatters = { { exe = 'markdownlint' } }
+lvim.lang.markdown.formatters = { { exe = 'prettierd' } }
 lvim.lang.lua.linters = {
   {
     exe = 'luacheck',
