@@ -17,6 +17,11 @@ lvim.keys.normal_mode['<S-h>'] = nil
 lvim.keys.normal_mode[']b'] = '<Cmd>BufferNext<cr>'
 lvim.keys.normal_mode['[b'] = '<Cmd>BufferPrevious<cr>'
 
+lvim.keys.normal_mode['[d'] =
+  '<Cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<CR>'
+lvim.keys.normal_mode[']d'] =
+  '<Cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<CR>'
+
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 lvim.builtin.telescope.on_config_done = function()
   local actions = require('telescope.actions')
@@ -30,6 +35,51 @@ end
 
 local cmp = require('cmp')
 lvim.builtin.cmp.mapping['<CR>'].invoke = cmp.mapping.confirm({ select = true })
+
+local luasnip = require('luasnip')
+local cmp = require('cmp')
+
+local t = function(str)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+local check_back_space = function()
+  local col = vim.fn.col('.') - 1
+  if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+    return true
+  else
+    return false
+  end
+end
+
+_G.tab_complete = function()
+  if cmp and cmp.visible() then
+    cmp.select_next_item()
+  elseif luasnip and luasnip.expand_or_jumpable() then
+    luasnip.expand_or_jump()
+  elseif check_back_space() then
+    return t('<Tab>')
+  else
+    cmp.complete()
+  end
+  return ''
+end
+
+_G.s_tab_complete = function()
+  if cmp and cmp.visible() then
+    cmp.select_prev_item()
+  elseif luasnip and luasnip.jumpable(-1) then
+    luasnip.jump(-1)
+  else
+    return t('<S-Tab>')
+  end
+  return ''
+end
+
+vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
+vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
+vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
+vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
 
 -- Use which-key to add extra bindings with the leader-key prefix
 lvim.builtin.which_key.mappings['P'] = {
@@ -89,7 +139,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 
 -- cant get vale to work for some reason
 lvim.lang.markdown.linters = {
-  { exe = 'markdownlint', args = { '-c', '~/.markdownlint.json' } },
+  { exe = 'markdownlint', args = { '-c', os.getenv('HOME') .. '/.markdownlint.json' } },
   { exe = 'proselint' },
 }
 lvim.lang.markdown.formatters = { { exe = 'markdownlint' } }
@@ -112,6 +162,24 @@ lvim.lang.lua.formatters = {
     },
   },
 }
+
+function _G.dump(...)
+  local objects = vim.tbl_map(vim.inspect, { ... })
+  print(unpack(objects))
+end
+
+function _G.new_buf(...)
+  local objects = vim.tbl_map(vim.inspect, { ... })
+  local buf = vim.api.nvim_create_buf(true, true)
+  local content = {}
+  for _, obj in ipairs(objects) do
+    for _, line in ipairs(vim.split(obj, '\n')) do
+      table.insert(content, line)
+    end
+  end
+  vim.api.nvim_buf_set_lines(buf, 0, -1, true, content)
+  vim.cmd('b ' .. buf)
+end
 
 -- Until they release the `vim.lsp.util.formatexpr()`
 -- https://github.com/neovim/neovim/issues/12528
@@ -140,7 +208,7 @@ function _G.lsp_formatexpr(start_line, end_line, timeout_ms)
     vim.lsp.buf.range_formatting({}, { start_line, 0 }, { end_line, end_char })
   end
 
-  -- do not run builtin formatter.
+  -- do not run builtin formatter after lsp format
   return 0
 end
 
@@ -165,8 +233,11 @@ function _G.toggle_diagnostics()
   end
 end
 
--- TODO (AS): Not registering keybindings for lsp
-lvim.lsp.buffer_mappings.normal_mode['g='] = '<Cmd>lua vim.lsp.buf.formatting()<cr>'
+lvim.lsp.on_attach_callback = function(client, _)
+  if client.resolved_capabilities.document_range_formatting then
+    vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
+  end
+end
 
 -- Additional Plugins
 lvim.plugins = {
@@ -243,6 +314,13 @@ lvim.plugins = {
       })
     end,
   },
+  {
+    'aymericbeaumet/vim-symlink',
+    event = 'BufRead',
+    requires = {
+      { 'moll/vim-bbye' },
+    },
+  },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
@@ -258,6 +336,7 @@ vim.opt.timeoutlen = 300
 vim.opt.foldenable = false
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+-- vim.opt.formatexpr = 'v:lua.lsp_formatexpr()'
 vim.g.loaded_python_provider = 0
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
