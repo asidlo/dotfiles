@@ -39,7 +39,7 @@ fi
 
 if (( JAVA_MAJOR_VERSION > 8 )); then
 	GRADLE_HOME="$HOME/.sdkman/candidates/gradle/current/bin/gradle" java \
-		$DEBUGGER_SETTINGS \
+		"$DEBUGGER_SETTINGS" \
 		"-javaagent:$HOME/.local/lib/lombok.jar" \
 		"-Xbootclasspath/a:$HOME/.local/lib/lombok.jar" \
 		-Declipse.application=org.eclipse.jdt.ls.core.id1 \
@@ -49,7 +49,7 @@ if (( JAVA_MAJOR_VERSION > 8 )); then
 		-Dlog.level=ALL \
 		-noverify \
 		-Xmx1G \
-		-jar $JDTLS_JAR \
+		-jar "$JDTLS_JAR" \
 		-configuration "$JDTLS_TARGET_REPO/$JDTLS_CONFIG" \
 		--add-modules=ALL-SYSTEM \
 		--add-opens java.base/java.util=ALL-UNNAMED \
@@ -57,7 +57,7 @@ if (( JAVA_MAJOR_VERSION > 8 )); then
 		-data "$DEFAULT_DATA_DIR"
 elif [[ $(echo "$JAVA_VERSION" | cut -d'.' -f1,2) == "1.8" ]]; then
 	GRADLE_HOME="$HOME/.sdkman/candidates/gradle/current/bin/gradle" java \
-		$DEBUGGER_SETTINGS \
+		"$DEBUGGER_SETTINGS" \
 		"-javaagent:$HOME/.local/lib/lombok.jar" \
 		"-Xbootclasspath/a:$HOME/.local/lib/lombok.jar" \
 		-Declipse.application=org.eclipse.jdt.ls.core.id1 \
@@ -66,7 +66,7 @@ elif [[ $(echo "$JAVA_VERSION" | cut -d'.' -f1,2) == "1.8" ]]; then
 		-Dlog.level=ALL \
 		-noverify \
 		-Xmx1G \
-		-jar $JDT8LS_JAR \
+		-jar "$JDT8LS_JAR" \
 		-configuration "$JDT8LS_TARGET_REPO/$JDTLS_CONFIG" \
 		-data "$DEFAULT_DATA_DIR"
 else

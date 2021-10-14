@@ -14,12 +14,6 @@ WinPCap
 WinDump
 Npcap
 src
-o
-i
-n
-r
-w
-c
 BPF
 keytool
 DNS
