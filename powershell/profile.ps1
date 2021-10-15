@@ -162,6 +162,10 @@ function Stop-NxJavaProcesses {
     jps -l | Select-String "nexidia" | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru} 
 }
 
+function Stop-JavaProcesses {
+    jps -l | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru} 
+}
+
 #--------------------------------------------------------------
 # Aliases
 #--------------------------------------------------------------
