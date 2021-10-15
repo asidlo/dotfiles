@@ -6,8 +6,6 @@ local lvim_lsp = require('lvim.lsp')
 local jdtls = require('jdtls')
 local home = os.getenv('HOME')
 
-require('jdtls.setup').add_commands()
-
 -- https://github.com/neovim/neovim/issues/12970
 vim.lsp.util.apply_text_document_edit = function(text_document_edit, _)
     local text_document = text_document_edit.textDocument
@@ -24,7 +22,7 @@ local jar_patterns = {
 local bundles = {}
 for _, jar_pattern in ipairs(jar_patterns) do
     for _, bundle in ipairs(vim.split(vim.fn.glob(jar_pattern), '\n')) do
-        if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') then
+        if not vim.endswith(bundle, 'com.microsoft.java.test.runner.jar') and not '' then
             table.insert(bundles, bundle)
         end
     end
@@ -60,8 +58,14 @@ local config = {
     },
     on_attach = function(client, bufnr)
         lvim_lsp.common_on_attach(client, bufnr)
-        jdtls.setup_dap({ hotcodereplace = 'auto' })
-        require('jdtls.dap').setup_dap_main_class_configs()
+        -- Check if jars exists for dap and tests
+        if next(bundles) then
+            jdtls.setup_dap({ hotcodereplace = 'auto' })
+            require('jdtls.dap').setup_dap_main_class_configs()
+            require('jdtls.setup').add_commands()
+        else
+            print('No debug/test jars passed into init_options...not loading jdtls.dap')
+        end
     end,
     on_init = lvim_lsp.common_on_init,
     capabilities = vim.tbl_deep_extend('keep', lvim_lsp.common_capabilities(), extra_capabilities),
