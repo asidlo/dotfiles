@@ -6,6 +6,8 @@ local lvim_lsp = require('lvim.lsp')
 local jdtls = require('jdtls')
 local home = os.getenv('HOME')
 
+require('jdtls.setup').add_commands()
+
 -- https://github.com/neovim/neovim/issues/12970
 vim.lsp.util.apply_text_document_edit = function(text_document_edit, _)
     local text_document = text_document_edit.textDocument
@@ -56,12 +58,16 @@ local config = {
         'jdtls.sh',
         os.getenv('HOME') .. '/.local/share/eclipse/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t'),
     },
-    on_attach = lvim_lsp.common_on_attach,
+    on_attach = function(client, bufnr)
+        lvim_lsp.common_on_attach(client, bufnr)
+        jdtls.setup_dap({ hotcodereplace = 'auto' })
+        require('jdtls.dap').setup_dap_main_class_configs()
+    end,
     on_init = lvim_lsp.common_on_init,
     capabilities = vim.tbl_deep_extend('keep', lvim_lsp.common_capabilities(), extra_capabilities),
     flags = { allow_incremental_sync = true, server_side_fuzzy_completion = true },
     init_options = {
-        -- bundles = bundles,
+        bundles = bundles,
         extendedClientCapabilities = jdtls_capabilities,
     },
     settings = {
@@ -89,33 +95,6 @@ local config = {
             },
         },
     },
-    -- handlers = {
-    -- ['textDocument/codeAction'] = function(_, method, actions)
-    -- new_buf({ _, method, actions })
-    -- for _, action in ipairs(actions) do
-    --     if action ~= vim.NIL then
-    --         if action.command == 'java.apply.workspaceEdit' then
-    --             local changes = {}
-    --             local documentChanges = {}
-    --             for _, argument in ipairs(action.command.arguments) do
-    --                 for _, change in ipairs(argument.changes) do
-    --                     table.insert(changes, change)
-    --                 end
-    --                 if argument.documentChanges then
-    --                     for _, documentChange in ipairs(argument.documentChanges) do
-    --                         table.insert(documentChanges, documentChange)
-    --                     end
-    --                 end
-    --             end
-    --             action.edit = { changes = changes, documentChanges = documentChanges }
-    --             -- action.command = nil
-    --         end
-    --     end
-    -- end
-    -- -- new_buf({a, b, actions})
-    -- vim.lsp.handlers['textDocument/codeAction'](nil, method, actions)
-    -- end,
-    -- },
 }
 
 -- TODO (AS): Look into how to use lsp-settings to read json settings for lsp
@@ -128,11 +107,11 @@ local sorters = require('telescope.sorters')
 local actions = require('telescope.actions')
 local pickers = require('telescope.pickers')
 local conf = require('telescope.config').values
+local themes = require('telescope.themes')
 
--- TODO (AS): These opts may only make sense for code_actions
 -- TODO (AS): Hook jdtls functions into lvim.lsp mappings
 require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
-    local opts = {
+    local opts = themes.get_dropdown({
         winblend = 15,
         layout_config = {
             prompt_position = 'top',
@@ -147,7 +126,7 @@ require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
         border = {},
         previewer = false,
         shorten_path = false,
-    }
+    })
     pickers.new(opts, {
         prompt_title = prompt,
         finder = finders.new_table({
@@ -159,7 +138,7 @@ require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
         sorter = conf.generic_sorter(opts),
         attach_mappings = function(prompt_bufnr)
             actions.select_default:replace(function()
-                local selection = actions.get_selected_entry(prompt_bufnr)
+                local selection = require('telescope.actions.state').get_selected_entry(prompt_bufnr)
                 actions.close(prompt_bufnr)
                 cb(selection.value)
             end)
@@ -168,4 +147,4 @@ require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
     }):find()
 end
 
-require('jdtls').start_or_attach(config)
+jdtls.start_or_attach(config)
