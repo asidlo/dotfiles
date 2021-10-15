@@ -53,6 +53,7 @@ jdtls_capabilities.resolveAdditionalTextEditsSupport = true
 
 local config = {
     cmd = {
+        -- TODO (AS): Move script here and use eclipse jdtls installed from lsp-installer
         'jdtls.sh',
         os.getenv('HOME') .. '/.local/share/eclipse/' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t'),
     },
