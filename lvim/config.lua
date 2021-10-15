@@ -324,6 +324,7 @@ lvim.plugins = {
             { 'moll/vim-bbye' },
         },
     },
+    { 'mfussenegger/nvim-jdtls' },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
@@ -368,3 +369,5 @@ end
 -- https://stackoverflow.com/a/51962260
 -- https://thoughtbot.com/blog/faster-grepping-in-vim
 vim.cmd('packadd cfilter')
+
+lvim.lsp.override = { 'jdtls' }

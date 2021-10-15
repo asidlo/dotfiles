@@ -49,7 +49,7 @@ if (( JAVA_MAJOR_VERSION > 8 )); then
 		-Dlog.level=ALL \
 		-noverify \
 		-Xmx1G \
-		-jar "$JDTLS_JAR" \
+        -jar $(echo "$JDTLS_JAR") \
 		-configuration "$JDTLS_TARGET_REPO/$JDTLS_CONFIG" \
 		--add-modules=ALL-SYSTEM \
 		--add-opens java.base/java.util=ALL-UNNAMED \
