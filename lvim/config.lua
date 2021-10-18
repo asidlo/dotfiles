@@ -11,6 +11,7 @@ lvim.keys.normal_mode['[<Space>'] = [[maO<Esc>`a]]
 lvim.keys.normal_mode[']<Space>'] = [[mao<Esc>`a]]
 lvim.keys.normal_mode['<F5>'] = '<Cmd>mode<cr>'
 lvim.keys.normal_mode['<Leader>D'] = ':call v:lua.toggle_diagnostics()<CR>'
+lvim.keys.normal_mode['<C-e>'] = '<Cmd>Telescope oldfiles<cr>'
 
 lvim.keys.normal_mode['<S-l>'] = nil
 lvim.keys.normal_mode['<S-h>'] = nil
@@ -135,6 +136,31 @@ lvim.builtin.treesitter.ensure_installed = {
 }
 lvim.builtin.treesitter.ignore_install = { 'haskell' }
 lvim.builtin.treesitter.highlight.enabled = true
+lvim.builtin.treesitter.textobjects = {
+    select = {
+        enable = true,
+        keymaps = {
+            ['af'] = '@function.outer',
+            ['if'] = '@function.inner',
+            ['ac'] = '@class.outer',
+            ['ic'] = '@class.inner',
+        },
+    },
+    move = {
+        enable = true,
+        goto_next_start = { [']m'] = '@function.outer', [']]'] = '@class.outer' },
+        goto_next_end = { [']M'] = '@function.outer', [']['] = '@class.outer' },
+        goto_previous_start = { ['[m'] = '@function.outer', ['[['] = '@class.outer' },
+        goto_previous_end = { ['[M'] = '@function.outer', ['[]'] = '@class.outer' },
+    },
+    swap = {
+        enable = false,
+    },
+}
+lvim.builtin.treesitter.indent = {
+    enable = true,
+    disable = { 'yaml', 'json', 'java' },
+}
 
 lvim.lang.sh.linters = { { exe = 'shellcheck' } }
 lvim.lang.sh.formatters = { { exe = 'shellharden' } }
@@ -230,6 +256,7 @@ function _G.toggle_diagnostics()
             underline = true,
             update_in_insert = false,
         })
+        vim.cmd('e ' .. vim.fn.expand('%'))
         print('Diagnostics are visible')
     end
 end
@@ -238,6 +265,9 @@ lvim.lsp.on_attach_callback = function(client, bufnr)
     if client.resolved_capabilities.document_range_formatting then
         vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
     end
+    require('lsp_signature').on_attach({
+        toggle_key = '<C-q>',
+    })
 end
 
 -- lvim.lsp.templates_dir = join_paths(get_config_dir(), 'after', 'ftplugin')
@@ -325,6 +355,8 @@ lvim.plugins = {
         },
     },
     { 'mfussenegger/nvim-jdtls' },
+    { 'ray-x/lsp_signature.nvim' },
+    { 'nvim-treesitter/nvim-treesitter-textobjects' },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)

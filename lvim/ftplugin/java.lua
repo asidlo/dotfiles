@@ -2,6 +2,28 @@ vim.cmd('setlocal expandtab tabstop=4 shiftwidth=4')
 vim.cmd('setlocal foldlevel=2')
 vim.cmd('setlocal colorcolumn=120')
 
+vim.api.nvim_buf_set_keymap(
+    0,
+    'n',
+    '<Leader>la',
+    '<Cmd>lua require("jdtls").code_action()<cr>',
+    { noremap = true, silent = true }
+)
+vim.api.nvim_buf_set_keymap(
+    0,
+    'n',
+    '<M-CR>',
+    '<Cmd>lua require("jdtls").code_action()<cr>',
+    { noremap = true, silent = true }
+)
+vim.api.nvim_buf_set_keymap(
+    0,
+    'n',
+    '<M-o>',
+    '<Cmd>lua require("jdtls").organize_imports()<cr>',
+    { noremap = true, silent = true }
+)
+
 local lvim_lsp = require('lvim.lsp')
 local jdtls = require('jdtls')
 local home = os.getenv('HOME')
