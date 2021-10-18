@@ -403,3 +403,17 @@ end
 vim.cmd('packadd cfilter')
 
 lvim.lsp.override = { 'jdtls' }
+
+_G.resize_tree = function()
+    local nvim_tree_bufnr = require('nvim-tree.view').View.bufnr
+    local nvim_win = vim.fn.win_findbuf(nvim_tree_bufnr)
+    if next(nvim_win) then
+        local tree_win = nvim_win[1]
+        local tree_buf_width = vim.fn.winwidth(tree_win)
+        require('bufferline.state').set_offset(tree_buf_width + 1, 'FileTree')
+    else
+        print('NvimTree buffer is hidden')
+    end
+end
+
+lvim.keys.normal_mode['<Leader>r'] = '<Cmd>lua resize_tree()<cr>'
