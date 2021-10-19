@@ -17,6 +17,35 @@ lvim.keys.normal_mode['<S-l>'] = nil
 lvim.keys.normal_mode['<S-h>'] = nil
 lvim.keys.normal_mode[']b'] = '<Cmd>BufferNext<cr>'
 lvim.keys.normal_mode['[b'] = '<Cmd>BufferPrevious<cr>'
+lvim.keys.normal_mode[']p'] = ':call v:lua.paste_after()<cr>o'
+lvim.keys.normal_mode['[p'] = ':call v:lua.paste_before()<cr>'
+
+-- TODO (AS): Delay resetting opts since text isnt using the set paste
+_G.paste_after = function()
+    local paste_opt = vim.api.nvim_get_option('paste')
+    local mouse_opt = vim.api.nvim_get_option('mouse')
+    vim.api.nvim_set_option('paste', true)
+    vim.api.nvim_set_option('mouse', '')
+
+    local keys = vim.api.nvim_replace_termcodes('mao<C-r>*<Esc>`a', true, false, true)
+    vim.api.nvim_feedkeys(keys, 'n', true)
+
+    vim.api.nvim_set_option('paste', paste_opt)
+    vim.api.nvim_set_option('mouse', mouse_opt)
+end
+_G.paste_before = function()
+    local paste_opt = vim.api.nvim_get_option('paste')
+    local mouse_opt = vim.api.nvim_get_option('mouse')
+    vim.api.nvim_set_option('paste', true)
+    vim.api.nvim_set_option('mouse', '')
+
+    local keys = vim.api.nvim_replace_termcodes('maO<C-r>*<Esc>`a', true, false, true)
+    vim.api.nvim_feedkeys(keys, 'n', true)
+    vim.api.nvim_set_option('paste', paste_opt)
+
+    vim.api.nvim_set_option('paste', paste_opt)
+    vim.api.nvim_set_option('mouse', mouse_opt)
+end
 
 lvim.keys.normal_mode[']d'] =
     '<Cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<CR>'
