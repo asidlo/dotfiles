@@ -379,13 +379,25 @@ lvim.plugins = {
     { 'mfussenegger/nvim-jdtls' },
     { 'ray-x/lsp_signature.nvim' },
     { 'nvim-treesitter/nvim-treesitter-textobjects' },
-    -- {
-    --     'rcarriga/nvim-dap-ui',
-    --     config = function()
-    --         require('dapui').setup()
-    --     end,
-    -- },
+    { 'nvim-telescope/telescope-dap.nvim' },
+    { 'theHamsta/nvim-dap-virtual-text' },
+    {
+        'rcarriga/nvim-dap-ui',
+        config = function()
+            require('dapui').setup()
+        end,
+    },
 }
+
+require('telescope').load_extension('dap')
+
+lvim.keys.normal_mode['<Leader>dvs'] = '<Cmd>lua require("dap.ui.variables").scopes()<CR>'
+lvim.keys.normal_mode['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").hover()<CR>'
+lvim.keys.visual_mode['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").visual_hover()<CR>'
+lvim.keys.visual_mode['<Leader>dwh'] = '<Cmd>lua require("dap.ui.widgets").hover()<CR>'
+lvim.keys.visual_mode['<Leader>dwf'] =
+    '<Cmd>lua widgets=require("dap.ui.widgets"); widgets.centered_float(widgets.scopes)<CR>'
+lvim.keys.normal_mode['<Leader>dU'] = '<Cmd>lua require("dapui").toggle()<CR>'
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 lvim.autocommands.custom_groups = {
@@ -420,6 +432,8 @@ vim.g.markdown_fenced_languages = {
     'rust',
 }
 
+vim.g.dap_virtual_text = true
+
 if vim.fn.executable('rg') then
     vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
     vim.opt.grepformat = '%f:%l:%c:%m,%f:%l:%m'
@@ -445,3 +459,27 @@ _G.resize_tree = function()
 end
 
 lvim.keys.normal_mode['<Leader>r'] = '<Cmd>lua resize_tree()<cr>'
+
+-- Map K to hover while session is active
+local dap = require('dap')
+local api = vim.api
+local keymap_restore = {}
+dap.listeners.after['event_initialized']['me'] = function()
+    for _, buf in pairs(api.nvim_list_bufs()) do
+        local keymaps = api.nvim_buf_get_keymap(buf, 'n')
+        for _, keymap in pairs(keymaps) do
+            if keymap.lhs == 'K' then
+                table.insert(keymap_restore, keymap)
+                api.nvim_buf_del_keymap(buf, 'n', 'K')
+            end
+        end
+    end
+    api.nvim_set_keymap('n', 'K', '<Cmd>lua require("dap.ui.variables").hover()<CR>', { silent = true })
+end
+
+dap.listeners.after['event_terminated']['me'] = function()
+    for _, keymap in pairs(keymap_restore) do
+        api.nvim_buf_set_keymap(keymap.buffer, keymap.mode, keymap.lhs, keymap.rhs, { silent = keymap.silent == 1 })
+    end
+    keymap_restore = {}
+end

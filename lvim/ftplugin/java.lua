@@ -83,6 +83,7 @@ local config = {
         lvim_lsp.common_on_attach(client, bufnr)
         -- Check if jars exists for dap and tests
         if next(bundles) then
+            -- jdtls.setup_dap({ hotcodereplace = 'auto' })
             jdtls.setup_dap({ hotcodereplace = 'auto' })
             require('jdtls.dap').setup_dap_main_class_configs()
             require('jdtls.setup').add_commands()
