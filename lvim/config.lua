@@ -264,7 +264,7 @@ lvim.lsp.on_attach_callback = function(client, bufnr)
         vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
     end
     require('lsp_signature').on_attach({
-        toggle_key = '<C-q>',
+        toggle_key = '<M-q>',
     })
 end
 
@@ -379,6 +379,12 @@ lvim.plugins = {
     { 'mfussenegger/nvim-jdtls' },
     { 'ray-x/lsp_signature.nvim' },
     { 'nvim-treesitter/nvim-treesitter-textobjects' },
+    -- {
+    --     'rcarriga/nvim-dap-ui',
+    --     config = function()
+    --         require('dapui').setup()
+    --     end,
+    -- },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
