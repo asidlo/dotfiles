@@ -7,45 +7,12 @@ lvim.colorscheme = 'tokyonight'
 lvim.leader = 'space'
 lvim.keys.normal_mode['<C-s>'] = ':w<cr>'
 lvim.keys.insert_mode['<C-s>'] = '<Esc>:w<cr>'
-lvim.keys.normal_mode['[<Space>'] = [[maO<Esc>`a]]
-lvim.keys.normal_mode[']<Space>'] = [[mao<Esc>`a]]
 lvim.keys.normal_mode['<F5>'] = '<Cmd>mode<cr>'
 lvim.keys.normal_mode['<Leader>D'] = ':call v:lua.toggle_diagnostics()<CR>'
 lvim.keys.normal_mode['<C-e>'] = '<Cmd>Telescope oldfiles<cr>'
 
 lvim.keys.normal_mode['<S-l>'] = nil
 lvim.keys.normal_mode['<S-h>'] = nil
-lvim.keys.normal_mode[']b'] = '<Cmd>BufferNext<cr>'
-lvim.keys.normal_mode['[b'] = '<Cmd>BufferPrevious<cr>'
-lvim.keys.normal_mode[']p'] = ':call v:lua.paste_after()<cr>o'
-lvim.keys.normal_mode['[p'] = ':call v:lua.paste_before()<cr>'
-
--- TODO (AS): Delay resetting opts since text isnt using the set paste
-_G.paste_after = function()
-    local paste_opt = vim.api.nvim_get_option('paste')
-    local mouse_opt = vim.api.nvim_get_option('mouse')
-    vim.api.nvim_set_option('paste', true)
-    vim.api.nvim_set_option('mouse', '')
-
-    local keys = vim.api.nvim_replace_termcodes('mao<C-r>*<Esc>`a', true, false, true)
-    vim.api.nvim_feedkeys(keys, 'n', true)
-
-    vim.api.nvim_set_option('paste', paste_opt)
-    vim.api.nvim_set_option('mouse', mouse_opt)
-end
-_G.paste_before = function()
-    local paste_opt = vim.api.nvim_get_option('paste')
-    local mouse_opt = vim.api.nvim_get_option('mouse')
-    vim.api.nvim_set_option('paste', true)
-    vim.api.nvim_set_option('mouse', '')
-
-    local keys = vim.api.nvim_replace_termcodes('maO<C-r>*<Esc>`a', true, false, true)
-    vim.api.nvim_feedkeys(keys, 'n', true)
-    vim.api.nvim_set_option('paste', paste_opt)
-
-    vim.api.nvim_set_option('paste', paste_opt)
-    vim.api.nvim_set_option('mouse', mouse_opt)
-end
 
 lvim.keys.normal_mode[']d'] =
     '<Cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<CR>'
@@ -130,12 +97,14 @@ lvim.builtin.which_key.mappings['T'] = {
     name = '+Telescope',
     D = { '<Cmd>TodoTelescope<cr>', 'Todo' },
 }
-lvim.builtin.which_key.mappings['S'] = {
-    name = '+Session',
-    l = { '<Cmd>lua require("persistence").load({last=true})<cr>', 'Load last session' },
-    c = { '<Cmd>lua require("persistence").load()<cr>', 'Load current session' },
-    s = { '<Cmd>lua require("persistence").stop()<cr>', 'Stop current session' },
-}
+-- lvim.builtin.which_key.mappings['m'] = {
+--     name = '+Minimap',
+--     m = { '<Cmd>MinimapToggle<cr>', 'Toggle Minimap' },
+--     r = { '<Cmd>MinimapRefresh<cr>', 'Toggle Minimap' },
+--     c = { '<Cmd>MinimapClose<cr>', 'Toggle Minimap' },
+--     h = { '<Cmd>MinimapUpdateHighlight<cr>', 'Toggle Minimap' },
+-- }
+-- lvim.keys.normal_mode['<C-m>'] = '<Cmd>MinimapToggle<cr>'
 
 -- User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -306,6 +275,41 @@ lvim.plugins = {
     { 'folke/tokyonight.nvim' },
     { 'tpope/vim-repeat' },
     { 'tpope/vim-surround', keys = { 'c', 'd', 'y' } },
+    { 'tpope/vim-unimpaired', keys = { '[', ']' } },
+    { 'tpope/vim-obsession', cmd = { 'Obsess', 'Obsess!' } },
+    {
+        'tpope/vim-fugitive',
+        cmd = {
+            'G',
+            'Git',
+            'Gdiffsplit',
+            'Gread',
+            'Gwrite',
+            'Ggrep',
+            'GMove',
+            'GDelete',
+            'GBrowse',
+            'GRemove',
+            'GRename',
+            'Glgrep',
+            'Gedit',
+        },
+        ft = { 'fugitive' },
+    },
+    -- {
+    --     'wfxr/minimap.vim',
+    --     -- For some reason it doesnt run the cargo command automatically
+    --     run = 'cargo install --locked code-minimap',
+    --     -- cmd = { 'Minimap', 'MinimapClose', 'MinimapToggle', 'MinimapRefresh', 'MinimapUpdateHighlight' },
+    --     config = function()
+    --         vim.cmd('let g:minimap_width = 10')
+    --         vim.cmd('let g:minimap_auto_start = 1')
+    --         vim.cmd('let g:minimap_auto_start_win_enter = 1')
+    --         vim.cmd('let g:minimap_highlight_search = 1')
+    --         vim.cmd('let g:minimap_git_colors = 1')
+    --         vim.cmd('let g:minimap_highlight_range = 1')
+    --     end,
+    -- },
     {
         'folke/todo-comments.nvim',
         event = 'BufRead',
@@ -362,17 +366,6 @@ lvim.plugins = {
                     'hgcommit',
                 },
                 lastplace_open_folds = true,
-            })
-        end,
-    },
-    {
-        'folke/persistence.nvim',
-        event = 'VimEnter',
-        module = 'persistence',
-        config = function()
-            require('persistence').setup({
-                dir = vim.fn.expand(vim.fn.stdpath('config') .. '/session/'),
-                options = { 'buffers', 'curdir', 'tabpages', 'winsize' },
             })
         end,
     },
