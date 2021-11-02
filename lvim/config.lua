@@ -22,16 +22,16 @@ lvim.keys.normal_mode['[d'] =
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 lvim.builtin.telescope.on_config_done = function()
     local actions = require('telescope.actions')
-    lvim.builtin.telescope.defaults.mappings.i['<C-j>'] = actions.move_selection_next
-    lvim.builtin.telescope.defaults.mappings.i['<C-k>'] = actions.move_selection_previous
-    lvim.builtin.telescope.defaults.mappings.i['<C-n>'] = actions.cycle_history_next
-    lvim.builtin.telescope.defaults.mappings.i['<C-p>'] = actions.cycle_history_prev
-    lvim.builtin.telescope.defaults.mappings.n['<C-j>'] = actions.move_selection_next
-    lvim.builtin.telescope.defaults.mappings.n['<C-k>'] = actions.move_selection_previous
+    lvim.builtin.telescope.mappings.i['<C-j>'] = actions.move_selection_next
+    lvim.builtin.telescope.mappings.i['<C-k>'] = actions.move_selection_previous
+    lvim.builtin.telescope.mappings.i['<C-n>'] = actions.cycle_history_next
+    lvim.builtin.telescope.mappings.i['<C-p>'] = actions.cycle_history_prev
+    lvim.builtin.telescope.mappings.n['<C-j>'] = actions.move_selection_next
+    lvim.builtin.telescope.mappings.n['<C-k>'] = actions.move_selection_previous
 end
 
 local cmp = require('cmp')
-lvim.builtin.cmp.mapping['<CR>'].invoke = cmp.mapping.confirm({ select = true })
+lvim.builtin.cmp.mapping['<CR>'] = cmp.mapping.confirm({ select = true })
 
 local luasnip = require('luasnip')
 
