@@ -380,7 +380,12 @@ lvim.plugins = {
     { 'ray-x/lsp_signature.nvim' },
     { 'nvim-treesitter/nvim-treesitter-textobjects' },
     { 'nvim-telescope/telescope-dap.nvim' },
-    { 'theHamsta/nvim-dap-virtual-text' },
+    {
+        'theHamsta/nvim-dap-virtual-text',
+        config = function()
+            require('nvim-dap-virtual-text').setup()
+        end,
+    },
     {
         'rcarriga/nvim-dap-ui',
         config = function()
@@ -431,8 +436,6 @@ vim.g.markdown_fenced_languages = {
     'go',
     'rust',
 }
-
-vim.g.dap_virtual_text = true
 
 if vim.fn.executable('rg') then
     vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
