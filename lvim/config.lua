@@ -132,6 +132,7 @@ lvim.builtin.treesitter.ensure_installed = {
     'java',
     'yaml',
 }
+lvim.lsp.automatic_servers_installation = false
 lvim.builtin.treesitter.ignore_install = { 'haskell' }
 lvim.builtin.treesitter.highlight.enabled = true
 lvim.builtin.treesitter.textobjects = {
