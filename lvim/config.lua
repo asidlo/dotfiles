@@ -2,22 +2,71 @@
 lvim.log.level = 'warn'
 lvim.format_on_save = true
 lvim.colorscheme = 'tokyonight'
-
--- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = 'space'
-lvim.keys.normal_mode['<C-s>'] = ':w<cr>'
-lvim.keys.insert_mode['<C-s>'] = '<Esc>:w<cr>'
-lvim.keys.normal_mode['<F5>'] = '<Cmd>mode<cr>'
-lvim.keys.normal_mode['<Leader>D'] = ':call v:lua.toggle_diagnostics()<CR>'
-lvim.keys.normal_mode['<C-e>'] = '<Cmd>Telescope oldfiles<cr>'
 
-lvim.keys.normal_mode['<S-l>'] = nil
-lvim.keys.normal_mode['<S-h>'] = nil
-
-lvim.keys.normal_mode[']d'] =
-    '<Cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<CR>'
-lvim.keys.normal_mode['[d'] =
-    '<Cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<CR>'
+lvim.keys.command_mode = {
+    ['C-j>'] = { 'pumvisible() ? "\\<C-n>" : "\\<C-j>"', {
+        expr = true,
+        noremap = true,
+    } },
+    ['<C-k>'] = { 'pumvisible() ? "\\<C-p>" : "\\<C-k>"', {
+        expr = true,
+        noremap = true,
+    } },
+}
+lvim.keys.insert_mode = {
+    ['<A-Down>'] = '<C-\\><C-N><C-w>j',
+    ['<A-Left>'] = '<C-\\><C-N><C-w>h',
+    ['<A-Right>'] = '<C-\\><C-N><C-w>l',
+    ['<A-Up>'] = '<C-\\><C-N><C-w>k',
+    ['<A-j>'] = '<Esc>:m .+1<CR>==gi',
+    ['<A-k>'] = '<Esc>:m .-2<CR>==gi',
+    ['<C-s>'] = '<Esc>:w<cr>',
+}
+lvim.keys.normal_mode = {
+    ['<A-j>'] = ':m .+1<CR>==',
+    ['<A-k>'] = ':m .-2<CR>==',
+    ['<C-Down>'] = ':resize +2<CR>',
+    ['<C-Left>'] = ':vertical resize -2<CR>',
+    ['<C-Right>'] = ':vertical resize +2<CR>',
+    ['<C-Up>'] = ':resize -2<CR>',
+    ['<C-e>'] = '<Cmd>Telescope oldfiles<cr>',
+    ['<C-h>'] = '<C-w>h',
+    ['<C-j>'] = '<C-w>j',
+    ['<C-k>'] = '<C-w>k',
+    ['<C-l>'] = '<C-w>l',
+    ['<C-q>'] = ':call QuickFixToggle()<CR>',
+    ['<C-s>'] = ':w<cr>',
+    ['<F5>'] = '<Cmd>mode<cr>',
+    ['<Leader>D'] = ':call v:lua.toggle_diagnostics()<CR>',
+    ['<Leader>dU'] = '<Cmd>lua require("dapui").toggle()<CR>',
+    ['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").hover()<CR>',
+    ['<Leader>dvs'] = '<Cmd>lua require("dap.ui.variables").scopes()<CR>',
+    ['<Leader>r'] = '<Cmd>lua resize_tree()<cr>',
+    ['[d'] = '<Cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<CR>',
+    ['[q'] = ':cprev<CR>',
+    [']d'] = '<Cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<CR>',
+    [']q'] = ':cnext<CR>',
+}
+lvim.keys.term_mode = {
+    ['<C-h>'] = '<C-\\><C-N><C-w>h',
+    ['<C-j>'] = '<C-\\><C-N><C-w>j',
+    ['<C-k>'] = '<C-\\><C-N><C-w>k',
+    ['<C-l>'] = '<C-\\><C-N><C-w>l',
+}
+lvim.keys.visual_block_mode = {
+    ['<A-j>'] = ":m '>+1<CR>gv-gv",
+    ['<A-k>'] = ":m '<-2<CR>gv-gv",
+    J = ":move '>+1<CR>gv-gv",
+    K = ":move '<-2<CR>gv-gv",
+}
+lvim.keys.visual_mode = {
+    ['<'] = '<gv',
+    ['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").visual_hover()<CR>',
+    ['<Leader>dwf'] = '<Cmd>lua widgets=require("dap.ui.widgets"); widgets.centered_float(widgets.scopes)<CR>',
+    ['<Leader>dwh'] = '<Cmd>lua require("dap.ui.widgets").hover()<CR>',
+    ['>'] = '>gv',
+}
 
 -- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
 lvim.builtin.telescope.on_config_done = function()
@@ -109,6 +158,7 @@ lvim.builtin.which_key.mappings['T'] = {
 -- User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.dashboard.active = true
+lvim.builtin.bufferline.active = false
 lvim.builtin.dap.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = 'left'
@@ -411,6 +461,7 @@ lvim.autocommands.custom_groups = {
     { 'TermEnter', 'term://*', 'setlocal nonumber norelativenumber signcolumn=no' },
 }
 
+vim.opt.showtabline = 0
 vim.opt.relativenumber = true
 vim.opt.wildmode = { 'longest:full', 'full' }
 vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
