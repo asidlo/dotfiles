@@ -1,159 +1,46 @@
+vim.opt.showtabline = 0
+vim.opt.relativenumber = true
+vim.opt.wildmode = { 'longest:full', 'full' }
+vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
+vim.opt.timeoutlen = 300
+vim.opt.foldenable = false
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+vim.opt.expandtab = true
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+-- vim.opt.formatexpr = 'v:lua.lsp_formatexpr()'
+vim.g.loaded_python_provider = 0
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.python3_host_prog = '/usr/bin/python3'
+vim.g.markdown_fenced_languages = {
+    'bash',
+    'json',
+    'javascript',
+    'python',
+    'java',
+    'groovy',
+    'go',
+    'rust',
+}
+
+if vim.fn.executable('rg') then
+    vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
+    vim.opt.grepformat = '%f:%l:%c:%m,%f:%l:%m'
+end
+
+-- https://jdhao.github.io/2020/03/14/nvim_search_replace_multiple_file/
+-- https://stackoverflow.com/a/51962260
+-- https://thoughtbot.com/blog/faster-grepping-in-vim
+vim.cmd('packadd cfilter')
+
 -- general
 lvim.log.level = 'warn'
 lvim.format_on_save = true
 lvim.colorscheme = 'tokyonight'
 lvim.leader = 'space'
-
-lvim.keys.command_mode = {
-    ['C-j>'] = { 'pumvisible() ? "\\<C-n>" : "\\<C-j>"', {
-        expr = true,
-        noremap = true,
-    } },
-    ['<C-k>'] = { 'pumvisible() ? "\\<C-p>" : "\\<C-k>"', {
-        expr = true,
-        noremap = true,
-    } },
-}
-lvim.keys.insert_mode = {
-    ['<A-Down>'] = '<C-\\><C-N><C-w>j',
-    ['<A-Left>'] = '<C-\\><C-N><C-w>h',
-    ['<A-Right>'] = '<C-\\><C-N><C-w>l',
-    ['<A-Up>'] = '<C-\\><C-N><C-w>k',
-    ['<A-j>'] = '<Esc>:m .+1<CR>==gi',
-    ['<A-k>'] = '<Esc>:m .-2<CR>==gi',
-    ['<C-s>'] = '<Esc>:w<cr>',
-}
-lvim.keys.normal_mode = {
-    ['<A-j>'] = ':m .+1<CR>==',
-    ['<A-k>'] = ':m .-2<CR>==',
-    ['<C-Down>'] = ':resize +2<CR>',
-    ['<C-Left>'] = ':vertical resize -2<CR>',
-    ['<C-Right>'] = ':vertical resize +2<CR>',
-    ['<C-Up>'] = ':resize -2<CR>',
-    ['<C-e>'] = '<Cmd>Telescope oldfiles<cr>',
-    ['<C-h>'] = '<C-w>h',
-    ['<C-j>'] = '<C-w>j',
-    ['<C-k>'] = '<C-w>k',
-    ['<C-l>'] = '<C-w>l',
-    ['<C-q>'] = ':call QuickFixToggle()<CR>',
-    ['<C-s>'] = ':w<cr>',
-    ['<F5>'] = '<Cmd>mode<cr>',
-    ['<Leader>D'] = ':call v:lua.toggle_diagnostics()<CR>',
-    ['<Leader>dU'] = '<Cmd>lua require("dapui").toggle()<CR>',
-    ['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").hover()<CR>',
-    ['<Leader>dvs'] = '<Cmd>lua require("dap.ui.variables").scopes()<CR>',
-    ['<Leader>r'] = '<Cmd>lua resize_tree()<cr>',
-    ['[d'] = '<Cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<CR>',
-    ['[q'] = ':cprev<CR>',
-    [']d'] = '<Cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<CR>',
-    [']q'] = ':cnext<CR>',
-}
-lvim.keys.term_mode = {
-    ['<C-h>'] = '<C-\\><C-N><C-w>h',
-    ['<C-j>'] = '<C-\\><C-N><C-w>j',
-    ['<C-k>'] = '<C-\\><C-N><C-w>k',
-    ['<C-l>'] = '<C-\\><C-N><C-w>l',
-}
-lvim.keys.visual_block_mode = {
-    ['<A-j>'] = ":m '>+1<CR>gv-gv",
-    ['<A-k>'] = ":m '<-2<CR>gv-gv",
-    J = ":move '>+1<CR>gv-gv",
-    K = ":move '<-2<CR>gv-gv",
-}
-lvim.keys.visual_mode = {
-    ['<'] = '<gv',
-    ['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").visual_hover()<CR>',
-    ['<Leader>dwf'] = '<Cmd>lua widgets=require("dap.ui.widgets"); widgets.centered_float(widgets.scopes)<CR>',
-    ['<Leader>dwh'] = '<Cmd>lua require("dap.ui.widgets").hover()<CR>',
-    ['>'] = '>gv',
-}
-
--- Change Telescope navigation to use j and k for navigation and n and p for history in both input and normal mode.
-lvim.builtin.telescope.on_config_done = function()
-    local actions = require('telescope.actions')
-    lvim.builtin.telescope.mappings.i['<C-j>'] = actions.move_selection_next
-    lvim.builtin.telescope.mappings.i['<C-k>'] = actions.move_selection_previous
-    lvim.builtin.telescope.mappings.i['<C-n>'] = actions.cycle_history_next
-    lvim.builtin.telescope.mappings.i['<C-p>'] = actions.cycle_history_prev
-    lvim.builtin.telescope.mappings.n['<C-j>'] = actions.move_selection_next
-    lvim.builtin.telescope.mappings.n['<C-k>'] = actions.move_selection_previous
-end
-
-local cmp = require('cmp')
-lvim.builtin.cmp.mapping['<CR>'] = cmp.mapping.confirm({ select = true })
-
-local luasnip = require('luasnip')
-
-local t = function(str)
-    return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
-local check_back_space = function()
-    local col = vim.fn.col('.') - 1
-    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-        return true
-    else
-        return false
-    end
-end
-
-_G.tab_complete = function()
-    if cmp and cmp.visible() then
-        cmp.select_next_item()
-    elseif luasnip and luasnip.expand_or_jumpable() then
-        luasnip.expand_or_jump()
-    elseif check_back_space() then
-        return t('<Tab>')
-    else
-        cmp.complete()
-    end
-    return ''
-end
-
-_G.s_tab_complete = function()
-    if cmp and cmp.visible() then
-        cmp.select_prev_item()
-    elseif luasnip and luasnip.jumpable(-1) then
-        luasnip.jump(-1)
-    else
-        return t('<S-Tab>')
-    end
-    return ''
-end
-
-vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('s', '<Tab>', 'v:lua.tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('i', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-vim.api.nvim_set_keymap('s', '<S-Tab>', 'v:lua.s_tab_complete()', { expr = true })
-
--- Use which-key to add extra bindings with the leader-key prefix
-lvim.builtin.which_key.mappings['P'] = {
-    '<cmd>Telescope projects<CR>',
-    'Projects',
-}
-lvim.builtin.which_key.mappings['t'] = {
-    name = '+Trouble',
-    r = { '<cmd>Trouble lsp_references<cr>', 'References' },
-    f = { '<cmd>Trouble lsp_definitions<cr>', 'Definitions' },
-    d = { '<cmd>Trouble lsp_document_diagnostics<cr>', 'Diagnostics' },
-    q = { '<cmd>Trouble quickfix<cr>', 'QuickFix' },
-    l = { '<cmd>Trouble loclist<cr>', 'LocationList' },
-    w = { '<cmd>Trouble lsp_workspace_diagnostics<cr>', 'Diagnostics' },
-    t = { '<cmd>TroubleToggle<cr>', 'Toggle Trouble' },
-    R = { '<cmd>TroubleRefresh<cr>', 'Refresh Trouble' },
-}
-lvim.builtin.which_key.mappings['T'] = {
-    name = '+Telescope',
-    D = { '<Cmd>TodoTelescope<cr>', 'Todo' },
-}
--- lvim.builtin.which_key.mappings['m'] = {
---     name = '+Minimap',
---     m = { '<Cmd>MinimapToggle<cr>', 'Toggle Minimap' },
---     r = { '<Cmd>MinimapRefresh<cr>', 'Toggle Minimap' },
---     c = { '<Cmd>MinimapClose<cr>', 'Toggle Minimap' },
---     h = { '<Cmd>MinimapUpdateHighlight<cr>', 'Toggle Minimap' },
--- }
--- lvim.keys.normal_mode['<C-m>'] = '<Cmd>MinimapToggle<cr>'
 
 -- User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -182,7 +69,14 @@ lvim.builtin.treesitter.ensure_installed = {
     'java',
     'yaml',
 }
+vim.list_extend(lvim.lsp.override, { 'jdtls' })
 lvim.lsp.automatic_servers_installation = false
+lvim.lsp.on_attach_callback = function(client, bufnr)
+    if client.resolved_capabilities.document_range_formatting then
+        vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
+    end
+end
+
 lvim.builtin.treesitter.ignore_install = { 'haskell' }
 lvim.builtin.treesitter.highlight.enabled = true
 lvim.builtin.treesitter.textobjects = {
@@ -211,33 +105,405 @@ lvim.builtin.treesitter.indent = {
     disable = { 'yaml', 'json', 'java' },
 }
 
-lvim.lang.sh.linters = { { exe = 'shellcheck' } }
-lvim.lang.sh.formatters = { { exe = 'shellharden' } }
+-- Autocommands (https://neovim.io/doc/user/autocmd.html)
+lvim.autocommands.custom_groups = {
+    { 'TermOpen,TermEnter', 'term://*', 'startinsert!' },
+    { 'TermEnter', 'term://*', 'setlocal nonumber norelativenumber signcolumn=no' },
+}
 
-lvim.lang.markdown.linters = {
-    { exe = 'markdownlint', args = { '-c', os.getenv('HOME') .. '/.markdownlint.json' } },
-    { exe = 'vale' },
+lvim.keys.insert_mode = {
+    ['<A-Down>'] = '<C-\\><C-N><C-w>j',
+    ['<A-Left>'] = '<C-\\><C-N><C-w>h',
+    ['<A-Right>'] = '<C-\\><C-N><C-w>l',
+    ['<A-Up>'] = '<C-\\><C-N><C-w>k',
+    ['<A-j>'] = '<Esc>:m .+1<CR>==gi',
+    ['<A-k>'] = '<Esc>:m .-2<CR>==gi',
+    ['<C-s>'] = '<Esc>:w<cr>',
+    ['<Tab>'] = { 'v:lua.tab_complete()', { expr = true } },
+    ['<S-Tab>'] = { 'v:lua.s_tab_complete()', { expr = true } },
 }
-lvim.lang.markdown.formatters = { { exe = 'prettierd' } }
-lvim.lang.lua.linters = {
-    {
-        exe = 'luacheck',
-        args = { '--globals', 'lvim', '--globals', 'vim' },
+lvim.keys.normal_mode = {
+    ['<A-j>'] = ':m .+1<CR>==',
+    ['<A-k>'] = ':m .-2<CR>==',
+    ['<C-Down>'] = ':resize +2<CR>',
+    ['<C-Left>'] = ':vertical resize -2<CR>',
+    ['<C-Right>'] = ':vertical resize +2<CR>',
+    ['<C-Up>'] = ':resize -2<CR>',
+    ['<C-e>'] = '<Cmd>Telescope oldfiles<cr>',
+    ['<C-h>'] = '<C-w>h',
+    ['<C-j>'] = '<C-w>j',
+    ['<C-k>'] = '<C-w>k',
+    ['<C-l>'] = '<C-w>l',
+    ['<C-q>'] = ':call QuickFixToggle()<CR>',
+    ['<C-s>'] = ':w<cr>',
+    ['<F5>'] = '<Cmd>mode<cr>',
+    ['<Leader>D'] = ':call v:lua.toggle_diagnostics()<CR>',
+    ['<Leader>dU'] = '<Cmd>lua require("dapui").toggle()<CR>',
+    ['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").hover()<CR>',
+    ['<Leader>dvs'] = '<Cmd>lua require("dap.ui.variables").scopes()<CR>',
+    ['[d'] = '<Cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<CR>',
+    ['[q'] = ':cprev<CR>',
+    [']d'] = '<Cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<CR>',
+    [']q'] = ':cnext<CR>',
+    ['<Tab>'] = { 'v:lua.tab_complete()', { expr = true } },
+    ['<S-Tab>'] = { 'v:lua.s_tab_complete()', { expr = true } },
+}
+lvim.keys.term_mode = {
+    ['<C-h>'] = '<C-\\><C-N><C-w>h',
+    ['<C-j>'] = '<C-\\><C-N><C-w>j',
+    ['<C-k>'] = '<C-\\><C-N><C-w>k',
+    ['<C-l>'] = '<C-\\><C-N><C-w>l',
+}
+lvim.keys.visual_block_mode = {
+    ['<A-j>'] = ":m '>+1<CR>gv-gv",
+    ['<A-k>'] = ":m '<-2<CR>gv-gv",
+    J = ":move '>+1<CR>gv-gv",
+    K = ":move '<-2<CR>gv-gv",
+}
+lvim.keys.visual_mode = {
+    ['<'] = '<gv',
+    ['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").visual_hover()<CR>',
+    ['<Leader>dwf'] = '<Cmd>lua widgets=require("dap.ui.widgets"); widgets.centered_float(widgets.scopes)<CR>',
+    ['<Leader>dwh'] = '<Cmd>lua require("dap.ui.widgets").hover()<CR>',
+    ['>'] = '>gv',
+}
+
+lvim.builtin.which_key.mappings = {
+    ['f'] = { '<cmd>Telescope find_files<CR>', 'Find File' },
+    ['h'] = { '<cmd>nohlsearch<CR>', 'No Highlight' },
+    b = {
+        name = 'Buffers',
+        j = { '<cmd>BufferPick<cr>', 'Jump' },
+        f = { '<cmd>Telescope buffers<cr>', 'Find' },
+        b = { '<cmd>b#<cr>', 'Previous' },
+        w = { '<cmd>BufferWipeout<cr>', 'Wipeout' },
+        e = {
+            '<cmd>BufferCloseAllButCurrent<cr>',
+            'Close all but current',
+        },
     },
-}
-lvim.lang.lua.formatters = {
-    {
-        exe = 'stylua',
-        args = {
-            '--indent-width',
-            '4',
-            '--quote-style',
-            'AutoPreferSingle',
-            '--indent-type',
-            'Spaces',
+    g = {
+        name = 'Git',
+        j = { "<cmd>lua require 'gitsigns'.next_hunk()<cr>", 'Next Hunk' },
+        k = { "<cmd>lua require 'gitsigns'.prev_hunk()<cr>", 'Prev Hunk' },
+        l = { "<cmd>lua require 'gitsigns'.blame_line()<cr>", 'Blame' },
+        p = { "<cmd>lua require 'gitsigns'.preview_hunk()<cr>", 'Preview Hunk' },
+        r = { "<cmd>lua require 'gitsigns'.reset_hunk()<cr>", 'Reset Hunk' },
+        R = { "<cmd>lua require 'gitsigns'.reset_buffer()<cr>", 'Reset Buffer' },
+        s = { "<cmd>lua require 'gitsigns'.stage_hunk()<cr>", 'Stage Hunk' },
+        u = {
+            "<cmd>lua require 'gitsigns'.undo_stage_hunk()<cr>",
+            'Undo Stage Hunk',
+        },
+        o = { '<cmd>Telescope git_status<cr>', 'Open changed file' },
+        b = { '<cmd>Telescope git_branches<cr>', 'Checkout branch' },
+        c = { '<cmd>Telescope git_commits<cr>', 'Checkout commit' },
+        C = {
+            '<cmd>Telescope git_bcommits<cr>',
+            'Checkout commit(for current file)',
+        },
+        d = {
+            '<cmd>Gitsigns diffthis HEAD<cr>',
+            'Git Diff',
+        },
+    },
+
+    l = {
+        name = 'LSP',
+        a = { "<cmd>lua require('lvim.core.telescope').code_actions()<cr>", 'Code Action' },
+        d = {
+            '<cmd>Telescope lsp_document_diagnostics<cr>',
+            'Document Diagnostics',
+        },
+        w = {
+            '<cmd>Telescope lsp_workspace_diagnostics<cr>',
+            'Workspace Diagnostics',
+        },
+        f = { '<cmd>lua vim.lsp.buf.formatting()<cr>', 'Format' },
+        i = { '<cmd>LspInfo<cr>', 'Info' },
+        I = { '<cmd>LspInstallInfo<cr>', 'Installer Info' },
+        j = {
+            '<cmd>lua vim.lsp.diagnostic.goto_next({popup_opts = {border = lvim.lsp.popup_border}})<cr>',
+            'Next Diagnostic',
+        },
+        k = {
+            '<cmd>lua vim.lsp.diagnostic.goto_prev({popup_opts = {border = lvim.lsp.popup_border}})<cr>',
+            'Prev Diagnostic',
+        },
+        l = { '<cmd>lua vim.lsp.codelens.run()<cr>', 'CodeLens Action' },
+        p = {
+            name = 'Peek',
+            d = { "<cmd>lua require('lvim.lsp.peek').Peek('definition')<cr>", 'Definition' },
+            t = { "<cmd>lua require('lvim.lsp.peek').Peek('typeDefinition')<cr>", 'Type Definition' },
+            i = { "<cmd>lua require('lvim.lsp.peek').Peek('implementation')<cr>", 'Implementation' },
+        },
+        q = { '<cmd>lua vim.lsp.diagnostic.set_loclist()<cr>', 'Quickfix' },
+        r = { '<cmd>lua vim.lsp.buf.rename()<cr>', 'Rename' },
+        s = { '<cmd>Telescope lsp_document_symbols<cr>', 'Document Symbols' },
+        S = {
+            '<cmd>Telescope lsp_dynamic_workspace_symbols<cr>',
+            'Workspace Symbols',
+        },
+    },
+    L = {
+        name = '+LunarVim',
+        c = {
+            '<cmd>edit ' .. get_config_dir() .. '/config.lua<cr>',
+            'Edit config.lua',
+        },
+        f = {
+            "<cmd>lua require('lvim.core.telescope.custom-finders').find_lunarvim_files()<cr>",
+            'Find LunarVim files',
+        },
+        g = {
+            "<cmd>lua require('lvim.core.telescope.custom-finders').grep_lunarvim_files()<cr>",
+            'Grep LunarVim files',
+        },
+        k = { "<cmd>lua require('lvim.keymappings').print()<cr>", "View LunarVim's default keymappings" },
+        i = {
+            "<cmd>lua require('lvim.core.info').toggle_popup(vim.bo.filetype)<cr>",
+            'Toggle LunarVim Info',
+        },
+        I = {
+            "<cmd>lua require('lvim.core.telescope.custom-finders').view_lunarvim_changelog()<cr>",
+            "View LunarVim's changelog",
+        },
+        l = {
+            name = '+logs',
+            d = {
+                "<cmd>lua require('lvim.core.terminal').toggle_log_view(require('lvim.core.log').get_path())<cr>",
+                'view default log',
+            },
+            D = {
+                "<cmd>lua vim.fn.execute('edit ' .. require('lvim.core.log').get_path())<cr>",
+                'Open the default logfile',
+            },
+            l = {
+                "<cmd>lua require('lvim.core.terminal').toggle_log_view(vim.lsp.get_log_path())<cr>",
+                'view lsp log',
+            },
+            L = { "<cmd>lua vim.fn.execute('edit ' .. vim.lsp.get_log_path())<cr>", 'Open the LSP logfile' },
+            n = {
+                "<cmd>lua require('lvim.core.terminal').toggle_log_view(os.getenv('NVIM_LOG_FILE'))<cr>",
+                'view neovim log',
+            },
+            N = { '<cmd>edit $NVIM_LOG_FILE<cr>', 'Open the Neovim logfile' },
+            p = {
+                "<cmd>lua require('lvim.core.terminal').toggle_log_view('packer.nvim')<cr>",
+                'view packer log',
+            },
+            P = { "<cmd>exe 'edit '.stdpath('cache').'/packer.nvim.log'<cr>", 'Open the Packer logfile' },
+        },
+        r = { '<cmd>LvimReload<cr>', "Reload LunarVim's configuration" },
+        u = { '<cmd>LvimUpdate<cr>', 'Update LunarVim' },
+    },
+    s = {
+        name = 'Search',
+        b = { '<cmd>Telescope git_branches<cr>', 'Checkout branch' },
+        c = { '<cmd>Telescope colorscheme<cr>', 'Colorscheme' },
+        f = { '<cmd>Telescope find_files<cr>', 'Find File' },
+        h = { '<cmd>Telescope help_tags<cr>', 'Find Help' },
+        m = { '<cmd>Telescope man_pages<cr>', 'Man Pages' },
+        r = { '<cmd>Telescope oldfiles<cr>', 'Open Recent File' },
+        ['@'] = { '<cmd>Telescope registers<cr>', 'Registers' },
+        t = { '<cmd>Telescope live_grep<cr>', 'Text' },
+        k = { '<cmd>Telescope keymaps<cr>', 'Keymaps' },
+        x = { '<cmd>Telescope commands<cr>', 'Commands' },
+        p = {
+            "<cmd>lua require('telescope.builtin.internal').colorscheme({enable_preview = true})<cr>",
+            'Colorscheme with Preview',
         },
     },
 }
+lvim.keys.normal_mode['<Leader>dvs'] = '<Cmd>lua require("dap.ui.variables").scopes()<CR>'
+lvim.keys.normal_mode['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").hover()<CR>'
+lvim.keys.visual_mode['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").visual_hover()<CR>'
+lvim.keys.visual_mode['<Leader>dwh'] = '<Cmd>lua require("dap.ui.widgets").hover()<CR>'
+lvim.keys.visual_mode['<Leader>dwf'] =
+    '<Cmd>lua widgets=require("dap.ui.widgets"); widgets.centered_float(widgets.scopes)<CR>'
+lvim.keys.normal_mode['<Leader>dU'] = '<Cmd>lua require("dapui").toggle()<CR>'
+
+-- Use which-key to add extra bindings with the leader-key prefix
+lvim.builtin.which_key.mappings['P'] = {
+    '<cmd>Telescope projects<CR>',
+    'Projects',
+}
+lvim.builtin.which_key.mappings['t'] = {
+    name = '+Trouble',
+    r = { '<cmd>Trouble lsp_references<cr>', 'References' },
+    f = { '<cmd>Trouble lsp_definitions<cr>', 'Definitions' },
+    d = { '<cmd>Trouble lsp_document_diagnostics<cr>', 'Diagnostics' },
+    q = { '<cmd>Trouble quickfix<cr>', 'QuickFix' },
+    l = { '<cmd>Trouble loclist<cr>', 'LocationList' },
+    D = { '<cmd>Trouble lsp_workspace_diagnostics<cr>', 'Diagnostics' },
+    t = { '<cmd>TroubleToggle<cr>', 'Toggle Trouble' },
+    R = { '<cmd>TroubleRefresh<cr>', 'Refresh Trouble' },
+}
+lvim.builtin.which_key.mappings['T'] = {
+    name = '+Telescope',
+    D = { '<Cmd>TodoTelescope<cr>', 'Todo' },
+}
+
+-- Additional Plugins
+lvim.plugins = {
+    { 'folke/tokyonight.nvim' },
+    { 'tpope/vim-repeat' },
+    { 'tpope/vim-surround', keys = { 'c', 'd', 'y' } },
+    { 'tpope/vim-unimpaired', keys = { '[', ']' } },
+    { 'tpope/vim-obsession', cmd = { 'Obsess', 'Obsess!' } },
+    {
+        'tpope/vim-fugitive',
+        cmd = {
+            'G',
+            'Git',
+            'Gdiffsplit',
+            'Gread',
+            'Gwrite',
+            'Ggrep',
+            'GMove',
+            'GDelete',
+            'GBrowse',
+            'GRemove',
+            'GRename',
+            'Glgrep',
+            'Gedit',
+        },
+        ft = { 'fugitive' },
+    },
+    {
+        'folke/todo-comments.nvim',
+        event = 'BufRead',
+        config = function()
+            require('todo-comments').setup({
+                highlight = {
+                    keyword = 'wide',
+                    pattern = [[.*<(KEYWORDS) (\([^\)]*\))?:]],
+                },
+                search = { pattern = [[\b(KEYWORDS) (\([^\)]*\))?:]] },
+            })
+        end,
+    },
+    { 'folke/trouble.nvim', cmd = 'TroubleToggle' },
+    {
+        'lukas-reineke/indent-blankline.nvim',
+        event = 'BufRead',
+        setup = function()
+            vim.g.indentLine_enabled = 1
+            vim.g.indent_blankline_char = '▏'
+            vim.g.indent_blankline_filetype_exclude = {
+                'help',
+                'terminal',
+                'dashboard',
+                'packer',
+                'lsp-installer',
+                'lspinfo',
+            }
+            vim.g.indent_blankline_buftype_exclude = { 'terminal' }
+            vim.g.indent_blankline_show_trailing_blankline_indent = false
+            vim.g.indent_blankline_show_first_indent_level = false
+            vim.g.indent_blankline_use_treesitter = true
+        end,
+    },
+    { 'simrat39/symbols-outline.nvim', cmd = 'SymbolsOutline' },
+    {
+        'nvim-telescope/telescope-project.nvim',
+        event = 'BufWinEnter',
+        setup = function()
+            vim.cmd([[packadd telescope.nvim]])
+        end,
+    },
+    { 'segeljakt/vim-silicon' },
+    {
+        'ethanholz/nvim-lastplace',
+        event = 'BufRead',
+        config = function()
+            require('nvim-lastplace').setup({
+                lastplace_ignore_buftype = { 'quickfix', 'nofile', 'help' },
+                lastplace_ignore_filetype = {
+                    'gitcommit',
+                    'gitrebase',
+                    'svn',
+                    'hgcommit',
+                },
+                lastplace_open_folds = true,
+            })
+        end,
+    },
+    {
+        'aymericbeaumet/vim-symlink',
+        event = 'BufRead',
+        requires = {
+            { 'moll/vim-bbye' },
+        },
+    },
+    { 'mfussenegger/nvim-jdtls' },
+    { 'ray-x/lsp_signature.nvim' },
+    { 'nvim-treesitter/nvim-treesitter-textobjects' },
+    {
+        'nvim-telescope/telescope-dap.nvim',
+        event = 'BufWinEnter',
+        setup = function()
+            vim.cmd([[packadd telescope.nvim]])
+        end,
+        config = function()
+            require('telescope').load_extension('dap')
+        end,
+    },
+    {
+        'theHamsta/nvim-dap-virtual-text',
+        config = function()
+            require('nvim-dap-virtual-text').setup()
+        end,
+    },
+    {
+        'rcarriga/nvim-dap-ui',
+        config = function()
+            require('dapui').setup()
+        end,
+    },
+}
+
+local cmp = require('cmp')
+lvim.builtin.cmp.mapping['<CR>'] = cmp.mapping.confirm({ select = true })
+
+local luasnip = require('luasnip')
+
+local t = function(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+local check_back_space = function()
+    local col = vim.fn.col('.') - 1
+    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+        return true
+    else
+        return false
+    end
+end
+
+function _G.tab_complete()
+    if cmp and cmp.visible() then
+        cmp.select_next_item()
+    elseif luasnip and luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+    elseif check_back_space() then
+        return t('<Tab>')
+    else
+        cmp.complete()
+    end
+    return ''
+end
+
+function _G.s_tab_complete()
+    if cmp and cmp.visible() then
+        cmp.select_prev_item()
+    elseif luasnip and luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+    else
+        return t('<S-Tab>')
+    end
+    return ''
+end
 
 function _G.dump(...)
     local objects = vim.tbl_map(vim.inspect, { ... })
@@ -310,211 +576,6 @@ function _G.toggle_diagnostics()
     end
 end
 
-lvim.lsp.on_attach_callback = function(client, bufnr)
-    if client.resolved_capabilities.document_range_formatting then
-        vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
-    end
-    require('lsp_signature').on_attach({
-        toggle_key = '<M-q>',
-    })
-end
-
--- lvim.lsp.templates_dir = join_paths(get_config_dir(), 'after', 'ftplugin')
-
--- Additional Plugins
-lvim.plugins = {
-    { 'folke/tokyonight.nvim' },
-    { 'tpope/vim-repeat' },
-    { 'tpope/vim-surround', keys = { 'c', 'd', 'y' } },
-    { 'tpope/vim-unimpaired', keys = { '[', ']' } },
-    { 'tpope/vim-obsession', cmd = { 'Obsess', 'Obsess!' } },
-    {
-        'tpope/vim-fugitive',
-        cmd = {
-            'G',
-            'Git',
-            'Gdiffsplit',
-            'Gread',
-            'Gwrite',
-            'Ggrep',
-            'GMove',
-            'GDelete',
-            'GBrowse',
-            'GRemove',
-            'GRename',
-            'Glgrep',
-            'Gedit',
-        },
-        ft = { 'fugitive' },
-    },
-    -- {
-    --     'wfxr/minimap.vim',
-    --     -- For some reason it doesnt run the cargo command automatically
-    --     run = 'cargo install --locked code-minimap',
-    --     -- cmd = { 'Minimap', 'MinimapClose', 'MinimapToggle', 'MinimapRefresh', 'MinimapUpdateHighlight' },
-    --     config = function()
-    --         vim.cmd('let g:minimap_width = 10')
-    --         vim.cmd('let g:minimap_auto_start = 1')
-    --         vim.cmd('let g:minimap_auto_start_win_enter = 1')
-    --         vim.cmd('let g:minimap_highlight_search = 1')
-    --         vim.cmd('let g:minimap_git_colors = 1')
-    --         vim.cmd('let g:minimap_highlight_range = 1')
-    --     end,
-    -- },
-    {
-        'folke/todo-comments.nvim',
-        event = 'BufRead',
-        config = function()
-            require('todo-comments').setup({
-                highlight = {
-                    keyword = 'wide',
-                    pattern = [[.*<(KEYWORDS) (\([^\)]*\))?:]],
-                },
-                search = { pattern = [[\b(KEYWORDS) (\([^\)]*\))?:]] },
-            })
-        end,
-    },
-    { 'folke/trouble.nvim', cmd = 'TroubleToggle' },
-    {
-        'lukas-reineke/indent-blankline.nvim',
-        event = 'BufRead',
-        setup = function()
-            vim.g.indentLine_enabled = 1
-            vim.g.indent_blankline_char = '▏'
-            vim.g.indent_blankline_filetype_exclude = {
-                'help',
-                'terminal',
-                'dashboard',
-                'packer',
-                'lsp-installer',
-                'lspinfo',
-            }
-            vim.g.indent_blankline_buftype_exclude = { 'terminal' }
-            vim.g.indent_blankline_show_trailing_blankline_indent = false
-            vim.g.indent_blankline_show_first_indent_level = false
-            vim.g.indent_blankline_use_treesitter = true
-        end,
-    },
-    { 'simrat39/symbols-outline.nvim', cmd = 'SymbolsOutline' },
-    {
-        'nvim-telescope/telescope-project.nvim',
-        event = 'BufWinEnter',
-        setup = function()
-            vim.cmd([[packadd telescope.nvim]])
-        end,
-    },
-    { 'segeljakt/vim-silicon' },
-    {
-        'ethanholz/nvim-lastplace',
-        event = 'BufRead',
-        config = function()
-            require('nvim-lastplace').setup({
-                lastplace_ignore_buftype = { 'quickfix', 'nofile', 'help' },
-                lastplace_ignore_filetype = {
-                    'gitcommit',
-                    'gitrebase',
-                    'svn',
-                    'hgcommit',
-                },
-                lastplace_open_folds = true,
-            })
-        end,
-    },
-    {
-        'aymericbeaumet/vim-symlink',
-        event = 'BufRead',
-        requires = {
-            { 'moll/vim-bbye' },
-        },
-    },
-    { 'mfussenegger/nvim-jdtls' },
-    { 'ray-x/lsp_signature.nvim' },
-    { 'nvim-treesitter/nvim-treesitter-textobjects' },
-    { 'nvim-telescope/telescope-dap.nvim' },
-    {
-        'theHamsta/nvim-dap-virtual-text',
-        config = function()
-            require('nvim-dap-virtual-text').setup()
-        end,
-    },
-    {
-        'rcarriga/nvim-dap-ui',
-        config = function()
-            require('dapui').setup()
-        end,
-    },
-}
-
-require('telescope').load_extension('dap')
-
-lvim.keys.normal_mode['<Leader>dvs'] = '<Cmd>lua require("dap.ui.variables").scopes()<CR>'
-lvim.keys.normal_mode['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").hover()<CR>'
-lvim.keys.visual_mode['<Leader>dvh'] = '<Cmd>lua require("dap.ui.variables").visual_hover()<CR>'
-lvim.keys.visual_mode['<Leader>dwh'] = '<Cmd>lua require("dap.ui.widgets").hover()<CR>'
-lvim.keys.visual_mode['<Leader>dwf'] =
-    '<Cmd>lua widgets=require("dap.ui.widgets"); widgets.centered_float(widgets.scopes)<CR>'
-lvim.keys.normal_mode['<Leader>dU'] = '<Cmd>lua require("dapui").toggle()<CR>'
-
--- Autocommands (https://neovim.io/doc/user/autocmd.html)
-lvim.autocommands.custom_groups = {
-    { 'TermOpen,TermEnter', 'term://*', 'startinsert!' },
-    { 'TermEnter', 'term://*', 'setlocal nonumber norelativenumber signcolumn=no' },
-}
-
-vim.opt.showtabline = 0
-vim.opt.relativenumber = true
-vim.opt.wildmode = { 'longest:full', 'full' }
-vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
-vim.opt.timeoutlen = 300
-vim.opt.foldenable = false
-vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
-vim.opt.expandtab = true
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
--- vim.opt.formatexpr = 'v:lua.lsp_formatexpr()'
-vim.g.loaded_python_provider = 0
-vim.g.loaded_node_provider = 0
-vim.g.loaded_perl_provider = 0
-vim.g.loaded_ruby_provider = 0
-vim.g.python3_host_prog = '/usr/bin/python3'
-vim.g.markdown_fenced_languages = {
-    'bash',
-    'json',
-    'javascript',
-    'python',
-    'java',
-    'groovy',
-    'go',
-    'rust',
-}
-
-if vim.fn.executable('rg') then
-    vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
-    vim.opt.grepformat = '%f:%l:%c:%m,%f:%l:%m'
-end
-
--- https://jdhao.github.io/2020/03/14/nvim_search_replace_multiple_file/
--- https://stackoverflow.com/a/51962260
--- https://thoughtbot.com/blog/faster-grepping-in-vim
-vim.cmd('packadd cfilter')
-
-lvim.lsp.override = { 'jdtls' }
-
-_G.resize_tree = function()
-    local nvim_tree_bufnr = require('nvim-tree.view').View.bufnr
-    local nvim_win = vim.fn.win_findbuf(nvim_tree_bufnr)
-    if next(nvim_win) then
-        local tree_win = nvim_win[1]
-        local tree_buf_width = vim.fn.winwidth(tree_win)
-        require('bufferline.state').set_offset(tree_buf_width + 1, 'FileTree')
-    else
-        print('NvimTree buffer is hidden')
-    end
-end
-
-lvim.keys.normal_mode['<Leader>r'] = '<Cmd>lua resize_tree()<cr>'
-
 -- Map K to hover while session is active
 local dap = require('dap')
 local api = vim.api
@@ -538,3 +599,7 @@ dap.listeners.after['event_terminated']['me'] = function()
     end
     keymap_restore = {}
 end
+
+require('lsp_signature').setup({
+    toggle_key = '<M-q>',
+})
