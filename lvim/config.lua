@@ -137,7 +137,7 @@ lvim.plugins = {
     { 'folke/tokyonight.nvim' },
     { 'tpope/vim-repeat' },
     { 'tpope/vim-surround', keys = { 'c', 'd', 'y' } },
-    { 'tpope/vim-unimpaired', keys = { '[', ']' } },
+    { 'tpope/vim-unimpaired', keys = { '[', ']', 'y' } },
     { 'tpope/vim-obsession', cmd = { 'Obsess', 'Obsess!' } },
     {
         'tpope/vim-fugitive',
