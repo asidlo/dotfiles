@@ -10,5 +10,5 @@ linters.setup({
         exe = 'markdownlint',
         args = { '-c', os.getenv('HOME') .. '/.markdownlint.json' },
     },
-    { exe = 'vale' },
+    -- { exe = 'vale' },
 })
