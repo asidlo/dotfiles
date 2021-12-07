@@ -52,7 +52,7 @@ lvim.builtin.nvimtree.show_icons.git = 0
 lvim.builtin.nvimtree.setup.view.auto_resize = false
 lvim.builtin.nvimtree.setup.view.nvim_tree_group_empty = 1
 lvim.builtin.nvimtree.nvim_tree_gitignore = 1
-lvim.builtin.nvimtree.ignore = { '.git', 'node_modules', '.cache', '.DS_Store' }
+lvim.builtin.nvimtree.setup.filters = { '.git', 'node_modules', '.cache', '.DS_Store' }
 lvim.builtin.lualine.style = 'default'
 lvim.builtin.treesitter.ensure_installed = {
     'bash',
