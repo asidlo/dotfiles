@@ -54,19 +54,7 @@ lvim.builtin.nvimtree.setup.view.nvim_tree_group_empty = 1
 lvim.builtin.nvimtree.nvim_tree_gitignore = 1
 lvim.builtin.nvimtree.setup.filters = { '.git', 'node_modules', '.cache', '.DS_Store' }
 lvim.builtin.lualine.style = 'default'
-lvim.builtin.treesitter.ensure_installed = {
-    'bash',
-    'c',
-    'javascript',
-    'json',
-    'lua',
-    'python',
-    'typescript',
-    'css',
-    'rust',
-    'java',
-    'yaml',
-}
+
 vim.list_extend(lvim.lsp.override, { 'jdtls' })
 lvim.lsp.automatic_servers_installation = false
 lvim.lsp.on_attach_callback = function(client, bufnr)
@@ -75,7 +63,32 @@ lvim.lsp.on_attach_callback = function(client, bufnr)
     end
 end
 
-lvim.builtin.treesitter.ignore_install = { 'haskell' }
+lvim.builtin.treesitter.ensure_installed = {
+    'bash',
+    'c',
+    'cpp',
+    'cmake',
+    'vue',
+    'javascript',
+    'json',
+    'jsonc',
+    'json5',
+    'html',
+    'lua',
+    'python',
+    'typescript',
+    'css',
+    'rust',
+    'kotlin',
+    'java',
+    'vim',
+    'yaml',
+    'toml',
+    'rst',
+    'gomod',
+    'go',
+    'dockerfile',
+}
 lvim.builtin.treesitter.highlight.enabled = true
 lvim.builtin.treesitter.incremental_selection = {
     enable = true,
@@ -131,10 +144,10 @@ lvim.keys.normal_mode['<S-Tab>'] = { 'v:lua.s_tab_complete()', { expr = true } }
 
 lvim.builtin.which_key.mappings['lD'] = { ':call v:lua.toggle_diagnostics()<CR>', 'Toggle Diagnostics' }
 lvim.builtin.which_key.mappings['sp'] = { '<Cmd>Telescope projects<CR>', 'Search Projects' }
+lvim.builtin.which_key.mappings['lo'] = { '<Cmd>SymbolsOutline<CR>', 'Symbols Outline' }
 
 -- Additional Plugins
 lvim.plugins = {
-    { 'folke/tokyonight.nvim' },
     { 'tpope/vim-repeat' },
     { 'tpope/vim-surround', keys = { 'c', 'd', 'y' } },
     { 'tpope/vim-unimpaired', keys = { '[', ']', 'y' } },
@@ -158,6 +171,7 @@ lvim.plugins = {
         },
         ft = { 'fugitive' },
     },
+    { 'folke/tokyonight.nvim' },
     {
         'folke/todo-comments.nvim',
         event = 'BufRead',
@@ -192,7 +206,9 @@ lvim.plugins = {
             vim.g.indent_blankline_use_treesitter = true
         end,
     },
+    { 'mfussenegger/nvim-jdtls' },
     { 'simrat39/symbols-outline.nvim', cmd = 'SymbolsOutline' },
+    { 'nvim-treesitter/nvim-treesitter-textobjects' },
     {
         'nvim-telescope/telescope-project.nvim',
         event = 'BufWinEnter',
@@ -223,8 +239,6 @@ lvim.plugins = {
             { 'moll/vim-bbye' },
         },
     },
-    { 'mfussenegger/nvim-jdtls' },
-    { 'nvim-treesitter/nvim-treesitter-textobjects' },
     { 'segeljakt/vim-silicon' },
 }
 

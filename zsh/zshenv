@@ -41,8 +41,8 @@ alias cls='clear'
 alias nnn='nnn -de'
 
 if (( $+commands[nvim] )); then
-	export VISUAL=nvim
-	export EDITOR=nvim
+	export VISUAL=lvim
+	export EDITOR=lvim
 	export MANPAGER="$EDITOR +Man!"
 else
 	export VISUAL=vim

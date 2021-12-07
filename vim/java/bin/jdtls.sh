@@ -16,7 +16,8 @@ if ! command -v java &> /dev/null; then
 	exit 1
 fi
 
-JDTLS_TARGET_REPO="/opt/eclipse.jdt.ls"
+JDTLS_TARGET_REPO="$HOME/.local/share/nvim/lsp_servers/jdtls"
+# JDTLS_TARGET_REPO="/opt/eclipse.jdt.ls"
 JDT8LS_TARGET_REPO="/opt/eclipse.jdt.ls.1_8"
 JDTLS_JAR="$JDTLS_TARGET_REPO/plugins/org.eclipse.equinox.launcher_*.jar"
 JDT8LS_JAR="$JDT8LS_TARGET_REPO/plugins/org.eclipse.equinox.launcher_*.jar"
@@ -49,7 +50,7 @@ if (( JAVA_MAJOR_VERSION > 8 )); then
 		-Dlog.level=ALL \
 		-noverify \
 		-Xmx1G \
-        -jar $(echo "$JDTLS_JAR") \
+		-jar $(echo "$JDTLS_JAR") \
 		-configuration "$JDTLS_TARGET_REPO/$JDTLS_CONFIG" \
 		--add-modules=ALL-SYSTEM \
 		--add-opens java.base/java.util=ALL-UNNAMED \
@@ -66,7 +67,7 @@ elif [[ $(echo "$JAVA_VERSION" | cut -d'.' -f1,2) == "1.8" ]]; then
 		-Dlog.level=ALL \
 		-noverify \
 		-Xmx1G \
-		-jar "$JDT8LS_JAR" \
+		-jar $(echo "$JDT8LS_JAR") \
 		-configuration "$JDT8LS_TARGET_REPO/$JDTLS_CONFIG" \
 		-data "$DEFAULT_DATA_DIR"
 else
