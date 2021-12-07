@@ -29,14 +29,15 @@
                 "name": "Command Prompt"
             },
             {
-                "bellStyle": "visual",
+                "bellStyle": "none",
                 "commandline": "wsl.exe ~ -d Ubuntu",
                 "fontFace": "MesloLGM Nerd Font",
                 "fontSize": 11,
                 "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
                 "hidden": false,
                 "name": "Ubuntu",
-                "source": "Windows.Terminal.Wsl"
+                "source": "Windows.Terminal.Wsl",
+                "suppressApplicationTitle": true
             },
             {
                 "commandline": "C:/Program Files/Git/bin/bash.exe",
@@ -77,8 +78,8 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                // "commandline": "wsl.exe nvim -S ~/.local/share/nvim/sessions/notes.vim",
-                "commandline": "wsl.exe cd ~/workspace/notes && lvim '+lua require(\"persistence\").load()'",
+                "commandline": "wsl.exe lvim -S ~/.local/share/nvim/sessions/notes.vim",
+                // "commandline": "wsl.exe cd ~/workspace/notes && lvim '+lua require(\"persistence\").load()'",
                 "fontFace": "MesloLGM Nerd Font",
                 "fontSize": 11,
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
