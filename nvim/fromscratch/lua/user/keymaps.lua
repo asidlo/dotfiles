@@ -36,12 +36,12 @@ keymap("n", "<S-l>", ":bnext<CR>", opts)
 keymap("n", "<S-h>", ":bprevious<CR>", opts)
 
 -- Move text up and down
-keymap("n", "<A-j>", "<Esc>:m .+1<CR>==gi", opts)
-keymap("n", "<A-k>", "<Esc>:m .-2<CR>==gi", opts)
+keymap("n", "<A-j>", "<Esc>:m .+1<CR>==", opts)
+keymap("n", "<A-k>", "<Esc>:m .-2<CR>==", opts)
 
 -- Insert --
--- Press jk fast to enter
-keymap("i", "jk", "<ESC>", opts)
+keymap("i", "<A-j>", "<Esc>:m .+1<CR>==gi", opts)
+keymap("i", "<A-k>", "<Esc>:m .+1<CR>==gi", opts)
 
 -- Visual --
 -- Stay in indent mode
@@ -51,7 +51,6 @@ keymap("v", ">", ">gv", opts)
 -- Move text up and down
 keymap("v", "<A-j>", ":m .+1<CR>==", opts)
 keymap("v", "<A-k>", ":m .-2<CR>==", opts)
-keymap("v", "p", '"_dP', opts)
 
 -- Visual Block --
 -- Move text up and down
@@ -67,3 +66,6 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 -- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 -- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
+-- TODO (AS): Create a custom code-action for vale to add to dictionary
+-- could also add the top 10 entries in z= 
+keymap('n', 'zg', '<Cmd>lua add_to_dictionary(vim.fn.expand("<cword>"))<CR>', opts)

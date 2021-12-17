@@ -2,6 +2,6 @@ extends: spelling
 message: "Did you really mean '%s'?"
 level: warning
 ignore:
-  - vocab.txt
+  - en.utf-8.add
 filters:
   - "^[A-Z]"
