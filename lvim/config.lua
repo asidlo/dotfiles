@@ -48,6 +48,7 @@ lvim.leader = 'space'
 lvim.builtin.dashboard.active = true
 lvim.builtin.bufferline.active = false
 lvim.builtin.terminal.active = true
+lvim.builtin.dap.active = true
 lvim.builtin.nvimtree.setup.view.side = 'left'
 lvim.builtin.nvimtree.show_icons.tree_width = 40
 lvim.builtin.nvimtree.show_icons.git = 0
@@ -70,6 +71,7 @@ lvim.builtin.treesitter.ensure_installed = {
     'c',
     'cpp',
     'cmake',
+    'c_sharp',
     'vue',
     'javascript',
     'json',
