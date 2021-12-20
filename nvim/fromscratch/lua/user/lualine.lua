@@ -65,7 +65,7 @@ lualine.setup({
 	sections = {
 		lualine_a = {},
 		lualine_b = {},
-		lualine_c = {branch, diagnostics},
+		lualine_c = {branch, diagnostics, mode},
 		-- lualine_x = { "encoding", "fileformat", "filetype" },
 		lualine_x = {diff, spaces, "encoding", filetype, location  },
     lualine_y = {},
