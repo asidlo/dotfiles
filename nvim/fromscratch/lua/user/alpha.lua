@@ -33,10 +33,11 @@ dashboard.section.buttons.val = {
 -- local fortune = require('alpha.fortune')
 -- dashboard.section.footer.val = fortune
 dashboard.section.footer.val = os.date(' %d-%m-%Y   %H:%M:%S')
+-- dashboard.section.footer.val = vim.fn.system({ 'ncal', '-b', '-3', '-h' })
 
 dashboard.section.header.opts.hl = 'Include'
-dashboard.section.footer.opts.hl = "Type"
-dashboard.section.buttons.opts.hl = "Keyword"
+dashboard.section.footer.opts.hl = 'Type'
+dashboard.section.buttons.opts.hl = 'Keyword'
 -- dashboard.section.footer.opts.hl = 'Keyword'
 
 dashboard.opts.opts.noautocmd = true
