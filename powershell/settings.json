@@ -49,32 +49,22 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Professional\\Common7\\Tools\\VsDevCmd.bat\"",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
-                "guid": "{7445dc20-f8d3-4b63-a200-015e92c7e229}",
-                "hidden": true,
-                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2017.png",
-                "name": "VS2017 Dev",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\VsDevCmd.bat\"",
+                "commandline": "%comspec% /k \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\VsDevCmd.bat\"",
                 "fontFace": "MesloLGM Nerd Font",
                 "fontSize": 11,
                 "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
                 "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2019.png",
-                "name": "VS2019 Cmd",
+                "name": "VS2022 Cmd",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell -VsInstanceId 0dc35847 -DevCmdArguments '-arch=x64'}",
+                "commandline": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell -VsInstanceId 0dc35847 -DevCmdArguments '-arch=x64'}",
                 "fontFace": "MesloLGM Nerd Font",
                 "fontSize": 11,
                 "guid": "{ece5cd36-703a-481b-bc31-f0f91af22a74}",
                 "hidden": true,
                 "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2019.png",
-                "name": "VS2019 Powershell",
+                "name": "VS2022 Powershell",
                 "startingDirectory": "%USERPROFILE%"
             },
             {

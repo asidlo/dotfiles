@@ -13,6 +13,12 @@ if not handlers_ok then
     return
 end
 
+-- Check for unix home and if not present then use windows equivalent
+local home = os.getenv('HOME')
+if not home then
+    home = os.getenv('HOMEPATH')
+end
+
 null_ls.setup({
     debug = true,
     on_attach = handlers.on_attach,
@@ -50,9 +56,10 @@ null_ls.setup({
         formatting.shellharden.with({ filetypes = { 'bash', 'sh' } }),
         diagnostics.shellcheck.with({ filetypes = { 'bash', 'sh' } }),
 
+        diagnostics.markdownlint.with({ extra_args = { '-c', home .. '/.markdownlint.json' } }),
+
         -- Markdown
         formatting.prettierd,
-        diagnostics.markdownlint.with({ extra_args = { '-c', os.getenv('HOME') .. '/.markdownlint.json' } }),
 
         -- Text
         diagnostics.vale,
