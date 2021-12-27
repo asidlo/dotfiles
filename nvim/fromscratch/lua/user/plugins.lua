@@ -81,8 +81,12 @@ return packer.startup(function(use)
     use('williamboman/nvim-lsp-installer') -- simple to use language server installer
     use('tamago324/nlsp-settings.nvim') -- language server settings defined in json for
     use('jose-elias-alvarez/null-ls.nvim') -- for formatters and linters
-    use('nvim-lua/lsp_extensions.nvim')
     use('mfussenegger/nvim-dap')
+    use('Pocco81/DAPInstall.nvim')
+    use({
+        'simrat39/rust-tools.nvim',
+        config = require('rust-tools').setup({ })
+    })
     use('mfussenegger/nvim-jdtls')
 
     use({

@@ -84,3 +84,5 @@
 
 	# Get all aliases defined in gitconfig
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+[init]
+	defaultBranch = master
