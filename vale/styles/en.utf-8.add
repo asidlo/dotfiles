@@ -118,3 +118,12 @@ classpath
 pwd
 scaffolded
 src
+wsl
+cygwin
+openssl
+arg
+linux
+keytool
+keystore
+truststore
+keypair

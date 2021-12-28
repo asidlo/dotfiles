@@ -52,7 +52,17 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.python3_host_prog = '/usr/bin/python3'
 
-vim.g.markdown_fenced_languages = { 'bash', 'sh', 'json', 'javascript', 'python', 'java', 'groovy', 'go', 'rust' }
+vim.g.markdown_fenced_languages = {
+    'bash',
+    'sh',
+    'json',
+    'javascript',
+    'python',
+    'java',
+    'groovy',
+    'go',
+    'rust',
+}
 
 if vim.fn.executable('rg') then
     vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
