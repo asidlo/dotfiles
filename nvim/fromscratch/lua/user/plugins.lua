@@ -88,7 +88,7 @@ return packer.startup(function(use)
     use('Pocco81/DAPInstall.nvim')
     use({
         'simrat39/rust-tools.nvim',
-        config = function() require('rust-tools').setup({ }) end
+        config = function() require('rust-tools').setup({ }) end,
     })
     use('mfussenegger/nvim-jdtls')
 

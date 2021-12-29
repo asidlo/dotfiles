@@ -145,13 +145,15 @@ require('cmp').setup.cmdline(':', {
         { name = 'cmdline' },
     },
     mapping = {
+        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
         ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
         ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
-        ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-1), { 'c' }),
-        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(1), { 'c' }),
-        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
         ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
         ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
+    },
+    completion = {
+        completeopt = 'menu,menuone,noselect',
     },
 })
 
@@ -160,13 +162,15 @@ require('cmp').setup.cmdline('/', {
         { name = 'buffer' },
     },
     mapping = {
+        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
         ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
         ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
-        ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-1), { 'c' }),
-        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(1), { 'c' }),
-        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
         ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
         ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
+    },
+    completion = {
+        completeopt = 'menu,menuone,noselect',
     },
 })
 
