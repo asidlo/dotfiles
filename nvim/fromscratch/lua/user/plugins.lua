@@ -71,6 +71,9 @@ return packer.startup(function(use)
     use('hrsh7th/cmp-cmdline') -- cmdline completions
     use('saadparwaiz1/cmp_luasnip') -- snippet completions
     use('hrsh7th/cmp-nvim-lsp')
+    use('hrsh7th/cmp-nvim-lua')
+    use('f3fora/cmp-spell')
+    use('uga-rosa/cmp-dictionary')
 
     -- snippets
     use('L3MON4D3/LuaSnip') --snippet engine
