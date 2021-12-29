@@ -135,18 +135,31 @@ cmp.setup({
         ghost_text = false,
         native_menu = false,
     },
+    completion = {
+        completeopt = 'menu,menuone,noinsert'
+    }
 })
 
-require'cmp'.setup.cmdline(':', {
-  sources = {
-    { name = 'cmdline' }
-  }
+require('cmp').setup.cmdline(':', {
+    sources = {
+        { name = 'cmdline' },
+    },
+    mapping = {
+        -- Accept currently selected item. If none selected, `select` first item.
+        -- Set `select` to `false` to only confirm explicitly selected items.
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    },
 })
 
-require'cmp'.setup.cmdline('/', {
-  sources = {
-    { name = 'buffer' }
-  }
+require('cmp').setup.cmdline('/', {
+    sources = {
+        { name = 'buffer' },
+    },
+    mapping = {
+        -- Accept currently selected item. If none selected, `select` first item.
+        -- Set `select` to `false` to only confirm explicitly selected items.
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    },
 })
 
 require('cmp_dictionary').setup({
