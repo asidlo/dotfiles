@@ -136,8 +136,8 @@ cmp.setup({
         native_menu = false,
     },
     completion = {
-        completeopt = 'menu,menuone,noinsert'
-    }
+        completeopt = 'menu,menuone,noinsert',
+    },
 })
 
 require('cmp').setup.cmdline(':', {
@@ -145,9 +145,13 @@ require('cmp').setup.cmdline(':', {
         { name = 'cmdline' },
     },
     mapping = {
-        -- Accept currently selected item. If none selected, `select` first item.
-        -- Set `select` to `false` to only confirm explicitly selected items.
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
+        ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
+        ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-1), { 'c' }),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(1), { 'c' }),
+        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
+        ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
+        ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
     },
 })
 
@@ -156,9 +160,13 @@ require('cmp').setup.cmdline('/', {
         { name = 'buffer' },
     },
     mapping = {
-        -- Accept currently selected item. If none selected, `select` first item.
-        -- Set `select` to `false` to only confirm explicitly selected items.
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
+        ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
+        ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-1), { 'c' }),
+        ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(1), { 'c' }),
+        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
+        ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
+        ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
     },
 })
 
