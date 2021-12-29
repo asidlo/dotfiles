@@ -73,3 +73,8 @@ end
 -- https://stackoverflow.com/a/51962260
 -- https://thoughtbot.com/blog/faster-grepping-in-vim
 vim.cmd('packadd cfilter')
+
+vim.cmd('iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>')
+vim.cmd('iab ddate <c-r>=strftime("%Y-%m-%d")<cr>')
+vim.cmd('cab ddate <c-r>=strftime("%Y_%m_%d")<cr>')
+vim.cmd('iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>')
