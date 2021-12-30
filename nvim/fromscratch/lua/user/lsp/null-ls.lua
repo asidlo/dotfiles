@@ -56,10 +56,11 @@ null_ls.setup({
         formatting.shellharden.with({ filetypes = { 'bash', 'sh' } }),
         diagnostics.shellcheck.with({ filetypes = { 'bash', 'sh' } }),
 
-        diagnostics.markdownlint.with({ extra_args = { '-c', home .. '/.markdownlint.json' } }),
-
         -- Markdown
-        formatting.prettierd,
+        -- JSON, graphql, yaml, and javascript varients can also be formatted with prettier,
+        -- but they have their own dedicated LSPs
+        formatting.prettierd.with({ filetypes = { 'markdown', 'html', 'css', 'scss', 'less' } }),
+        diagnostics.markdownlint.with({ extra_args = { '-c', home .. '/.markdownlint.json' } }),
 
         -- Text
         diagnostics.vale,

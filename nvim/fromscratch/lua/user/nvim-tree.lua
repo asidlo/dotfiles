@@ -21,6 +21,8 @@ vim.g.nvim_tree_icons = {
   },
 }
 
+vim.g.nvim_tree_group_empty = 1
+
 local status_ok, nvim_tree = pcall(require, "nvim-tree")
 if not status_ok then
   return
@@ -83,7 +85,6 @@ nvim_tree.setup {
     hide_root_folder = false,
     side = "left",
     auto_resize = false,
-    nvim_tree_group_empty = 1,
     mappings = {
       custom_only = false,
       list = {
