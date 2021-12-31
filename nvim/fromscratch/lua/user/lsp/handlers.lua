@@ -144,19 +144,18 @@ M.on_attach = function(client, bufnr)
     if client.resolved_capabilities.document_range_formatting then
         vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
     end
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
     lsp_keymaps(bufnr)
     lsp_highlight_document(client)
     lsp_code_lens_refresh(client)
 end
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
 
 local status_ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
 if not status_ok then
     return
 end
 
-M.capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+M.capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- https://github.com/neovim/neovim/issues/14825
 vim.g.diagnostics_visible = true
