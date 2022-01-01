@@ -178,6 +178,7 @@ require('cmp_dictionary').setup({
     dic = {
         ['markdown'] = '/usr/share/dict/words',
         ['text'] = '/usr/share/dict/words',
+        ['gitcommit'] = '/usr/share/dict/words',
     },
     -- The following are default values, so you don't need to write them if you don't want to change them
     exact = 2,
