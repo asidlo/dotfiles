@@ -98,12 +98,7 @@ return packer.startup(function(use)
             require('go').setup()
         end,
     })
-    use({
-        'simrat39/rust-tools.nvim',
-        config = function()
-            require('rust-tools').setup({})
-        end,
-    })
+    use('simrat39/rust-tools.nvim')
     use('mfussenegger/nvim-jdtls')
 
     use({
