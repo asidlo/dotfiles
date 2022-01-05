@@ -42,9 +42,9 @@ local options = {
 vim.opt.shortmess:append('c')
 
 if vim.fn.has('unix') then
-    vim.o.dictionary:append('/usr/share/dict/words')
+    vim.o.dictionary = '/usr/share/dict/words'
 else
-    vim.o.dictionary:append('~/AppData/Local/nvim/words')
+    vim.o.dictionary = '~/AppData/Local/nvim/words'
 end
 
 for k, v in pairs(options) do
