@@ -41,7 +41,7 @@ local options = {
 
 vim.opt.shortmess:append('c')
 
-if vim.fn.has('unix') then
+if vim.fn.has('unix') == 1 then
     vim.o.dictionary = '/usr/share/dict/words'
 else
     vim.o.dictionary = '~/AppData/Local/nvim/words'
@@ -56,7 +56,7 @@ vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
-if vim.fn.has('win32') then
+if vim.fn.has('win32') == 1 then
     vim.g.python3_host_prog = 'C:\\ProgramData\\Anaconda3\\python.exe'
 else
     vim.g.python3_host_prog = '/usr/bin/python3'
