@@ -31,8 +31,10 @@
             {
                 "bellStyle": "none",
                 "commandline": "wsl.exe ~ -d Ubuntu",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
                 "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
                 "hidden": false,
                 "name": "Ubuntu",
