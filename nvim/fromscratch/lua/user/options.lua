@@ -36,11 +36,16 @@ local options = {
     foldenable = false,
     foldmethod = 'expr',
     foldexpr = 'nvim_treesitter#foldexpr()',
-    dictionary = { '/usr/share/dict/words' },
     autowriteall = true,
 }
 
 vim.opt.shortmess:append('c')
+
+if vim.fn.has('unix') then
+    vim.o.dictionary:append('/usr/share/dict/words')
+else
+    vim.o.dictionary:append('~/AppData/Local/nvim/words')
+end
 
 for k, v in pairs(options) do
     vim.opt[k] = v
@@ -50,7 +55,12 @@ vim.g.loaded_python_provider = 0
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
-vim.g.python3_host_prog = '/usr/bin/python3'
+
+if vim.fn.has('win32') then
+    vim.g.python3_host_prog = 'C:\\ProgramData\\Anaconda3\\python.exe'
+else
+    vim.g.python3_host_prog = '/usr/bin/python3'
+end
 
 vim.g.markdown_fenced_languages = {
     'bash',
