@@ -146,7 +146,9 @@ M.on_attach = function(client, bufnr)
     end
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
     lsp_keymaps(bufnr)
-    lsp_highlight_document(client)
+    if client.name ~= 'powershell_es' then
+        lsp_highlight_document(client)
+    end
     lsp_code_lens_refresh(client)
 end
 
