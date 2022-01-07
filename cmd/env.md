@@ -16,3 +16,12 @@ value = `%FZF_DEFAULT_COMMAND%`
 
 key   = `FZF_ALT_C_COMMAND`
 value = `fd --type d %FD_OPTS%`
+
+key   = `MANPAGER`
+value = `%EDITOR% +Man!`
+
+key   = `EDITOR`
+value = `nvim`
+
+key   = `VISUAL`
+value = `%EDITOR%`
