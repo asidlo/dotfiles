@@ -151,6 +151,11 @@
             "command": "unbound",
             "keys": "alt+enter"
         },
+        // Prevents using Ctrl+^ in vim/nvim
+        { 
+            "command": "unbound",
+            "keys": "ctrl+shift+6"
+        },
         {
             "command": {
                 "action": "newTab",
