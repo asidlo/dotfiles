@@ -48,9 +48,17 @@ lsp_installer.on_server_ready(function(server)
         if not rtools_ok then
             return
         end
+
+        local custom_opts = {
+            checkOnSave = { command = 'clippy' },
+        }
+
+        local lsp_opts = vim.tbl_deep_extend('force', server:get_default_options(), opts)
+
         rtools.setup({
-            server = vim.tbl_deep_extend('force', server:get_default_options(), opts),
+            server = vim.tbl_deep_extend('force', lsp_opts, custom_opts),
         })
+
         server:attach_buffers()
         return
     end
