@@ -64,7 +64,7 @@ bufferline.setup {
     -- can also be a table containing 2 custom separators
     -- [focused and unfocused]. eg: { '|', '|' }
     separator_style = "thin", -- | "thick" | "thin" | { 'any', 'any' },
-    enforce_regular_tabs = true,
+    enforce_regular_tabs = false,
     always_show_bufferline = true,
     -- sort_by = 'id' | 'extension' | 'relative_directory' | 'directory' | 'tabs' | function(buffer_a, buffer_b)
     --   -- add custom logic
@@ -119,8 +119,8 @@ bufferline.setup {
     },
 
     duplicate_selected = {
-      guifg = { attribute = "fg", highlight = "TabLineSel" },
-      guibg = { attribute = "bg", highlight = "TabLineSel" },
+      -- guifg = { attribute = "fg", highlight = "Normal" },
+      -- guibg = { attribute = "bg", highlight = "Normal" },
       gui = "italic",
     },
     duplicate_visible = {
