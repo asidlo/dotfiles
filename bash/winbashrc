@@ -21,7 +21,6 @@ alias vi=vim
 alias grep="grep --color"
 alias cls=clear
 alias tree="tree -L 2"
-alias copy="clip"
 alias python="winpty.exe python"
 
 #==============================================================================
@@ -35,24 +34,8 @@ alias ldir="ls -d */"
 alias md="mkdir -p"
 
 #==============================================================================
-# Git Aliases
-#==============================================================================
-# https://gist.github.com/mwhite/6887990
-for git_alias in $(git --list-cmds=alias); do
-    # Alias each command
-    alias g$git_alias="git $git_alias"
-done
-
-function extract_git_aliases() {
-    output=$(git config -l | grep "alias" | sed 's/=/,/' | column -t -s, | cut -c 1-80)
-    echo "$output" | column -t -s,
-}
-
-alias gla="extract_git_aliases"
-alias gal="extract_git_aliases"
-
-#==============================================================================
 # Docker Aliases
 #==============================================================================
 # Docker Machine
-alias dm="docker-machine"
+alias dkm="docker-machine"
+alias dk="docker"
