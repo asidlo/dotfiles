@@ -92,6 +92,8 @@ if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE]
 	--bind='ctrl-a:select-all+accept'
 	"
 else
+	# Issue with installing batcat on wsl ubuntu: https://askubuntu.com/a/1300824
+	# sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
 	>&2 echo "$fg[yellow]WARN$reset_color: [fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
 fi
 
