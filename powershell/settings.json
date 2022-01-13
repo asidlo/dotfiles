@@ -14,16 +14,20 @@
         "list": [
             {
                 "commandline": "powershell.exe",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
                 "hidden": false,
                 "name": "Windows PowerShell"
             },
             {
                 "commandline": "cmd.exe",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
                 "name": "Command Prompt"
@@ -43,8 +47,10 @@
             },
             {
                 "commandline": "C:/Program Files/Git/bin/bash.exe",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
                 "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
                 "icon": "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
                 "name": "Git Bash",
@@ -52,58 +58,98 @@
             },
             {
                 "commandline": "%comspec% /k \"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\VsDevCmd.bat\"",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
+                "hidden": true,
                 "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
-                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2019.png",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2022 Cmd",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
                 "commandline": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell -VsInstanceId 0dc35847 -DevCmdArguments '-arch=x64'}",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
                 "guid": "{ece5cd36-703a-481b-bc31-f0f91af22a74}",
                 "hidden": true,
-                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\vs2019.png",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2022 Powershell",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "%windir%\\System32\\cmd.exe \"/K\" C:\\ProgramData\\Anaconda3\\Scripts\\activate.bat C:\\ProgramData\\Anaconda3",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "commandline": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84}\"",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
+                "guid": "{ece5cd36-703a-481b-bc31-f0f91af22a74}",
+                "hidden": true,
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "name": "VS2019 Powershell",
+                "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\VsDevCmd.bat\"",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
+                "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
+                "hidden": false,
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "name": "VS2019 Cmd",
+                "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "commandline": "%windir%\\System32\\cmd.exe \"/K\" %USERPROFILE%\\AppData\\Local\\Anaconda3\\Scripts\\activate.bat %USERPROFILE%\\AppData\\Local\\Anaconda3",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
+                "hidden": false,
                 "guid": "{dbd445d1-20b5-4bb5-9e21-aeff97668825}",
-                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\anaconda-navigator.ico",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\anaconda-navigator.ico",
                 "name": "Anaconda Cmd",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "%windir%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy ByPass -NoExit -Command \"& 'C:\\ProgramData\\Anaconda3\\shell\\condabin\\conda-hook.ps1' ; conda activate 'C:\\ProgramData\\Anaconda3' \"",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "commandline": "%windir%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe -ExecutionPolicy ByPass -NoExit -Command \"& $env:USERPROFILE\\AppData\\Local\\Anaconda3\\shell\\condabin\\conda-hook.ps1 ; conda activate $env:USERPROFILE\\AppData\\Local\\Anaconda3 \"",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
                 "guid": "{0cab0032-cf39-4f85-9c7a-949829e8c648}",
                 "hidden": true,
-                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\anaconda-navigator.ico",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\anaconda-navigator.ico",
                 "name": "Anaconda Powershell",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
                 "commandline": "wsl.exe nvim -S ~/.local/share/nvim/sessions/notes.vim",
                 // "commandline": "wsl.exe cd ~/workspace/notes && lvim '+lua require(\"persistence\").load()'",
-                "fontFace": "MesloLGM Nerd Font",
-                "fontSize": 11,
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
                 "hidden": false,
-                "icon": "%USERPROFILE%\\Workspace\\dotfiles\\powershell\\icons\\notepad.png",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\notepad.png",
                 "name": "Notes",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
-                "hidden": true,
+                "hidden": false,
                 "name": "Azure Cloud Shell",
-                "source": "Windows.Terminal.Azure"
+                "source": "Windows.Terminal.Azure",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                }
             },
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
@@ -156,7 +202,7 @@
             "keys": "alt+enter"
         },
         // Prevents using Ctrl+^ in vim/nvim
-        { 
+        {
             "command": "unbound",
             "keys": "ctrl+shift+6"
         },

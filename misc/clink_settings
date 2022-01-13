@@ -1,0 +1,33 @@
+# Note that clink settings dont work with symlinks, need to copy file as is
+
+# name: Enable automatic suggestions
+# type: boolean
+autosuggest.enable = True
+
+# name: Controls what startup logo to show
+# type: enum
+# options: none,full,short
+clink.logo = short
+
+# name: Strips CR and LF chars on paste
+# type: enum
+# options: delete,space,ampersand,crlf
+clink.paste_crlf = space
+
+# name: Auto-answer terminate prompt
+# type: enum
+# options: off,answer_yes,answer_no
+cmd.auto_answer = answer_yes
+
+# name: Skip adding lines prefixed with whitespace
+# type: boolean
+history.ignore_space = False
+
+# name: The number of history lines to save
+# type: integer
+history.max_lines = 10000
+
+# name: Support Windows' Ctrl-Alt substitute for AltGr
+# type: boolean
+terminal.use_altgr_substitute = True
+

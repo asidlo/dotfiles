@@ -1,14 +1,12 @@
-# Doesnt work with symlinks for some reason, so need to copy changes to dotdir 
-# Also need to manually set clink specific settings
-# > clink set history_io 1
-set bell-style none
-# set editing-mode vi
-# set show-mode-in-prompt on
+# Some common Readline config settings.
 
+set colored-stats on               # Turn on completion colors.
+set colored-completion-prefix on   # Color the typed completion prefix.
+set bell-style none
 set completion-ignore-case on
 set show-all-if-ambiguous on
 set visible-stats on
 
-# set keymap vi-move
-# "dd": kill-whole-line
-# "yy": copy-line-to-clipboard
+# Some config settings that only work in Clink.
+# https://chrisant996.github.io/clink/clink.html
+# See `clink info` for settings file

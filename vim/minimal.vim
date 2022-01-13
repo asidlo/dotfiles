@@ -39,7 +39,7 @@ runtime ftplugin/man.vim
 " Section: SETTINGS {{{
 "==============================================================================
 set nocompatible
-set list
+set nolist
 set listchars=tab:>-,trail:-
 set smarttab
 set smartcase
@@ -187,10 +187,10 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 
 " Move cusor by display lines when wrapping
-" noremap <up> gk
-" noremap <down> gj
-" noremap j gj
-" noremap k gk
+noremap <up> gk
+noremap <down> gj
+noremap j gj
+noremap k gk
 
 " Change pwd to current directory
 nnoremap <leader>cd :cd %:p:h<cr>
