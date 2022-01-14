@@ -2,7 +2,7 @@ flexprompt.settings.connection = "disconnected"
 flexprompt.settings.lines = "two"
 flexprompt.settings.left_frame = "none"
 flexprompt.settings.flow = "fluent"
-flexprompt.settings.left_prompt = "{battery}{cwd}{git}{duration}"
+flexprompt.settings.left_prompt = "{battery}{cwd}{git}{python}{duration}"
 flexprompt.settings.symbols =
 {
     prompt =
