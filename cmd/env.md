@@ -25,3 +25,6 @@ value = `nvim`
 
 key   = `VISUAL`
 value = `%EDITOR%`
+
+key   = `PROMPT`
+value = `$E[36m%USERNAME%$E[0m$Sat$S$E[35m%COMPUTERNAME%$E[0m$Sin$S$E[34m$P$E[0m$_$G$S`
