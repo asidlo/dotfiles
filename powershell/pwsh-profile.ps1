@@ -133,8 +133,7 @@ function Stop-JavaProcesses {
 Set-Alias -Name ls -Value Get-ChildItemColorFormatWide -Option AllScope
 Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias -Name cd -Value Set-LocationEnhanced -Option AllScope
-# Set-Alias -Name which -Value Get-Command
-# Set-Alias -Name where -Value Get-Command
+Set-Alias -Name which -Value Get-Command
 
 #--------------------------------------------------------------
 # Prompt

@@ -21,22 +21,6 @@
             "keys": "ctrl+v"
         },
         {
-            "command": {
-                "action": "newTab",
-                "profile": "Notes",
-                "suppressApplicationTitle": true,
-                "tabTitle": "Notes"
-            },
-            "keys": "ctrl+alt+n"
-        },
-        {
-            "command": {
-                "action": "newTab",
-                "profile": "{dbd445d1-20b5-4bb5-9e21-aeff97668825}"
-            },
-            "keys": "ctrl+alt+a"
-        },
-        {
             "command": "find",
             "keys": "ctrl+shift+f"
         },
@@ -50,12 +34,46 @@
         },
         {
             "command": {
+                "action": "commandPalette"
+            },
+            "keys": "ctrl+shift+p"
+        },
+        {
+            "command": {
                 "action": "newTab",
-                "profile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}"
+                "profile": "Notes",
+                "suppressApplicationTitle": true,
+                "tabTitle": "Notes"
+            },
+            "keys": "ctrl+alt+n"
+        },
+        {
+            // Networking-nfv pwsh
+            "command": {
+                "action": "newTab",
+                "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
+                "suppressApplicationTitle": true
+            },
+            "keys": "ctrl+alt+d"
+        },
+        {
+            // Anaconda powershell
+            "command": {
+                "action": "newTab",
+                "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
+            },
+            "keys": "ctrl+alt+a"
+        },
+        {
+            // Pwsh
+            "command": {
+                "action": "newTab",
+                "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
             },
             "keys": "ctrl+alt+p"
         },
         {
+            // VS Dev CMD
             "command": {
                 "action": "newTab",
                 "profile": "{ca2a2617-2af6-468c-aae8-56516a4b139e}"
@@ -63,6 +81,7 @@
             "keys": "ctrl+alt+v"
         },
         {
+            // CMD
             "command": {
                 "action": "newTab",
                 "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
@@ -70,6 +89,7 @@
             "keys": "ctrl+alt+c"
         },
         {
+            // Mysys Bash
             "command": {
                 "action": "newTab",
                 "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
@@ -77,10 +97,12 @@
             "keys": "ctrl+alt+b"
         },
         {
+            // WSL
             "command": {
-                "action": "commandPalette"
+                "action": "newTab",
+                "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
             },
-            "keys": "ctrl+shift+p"
+            "keys": "ctrl+alt+t"
         }
     ],
     "copyFormatting": "none",
@@ -170,6 +192,18 @@
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2019 Powershell",
                 "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84; ./AddModules.ps1}\"",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
+                "guid": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
+                "hidden": true,
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "name": "Networking-nfv",
+                "startingDirectory": "D:\\Networking-nfv"
             },
             {
                 "commandline": "%windir%\\System32\\cmd.exe \"/K\" %USERPROFILE%\\AppData\\Local\\Anaconda3\\Scripts\\activate.bat %USERPROFILE%\\AppData\\Local\\Anaconda3",
