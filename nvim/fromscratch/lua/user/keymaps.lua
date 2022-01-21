@@ -77,3 +77,8 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 -- TODO (AS): Create a custom code-action for vale to add to dictionary
 -- could also add the top 10 entries in z= 
 keymap('n', 'zg', '<Cmd>lua add_to_dictionary(vim.fn.expand("<cword>"))<CR>', opts)
+
+keymap('n', '<M-Left>', '<Cmd>BufferLineMovePrev<CR>', opts)
+keymap('n', '<M-Right>', '<Cmd>BufferLineMoveNext<CR>', opts)
+keymap('n', '<S-Left>', '<Cmd>BufferLineCyclePrev<CR>', opts)
+keymap('n', '<S-Right>', '<Cmd>BufferLineCycleNext<CR>', opts)
