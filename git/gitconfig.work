@@ -3,6 +3,7 @@
 	email = andrewsidlo@microsoft.com
 [core]
 	excludesfile = ~/.gitignore
+    editor = nvim-qt.exe
 [log]
 	date = iso
 [fetch]
@@ -80,3 +81,8 @@
 
 	# Get all aliases defined in gitconfig
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+
+    # https://github.com/starship/starship/issues/1617#issuecomment-842371980
+    # fastprompt = !git config --local status.showUntrackedFiles no
+    # slowprompt = !git config --local --unset status.showUntrackedFiles
+    # st  = status -sb -unormal

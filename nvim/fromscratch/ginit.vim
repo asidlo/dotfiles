@@ -1,5 +1,5 @@
 " Set font without error
-GuiFont! MesloLGM\ Nerd\ Font:h11
+GuiFont! MesloLGM\ NF:h11
 
 " Remove tabline
 GuiTabline 0
