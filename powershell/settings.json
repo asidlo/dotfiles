@@ -112,7 +112,7 @@
     "multiLinePasteWarning": false,
     "profiles": {
         "defaults": {
-            "colorScheme": "Dracula"
+            "colorScheme": "Tokyonight"
         },
         "list": [
             {
@@ -483,7 +483,30 @@
             "selectionBackground": "#FFFFFF",
             "white": "#C0C0C0",
             "yellow": "#808000"
-        }
+        },
+        {
+            "background": "#24283b",
+            "black": "#1D202F",
+            "blue": "#7aa2f7",
+            "brightBlack": "#414868",
+            "brightBlue": "#7aa2f7",
+            "brightCyan": "#7dcfff",
+            "brightGreen": "#9ece6a",
+            "brightPurple": "#bb9af7",
+            "brightRed": "#f7768e",
+            "brightWhite": "#c0caf5",
+            "brightYellow": "#e0af68",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#7dcfff",
+            "foreground": "#c0caf5",
+            "green": "#9ece6a",
+            "name": "Tokyonight",
+            "purple": "#bb9af7",
+            "red": "#f7768e",
+            "selectionBackground": "#364A82",
+            "white": "#a9b1d6",
+            "yellow": "#e0af68"
+        },
     ],
     "theme": "dark"
 }
