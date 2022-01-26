@@ -82,3 +82,5 @@ keymap('n', '<M-Left>', '<Cmd>BufferLineMovePrev<CR>', opts)
 keymap('n', '<M-Right>', '<Cmd>BufferLineMoveNext<CR>', opts)
 keymap('n', '<S-Left>', '<Cmd>BufferLineCyclePrev<CR>', opts)
 keymap('n', '<S-Right>', '<Cmd>BufferLineCycleNext<CR>', opts)
+
+keymap('n', 'K', '<cmd>lua require("user.lsp.handlers").show_documentation()<CR>', opts)
