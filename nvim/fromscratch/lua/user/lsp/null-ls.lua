@@ -63,6 +63,6 @@ null_ls.setup({
         diagnostics.markdownlint.with({ extra_args = { '-c', home .. '/.markdownlint.json' } }),
 
         -- Text
-        diagnostics.vale,
+        -- diagnostics.vale,
     },
 })

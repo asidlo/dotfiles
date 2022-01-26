@@ -42,8 +42,10 @@ vim.opt.shortmess:append('c')
 
 if vim.fn.has('unix') == 1 then
     vim.o.dictionary = '/usr/share/dict/words'
+    vim.o.spellfile = '~/.config/nvim/spell/en.utf-8.add'
 else
     vim.o.dictionary = '~/AppData/Local/nvim/words'
+    vim.o.spellfile = '~/AppData/Local/nvim/spell/en.utf-8.add'
 end
 
 for k, v in pairs(options) do
@@ -61,17 +63,18 @@ else
     vim.g.python3_host_prog = '/usr/bin/python3'
 end
 
-vim.g.markdown_fenced_languages = {
-    'bash',
-    'sh',
-    'json',
-    'javascript',
-    'python',
-    'java',
-    'groovy',
-    'go',
-    'rust',
-}
+-- NOTE: Messes with vim's built in spelling for some reason
+-- vim.g.markdown_fenced_languages = {
+--     'bash',
+--     'sh',
+--     'json',
+--     'javascript',
+--     'python',
+--     'java',
+--     'groovy',
+--     'go',
+--     'rust',
+-- }
 
 if vim.fn.executable('rg') then
     vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
