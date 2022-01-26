@@ -96,7 +96,7 @@ local function lsp_keymaps(bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua require("lsp.handlers").show_documentation()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
@@ -172,6 +172,19 @@ M.toggle_diagnostics = function()
         vim.diagnostic.show()
         vim.cmd('e ' .. vim.fn.expand('%'))
         print('Diagnostics are visible')
+    end
+end
+
+M.show_documentation = function()
+    local filetype = vim.bo.filetype
+    if vim.tbl_contains({ 'vim','help' }, filetype) then
+        vim.cmd('h '..vim.fn.expand('<cword>'))
+    elseif vim.tbl_contains({ 'man' }, filetype) then
+        vim.cmd('Man '..vim.fn.expand('<cword>'))
+    elseif vim.fn.expand('%:t') == 'Cargo.toml' then
+        require('crates').show_popup()
+    else
+        vim.lsp.buf.hover()
     end
 end
 

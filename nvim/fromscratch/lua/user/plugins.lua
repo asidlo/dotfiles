@@ -16,12 +16,12 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 
 -- Autocommand that reloads neovim whenever you save the plugins.lua file
-vim.cmd([[
-  augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerSync
-  augroup end
-]])
+-- vim.cmd([[
+--   augroup packer_user_config
+--     autocmd!
+--     autocmd BufWritePost plugins.lua source <afile> | PackerSync
+--   augroup end
+-- ]])
 
 -- Use a protected call so we don't error out on first use
 local status_ok, packer = pcall(require, 'packer')
@@ -74,6 +74,19 @@ return packer.startup(function(use)
     use('hrsh7th/cmp-nvim-lua')
     use('f3fora/cmp-spell')
     use('uga-rosa/cmp-dictionary')
+    use({
+        'saecki/crates.nvim',
+        requires = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            require('crates').setup()
+        end,
+    })
+    use({
+        'PasiBergman/cmp-nuget',
+        requires = {
+            'nvim-lua/plenary.nvim',
+        },
+    })
 
     -- snippets
     use('L3MON4D3/LuaSnip') --snippet engine

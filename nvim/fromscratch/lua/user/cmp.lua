@@ -3,6 +3,11 @@ if not cmp_status_ok then
     return
 end
 
+local cmp_nuget_ok, cmp_nuget = pcall(require, 'cmp-nuget')
+if cmp_nuget_ok then
+    cmp_nuget.setup({})
+end
+
 local snip_status_ok, luasnip = pcall(require, 'luasnip')
 if not snip_status_ok then
     return
@@ -111,6 +116,9 @@ cmp.setup({
             })[entry.source.name]
             return vim_item
         end,
+        source_names = {
+            nuget = '(NuGet)',
+        },
     },
     sources = {
         { name = 'nvim_lsp' },
@@ -122,6 +130,11 @@ cmp.setup({
         {
             name = 'dictionary',
             keyword_length = 2,
+        },
+        { name = 'crates' },
+        {
+            name = 'nuget',
+            keyword_length = 0,
         },
     },
     confirm_opts = {
