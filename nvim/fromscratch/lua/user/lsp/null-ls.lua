@@ -64,5 +64,9 @@ null_ls.setup({
 
         -- Text
         -- diagnostics.vale,
+        -- diagnostics.cspell.with({filetypes = {'markdown'}}),
+        -- diagnostics.misspell.with({filetypes = {'markdown'}}),
+        -- diagnostics.codespell.with({filetypes = {'markdown'}}),
+        -- formatting.codespell.with({filetypes = {'markdown'}})
     },
 })

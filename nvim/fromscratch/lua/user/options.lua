@@ -41,11 +41,15 @@ local options = {
 vim.opt.shortmess:append('c')
 
 if vim.fn.has('unix') == 1 then
-    vim.o.dictionary = '/usr/share/dict/words'
-    vim.o.spellfile = '~/.config/nvim/spell/en.utf-8.add'
+    local home = os.getenv('HOME')
+    vim.opt['dictionary'] = '/usr/share/dict/words'
+    vim.opt['spellfile'] = home .. '/.config/nvim/spell/en.utf-8.add'
+    vim.opt['thesaurus'] = home .. '/.config/nvim/spell/thesaurii.txt'
 else
-    vim.o.dictionary = '~/AppData/Local/nvim/words'
-    vim.o.spellfile = '~/AppData/Local/nvim/spell/en.utf-8.add'
+    local home = os.getenv('USERPROFILE')
+    vim.opt['dictionary'] = home .. '\\AppData\\Local\\nvim\\words'
+    vim.opt['spellfile'] = home .. '\\AppData\\Local\\nvim\\spell\\en.utf-8.add'
+    vim.opt['thesaurus'] = home .. '\\AppData\\Local\\nvim\\spell\\thesaurii.txt'
 end
 
 for k, v in pairs(options) do
