@@ -106,6 +106,19 @@ return packer.startup(function(use)
     use('b0o/schemastore.nvim')
     use('mfussenegger/nvim-dap')
     use({
+        'rcarriga/nvim-dap-ui',
+        requires = { 'mfussenegger/nvim-dap' },
+        config = function()
+            require('dapui').setup()
+        end,
+    })
+    use({
+        'theHamsta/nvim-dap-virtual-text',
+        config = function()
+            require('nvim-dap-virtual-text').setup()
+        end,
+    })
+    use({
         'ray-x/go.nvim',
         config = function()
             local path = require 'nvim-lsp-installer.path'
