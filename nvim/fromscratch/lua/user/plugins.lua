@@ -138,7 +138,7 @@ return packer.startup(function(use)
             local install_root_dir = path.concat {vim.fn.stdpath 'data', 'lsp_servers'}
             require('rust-tools').setup({
                 server = {
-                    -- cmd = {install_root_dir .. '/rust/rust-analyzer'},
+                    cmd = {install_root_dir .. '/rust/rust-analyzer'},
                     on_attach = require('user.lsp.handlers').on_attach,
                     capabilities = require('user.lsp.handlers').capabilities,
                     settings = {
