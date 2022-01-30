@@ -131,7 +131,25 @@ return packer.startup(function(use)
             })
         end,
     })
-    use('simrat39/rust-tools.nvim')
+    use({
+        'simrat39/rust-tools.nvim',
+        config = function()
+            local path = require 'nvim-lsp-installer.path'
+            local install_root_dir = path.concat {vim.fn.stdpath 'data', 'lsp_servers'}
+            require('rust-tools').setup({
+                server = {
+                    -- cmd = {install_root_dir .. '/rust/rust-analyzer'},
+                    on_attach = require('user.lsp.handlers').on_attach,
+                    capabilities = require('user.lsp.handlers').capabilities,
+                    settings = {
+                        ['rust-analyzer'] = {
+                            checkOnSave = { command = 'clippy' },
+                        }
+                    }
+                }
+            })
+        end
+    })
     use('mfussenegger/nvim-jdtls')
 
     use({

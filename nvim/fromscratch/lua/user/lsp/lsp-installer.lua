@@ -44,22 +44,22 @@ lsp_installer.on_server_ready(function(server)
     -- end
 
     if server.name == 'rust_analyzer' then
-        local rtools_ok, rtools = pcall(require, 'rust-tools')
-        if not rtools_ok then
-            return
-        end
-
-        local custom_opts = {
-            checkOnSave = { command = 'clippy' },
-        }
-
-        local lsp_opts = vim.tbl_deep_extend('force', server:get_default_options(), opts)
-
-        rtools.setup({
-            server = vim.tbl_deep_extend('force', lsp_opts, custom_opts),
-        })
-
-        server:attach_buffers()
+        -- local rtools_ok, rtools = pcall(require, 'rust-tools')
+        -- if not rtools_ok then
+        --     return
+        -- end
+        --
+        -- local custom_opts = {
+        --     checkOnSave = { command = 'clippy' },
+        -- }
+        --
+        -- local lsp_opts = vim.tbl_deep_extend('force', server:get_default_options(), opts)
+        --
+        -- rtools.setup({
+        --     server = vim.tbl_deep_extend('force', lsp_opts, custom_opts),
+        -- })
+        --
+        -- server:attach_buffers()
         return
     end
     --
