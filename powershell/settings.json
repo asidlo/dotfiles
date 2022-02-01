@@ -51,8 +51,8 @@
             // Networking-nfv pwsh
             "command": {
                 "action": "newTab",
-                "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
-                "suppressApplicationTitle": true
+                "suppressApplicationTitle": true,
+                "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}"
             },
             "keys": "ctrl+alt+d"
         },
@@ -194,7 +194,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84; ./AddModules.ps1}\"",
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84; cd D:\\Networking-nfv; .\\AddModules.ps1}\"",
                 "font": {
                     "face": "MesloLGM Nerd Font",
                     "size": 11
