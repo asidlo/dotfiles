@@ -36,6 +36,8 @@ local options = {
     foldmethod = 'expr',
     foldexpr = 'nvim_treesitter#foldexpr()',
     autowriteall = true,
+    modeline = false,
+    modelines = 0
 }
 
 vim.opt.shortmess:append('c')
