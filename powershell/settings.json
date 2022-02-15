@@ -1,6 +1,13 @@
 {
+    "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": [
+        {
+            "command": {
+                "action": "commandPalette"
+            },
+            "keys": "ctrl+shift+p"
+        },
         {
             "command": "unbound",
             "keys": "alt+enter"
@@ -15,6 +22,23 @@
                 "singleLine": false
             },
             "keys": "ctrl+c"
+        },
+        {
+            "command": {
+                "action": "newTab",
+                "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
+                "suppressApplicationTitle": true
+            },
+            "keys": "ctrl+alt+d"
+        },
+        {
+            "command": {
+                "action": "newTab",
+                "profile": "Notes",
+                "suppressApplicationTitle": true,
+                "tabTitle": "Notes"
+            },
+            "keys": "ctrl+alt+n"
         },
         {
             "command": "paste",
@@ -34,38 +58,12 @@
         },
         {
             "command": {
-                "action": "commandPalette"
-            },
-            "keys": "ctrl+shift+p"
-        },
-        {
-            "command": {
-                "action": "newTab",
-                "profile": "Notes",
-                "suppressApplicationTitle": true,
-                "tabTitle": "Notes"
-            },
-            "keys": "ctrl+alt+n"
-        },
-        {
-            // Networking-nfv pwsh
-            "command": {
-                "action": "newTab",
-                "suppressApplicationTitle": true,
-                "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}"
-            },
-            "keys": "ctrl+alt+d"
-        },
-        {
-            // Anaconda powershell
-            "command": {
                 "action": "newTab",
                 "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
             },
             "keys": "ctrl+alt+a"
         },
         {
-            // Pwsh
             "command": {
                 "action": "newTab",
                 "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
@@ -73,7 +71,6 @@
             "keys": "ctrl+alt+p"
         },
         {
-            // VS Dev CMD
             "command": {
                 "action": "newTab",
                 "profile": "{ca2a2617-2af6-468c-aae8-56516a4b139e}"
@@ -81,7 +78,6 @@
             "keys": "ctrl+alt+v"
         },
         {
-            // CMD
             "command": {
                 "action": "newTab",
                 "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
@@ -89,7 +85,6 @@
             "keys": "ctrl+alt+c"
         },
         {
-            // Mysys Bash
             "command": {
                 "action": "newTab",
                 "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
@@ -97,7 +92,6 @@
             "keys": "ctrl+alt+b"
         },
         {
-            // WSL
             "command": {
                 "action": "newTab",
                 "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
@@ -126,7 +120,6 @@
                 "source": "Windows.Terminal.PowershellCore"
             },
             {
-                "commandline": "powershell.exe",
                 "font": {
                     "face": "MesloLGM Nerd Font",
                     "size": 11
@@ -136,7 +129,6 @@
                 "name": "Windows PowerShell"
             },
             {
-                "commandline": "cmd.exe",
                 "font": {
                     "face": "MesloLGM Nerd Font",
                     "size": 11
@@ -250,6 +242,26 @@
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\notepad.png",
                 "name": "Notes",
                 "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "guid": "{60e15043-d159-5a45-bf85-42f758c872dd}",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2019",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{1b88e339-8e3c-54df-8c1d-a50846a1363d}",
+                "font": {
+                    "face": "MesloLGM Nerd Font",
+                    "size": 11
+                },
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2019",
+                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
@@ -462,6 +474,29 @@
             "yellow": "#C4A000"
         },
         {
+            "background": "#24283B",
+            "black": "#1D202F",
+            "blue": "#7AA2F7",
+            "brightBlack": "#414868",
+            "brightBlue": "#7AA2F7",
+            "brightCyan": "#7DCFFF",
+            "brightGreen": "#9ECE6A",
+            "brightPurple": "#BB9AF7",
+            "brightRed": "#F7768E",
+            "brightWhite": "#C0CAF5",
+            "brightYellow": "#E0AF68",
+            "cursorColor": "#FFFFFF",
+            "cyan": "#7DCFFF",
+            "foreground": "#C0CAF5",
+            "green": "#9ECE6A",
+            "name": "Tokyonight",
+            "purple": "#BB9AF7",
+            "red": "#F7768E",
+            "selectionBackground": "#364A82",
+            "white": "#A9B1D6",
+            "yellow": "#E0AF68"
+        },
+        {
             "background": "#000000",
             "black": "#000000",
             "blue": "#000080",
@@ -483,30 +518,7 @@
             "selectionBackground": "#FFFFFF",
             "white": "#C0C0C0",
             "yellow": "#808000"
-        },
-        {
-            "background": "#24283b",
-            "black": "#1D202F",
-            "blue": "#7aa2f7",
-            "brightBlack": "#414868",
-            "brightBlue": "#7aa2f7",
-            "brightCyan": "#7dcfff",
-            "brightGreen": "#9ece6a",
-            "brightPurple": "#bb9af7",
-            "brightRed": "#f7768e",
-            "brightWhite": "#c0caf5",
-            "brightYellow": "#e0af68",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#7dcfff",
-            "foreground": "#c0caf5",
-            "green": "#9ece6a",
-            "name": "Tokyonight",
-            "purple": "#bb9af7",
-            "red": "#f7768e",
-            "selectionBackground": "#364A82",
-            "white": "#a9b1d6",
-            "yellow": "#e0af68"
-        },
+        }
     ],
     "theme": "dark"
 }
