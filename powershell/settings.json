@@ -73,7 +73,7 @@
         {
             "command": {
                 "action": "newTab",
-                "profile": "{ca2a2617-2af6-468c-aae8-56516a4b139e}"
+                "profile": "{60e15043-d159-5a45-bf85-42f758c872dd}"
             },
             "keys": "ctrl+alt+v"
         },
@@ -147,17 +147,17 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "%comspec% /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\VsDevCmd.bat\"",
-                "guid": "{ca2a2617-2af6-468c-aae8-56516a4b139e}",
+                "guid": "{60e15043-d159-5a45-bf85-42f758c872dd}",
                 "hidden": false,
+                "source": "Windows.Terminal.VisualStudio",
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2019 Cmd",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84}\"",
-                "guid": "{ece5cd36-703a-481b-bc31-f0f91af22a74}",
+                "guid": "{1b88e339-8e3c-54df-8c1d-a50846a1363d}",
                 "hidden": false,
+                "source": "Windows.Terminal.VisualStudio",
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2019 Powershell",
                 "startingDirectory": "%USERPROFILE%"
@@ -199,18 +199,6 @@
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\notepad.png",
                 "name": "Notes",
                 "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "guid": "{60e15043-d159-5a45-bf85-42f758c872dd}",
-                "hidden": false,
-                "name": "Developer Command Prompt for VS 2019",
-                "source": "Windows.Terminal.VisualStudio"
-            },
-            {
-                "guid": "{1b88e339-8e3c-54df-8c1d-a50846a1363d}",
-                "hidden": false,
-                "name": "Developer PowerShell for VS 2019",
-                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
