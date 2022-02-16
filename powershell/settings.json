@@ -3,12 +3,6 @@
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": [
         {
-            "command": {
-                "action": "commandPalette"
-            },
-            "keys": "ctrl+shift+p"
-        },
-        {
             "command": "unbound",
             "keys": "alt+enter"
         },
@@ -25,11 +19,13 @@
         },
         {
             "command": {
-                "action": "newTab",
-                "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
-                "suppressApplicationTitle": true
+                "action": "commandPalette"
             },
-            "keys": "ctrl+alt+d"
+            "keys": "ctrl+shift+p"
+        },
+        {
+            "command": "paste",
+            "keys": "ctrl+v"
         },
         {
             "command": {
@@ -41,8 +37,12 @@
             "keys": "ctrl+alt+n"
         },
         {
-            "command": "paste",
-            "keys": "ctrl+v"
+            "command": {
+                "action": "newTab",
+                "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
+                "suppressApplicationTitle": true
+            },
+            "keys": "ctrl+alt+d"
         },
         {
             "command": "find",
@@ -107,11 +107,11 @@
     "profiles": {
         "defaults": {
             "colorScheme": "Tokyonight",
-            "suppressApplicationTitle": true,
             "font": {
                 "face": "MesloLGM Nerd Font",
                 "size": 11
-            }
+            },
+            "suppressApplicationTitle": true
         },
         "list": [
             {
@@ -149,17 +149,33 @@
             {
                 "guid": "{60e15043-d159-5a45-bf85-42f758c872dd}",
                 "hidden": false,
-                "source": "Windows.Terminal.VisualStudio",
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2019 Cmd",
+                "source": "Windows.Terminal.VisualStudio",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
                 "guid": "{1b88e339-8e3c-54df-8c1d-a50846a1363d}",
                 "hidden": false,
-                "source": "Windows.Terminal.VisualStudio",
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2019 Powershell",
+                "source": "Windows.Terminal.VisualStudio",
+                "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "guid": "{72851954-311e-507d-8cf1-1789f240dcee}",
+                "hidden": false,
+                "name": "VS2022 Cmd",
+                "source": "Windows.Terminal.VisualStudio",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "guid": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}",
+                "hidden": false,
+                "name": "VS2022 Powershell",
+                "source": "Windows.Terminal.VisualStudio",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
