@@ -167,7 +167,7 @@
                 "hidden": false,
                 "name": "VS2022 Cmd",
                 "source": "Windows.Terminal.VisualStudio",
-                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2022.png",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
@@ -175,7 +175,7 @@
                 "hidden": false,
                 "name": "VS2022 Powershell",
                 "source": "Windows.Terminal.VisualStudio",
-                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2022.png",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
