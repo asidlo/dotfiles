@@ -40,12 +40,11 @@ packer.init({
 
 -- Install your plugins here
 return packer.startup(function(use)
-    -- My plugins here
-    use('wbthomason/packer.nvim') -- Have packer manage itself
-    use('nvim-lua/popup.nvim') -- An implementation of the Popup API from vim in Neovim
-    use('nvim-lua/plenary.nvim') -- Useful lua functions used ny lots of plugins
-    use('windwp/nvim-autopairs') -- Autopairs, integrates with both cmp and treesitter
-    use('numToStr/Comment.nvim') -- Easily comment stuff
+    use('wbthomason/packer.nvim')
+    use('nvim-lua/popup.nvim')
+    use('nvim-lua/plenary.nvim')
+    use('windwp/nvim-autopairs')
+    use('numToStr/Comment.nvim')
     use('kyazdani42/nvim-web-devicons')
     use('kyazdani42/nvim-tree.lua')
     use('akinsho/bufferline.nvim')
@@ -65,11 +64,11 @@ return packer.startup(function(use)
     use('folke/tokyonight.nvim')
 
     -- cmp plugins
-    use('hrsh7th/nvim-cmp') -- The completion plugin
-    use('hrsh7th/cmp-buffer') -- buffer completions
-    use('hrsh7th/cmp-path') -- path completions
-    use('hrsh7th/cmp-cmdline') -- cmdline completions
-    use('saadparwaiz1/cmp_luasnip') -- snippet completions
+    use('hrsh7th/nvim-cmp')
+    use('hrsh7th/cmp-buffer')
+    use('hrsh7th/cmp-path')
+    use('hrsh7th/cmp-cmdline')
+    use('saadparwaiz1/cmp_luasnip')
     use('hrsh7th/cmp-nvim-lsp')
     use('hrsh7th/cmp-nvim-lua')
     use('f3fora/cmp-spell')
@@ -89,19 +88,19 @@ return packer.startup(function(use)
     })
 
     -- snippets
-    use('L3MON4D3/LuaSnip') --snippet engine
-    use('rafamadriz/friendly-snippets') -- a bunch of snippets to use
+    use('L3MON4D3/LuaSnip')
+    use('rafamadriz/friendly-snippets')
 
     -- LSP
-    use('neovim/nvim-lspconfig') -- enable LSP
-    use('williamboman/nvim-lsp-installer') -- simple to use language server installer
+    use('neovim/nvim-lspconfig')
+    use('williamboman/nvim-lsp-installer')
     use({
         'tamago324/nlsp-settings.nvim',
         -- config = function()
         --     require('nlspsettings').setup()
         -- end,
     })
-    use('jose-elias-alvarez/null-ls.nvim') -- for formatters and linters
+    use('jose-elias-alvarez/null-ls.nvim')
     use('Pocco81/DAPInstall.nvim')
     use('b0o/schemastore.nvim')
     use('mfussenegger/nvim-dap')
@@ -121,34 +120,34 @@ return packer.startup(function(use)
     use({
         'ray-x/go.nvim',
         config = function()
-            local path = require 'nvim-lsp-installer.path'
-            local install_root_dir = path.concat {vim.fn.stdpath 'data', 'lsp_servers'}
+            local path = require('nvim-lsp-installer.path')
+            local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
             require('go').setup({
-                gopls_cmd = {install_root_dir .. '/go/gopls'},
+                gopls_cmd = { install_root_dir .. '/go/gopls' },
                 filstruct = 'gopls',
                 dap_debug = true,
-                dap_debug_gui = true
+                dap_debug_gui = true,
             })
         end,
     })
     use({
         'simrat39/rust-tools.nvim',
         config = function()
-            local path = require 'nvim-lsp-installer.path'
-            local install_root_dir = path.concat {vim.fn.stdpath 'data', 'lsp_servers'}
+            local path = require('nvim-lsp-installer.path')
+            local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
             require('rust-tools').setup({
                 server = {
-                    cmd = {install_root_dir .. '/rust/rust-analyzer'},
+                    cmd = { install_root_dir .. '/rust/rust-analyzer' },
                     on_attach = require('user.lsp.handlers').on_attach,
                     capabilities = require('user.lsp.handlers').capabilities,
                     settings = {
                         ['rust-analyzer'] = {
                             checkOnSave = { command = 'clippy' },
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             })
-        end
+        end,
     })
     use('mfussenegger/nvim-jdtls')
 
@@ -170,6 +169,7 @@ return packer.startup(function(use)
     -- Telescope
     use('nvim-telescope/telescope.nvim')
     use('nvim-telescope/telescope-ui-select.nvim')
+    use('nvim-telescope/telescope-dap.nvim')
 
     -- Treesitter
     use({
