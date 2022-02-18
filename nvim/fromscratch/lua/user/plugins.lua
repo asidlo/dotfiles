@@ -140,6 +140,12 @@ return packer.startup(function(use)
         config = function()
             local path = require('nvim-lsp-installer.path')
             local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
+
+            local exe = '/usr/local/bin/lldb-vscode'
+            if vim.fn.has('win32') == 1 then
+                exe = 'C:\\Program Files\\LLVM\\bin\\lldb-vscode.exe'
+            end
+
             require('rust-tools').setup({
                 server = {
                     cmd = { install_root_dir .. '/rust/rust-analyzer' },
@@ -151,6 +157,13 @@ return packer.startup(function(use)
                         },
                     },
                 },
+                dap = {
+                       adapter = {
+                           type = 'executable',
+                           command = exe,
+                           name = "rt_lldb"
+                       }
+                   }
             })
         end,
     })

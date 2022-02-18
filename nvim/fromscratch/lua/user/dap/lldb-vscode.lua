@@ -3,11 +3,9 @@ if not dap_ok then
     return
 end
 
-local exe
+local exe = '/usr/local/bin/lldb-vscode'
 if vim.fn.has('win32') == 1 then
-    exe = [[ C:\Program Files\LLVM\bin\lldb-vscode.exe ]]
-else
-    exe = '/usr/local/bin/lldb-vscode'
+    exe = 'C:\\Program Files\\LLVM\\bin\\lldb-vscode.exe'
 end
 
 dap.adapters.lldb = {
@@ -45,4 +43,5 @@ dap.configurations.cpp = {
 -- If you want to use this for rust and c, add something like this:
 
 dap.configurations.c = dap.configurations.cpp
+-- dap.configurations.rust = dap.configurations.cpp
 -- dap.configurations.rust = dap.configurations.cpp
