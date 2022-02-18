@@ -32,4 +32,5 @@ dap.listeners.after['event_terminated']['me'] = function()
   keymap_restore = {}
 end
 
-require('user.dap.codelldb')
+-- require('user.dap.codelldb')
+require('user.dap.lldb-vscode')
