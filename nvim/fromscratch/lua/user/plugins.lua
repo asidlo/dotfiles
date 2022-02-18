@@ -103,7 +103,12 @@ return packer.startup(function(use)
     use('jose-elias-alvarez/null-ls.nvim')
     use('Pocco81/DAPInstall.nvim')
     use('b0o/schemastore.nvim')
-    use('mfussenegger/nvim-dap')
+    use({
+        'mfussenegger/nvim-dap',
+        config = function()
+            require('user.dap')
+        end,
+    })
     use({
         'rcarriga/nvim-dap-ui',
         requires = { 'mfussenegger/nvim-dap' },

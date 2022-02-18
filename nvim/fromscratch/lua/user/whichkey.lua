@@ -190,7 +190,7 @@ local mappings = {
         i = { "<cmd>lua require('dap').step_into()<CR>", 'Step Into' },
         o = { "<cmd>lua require('dap').step_out()<CR>", 'Step Out' },
         k = { "<cmd>lua require('dap.ui.widgets').hover()<CR>", 'Hover' },
-        f = { "local widgets=require('dap.ui.widgets');widgets.centered_float(widgets.scopes)<CR>", 'Float' },
+        f = { "<cmd>lua local widgets=require('dap.ui.widgets');widgets.centered_float(widgets.scopes)<CR>", 'Float' },
         -- h = {
         --     name = 'Hover',
         --     -- h = { "<cmd>lua require('dap.ui.variables').hover()<CR>", 'Hover' },
