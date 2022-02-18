@@ -1,4 +1,6 @@
 {
+    // %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json
+    // %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": [
@@ -40,7 +42,8 @@
             "command": {
                 "action": "newTab",
                 "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
-                "suppressApplicationTitle": true
+                "suppressApplicationTitle": true,
+                "elevate": true
             },
             "keys": "ctrl+alt+d"
         },
