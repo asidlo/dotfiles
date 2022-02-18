@@ -3,9 +3,11 @@ if not dap_ok then
     return
 end
 
-local exe = '/usr/local/bin/lldb-vscode'
+local exe = '/usr/bin/lldb-vscode'
 if vim.fn.has('win32') == 1 then
     exe = 'C:\\Program Files\\LLVM\\bin\\lldb-vscode.exe'
+else
+    exe = '/usr/local/bin/lldb-vscode'
 end
 
 dap.adapters.lldb = {

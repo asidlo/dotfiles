@@ -141,9 +141,11 @@ return packer.startup(function(use)
             local path = require('nvim-lsp-installer.path')
             local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
 
-            local exe = '/usr/local/bin/lldb-vscode'
+            local exe = '/usr/bin/lldb-vscode'
             if vim.fn.has('win32') == 1 then
                 exe = 'C:\\Program Files\\LLVM\\bin\\lldb-vscode.exe'
+            else
+                exe = '/usr/local/bin/lldb-vscode'
             end
 
             require('rust-tools').setup({
