@@ -112,7 +112,7 @@ cmp.setup({
                 path = '[Path]',
                 spell = '[Spell]',
                 nvim_lua = '[Lua]',
-                dictionary = '[Dict]',
+                -- dictionary = '[Dict]',
             })[entry.source.name]
             return vim_item
         end,
@@ -127,10 +127,10 @@ cmp.setup({
         { name = 'path' },
         { name = 'nvim_lua' },
         { name = 'spell' },
-        {
-            name = 'dictionary',
-            keyword_length = 2,
-        },
+        -- {
+        --     name = 'dictionary',
+        --     keyword_length = 2,
+        -- },
         { name = 'crates' },
         {
             name = 'nuget',
@@ -153,49 +153,49 @@ cmp.setup({
     },
 })
 
-require('cmp').setup.cmdline(':', {
-    sources = {
-        { name = 'cmdline' },
-    },
-    mapping = {
-        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
-        ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
-        ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
-        ['<C-f>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
-        ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
-        ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
-    },
-    completion = {
-        completeopt = 'menu,menuone,noselect',
-    },
-})
-
-require('cmp').setup.cmdline('/', {
-    sources = {
-        { name = 'buffer' },
-    },
-    mapping = {
-        ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
-        ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
-        ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
-        ['<C-f>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
-        ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
-        ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
-    },
-    completion = {
-        completeopt = 'menu,menuone,noselect',
-    },
-})
-
-require('cmp_dictionary').setup({
-    dic = {
-        ['markdown'] = '/usr/share/dict/words',
-        ['text'] = '/usr/share/dict/words',
-        ['gitcommit'] = '/usr/share/dict/words',
-    },
-    -- The following are default values, so you don't need to write them if you don't want to change them
-    exact = 2,
-    async = false,
-    capacity = 5,
-    debug = false,
-})
+-- require('cmp').setup.cmdline(':', {
+--     sources = {
+--         { name = 'cmdline' },
+--     },
+--     mapping = {
+--         ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
+--         ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
+--         ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
+--         ['<C-f>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
+--         ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
+--         ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
+--     },
+--     completion = {
+--         completeopt = 'menu,menuone,noselect',
+--     },
+-- })
+--
+-- require('cmp').setup.cmdline('/', {
+--     sources = {
+--         { name = 'buffer' },
+--     },
+--     mapping = {
+--         ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'c' }),
+--         ['<C-k>'] = cmp.mapping(cmp.mapping.select_prev_item(), { 'c' }),
+--         ['<C-j>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
+--         ['<C-f>'] = cmp.mapping(cmp.mapping.select_next_item(), { 'c' }),
+--         ['<C-y>'] = cmp.mapping(cmp.mapping.confirm({ select = true }), { 'c' }),
+--         ['<C-e>'] = cmp.mapping({ c = cmp.mapping.close() }),
+--     },
+--     completion = {
+--         completeopt = 'menu,menuone,noselect',
+--     },
+-- })
+--
+-- require('cmp_dictionary').setup({
+--     dic = {
+--         ['markdown'] = '/usr/share/dict/words',
+--         ['text'] = '/usr/share/dict/words',
+--         ['gitcommit'] = '/usr/share/dict/words',
+--     },
+--     -- The following are default values, so you don't need to write them if you don't want to change them
+--     exact = 2,
+--     async = false,
+--     capacity = 5,
+--     debug = false,
+-- })

@@ -67,12 +67,12 @@ return packer.startup(function(use)
     use('hrsh7th/nvim-cmp')
     use('hrsh7th/cmp-buffer')
     use('hrsh7th/cmp-path')
-    use('hrsh7th/cmp-cmdline')
+    -- use('hrsh7th/cmp-cmdline')
     use('saadparwaiz1/cmp_luasnip')
     use('hrsh7th/cmp-nvim-lsp')
     use('hrsh7th/cmp-nvim-lua')
     use('f3fora/cmp-spell')
-    use('uga-rosa/cmp-dictionary')
+    -- use('uga-rosa/cmp-dictionary')
     use({
         'saecki/crates.nvim',
         requires = { 'nvim-lua/plenary.nvim' },
