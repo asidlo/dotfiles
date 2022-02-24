@@ -73,6 +73,7 @@ antibody bundle zsh-users/zsh-autosuggestions
 # PROMPT+='%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} ' # % (red if error white otherwise)
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
+[ -f /etc/bash_completion.d/azure-cli ] && source /etc/bash_completion.d/azure-cli
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
