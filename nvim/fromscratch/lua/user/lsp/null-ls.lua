@@ -46,6 +46,7 @@ null_ls.setup({
                 'plain',
                 '--codes',
                 '--ranges',
+                '--no-max-line-length',
                 '--filename',
                 '$FILENAME',
                 '-',
