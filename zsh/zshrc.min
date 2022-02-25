@@ -72,8 +72,6 @@ antibody bundle zsh-users/zsh-autosuggestions
 # PROMPT+=$'\n'                                                        # newline
 # PROMPT+='%(?.%{$fg[white]%}.%{$fg[red]%})%(!.#.%%)%{$reset_color%} ' # % (red if error white otherwise)
 
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
-
 # https://medium.com/@MyDiemHo/enable-azure-cli-autocomplete-in-oh-my-zsh-93e79019a20d
 autoload -U +X bashcompinit && bashcompinit
 [ -f /etc/bash_completion.d/azure-cli ] && source /etc/bash_completion.d/azure-cli

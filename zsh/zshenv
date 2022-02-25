@@ -80,6 +80,8 @@ else
     FD_EXE='fd'
 fi
 
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
+
 if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
 	export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
 	export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | $FD_EXE --type f --type l $FD_OPTS"
@@ -99,10 +101,12 @@ if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE]
 	--bind='ctrl-a:select-all+accept'
 	"
 else
+    if (( $+commands[$FD_EXE] )); then echo "Found $FD_EXE"; fi
+    if (( $+commands[$BAT_EXE] )); then echo "Found $BAT_EXE"; fi
+    if (( $+commands[fzf] )); then echo "Found fzf"; fi
 	# Issue with installing batcat on wsl ubuntu: https://askubuntu.com/a/1300824
 	# sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
 	>&2 echo "$fg[yellow]WARN$reset_color: [fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
 fi
 
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
-. "$HOME/.cargo/env"
