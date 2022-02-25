@@ -39,3 +39,6 @@ symbol = " "
 
 [shlvl]
 symbol = " "
+
+[container]
+style = "purple"

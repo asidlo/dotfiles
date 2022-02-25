@@ -21,8 +21,13 @@ case $OS in
 		alias copy='xclip -selection -c'
 	fi
 	alias ls='ls --color=auto'
-	alias fd='fdfind'
-	alias bat='batcat'
+    # When installing from cargo, even on linux, those naming restrictions dont apply
+    if (( $+commands[fdfind] )); then
+        alias fd='fdfind'
+    fi
+    if (( $+commands[batcat] )); then
+        alias bat='batcat'
+    fi
 	export GOROOT=/opt/go
 	;;
 esac
@@ -66,11 +71,20 @@ LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 
 # Fd, bat, fzf
 if [[ $OS =~ $LINUX ]]; then
+    # When installing from package manager
 	FD_EXE='fdfind'
 	BAT_EXE='batcat'
 else
 	FD_EXE='fd'
 	BAT_EXE='bat'
+fi
+
+# When installing from cargo, even on linux, those naming restrictions dont apply
+if (( $+commands['fd'] )); then
+    FD_EXE='fd'
+fi
+if (( $+commands['bat'] )); then
+    BAT_EXE='bat'
 fi
 
 if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
@@ -98,3 +112,4 @@ else
 fi
 
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+. "$HOME/.cargo/env"

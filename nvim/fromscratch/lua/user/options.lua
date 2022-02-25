@@ -37,7 +37,8 @@ local options = {
     foldexpr = 'nvim_treesitter#foldexpr()',
     autowriteall = true,
     modeline = false,
-    modelines = 0
+    modelines = 0,
+    shell = 'zsh'
 }
 
 vim.opt.shortmess:append('c')
