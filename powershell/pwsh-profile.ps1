@@ -138,6 +138,6 @@ Set-Alias -Name which -Value Get-Command
 #--------------------------------------------------------------
 # Prompt
 #--------------------------------------------------------------
-if (Get-Command "starship.exe" -ErrorAction SilentlyContinue) { 
+if (Get-Command "starship" -ErrorAction SilentlyContinue) { 
     Invoke-Expression (&starship init powershell)
 }
