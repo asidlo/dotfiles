@@ -57,6 +57,7 @@ return packer.startup(function(use)
     use('goolord/alpha-nvim')
     use('antoinemadec/FixCursorHold.nvim') -- This is needed to fix lsp doc highlight
     use('folke/which-key.nvim')
+    use('bronson/vim-visual-star-search')
 
     -- Colorschemes
     -- use "lunarvim/colorschemes" -- A bunch of colorschemes you can try out
@@ -160,12 +161,12 @@ return packer.startup(function(use)
                     },
                 },
                 dap = {
-                       adapter = {
-                           type = 'executable',
-                           command = exe,
-                           name = "rt_lldb"
-                       }
-                   }
+                    adapter = {
+                        type = 'executable',
+                        command = exe,
+                        name = 'rt_lldb',
+                    },
+                },
             })
         end,
     })

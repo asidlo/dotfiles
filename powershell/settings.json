@@ -100,6 +100,13 @@
                 "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
             },
             "keys": "ctrl+alt+t"
+        },
+        {
+            "command": {
+                "action": "newTab",
+                "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
+            },
+            "keys": "ctrl+alt+z"
         }
     ],
     "copyFormatting": "none",
