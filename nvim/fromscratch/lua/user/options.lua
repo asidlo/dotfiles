@@ -37,8 +37,7 @@ local options = {
     foldexpr = 'nvim_treesitter#foldexpr()',
     autowriteall = true,
     modeline = false,
-    modelines = 0,
-    shell = 'zsh'
+    modelines = 0
 }
 
 vim.opt.shortmess:append('c')
@@ -48,6 +47,7 @@ if vim.fn.has('unix') == 1 then
     vim.opt['dictionary'] = '/usr/share/dict/words'
     vim.opt['spellfile'] = home .. '/.config/nvim/spell/en.utf-8.add'
     vim.opt['thesaurus'] = home .. '/.config/nvim/spell/thesaurii.txt'
+    vim.opt['shell'] = 'zsh'
 else
     local home = os.getenv('USERPROFILE')
     vim.opt['dictionary'] = home .. '\\AppData\\Local\\nvim\\words'
