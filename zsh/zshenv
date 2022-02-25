@@ -71,20 +71,23 @@ LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 
 # Fd, bat, fzf
 if [[ $OS =~ $LINUX ]]; then
-    # When installing from package manager
-	FD_EXE='fdfind'
-	BAT_EXE='batcat'
+    if (( $+commands[fd] )); then
+        # When installing from cargo
+        FD_EXE='fd'
+    else
+        # When installing from package manager
+        FD_EXE='fdfind'
+    fi
+    if (( $+commands[bat] )); then
+        # When installing from cargo
+        BAT_EXE='bat'
+    else
+        # When installing from package manager
+        BAT_EXE='batcat'
+    fi
 else
 	FD_EXE='fd'
 	BAT_EXE='bat'
-fi
-
-# When installing from cargo, even on linux, those naming restrictions dont apply
-if (( $+commands['fd'] )); then
-    FD_EXE='fd'
-fi
-if (( $+commands['bat'] )); then
-    BAT_EXE='bat'
 fi
 
 if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
