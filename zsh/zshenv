@@ -45,8 +45,8 @@ alias grep='grep --color=auto'
 alias cls='clear'
 
 if (( $+commands[nvim] )); then
-	export VISUAL=lvim
-	export EDITOR=lvim
+	export VISUAL=nvim
+	export EDITOR=nvim
 	export MANPAGER="$EDITOR +Man!"
 else
 	export VISUAL=vim
