@@ -1,5 +1,3 @@
-# Note that clink settings dont work with symlinks, need to copy file as is
-
 # name: Enable automatic suggestions
 # type: boolean
 autosuggest.enable = True
