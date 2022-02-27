@@ -35,3 +35,4 @@ end
 -- require('user.dap.codelldb')
 require('user.dap.lldb-vscode')
 require('user.dap.debugpy')
+require('user.dap.dlv')
