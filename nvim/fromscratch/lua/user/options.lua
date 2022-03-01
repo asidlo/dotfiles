@@ -65,7 +65,7 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 
 if vim.fn.has('win32') == 1 then
-    vim.g.python3_host_prog = '~/AppData/Local/Anaconda3/python.exe'
+    vim.g.python3_host_prog = '~\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe'
 else
     vim.g.python3_host_prog = '/usr/bin/python3'
 end
