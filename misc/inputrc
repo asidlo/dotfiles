@@ -10,3 +10,9 @@ set visible-stats on
 # Some config settings that only work in Clink.
 # https://chrisant996.github.io/clink/clink.html
 # See `clink info` for settings file
+
+$if clink
+# Completion key bindings.
+C-f: win-cursor-forward
+Tab: clink-select-complete
+$endif
