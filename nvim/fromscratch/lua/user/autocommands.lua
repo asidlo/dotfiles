@@ -1,15 +1,15 @@
 vim.cmd([[
     augroup _general_settings
         autocmd!
-        autocmd FileType qf,help,man,lspinfo,null-ls-info,dap-float nnoremap <silent> <buffer> q :close<CR> 
-        autocmd TextYankPost * silent!lua require('vim.highlight').on_yank({higroup = 'Search', timeout = 200}) 
+        autocmd FileType qf,help,man,lspinfo,null-ls-info,dap-float nnoremap <silent> <buffer> q :close<CR>
+        autocmd TextYankPost * silent!lua require('vim.highlight').on_yank({higroup = 'Search', timeout = 200})
         autocmd BufWinEnter * :set formatoptions-=cro
         autocmd FileType qf set nobuflisted
     augroup end
 
     augroup _auto_resize
         autocmd!
-        autocmd VimResized * tabdo wincmd = 
+        autocmd VimResized * tabdo wincmd =
     augroup end
 
     augroup _alpha
