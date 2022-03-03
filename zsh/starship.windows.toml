@@ -42,3 +42,16 @@ symbol = " "
 
 [shlvl]
 symbol = " "
+
+[container]
+style = "purple"
+
+[username]
+style_root = "red"
+style_user = "white"
+
+[hostname]
+style = "yellow"
+
+[localip]
+style = "green"

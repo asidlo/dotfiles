@@ -40,7 +40,7 @@ color.arginfo = blue
 
 # name: Argmatcher color
 # type: color
-color.argmatcher = magenta
+color.argmatcher = green
 
 # name: Shell command completions
 # type: color
@@ -52,7 +52,7 @@ color.cmdredir = yellow
 
 # name: Color for & and | command separators
 # type: color
-color.cmdsep = yellow
+color.cmdsep = default
 
 # name: Color for comment row
 # type: color
@@ -76,7 +76,7 @@ color.filtered = white
 
 # name: Flag color
 # type: color
-color.flag = cyan
+color.flag = default
 
 # name: Color for preferred branch completions
 # type: color
@@ -92,7 +92,7 @@ color.horizscroll = black
 
 # name: Input text color
 # type: color
-color.input = yellow
+color.input = default
 
 # name: For user-interaction prompts
 # type: color
@@ -112,7 +112,7 @@ color.selected_completion = black on white
 
 # name: Selection color
 # type: color
-color.selection = cyan
+color.selection = default
 
 # name: Color for suggestion text
 # type: color
@@ -124,7 +124,7 @@ color.unexpected = default
 
 # name: Color for unrecognized command word
 # type: color
-color.unrecognized = default
+color.unrecognized = red
 
 # name: Skip adding lines prefixed with whitespace
 # type: boolean

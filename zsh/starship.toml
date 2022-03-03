@@ -1,5 +1,8 @@
 add_newline = false
 
+[git_status]
+disabled = false
+
 [jobs]
 symbol = "+"
 
@@ -45,7 +48,7 @@ style = "purple"
 
 [username]
 style_root = "red"
-style_user = "red"
+style_user = "white"
 
 [hostname]
 style = "yellow"
