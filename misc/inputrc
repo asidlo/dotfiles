@@ -14,5 +14,6 @@ set visible-stats on
 $if clink
 # Completion key bindings.
 C-f: win-cursor-forward
+C-f: end-of-line
 Tab: clink-select-complete
 $endif
