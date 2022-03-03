@@ -36,35 +36,35 @@ color.arg = bold
 
 # name: Argument info color
 # type: color
-color.arginfo = sgr 38;5;172
+color.arginfo = blue
 
 # name: Argmatcher color
 # type: color
-color.argmatcher = sgr 1;38;5;40
+color.argmatcher = magenta
 
 # name: Shell command completions
 # type: color
-color.cmd = sgr 1;38;5;231
+color.cmd = green
 
 # name: Color for < and > redirection symbols
 # type: color
-color.cmdredir = sgr 38;5;172
+color.cmdredir = yellow
 
 # name: Color for & and | command separators
 # type: color
-color.cmdsep = sgr 38;5;214
+color.cmdsep = yellow
 
 # name: Color for comment row
 # type: color
-color.comment_row = sgr 38;5;87;48;5;18
+color.comment_row = cyan
 
 # name: Description completion color
 # type: color
-color.description = sgr 38;5;39
+color.description = blue
 
 # name: Doskey completions
 # type: color
-color.doskey = sgr 1;38;5;75
+color.doskey = cyan
 
 # name: Color for executable command word
 # type: color
@@ -72,27 +72,27 @@ color.executable = green
 
 # name: Filtered completion color
 # type: color
-color.filtered = sgr 38;5;231
+color.filtered = white
 
 # name: Flag color
 # type: color
-color.flag = sgr 38;5;117
+color.flag = cyan
 
 # name: Color for preferred branch completions
 # type: color
-color.git.star = bright green
+color.git.star = green
 
 # name: Hidden file completions
 # type: color
-color.hidden = sgr 38;5;160
+color.hidden = red
 
 # name: Horizontal scroll marker color
 # type: color
-color.horizscroll = sgr 38;5;16;48;5;30
+color.horizscroll = black
 
 # name: Input text color
 # type: color
-color.input = sgr 38;5;222
+color.input = yellow
 
 # name: For user-interaction prompts
 # type: color
@@ -104,19 +104,19 @@ color.message = default
 
 # name: Readonly file completions
 # type: color
-color.readonly = sgr 38;5;28
+color.readonly = green
 
 # name: Selected completion color
 # type: color
-color.selected_completion = sgr 38;5;16;48;5;254
+color.selected_completion = black on white
 
 # name: Selection color
 # type: color
-color.selection = sgr 38;5;16;48;5;179
+color.selection = cyan
 
 # name: Color for suggestion text
 # type: color
-color.suggestion = sgr 38;5;239
+color.suggestion = light black
 
 # name: Unexpected argument color
 # type: color
@@ -124,7 +124,7 @@ color.unexpected = default
 
 # name: Color for unrecognized command word
 # type: color
-color.unrecognized = sgr 38;5;203
+color.unrecognized = default
 
 # name: Skip adding lines prefixed with whitespace
 # type: boolean
