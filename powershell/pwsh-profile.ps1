@@ -44,24 +44,24 @@ Set-PsFzfOption -PSReadlineChordReverseHistoryArgs 'Alt+a'
 Set-PSReadLineKeyHandler -Key Ctrl+C -Function Copy
 Set-PSReadLineKeyHandler -Key Ctrl+v -Function Paste
 
-Set-PSReadLineOption -Colors @{
-    "ContinuationPrompt" = [ConsoleColor]:: Magenta
-    "Emphasis"           = [ConsoleColor]:: Gray
-    "Error"              = [ConsoleColor]:: Red
-    "Selection"          = [ConsoleColor]:: Cyan
-    "Default"            = [ConsoleColor]:: White
-    "Comment"            = [ConsoleColor]:: Gray
-    "Keyword"            = [ConsoleColor]:: Green
-    "String"             = [ConsoleColor]:: White
-    "Operator"           = [ConsoleColor]:: Gray
-    "Variable"           = [ConsoleColor]:: Blue
-    "Command"            = [ConsoleColor]:: Yellow
-    "Parameter"          = [ConsoleColor]:: Gray
-    "Type"               = [ConsoleColor]:: Yellow
-    "Number"             = [ConsoleColor]:: White
-    "Member"             = [ConsoleColor]:: Cyan
-    "InlinePrediction"   = [ConsoleColor]:: DarkGray
-}
+# Set-PSReadLineOption -Colors @{
+#     "ContinuationPrompt" = [ConsoleColor]:: Magenta
+#     "Emphasis"           = [ConsoleColor]:: Gray
+#     "Error"              = [ConsoleColor]:: Red
+#     "Selection"          = [ConsoleColor]:: Cyan
+#     "Default"            = [ConsoleColor]:: White
+#     "Comment"            = [ConsoleColor]:: Gray
+#     "Keyword"            = [ConsoleColor]:: Green
+#     "String"             = [ConsoleColor]:: White
+#     "Operator"           = [ConsoleColor]:: Gray
+#     "Variable"           = [ConsoleColor]:: Blue
+#     "Command"            = [ConsoleColor]:: Yellow
+#     "Parameter"          = [ConsoleColor]:: Gray
+#     "Type"               = [ConsoleColor]:: Yellow
+#     "Number"             = [ConsoleColor]:: White
+#     "Member"             = [ConsoleColor]:: Cyan
+#     "InlinePrediction"   = [ConsoleColor]:: DarkGray
+# }
 
 #--------------------------------------------------------------
 # Colors
