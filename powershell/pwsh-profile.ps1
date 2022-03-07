@@ -32,7 +32,11 @@ Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
 # https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
 # https://github.com/PowerShell/PSReadLine/blob/master/PSReadLine/SamplePSReadLineProfile.ps1#L13-L21
-Set-PSReadLineKeyHandler -Chord "Ctrl+f" -Function AcceptSuggestion
+# Set-PSReadLineKeyHandler -Chord "Ctrl+f" -Function AcceptSuggestion
+Set-PSReadLineKeyHandler -Chord "Ctrl+f" -ScriptBlock {
+    [Microsoft.Powershell.PSConsoleReadline]::AcceptSuggestion()
+    [Microsoft.Powershell.PSConsoleReadline]::EndOfLine()
+}
 
 # https://github.com/kelleyma49/PSFzf
 Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t'
