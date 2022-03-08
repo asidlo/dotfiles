@@ -48,7 +48,7 @@ Set-PsFzfOption -PSReadlineChordReverseHistoryArgs 'Alt+a'
 Set-PSReadLineKeyHandler -Key Ctrl+C -Function Copy
 Set-PSReadLineKeyHandler -Key Ctrl+v -Function Paste
 
-# Set-PSReadLineOption -Colors @{
+Set-PSReadLineOption -Colors @{
 #     "ContinuationPrompt" = [ConsoleColor]:: Magenta
 #     "Emphasis"           = [ConsoleColor]:: Gray
 #     "Error"              = [ConsoleColor]:: Red
@@ -57,15 +57,15 @@ Set-PSReadLineKeyHandler -Key Ctrl+v -Function Paste
 #     "Comment"            = [ConsoleColor]:: Gray
 #     "Keyword"            = [ConsoleColor]:: Green
 #     "String"             = [ConsoleColor]:: White
-#     "Operator"           = [ConsoleColor]:: Gray
+    "Operator"           = [ConsoleColor]:: Gray
 #     "Variable"           = [ConsoleColor]:: Blue
 #     "Command"            = [ConsoleColor]:: Yellow
-#     "Parameter"          = [ConsoleColor]:: Gray
+    "Parameter"          = [ConsoleColor]:: Gray
 #     "Type"               = [ConsoleColor]:: Yellow
 #     "Number"             = [ConsoleColor]:: White
 #     "Member"             = [ConsoleColor]:: Cyan
-#     "InlinePrediction"   = [ConsoleColor]:: DarkGray
-# }
+    "InlinePrediction"   = [ConsoleColor]:: DarkGray
+}
 
 #--------------------------------------------------------------
 # Colors
@@ -145,3 +145,8 @@ Set-Alias -Name which -Value Get-Command
 if (Get-Command "starship" -ErrorAction SilentlyContinue) { 
     Invoke-Expression (&starship init powershell)
 }
+
+if (Get-Command "$env:HOMEPATH\.azure-kubectl\kubectl.exe" -ErrorAction SilentlyContinue) {
+    &"$env:HOMEPATH\.azure-kubectl\kubectl.exe" completion powershell | Out-String | Invoke-Expression
+}
+
