@@ -63,6 +63,7 @@ source <(antibody init)
 antibody bundle zsh-users/zsh-syntax-highlighting
 antibody bundle zsh-users/zsh-history-substring-search
 antibody bundle zsh-users/zsh-autosuggestions
+# antibody bundle ohmyzsh/ohmyzsh path:plugins/docker
 
 # PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
 # PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
@@ -90,4 +91,10 @@ export NVM_DIR="$HOME/.nvm"
 if [ -d $NVM_DIR ]; then
     [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
     [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+fi
+
+if (( $+commands[kubectl] ));then
+    source <(kubectl completion zsh)
+    alias k=kubectl
+    compdef __start_kubectl k
 fi
