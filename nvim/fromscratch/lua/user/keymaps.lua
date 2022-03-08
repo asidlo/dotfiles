@@ -85,5 +85,18 @@ keymap('n', '<S-Right>', '<Cmd>BufferLineCycleNext<CR>', opts)
 
 keymap('n', 'K', '<cmd>lua require("user.lsp.handlers").show_documentation()<CR>', opts)
 
+keymap('n', '<C-q>', '<cmd>lua toggle_qfix()<cr>', opts)
+
+local qfix_open = false
+_G.toggle_qfix = function ()
+    if not qfix_open then
+        vim.cmd [[ cope ]]
+        qfix_open = true
+    else
+        vim.cmd [[ ccl ]]
+        qfix_open = false
+    end
+end
+
 -- Prevent * search from moving forward to first hit
 -- vim.cmd [[ nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR> ]]
