@@ -193,9 +193,18 @@
             {
                 "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84; cd D:\\Networking-nfv; .\\AddModules.ps1}\"",
                 "guid": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
-                "hidden": true,
+                "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "Networking-nfv",
+                "startingDirectory": "D:\\Networking-nfv"
+            },
+            {
+                // "commandline": "pwsh -noe -c \"C:\\Program' 'Files\\Ev2_PowerShell\\AzureServiceDeployClient.ps1; $VerbosePreference=\"Continue\"",
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84; cd \"C:\\Program' 'Files\\Ev2_PowerShell\"; .\\AzureServiceDeployClient.ps1; cd D:\\Networking-nfv; .\\AddModules.ps1}\"",
+                "guid": "{bed30a78-5c23-40b4-9db5-2214e20e09a6}",
+                "hidden": false,
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "name": "Ev2",
                 "startingDirectory": "D:\\Networking-nfv"
             },
             {
