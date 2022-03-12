@@ -98,3 +98,5 @@ if (( $+commands[kubectl] ));then
     alias k=kubectl
     compdef __start_kubectl k
 fi
+
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh

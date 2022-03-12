@@ -80,8 +80,6 @@ else
     FD_EXE='fd'
 fi
 
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
-
 if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
 	export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
 	export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | $FD_EXE --type f --type l $FD_OPTS"
