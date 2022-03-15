@@ -15,7 +15,6 @@ call plug#begin(expand('~/vimfiles/plugged'))
     Plug 'OmniSharp/omnisharp-vim'
     Plug 'nickspoons/vim-sharpenup'
     Plug 'dense-analysis/ale'
-    Plug 'sirver/ultisnips'
 
     Plug 'junegunn/fzf'
     Plug 'junegunn/fzf.vim'
@@ -189,6 +188,8 @@ let g:OmniSharp_popup_position = 'peek'
 let g:OmniSharp_popup_options = {
 	\ 'highlight': 'Normal',
   \ 'padding': [1],
+  \ 'border': [1],
+  \ 'borderchars': [ '─','│','─','│', '╭',  '╮',  '╯',  '╰', ]
 \}
 let g:OmniSharp_popup_mappings = {
 	\ 'sigNext': '<C-n>',
@@ -197,7 +198,7 @@ let g:OmniSharp_popup_mappings = {
 	\ 'pageUp': ['<C-b>', '<PageUp>']
 \}
 
-let g:OmniSharp_want_snippet = 1
+" let g:OmniSharp_want_snippet = 1
 
 let g:OmniSharp_highlight_groups = {
     \ 'ExcludedCode': 'NonText'
@@ -205,14 +206,12 @@ let g:OmniSharp_highlight_groups = {
 
 let g:coc_global_extensions = [ 
 	\ 'coc-json', 'coc-pyright', 'coc-vimlsp', 'coc-java', 'coc-rust-analyzer',
-	\ 'coc-fzf-preview', 'coc-marketplace', 'coc-ultisnips'
+	\ 'coc-fzf-preview', 'coc-marketplace', 'coc-snippets'
 	\]
 let g:coc_data_home = expand(g:vim_dir . '/coc')
 let g:coc_config_home = g:coc_data_home
 
 highlight link CocHighlightText CocUnderline
-
-imap <C-j> <Plug>(coc-snippets-expand-jump)
 
 nmap <silent> [d <Plug>(coc-diagnostic-prev)
 nmap <silent> ]d <Plug>(coc-diagnostic-next)
