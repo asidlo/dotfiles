@@ -3,7 +3,7 @@
 	email = andrewsidlo@microsoft.com
 [core]
 	excludesfile = ~/.gitignore
-    editor = nvim
+    editor = vim
 [log]
 	date = iso
 [fetch]

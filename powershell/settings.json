@@ -200,6 +200,13 @@
                 "startingDirectory": "D:\\Networking-nfv"
             },
             {
+                "commandline": "powershell -noe -c \"cd D:\\Ev2\\Ev2_PowerShell; .\\AzureServiceDeployClient.ps1 \"",
+                "guid": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}",
+                "hidden": false,
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
+                "name": "Ev2"
+            },
+            {
                 "commandline": "%windir%\\System32\\cmd.exe \"/K\" %USERPROFILE%\\AppData\\Local\\Anaconda3\\Scripts\\activate.bat %USERPROFILE%\\AppData\\Local\\Anaconda3",
                 "guid": "{dbd445d1-20b5-4bb5-9e21-aeff97668825}",
                 "hidden": false,

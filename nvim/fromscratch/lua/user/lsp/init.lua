@@ -30,6 +30,7 @@ lspconfig.omnisharp.setup({
         'roslynExtensionsOptions:enableDecompilationSupport=true',
         'roslynExtensionsOptions:enableImportCompletion=true'
     },
+    autostart = false,
     on_attach = require('user.lsp.handlers').on_attach,
     capabilities = require('user.lsp.handlers').capabilities,
 })
