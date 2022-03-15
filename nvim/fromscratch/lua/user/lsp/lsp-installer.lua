@@ -32,9 +32,9 @@ lsp_installer.on_server_ready(function(server)
         return
     end
 
-    if server.name == 'omnisharp' then
-        return
-    end
+    -- if server.name == 'omnisharp' then
+    --     return
+    -- end
 
     -- if server.name == 'gopls' then
     --     local go_ok, go_lsp = pcall(require, 'go.lsp')

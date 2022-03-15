@@ -172,8 +172,8 @@ return packer.startup(function(use)
         end,
     })
     use('mfussenegger/nvim-jdtls')
-    use('OmniSharp/omnisharp-vim')
-    use('nickspoons/vim-sharpenup')
+    -- use('OmniSharp/omnisharp-vim')
+    -- use('nickspoons/vim-sharpenup')
 
     use({
         'folke/todo-comments.nvim',
