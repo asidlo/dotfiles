@@ -66,6 +66,7 @@ return packer.startup(function(use)
 
     -- cmp plugins
     use('hrsh7th/nvim-cmp')
+    use('hrsh7th/cmp-omni')
     use('hrsh7th/cmp-buffer')
     use('hrsh7th/cmp-path')
     -- use('hrsh7th/cmp-cmdline')
@@ -171,6 +172,8 @@ return packer.startup(function(use)
         end,
     })
     use('mfussenegger/nvim-jdtls')
+    use('OmniSharp/omnisharp-vim')
+    use('nickspoons/vim-sharpenup')
 
     use({
         'folke/todo-comments.nvim',

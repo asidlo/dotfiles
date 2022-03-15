@@ -37,7 +37,7 @@ local options = {
     foldexpr = 'nvim_treesitter#foldexpr()',
     autowriteall = true,
     modeline = false,
-    modelines = 0
+    modelines = 0,
 }
 
 vim.opt.shortmess:append('c')
@@ -82,6 +82,22 @@ end
 --     'go',
 --     'rust',
 -- }
+
+vim.g.OmniSharp_popup_position = 'peek'
+-- vim.g.OmniSharp_popup_options = {
+    -- winhl = 'Normal:NormalFloat',
+    -- border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' },
+-- }
+vim.g.OmniSharp_popup_mappings = {
+    sigNext = '<C-n>',
+    sigPrev = '<C-p>',
+    pageDown = { '<C-f>', '<PageDown>' },
+    pageUp = { '<C-b>', '<PageUp>' },
+}
+
+vim.g.sharpenup_map_prefix = '<leader>o'
+vim.g.sharpenup_statusline_opts = { Text = '%s (%p/%P)' }
+vim.g.sharpenup_statusline_opts.Highlight = 0
 
 if vim.fn.executable('rg') then
     vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'

@@ -41,6 +41,10 @@ local spaces = function()
     return 'spaces: ' .. vim.api.nvim_buf_get_option(0, 'shiftwidth')
 end
 
+local omnisharp_status = function ()
+    return vim.fn['sharpenup#statusline#Build']()
+end
+
 lualine.setup({
     options = {
         icons_enabled = true,
@@ -55,7 +59,7 @@ lualine.setup({
         lualine_b = {},
         lualine_c = { branch, diagnostics, mode },
         -- lualine_x = { "encoding", "fileformat", "filetype" },
-        lualine_x = { diff, 'location', spaces, 'encoding', 'fileformat', 'filetype' },
+        lualine_x = { omnisharp_status, diff, 'location', spaces, 'encoding', 'fileformat', 'filetype' },
         lualine_y = {},
         lualine_z = {},
     },
