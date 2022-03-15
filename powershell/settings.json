@@ -153,6 +153,7 @@
                 "commandline": "C:/Program Files/Git/bin/bash.exe",
                 "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
                 "icon": "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
+                "colorScheme": "Dracula",
                 "name": "Git Bash",
                 "startingDirectory": "%USERPROFILE%"
             },
