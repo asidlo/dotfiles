@@ -82,8 +82,8 @@ Set-PSReadLineOption -Colors @{
 
 # $host.PrivateData.VerboseForegroundColor = "Cyan"
 # $host.PrivateData.DebugForegroundColor = "Green"
-# $host.PrivateData.ProgressBackgroundColor = "DarkGray"
-# $host.PrivateData.ProgressForegroundColor = "Gray"
+$host.PrivateData.ProgressBackgroundColor = "DarkGray"
+$host.PrivateData.ProgressForegroundColor = "Gray"
 
 $GetChildItemColorTable['Directory'] = "Blue"
 $GetChildItemColorTable['Default'] = "White"

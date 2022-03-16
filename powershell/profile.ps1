@@ -38,7 +38,9 @@ function prompt {
 }
 
 Import-Module -Name PSReadLine -RequiredVersion 2.1.0
+Import-Module PSFzf
 
+Set-PSReadLineOption -EditMode Emacs
 
 # Turn off annoying bell
 Set-PSReadlineOption -BellStyle None
@@ -47,62 +49,43 @@ Set-PSReadLineOption -HistoryNoDuplicates
 Set-PSReadLineOption -HistorySearchCursorMovesToEnd
 Set-PSReadLineOption -HistorySaveStyle SaveIncrementally
 Set-PSReadLineOption -MaximumHistoryCount 4000
-Set-PSReadLineOption -EditMode Emacs
+
 Set-PSReadLineOption -PredictionSource History
 
-# # history substring search
+# history substring search
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 
-# # Tab completion
+# Tab completion
 Set-PSReadlineKeyHandler -Chord 'Shift+Tab' -Function Complete
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
-# # https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
-# # https://github.com/PowerShell/PSReadLine/blob/master/PSReadLine/SamplePSReadLineProfile.ps1#L13-L21
-Set-PSReadLineKeyHandler -Chord "Ctrl+f" -Function AcceptSuggestion
+# https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
+# https://github.com/PowerShell/PSReadLine/blob/master/PSReadLine/SamplePSReadLineProfile.ps1#L13-L21
+# Set-PSReadLineKeyHandler -Chord "Ctrl+f" -Function AcceptSuggestion
+Set-PSReadLineKeyHandler -Chord "Ctrl+f" -ScriptBlock {
+    [Microsoft.Powershell.PSConsoleReadline]::AcceptSuggestion()
+    [Microsoft.Powershell.PSConsoleReadline]::EndOfLine()
+}
+
+# https://github.com/kelleyma49/PSFzf
+Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t'
+Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
+Set-PsFzfOption -PSReadlineChordSetLocation 'Alt+c'
+Set-PsFzfOption -PSReadlineChordReverseHistoryArgs 'Alt+a'
 
 # Clipboard interaction is bound by default in Windows mode, but not Emacs mode.
 Set-PSReadLineKeyHandler -Key Ctrl+C -Function Copy
 Set-PSReadLineKeyHandler -Key Ctrl+v -Function Paste
 
 Set-PSReadLineOption -Colors @{
-    "ContinuationPrompt" = [ConsoleColor]:: Magenta
-    "Emphasis"           = [ConsoleColor]:: Gray
-    "Error"              = [ConsoleColor]:: Red
-    "Selection"          = [ConsoleColor]:: Cyan
-    "Default"            = [ConsoleColor]:: White
-    "Comment"            = [ConsoleColor]:: Gray
-    "Keyword"            = [ConsoleColor]:: Green
-    "String"             = [ConsoleColor]:: White
     "Operator"           = [ConsoleColor]:: Gray
-    "Variable"           = [ConsoleColor]:: Blue
-    "Command"            = [ConsoleColor]:: Yellow
     "Parameter"          = [ConsoleColor]:: Gray
-    "Type"               = [ConsoleColor]:: Yellow
-    "Number"             = [ConsoleColor]:: White
-    "Member"             = [ConsoleColor]:: Cyan
     "InlinePrediction"   = [ConsoleColor]:: DarkGray
 }
 
-#--------------------------------------------------------------
-# Prompt Config
-#--------------------------------------------------------------
-# Console Color Settings
-# $host.UI.RawUI.BackgroundColor = "Black"
-# $host.UI.RawUI.ForegroundColor = "White"
-# $BackgroundColor = $host.UI.RawUI.BackgroundColor
-
-# $host.PrivateData.ErrorBackgroundColor = $BackgroundColor
-# $host.PrivateData.WarningBackgroundColor = $BackgroundColor
-# $host.PrivateData.VerboseBackgroundColor = $BackgroundColor
-# $host.PrivateData.DebugBackgroundColor = $BackgroundColor
-
-# $host.PrivateData.VerboseForegroundColor = "Cyan"
-# $host.PrivateData.DebugForegroundColor = "Green"
-# $host.PrivateData.ProgressBackgroundColor = "DarkGray"
-# $host.PrivateData.ProgressForegroundColor = "Gray"
-
+$host.PrivateData.ProgressBackgroundColor = "DarkGray"
+$host.PrivateData.ProgressForegroundColor = "Gray"
 
 #--------------------------------------------------------------
 # Functions
