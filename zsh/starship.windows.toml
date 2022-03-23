@@ -1,5 +1,9 @@
 add_newline = false
 
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+
 [git_status]
 disabled = true
 
@@ -14,12 +18,14 @@ symbol = " "
 
 [directory]
 read_only = " "
+style = "cyan"
 
 [docker_context]
 symbol = " "
 
 [git_branch]
 symbol = " "
+style = "purple"
 
 [golang]
 symbol = " "
@@ -55,3 +61,9 @@ style = "yellow"
 
 [localip]
 style = "green"
+
+[dotnet]
+style = "blue"
+
+[time]
+style = "yellow"
