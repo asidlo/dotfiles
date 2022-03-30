@@ -235,6 +235,12 @@
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\notepad.png",
                 "name": "Notes",
                 "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "guid": "{91b25fda-2fc2-51ed-8980-d77576323d2f}",
+                "hidden": true,
+                "name": "Developer Command Prompt for VS 2017",
+                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
@@ -495,4 +501,3 @@
     ],
     "theme": "dark"
 }
-

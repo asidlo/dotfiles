@@ -172,7 +172,7 @@ return packer.startup(function(use)
         end,
     })
     use('mfussenegger/nvim-jdtls')
-    -- use('OmniSharp/omnisharp-vim')
+    -- use({ 'OmniSharp/omnisharp-vim', })
     -- use('nickspoons/vim-sharpenup')
 
     use({
