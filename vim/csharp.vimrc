@@ -1,4 +1,5 @@
-let g:vim_dir = expand('~/vimfiles')
+" let g:vim_dir = expand('~/vimfiles')
+let g:vim_dir = expand('~/.vim')
 
 if empty(glob(g:vim_dir . '/autoload/plug.vim'))
 	let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
