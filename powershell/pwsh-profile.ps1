@@ -131,6 +131,14 @@ function Stop-JavaProcesses {
     jps -l | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru } 
 }
 
+# Dotnet cli completion
+Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
+    param($commandName, $wordToComplete, $cursorPosition)
+        dotnet complete --position $cursorPosition "$wordToComplete" | ForEach-Object {
+           [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+}
+
 #--------------------------------------------------------------
 # Aliases
 #--------------------------------------------------------------
