@@ -107,13 +107,7 @@ local function lsp_keymaps(bufnr)
     -- vim.api.nvim_buf_set_keymap(bufnr, "n", "<leader>f", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-    vim.api.nvim_buf_set_keymap(
-        bufnr,
-        'n',
-        'gl',
-        '<cmd>lua vim.diagnostic.open_float()<CR>',
-        opts
-    )
+    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gl', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
     vim.cmd([[ command! Format execute 'lua vim.lsp.buf.formatting()' ]])
     vim.api.nvim_buf_set_keymap(
@@ -150,6 +144,12 @@ M.on_attach = function(client, bufnr)
         lsp_highlight_document(client)
     end
     lsp_code_lens_refresh(client)
+
+    local status_ok, lspsig = pcall(require, 'lsp_signature')
+    if not status_ok then
+        return
+    end
+    lspsig.on_attach()
 end
 
 local status_ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
@@ -177,10 +177,10 @@ end
 
 M.show_documentation = function()
     local filetype = vim.bo.filetype
-    if vim.tbl_contains({ 'vim','help' }, filetype) then
-        vim.cmd('h '..vim.fn.expand('<cword>'))
+    if vim.tbl_contains({ 'vim', 'help' }, filetype) then
+        vim.cmd('h ' .. vim.fn.expand('<cword>'))
     elseif vim.tbl_contains({ 'man' }, filetype) then
-        vim.cmd('Man '..vim.fn.expand('<cword>'))
+        vim.cmd('Man ' .. vim.fn.expand('<cword>'))
     elseif vim.fn.expand('%:t') == 'Cargo.toml' then
         require('crates').show_popup()
     else
