@@ -68,43 +68,4 @@ export PATH=$PATH:~/.local/bin
 LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 [[ -d "$LUAROCKS_HOME/lua_modules/bin" ]] && export PATH=$PATH:"$LUAROCKS_HOME/lua_modules/bin"
 
-if (( $+commands[batcat] )); then
-    BAT_EXE='batcat'
-else
-    BAT_EXE='bat'
-fi
-
-if (( $+commands[fdfind] )); then
-    FD_EXE='fdfind'
-else
-    FD_EXE='fd'
-fi
-
-if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
-	export FD_OPTS='--follow --exclude .git --exclude node_modules --exclude "*.class"'
-	export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard 2> /dev/null | $FD_EXE --type f --type l $FD_OPTS"
-	export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
-	export FZF_ALT_C_COMMAND="$FD_EXE --type d $FD_OPTS"
-	export FZF_DEFAULT_OPTS="
-	--color=fg:#c2bebe,bg:-1,hl:#8be9fd
-	--color=fg+:#f8f8f2,bg+:-1,hl+:#ff79c6
-	--color=info:#bd93f9,prompt:#ff79c6,pointer:#ff79c6
-	--color=marker:#50fa7b,spinner:#8be9fd,header:#f1fa8c
-	--height 50% -1 --reverse --multi --inline-info
-	--preview='$BAT_EXE --color=always --style=numbers {}'
-	--preview-window='right:hidden'
-	--bind='F2:toggle-preview'
-	--bind='ctrl-d:half-page-down'
-	--bind='ctrl-u:half-page-up'
-	--bind='ctrl-a:select-all+accept'
-	"
-else
-    if (( $+commands[$FD_EXE] )); then echo "Found $FD_EXE"; fi
-    if (( $+commands[$BAT_EXE] )); then echo "Found $BAT_EXE"; fi
-    if (( $+commands[fzf] )); then echo "Found fzf"; fi
-	# Issue with installing batcat on wsl ubuntu: https://askubuntu.com/a/1300824
-	# sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
-	>&2 echo "$fg[yellow]WARN$reset_color: [fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
-fi
-
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
