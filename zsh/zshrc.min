@@ -54,10 +54,14 @@ compinit -C
 # zstyle ':vcs_info:git*' formats " on %{$fg[green]%}%b%{$reset_color%}"
 
 # precmd() { vcs_info }
+if [ -d ~/.local/bin ]; then
+	mkdir -p ~/.local/bin
+fi
+export PATH=$PATH:~/.local/bin
 
 if ! (( $+commands[antibody] )); then
 	echo "Installing antibody plugin manager"
-	sudo curl -sfL git.io/antibody | sudo sh -s - -b /usr/local/bin
+	curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
 fi
 source <(antibody init)
 antibody bundle zsh-users/zsh-syntax-highlighting
@@ -79,10 +83,11 @@ autoload -U +X bashcompinit && bashcompinit
 [ -f /usr/local/etc/bash_completion.d/az ] && source /usr/local/etc/bash_completion.d/az 
 
 if ! (( $+commands[starship] )); then
-	echo "Installing starship shell prompt"
-	sh -c "$(curl -fsSL https://starship.rs/install.sh)"
+	echo "Install starship for customized prompt: https://starship.rs/guide/#%F0%9F%9A%80-installation"
+	# sh -c "$(curl -fsSL https://starship.rs/install.sh)"
+else
+	eval "$(starship init zsh)"
 fi
-eval "$(starship init zsh)"
 
 export NVM_DIR="$HOME/.nvm"
 if [ -d $NVM_DIR ]; then
@@ -139,9 +144,9 @@ if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE]
 	--bind='ctrl-a:select-all+accept'
 	"
 else
-    if (( $+commands[$FD_EXE] )); then echo "Found $FD_EXE"; fi
-    if (( $+commands[$BAT_EXE] )); then echo "Found $BAT_EXE"; fi
-    if (( $+commands[fzf] )); then echo "Found fzf"; fi
+	if (( $+commands[$FD_EXE] )); then echo "Found $FD_EXE"; fi
+	if (( $+commands[$BAT_EXE] )); then echo "Found $BAT_EXE"; fi
+	if (( $+commands[fzf] )); then echo "Found fzf"; fi
 	# Issue with installing batcat on wsl ubuntu: https://askubuntu.com/a/1300824
 	# sudo apt install -o Dpkg::Options::="--force-overwrite" bat ripgrep
 	>&2 echo "$fg[yellow]WARN$reset_color: [fzf|$FD_EXE|$BAT_EXE]+ not found. Install all and add to PATH" 
