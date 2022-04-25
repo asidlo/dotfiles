@@ -1,14 +1,21 @@
 #!/bin/bash
 
+set -e
+
 mkdir -p ~/.local/bin
 
 curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o ~/.local/nvim.appimage
 
-chmod u+x ~/.local/nvim.appimage
+chmod +x ~/.local/nvim.appimage
 
-~/.local/nvim.appimage --appimage-extract
+pushd ~/.local
 
-rm ~/.local/nvim.appimage
-mv ~/.local/squashfs-root ~/.local/nvim
+./nvim.appimage --appimage-extract 
+
+mv ./squashfs-root ~/.local/nvim
 
 ln -svf ~/.local/nvim/AppRun ~/.local/bin/nvim
+
+rm ./nvim.appimage
+
+popd
