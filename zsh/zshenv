@@ -15,44 +15,18 @@ case $OS in
 	export GOROOT=/usr/local/opt/go/libexec
 	;;
 *$LINUX*)
-	if (( $+commands[clip.exe] )); then
-		alias copy=clip.exe
-	else
-		alias copy='xclip -selection -c'
-	fi
 	alias ls='ls --color=auto'
-    # When installing from cargo, even on linux, those naming restrictions dont apply
-    if (( $+commands[fdfind] )); then
-        alias fd='fdfind'
-    fi
-    if (( $+commands[batcat] )); then
-        alias bat='batcat'
-    fi
 	export GOROOT=/opt/go
 	;;
 esac
 
 alias luamake=/Users/asidlo/.local/src/lua-language-server/3rd/luamake/luamake
 
-if (( $+commands[tree] )); then
-	alias tree='tree -C'
-fi
-
 alias ll='ls -AlFG'
 alias l='ls'
 alias la='ls -AG'
 alias grep='grep --color=auto'
 alias cls='clear'
-
-if (( $+commands[nvim] )); then
-	export VISUAL=nvim
-	export EDITOR=nvim
-	export MANPAGER="$EDITOR +Man!"
-else
-	export VISUAL=vim
-	export EDITOR=vim
-	export MANPAGER="vim -M +MANPAGER -"
-fi
 
 export MANWIDTH=999
 

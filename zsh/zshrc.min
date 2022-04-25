@@ -113,16 +113,40 @@ compctl -K _dotnet_zsh_complete dotnet
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
-if (( $+commands[batcat] )); then
-    BAT_EXE='batcat'
+if (( $+commands[nvim] )); then
+	export VISUAL=nvim
+	export EDITOR=nvim
+	export MANPAGER="$EDITOR +Man!"
 else
-    BAT_EXE='bat'
+	export VISUAL=vim
+	export EDITOR=vim
+	export MANPAGER="vim -M +MANPAGER -"
 fi
 
+if (( $+commands[tree] )); then
+	alias tree='tree -C'
+fi
+
+if (( $+commands[clip.exe] )); then
+    alias copy=clip.exe
+elif (( $+commands[lemonade] )); then
+    alias copy='lemonade copy'
+elif (( $+commands[xclip] )); then
+    alias copy='xclip -selection -c'
+fi
+
+# When installing from cargo, even on linux, those naming restrictions dont apply
 if (( $+commands[fdfind] )); then
+    alias fd='fdfind'
     FD_EXE='fdfind'
 else
     FD_EXE='fd'
+fi
+if (( $+commands[batcat] )); then
+    alias bat='batcat'
+    BAT_EXE='batcat'
+else
+    BAT_EXE='bat'
 fi
 
 if (( $+commands[$FD_EXE] )) && (( $+commands[fzf] )) && (( $+commands[$BAT_EXE] )); then
