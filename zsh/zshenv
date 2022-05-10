@@ -16,7 +16,7 @@ case $OS in
 	;;
 *$LINUX*)
 	alias ls='ls --color=auto'
-	export GOROOT=/opt/go
+	# export GOROOT=/opt/go
 	;;
 esac
 
