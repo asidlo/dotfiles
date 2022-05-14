@@ -103,7 +103,7 @@ return packer.startup(function(use)
         -- end,
     })
     use('jose-elias-alvarez/null-ls.nvim')
-    use('Pocco81/DAPInstall.nvim')
+    use('Pocco81/dap-buddy.nvim')
     use('b0o/schemastore.nvim')
     use({
         'mfussenegger/nvim-dap',
@@ -138,6 +138,7 @@ return packer.startup(function(use)
             })
         end,
     })
+    use('leoluz/nvim-dap-go')
     use({
         'simrat39/rust-tools.nvim',
         config = function()
