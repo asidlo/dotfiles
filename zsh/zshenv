@@ -36,6 +36,9 @@ export PATH=$PATH:$GOPATH/bin
 [[ -v JAVA_HOME ]] && export PATH=$PATH:$JAVA_HOME/bin
 [[ -v GRADLE_HOME ]] && export PATH=$PATH:$GRADLE_HOME/bin
 
+export DOTNET_ROOT="$HOME/.dotnet"
+export PATH=$PATH:$DOTNET_ROOT
+
 LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 [[ -d "$LUAROCKS_HOME/lua_modules/bin" ]] && export PATH=$PATH:"$LUAROCKS_HOME/lua_modules/bin"
 
