@@ -228,7 +228,7 @@ local mappings = {
         -- },
         -- c = { "<cmd>lua require('dap').scopes()<CR>", 'Scopes' },
         u = { "<cmd>lua require('dapui').toggle()<CR>", 'UI' },
-        q = { "<cmd>lua require('dap').close()<CR>", 'Close' },
+        q = { "<cmd>lua require('dap').terminate()<CR>", 'Close' },
         c = { '<cmd>Telescope dap commands<CR>', 'Commands' },
         b = { "<cmd>lua require('dap').toggle_breakpoint()<CR>", 'Toggle' },
         l = { '<cmd>Telescope dap list_breakpoints<CR>', 'List' },
