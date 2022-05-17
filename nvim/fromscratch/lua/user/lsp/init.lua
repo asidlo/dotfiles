@@ -16,6 +16,6 @@ if vim.fn.has('nvim-0.5.1') == 1 then
     require('vim.lsp.log').set_format_func(vim.inspect)
 end
 
-require('user.lsp.lsp-installer')
+require('user.lsp.configs')
 require('user.lsp.handlers').setup()
 require('user.lsp.null-ls')
