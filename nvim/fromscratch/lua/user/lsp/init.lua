@@ -11,7 +11,7 @@ lspconfig.util.default_config = vim.tbl_extend('force', lspconfig.util.default_c
     capabilities = global_capabilities,
 })
 
-vim.lsp.set_log_level('info')
+-- vim.lsp.set_log_level('info')
 if vim.fn.has('nvim-0.5.1') == 1 then
     require('vim.lsp.log').set_format_func(vim.inspect)
 end
