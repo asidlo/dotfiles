@@ -5,6 +5,7 @@
 	excludesfile = ~/.gitignore
 	editor = vim
     fsmonitor = true
+	autocrlf = true
 [log]
 	date = iso
 [fetch]

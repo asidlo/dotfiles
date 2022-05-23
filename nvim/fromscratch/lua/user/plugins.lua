@@ -239,6 +239,12 @@ return packer.startup(function(use)
             { 'moll/vim-bbye' },
         },
     })
+    use({
+        'ten3roberts/qf.nvim',
+        config = function()
+            require('qf').setup({})
+        end,
+    })
     use({ 'segeljakt/vim-silicon' })
 
     use('carlsmedstad/vim-bicep')
