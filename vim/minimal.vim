@@ -4,6 +4,10 @@
 "==============================================================================
 " Section: PLUGINS {{{
 "==============================================================================
+
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
 if empty(glob('~/.vim/autoload/plug.vim'))
 	silent execute '!curl -fLo ' . expand('~/.vim/autoload/plug.vim') . ' --create-dirs ' .
 		\ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
