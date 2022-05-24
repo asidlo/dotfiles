@@ -32,8 +32,15 @@ call plug#begin(expand('~/.vim/plugged'))
 	Plug 'aymericbeaumet/vim-symlink'
 call plug#end()
 
-packadd cfilter
-runtime ftplugin/man.vim
+try
+    packadd cfilter
+catch
+endtry
+
+try
+    runtime ftplugin/man.vim
+catch
+endtry
 
 " }}}
 " Section: SETTINGS {{{
