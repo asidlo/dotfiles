@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# https://developer.1password.com/docs/cli/get-started/
 
 set -e
 
@@ -14,17 +15,17 @@ ENTRY=$(op item list --format=json | jq -c '.[] | {title: (.title), id: (.id)}' 
 
 if [ -n "$ENTRY" ]; then
 	ITEM_ID=$(echo "$ENTRY" | jq '.id' | tr -d '"')
-    ITEM=$(op item get "$ITEM_ID" --format=json)
+    PASS=$(op item get "$ITEM_ID" --fields label=password)
 
 	case $OS in
 	*$MAC*)
-		echo "$ITEM" | jq '.password' | tr -d '"' | pbcopy
+		echo "$PASS" | pbcopy
 		;;
 	*$LINUX*)
 		if [[ $OS =~ $WSL ]]; then
-			echo "$ITEM" | jq '.password' | tr -d '"' | win32yank.exe -i
+			echo "$PASS" | win32yank.exe -i
 		else
-			echo "$ITEM" | jq '.password' | tr -d '"' | xclip -selection -c
+			echo "$PASS" | xclip -selection -c
 		fi
 		;;
 	*)
@@ -34,5 +35,5 @@ if [ -n "$ENTRY" ]; then
 	esac
 
 	echo "Copied password to clipboard!"
-	echo "$ITEM" | jq '. | {title: (.title), username: (.username), password: "*****"}'
+	echo "$ENTRY" | jq '. | {title: (.title), password: "**********"}'
 fi
