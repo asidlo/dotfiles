@@ -7,14 +7,14 @@ MAC='DARWIN'
 LINUX='LINUX'
 WSL='MICROSOFT'
 
-SIGNIN=$(op signin my)
+SIGNIN=$(op signin --account my.1password.com)
 eval "$SIGNIN"
 
-ENTRY=$(op list items | jq -c '.[] | {title: (.overview.title), url: (.overview.url), uuid: (.uuid)}' | fzf)
+ENTRY=$(op item list --format=json | jq -c '.[] | {title: (.title), id: (.id)}' | fzf)
 
 if [ -n "$ENTRY" ]; then
-	ITEM=$(echo "$ENTRY" | jq '.uuid' | tr -d '"')
-	TOKEN=$(op get totp "$ITEM")
+	ITEM=$(echo "$ENTRY" | jq '.id' | tr -d '"')
+	TOKEN=$(op item get --otp "$ITEM")
 
 	case $OS in
 	*$MAC*)
@@ -22,7 +22,7 @@ if [ -n "$ENTRY" ]; then
 		;;
 	*$LINUX*)
 		if [[ $OS =~ $WSL ]]; then
-			echo "$TOKEN" | clip.exe
+			echo "$TOKEN" | win32yank.exe -i
 		else
 			echo "$TOKEN" | xclip -selection -c
 		fi
@@ -34,5 +34,5 @@ if [ -n "$ENTRY" ]; then
 	esac
 
 	echo "Copied token to clipboard!"
-	echo "$ENTRY" | jq '. | {title: (.title), url: (.url), token: "****"}'
+	echo "$ENTRY" | jq '. | {title: (.title), token: "****"}'
 fi

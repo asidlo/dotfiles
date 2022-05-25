@@ -39,6 +39,10 @@ export PATH=$PATH:$GOPATH/bin
 export DOTNET_ROOT="$HOME/.dotnet"
 export PATH=$PATH:$DOTNET_ROOT
 
+# For using gpg for pass and git credential manager
+# See https://github.com/GitCredentialManager/git-credential-manager/blob/main/docs/credstores.md#gpgpass-compatible-files
+export GPG_TTY=$(tty)
+
 LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 [[ -d "$LUAROCKS_HOME/lua_modules/bin" ]] && export PATH=$PATH:"$LUAROCKS_HOME/lua_modules/bin"
 

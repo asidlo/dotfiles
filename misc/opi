@@ -7,14 +7,14 @@ MAC='DARWIN'
 LINUX='LINUX'
 WSL='MICROSOFT'
 
-SIGNIN=$(op signin my)
+SIGNIN=$(op signin --account my.1password.com)
 eval "$SIGNIN"
 
-ENTRY=$(op list items | jq -c '.[] | {title: (.overview.title), url: (.overview.url), uuid: (.uuid)}' | fzf)
+ENTRY=$(op item list --format=json | jq -c '.[] | {title: (.title), id: (.id)}' | fzf)
 
 if [ -n "$ENTRY" ]; then
-	ITEM_ID=$(echo "$ENTRY" | jq '.uuid' | tr -d '"')
-	ITEM=$(op get item "$ITEM_ID" --fields title,url,username,password)
+	ITEM_ID=$(echo "$ENTRY" | jq '.id' | tr -d '"')
+    ITEM=$(op item get "$ITEM_ID" --format=json)
 
 	case $OS in
 	*$MAC*)
@@ -22,7 +22,7 @@ if [ -n "$ENTRY" ]; then
 		;;
 	*$LINUX*)
 		if [[ $OS =~ $WSL ]]; then
-			echo "$ITEM" | jq '.password' | tr -d '"' | clip.exe
+			echo "$ITEM" | jq '.password' | tr -d '"' | win32yank.exe -i
 		else
 			echo "$ITEM" | jq '.password' | tr -d '"' | xclip -selection -c
 		fi
@@ -34,5 +34,5 @@ if [ -n "$ENTRY" ]; then
 	esac
 
 	echo "Copied password to clipboard!"
-	echo "$ITEM" | jq '. | {title: (.title), url: (.url), username: (.username), password: "*****"}'
+	echo "$ITEM" | jq '. | {title: (.title), username: (.username), password: "*****"}'
 fi
