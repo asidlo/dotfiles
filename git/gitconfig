@@ -17,6 +17,7 @@
 	rebase = true
 [diff]
 	tool = vimdiff
+	ignoreSubmodules = dirty
 [difftool]
 	prompt = 0
 [alias]
