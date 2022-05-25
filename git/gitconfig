@@ -3,6 +3,7 @@
 	email = sidlo.andrew@gmail.com
 [core]
 	excludesfile = ~/.gitignore
+	editor = nvim
 [log]
 	date = iso
 [fetch]

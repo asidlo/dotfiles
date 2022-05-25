@@ -3,9 +3,9 @@
 	email = andrewsidlo@microsoft.com
 [core]
 	excludesfile = ~/.gitignore
-	editor = vim
+	editor = nvim
     fsmonitor = true
-	autocrlf = true
+	# autocrlf = false
 [log]
 	date = iso
 [fetch]
