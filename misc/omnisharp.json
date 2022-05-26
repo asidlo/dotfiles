@@ -1,3 +1,4 @@
+// https://www.strathweb.com/2020/02/hidden-features-of-omnisharp-and-c-extension-for-vs-code/
 {
     "RoslynExtensionsOptions": {
         "enableDecompilationSupport": true,
@@ -20,5 +21,15 @@
     },
     "FormattingOptions": {
         "EnableEditorConfigSupport": true,
+        "OrganizeImports": true
+    },
+    "RenameOptions": {
+        "RenameInComments": true,
+        "RenameOverloads": true,
+        "RenameInStrings": true
+    },
+    "ImplementTypeOptions": {
+        "PropertyGenerationBehavior": "PreferAutoProperties",
+        "InsertionBehavior": "WithOtherMembersOfTheSameKind"
     }
 }
