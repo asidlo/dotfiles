@@ -193,9 +193,9 @@ return packer.startup(function(use)
             require('todo-comments').setup({
                 highlight = {
                     keyword = 'wide',
-                    pattern = [[.*<(KEYWORDS) (\([^\)]*\))?:]],
+                    pattern = [[.*<(KEYWORDS) ?(\([^\)]*\))?:]],
                 },
-                search = { pattern = [[\b(KEYWORDS) (\([^\)]*\))?:]] },
+                search = { pattern = [[\b(KEYWORDS) ?(\([^\)]*\))?:]] },
             })
         end,
     })
