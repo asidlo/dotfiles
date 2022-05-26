@@ -175,8 +175,16 @@ return packer.startup(function(use)
         end,
     })
     use('mfussenegger/nvim-jdtls')
+    use('simrat39/symbols-outline.nvim')
+    use({
+        'stevearc/aerial.nvim',
+        config = function()
+            require('aerial').setup()
+        end,
+    })
     -- use({ 'OmniSharp/omnisharp-vim', })
     -- use('nickspoons/vim-sharpenup')
+    use ('Hoffs/omnisharp-extended-lsp.nvim')
 
     use({
         'folke/todo-comments.nvim',
@@ -245,6 +253,10 @@ return packer.startup(function(use)
             require('qf').setup({})
         end,
     })
+    -- use 'TamaMcGlinn/quickfixdd'
+    use 'wincent/loupe'
+    use 'wincent/ferret'
+    use 'romainl/vim-qf'
     use({ 'segeljakt/vim-silicon' })
 
     use('carlsmedstad/vim-bicep')
