@@ -15,13 +15,13 @@ local servers = {
     'dockerls',
     'gopls',
     'jdtls',
-    -- 'omnisharp',
+    'omnisharp',
     'pyright',
     'rust_analyzer',
 }
 
 lsp_installer.setup({
-    ensure_installed = servers,
+    ensure_installed = {},
 })
 
 for _, server in pairs(servers) do
@@ -36,26 +36,26 @@ for _, server in pairs(servers) do
     lspconfig[server].setup(opts)
 end
 
-lspconfig.omnisharp.setup({
-    cmd = {
-        'dotnet',
-        -- '/home/asidlo/.local/share/nvim/lsp_servers/omnisharp/omnisharp/OmniSharp.dll',
-        '/home/asidlo/omnisharp6/OmniSharp.dll',
-        '--languageserver',
-        '-z',
-        -- '-s',
-        -- '/home/asidlo/workspace/src/msft/Networking-AppGW/src/ApplicationGateway.sln',
-        '--hostPID',
-        tostring(vim.fn.getpid()),
-        'DotNet:enablePackageRestore=false',
-        '--encoding',
-        'utf-8',
-        '--loglevel',
-        'information',
-    },
-    handlers = {
-        ['textDocument/definition'] = require('omnisharp_extended').handler,
-    },
-    on_attach = require('user.lsp.handlers').on_attach,
-    capabilities = require('user.lsp.handlers').capabilities,
-})
+-- lspconfig.omnisharp.setup({
+--     cmd = {
+--         'dotnet',
+--         -- '/home/asidlo/.local/share/nvim/lsp_servers/omnisharp/omnisharp/OmniSharp.dll',
+--         '/home/asidlo/omnisharp6/OmniSharp.dll',
+--         '--languageserver',
+--         '-z',
+--         -- '-s',
+--         -- '/home/asidlo/workspace/src/msft/Networking-AppGW/src/ApplicationGateway.sln',
+--         '--hostPID',
+--         tostring(vim.fn.getpid()),
+--         'DotNet:enablePackageRestore=false',
+--         '--encoding',
+--         'utf-8',
+--         '--loglevel',
+--         'information',
+--     },
+--     handlers = {
+--         ['textDocument/definition'] = require('omnisharp_extended').handler,
+--     },
+--     on_attach = require('user.lsp.handlers').on_attach,
+--     capabilities = require('user.lsp.handlers').capabilities,
+-- })

@@ -215,7 +215,10 @@ return packer.startup(function(use)
     use({ 'nvim-treesitter/nvim-treesitter-textobjects' })
 
     -- Gi
-    use('lewis6991/gitsigns.nvim')
+    use({
+        'lewis6991/gitsigns.nvim',
+        -- event = "BufEnter",
+    })
 
     -- Tpope
     use('tpope/vim-repeat')
