@@ -9,7 +9,7 @@ UBUNTU_VERSION="18.04"
 BAT_VERSION="0.21.0"
 GITCONFIG="gitconfig.work"
 
-if "$INSTALL_ALL"; then
+if [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_MARKDOWN=1
     INSTALL_JAVA=1
     INSTALL_LUA=1
@@ -99,7 +99,7 @@ sudo apt install tmux zip unzip -y
 
 # Install dotnet
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
-if "$INSTALL_DOTNET"; then
+if [ "$INSTALL_DOTNET" -eq 1 ]; then
     wget https://packages.microsoft.com/config/ubuntu/"$UBUNTU_VERSION"/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg -i packages-microsoft-prod.deb
     rm packages-microsoft-prod.deb
@@ -109,7 +109,7 @@ if "$INSTALL_DOTNET"; then
       sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
 fi
 
-if "$INSTALL_PYTHON"; then
+if [ "$INSTALL_PYTHON" -eq 1 ]; then
     sudo apt install python3-venv python3-pip -y
     /usr/bin/python3 -m pip install pynvim
     pip3 install black
@@ -117,14 +117,14 @@ fi
 
 
 # Install sdkman for java
-if "$INSTALL_JAVA"; then
+if [ "$INSTALL_JAVA" -eq 1 ]; then
     curl -s "https://get.sdkman.io" | bash
     source "$HOME/.sdkman/bin/sdkman-init.sh"
     sdk i java 17.0.3-ms
 fi
 
 # Install formatters/linters
-if "$INSTALL_LUA"; then
+if [ "$INSTALL_LUA" -eq 1 ]; then
     install_cargo && cargo install stylua
 
     sudo apt install build-essential libreadline-dev unzip -y
@@ -151,12 +151,12 @@ if "$INSTALL_LUA"; then
     sudo luarocks install lanes
 fi
 
-if "$INSTALL_BASH"; then
+if [ "$INSTALL_BASH" -eq 1 ]; then
     install_cargo && cargo install shellharden
     sudo apt install shellcheck -y
 fi
 
-if "$INSTALL_MARKDOWN"; then
+if [ "$INSTALL_MARKDOWN" -eq 1 ]; then
     install_npm
     npm install -g @fsouza/prettierd
     npm install -g markdownlint-cli
