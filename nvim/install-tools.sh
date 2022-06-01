@@ -13,6 +13,9 @@ GITCONFIG="gitconfig.work"
 # Needs to be run as root if sudo isnt already installed
 command -v sudo 2&> /dev/null || apt install sudo
 
+# For generating english locales to be set via zshrc and used for character rendering
+sudo apt install language-pack-en -y
+
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/"$RG_VERSION"/ripgrep_13.0.0_amd64.deb
@@ -58,6 +61,10 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
 ln -svf ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
 ln -svf ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
 ln -svf ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
+ln -svf ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
+
+mkdir -p ~/.omnisharp
+ln -svf ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
 
 mkdir -p ~/.config
 ln -svf ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
