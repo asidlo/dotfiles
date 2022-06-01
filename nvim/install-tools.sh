@@ -40,7 +40,10 @@ sudo apt install zsh -y
 sudo chsh -s /bin/zsh
 
 # Install starship
-curl -sS https://starship.rs/install.sh | sh
+curl -LO https://starship.rs/install.sh
+chmod +x ./install.sh
+sudo ./install.sh -y
+rm ./install.sh
 
 # Install dotnet
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
