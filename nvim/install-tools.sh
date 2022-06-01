@@ -55,8 +55,6 @@ git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
 ~/.local/src/fzf/install --xdg --key-bindings --completion --no-update-rc --no-bash --no-fish
 
 # Download dotfiles and link
-
-git clone https://github.com/asidlo/dotfiles.git ~/.local/src/dotfiles
 ln -svf ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
 ln -svf ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
 ln -svf ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
