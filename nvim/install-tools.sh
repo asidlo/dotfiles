@@ -16,6 +16,77 @@ command -v sudo 2&> /dev/null || apt install sudo
 # For generating english locales to be set via zshrc and used for character rendering
 sudo apt install language-pack-en -y
 
+# Install zsh
+sudo apt install zsh -y
+
+# Set zsh as current shell
+sudo chsh -s /bin/zsh
+
+# Download dotfiles and link
+ln -svf ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
+ln -svf ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
+ln -svf ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
+ln -svf ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
+
+mkdir -p ~/.omnisharp
+ln -svf ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
+
+mkdir -p ~/.config
+ln -svf ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
+ln -svf ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
+
+# Run zsh login shell to install antibody plugins
+zsh
+
+# Install nvim
+~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
+
+# Install nvim runtime prerequisites
+sudo apt install tmux python3-venv python3-pip zip unzip -y
+/usr/bin/python3 -m pip install pynvim
+
+# Install nvm for npm and nodejs
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install --lts
+
+# Install sdkman for java
+curl -s "https://get.sdkman.io" | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk i java 17.0.3-ms
+
+# Install cargo for rust dev
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source $HOME/.cargo/env
+
+# Install formatters/linters
+cargo install stylua
+cargo install shellharden
+pip install black
+sudo apt install shellcheck -y
+npm install -g @fsouza/prettierd
+npm install -g markdownlint-cli
+
+sudo apt install build-essential libreadline-dev unzip -y
+curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
+tar -zxf lua-5.3.5.tar.gz
+cd lua-5.3.5
+make linux test
+sudo make install
+cd -
+
+wget https://luarocks.org/releases/luarocks-3.8.0.tar.gz
+tar zxpf luarocks-3.8.0.tar.gz
+cd luarocks-3.8.0
+./configure --with-lua-include=/usr/local/include
+make
+make install
+cd -
+
+luarocks install luacheck
+luarocks install lanes
+
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/"$RG_VERSION"/ripgrep_13.0.0_amd64.deb
@@ -33,17 +104,8 @@ curl -LO https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$
 sudo apt install ./bat_"$BAT_VERSION"_amd64.deb
 rm ./bat_"$BAT_VERSION"_amd64.deb
 
-# Install zsh
-sudo apt install zsh -y
-
-# Set zsh as current shell
-sudo chsh -s /bin/zsh
-
 # Install starship
-curl -LO https://starship.rs/install.sh
-chmod +x ./install.sh
-sudo ./install.sh -y
-rm ./install.sh
+curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
 # Install dotnet
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
@@ -60,17 +122,3 @@ mkdir -p ~/.local/src
 git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
 ~/.local/src/fzf/install --xdg --key-bindings --completion --no-update-rc --no-bash --no-fish
 
-# Download dotfiles and link
-ln -svf ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
-ln -svf ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
-ln -svf ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
-ln -svf ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
-
-mkdir -p ~/.omnisharp
-ln -svf ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
-
-mkdir -p ~/.config
-ln -svf ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
-ln -svf ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
-
-~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
