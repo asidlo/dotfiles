@@ -35,8 +35,12 @@ mkdir -p ~/.config
 ln -svf ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
 ln -svf ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
 
-# Run zsh login shell to install antibody plugins
-zsh
+mkdir -p ~/.local/bin
+curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
+source <(~/.local/bin/antibody init)
+~/.local/bin/antibody bundle zsh-users/zsh-syntax-highlighting
+~/.local/bin/antibody bundle zsh-users/zsh-history-substring-search
+~/.local/bin/antibody zsh-users/zsh-autosuggestions
 
 # Install nvim
 ~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
