@@ -67,7 +67,7 @@ source $HOME/.cargo/env
 # Install formatters/linters
 cargo install stylua
 cargo install shellharden
-pip install black
+pip3 install black
 sudo apt install shellcheck -y
 npm install -g @fsouza/prettierd
 npm install -g markdownlint-cli
@@ -75,21 +75,25 @@ npm install -g markdownlint-cli
 sudo apt install build-essential libreadline-dev unzip -y
 curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
 tar -zxf lua-5.3.5.tar.gz
+rm lua-5.3.5.tar.gz
 cd lua-5.3.5
 make linux test
 sudo make install
-cd -
+cd .. 
+rm -rf ./lua-5.3.5
 
 wget https://luarocks.org/releases/luarocks-3.8.0.tar.gz
 tar zxpf luarocks-3.8.0.tar.gz
+rm luarocks-3.8.0.tar.gz
 cd luarocks-3.8.0
 ./configure --with-lua-include=/usr/local/include
 make
 make install
-cd -
+cd .. 
+rm -rf luarocks-3.8.0
 
-luarocks install luacheck
-luarocks install lanes
+sudo luarocks install luacheck
+sudo luarocks install lanes
 
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
