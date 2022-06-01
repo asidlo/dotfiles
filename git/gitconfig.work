@@ -92,3 +92,5 @@
 	credentialStore = gpg
 [credential "https://dev.azure.com"]
 	useHttpPath = true
+[safe]
+	directory = /azure/appgw

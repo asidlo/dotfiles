@@ -47,7 +47,7 @@ if vim.fn.has('unix') == 1 then
     vim.opt['dictionary'] = '/usr/share/dict/words'
     vim.opt['spellfile'] = home .. '/.config/nvim/spell/en.utf-8.add'
     vim.opt['thesaurus'] = home .. '/.config/nvim/spell/thesaurii.txt'
-    if vim.fn.executable('zsh') then
+    if vim.fn.executable('zsh') == 1 then
         vim.opt['shell'] = 'zsh'
     end
 else
