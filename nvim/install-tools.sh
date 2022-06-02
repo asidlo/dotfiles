@@ -51,17 +51,17 @@ sudo apt install zsh -y
 sudo chsh -s /bin/zsh
 
 # Download dotfiles and link
-ln -svf ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
-ln -svf ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
-ln -svf ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
-ln -svf ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
+ln -sv ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
+ln -sv ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
+ln -sv ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
+ln -sv ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
 
 mkdir -p ~/.omnisharp
-ln -svf ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
+ln -sv ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
 
 mkdir -p ~/.config
-ln -svf ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
-ln -svf ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
+ln -sv ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
+ln -sv ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
 
 mkdir -p ~/.local/bin
 curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
