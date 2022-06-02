@@ -9,7 +9,7 @@ UBUNTU_VERSION="18.04"
 BAT_VERSION="0.21.0"
 GITCONFIG="gitconfig.work"
 
-if [ "$INSTALL_ALL" -eq 1 ]; then
+if [ -n "$INSTALL_ALL" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_MARKDOWN=1
     INSTALL_JAVA=1
     INSTALL_LUA=1
