@@ -88,7 +88,9 @@ curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
 # Install fzf
 mkdir -p ~/.local/src
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
+if [ ! -d ~/.local/src/fzf/ ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
+fi
 ~/.local/src/fzf/install --xdg --key-bindings --completion --no-update-rc --no-bash --no-fish
 
 # Install nvim
