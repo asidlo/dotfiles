@@ -8,8 +8,6 @@ case $OS in
 *$MAC*)
 	alias ls='ls -G'
 	alias copy='pbcopy'
-	export PATH=/usr/local/sbin:$PATH
-	export PATH=/usr/local/bin:$PATH
 	export PATH=/usr/local/opt/openssl/bin:$PATH
 	export JAVA_HOME=$(/usr/libexec/java_home)
 	;;
@@ -18,6 +16,13 @@ case $OS in
 	export GOROOT=/usr/local/go
 	;;
 esac
+
+export PATH=/bin:$PATH
+export PATH=/sbin:$PATH
+export PATH=/usr/bin:$PATH
+export PATH=/usr/sbin:$PATH
+export PATH=/usr/local/bin:$PATH
+export PATH=/usr/local/sbin:$PATH
 
 alias luamake=/Users/asidlo/.local/src/lua-language-server/3rd/luamake/luamake
 
@@ -47,3 +52,14 @@ LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 [[ -d "$LUAROCKS_HOME/lua_modules/bin" ]] && export PATH=$PATH:"$LUAROCKS_HOME/lua_modules/bin"
 
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+
+export NVM_DIR="$HOME/.nvm"
+if [ -d $NVM_DIR ]; then
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+fi
+
+export SDKMAN_DIR="$HOME/.sdkman"
+if [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
+    source "$SDKMAN_DIR/bin/sdkman-init.sh"
+fi
