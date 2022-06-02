@@ -50,18 +50,18 @@ sudo apt install zsh -y
 # Set zsh as current shell
 sudo chsh -s /bin/zsh
 
-# Download dotfiles and link
-ln -sv ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
-ln -sv ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
-ln -sv ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
-ln -sv ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
+# Download dotfiles and link if file is not already present and a symlink
+[ -L ~/.gitconfig ] || ln -sv ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
+[ -L ~/.zshrc ] || ln -sv ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
+[ -L ~/.zshenv ] || ln -sv ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
+[ -L ~/.tmux.conf ] || ln -sv ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
 
 mkdir -p ~/.omnisharp
-ln -sv ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
+[ -L ~/.omnisharp/omnisharp.json ] || ln -sv ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
 
 mkdir -p ~/.config
-ln -sv ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
-ln -sv ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
+[ -L ~/.config/starship.toml ] || ln -sv ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
+[ -L ~/.config/nvim ] || ln -sv ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
 
 mkdir -p ~/.local/bin
 curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
