@@ -12,7 +12,7 @@ pushd ~/.local
 
 ./nvim.appimage --appimage-extract 
 
-mv ./squashfs-root ~/.local/nvim
+mv -f ./squashfs-root ~/.local/nvim
 
 ln -svf ~/.local/nvim/AppRun ~/.local/bin/nvim
 
