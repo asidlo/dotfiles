@@ -7,6 +7,7 @@ FD_VERSION="8.4.0"
 DOTNET_VERSION="6.0"
 UBUNTU_VERSION="18.04"
 BAT_VERSION="0.21.0"
+GO_VERSION="1.18.3"
 GITCONFIG="gitconfig.work"
 
 if [ -n "$INSTALL_ALL" ] && [ "$INSTALL_ALL" -eq 1 ]; then
@@ -117,6 +118,11 @@ if [ -n "$INSTALL_PYTHON" ] && [ "$INSTALL_PYTHON" -eq 1 ]; then
     pip3 install black
 fi
 
+if [ -n "$INSTALL_GO" ] && [ "$INSTALL_GO" -eq 1 ]; then
+    curl -LO https://go.dev/dl/go"$GO_VERSION".linux-amd64.tar.gz
+    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go"$GO_VERSION".linux-amd64.tar.gz
+    rm ./go"$GO_VERSION".linux-amd64.tar.gz
+fi
 
 # Install sdkman for java
 if [ -n "$INSTALL_JAVA" ] && [ "$INSTALL_JAVA" -eq 1 ]; then
