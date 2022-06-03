@@ -98,7 +98,7 @@ fi
 ~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
 
 # Install nvim runtime prerequisites
-sudo apt install tmux zip unzip -y
+sudo apt install build-essential tmux zip unzip -y
 
 # Install dotnet
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
