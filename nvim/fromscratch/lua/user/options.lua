@@ -28,8 +28,8 @@ local options = {
     relativenumber = true, -- set relative numbered lines
     signcolumn = 'yes', -- always show the sign column, otherwise it would shift the text each time
     wrap = false, -- display lines as one long line
-    -- scrolloff = 8, -- is one of my fav
-    -- sidescrolloff = 8,
+    scrolloff = 8, -- is one of my fav
+    sidescrolloff = 8,
     wildmode = { 'longest:full', 'full' },
     completeopt = { 'menu', 'menuone', 'noselect' },
     foldenable = false,
@@ -38,6 +38,7 @@ local options = {
     autowriteall = true,
     modeline = false,
     modelines = 0,
+    laststatus = 3
 }
 
 vim.opt.shortmess:append('c')
@@ -72,34 +73,30 @@ else
     vim.g.python3_host_prog = '/usr/bin/python3'
 end
 
--- NOTE: Messes with vim's built in spelling for some reason
--- vim.g.markdown_fenced_languages = {
---     'bash',
---     'sh',
---     'json',
---     'javascript',
---     'python',
---     'java',
---     'groovy',
---     'go',
---     'rust',
--- }
-
-vim.g.OmniSharp_popup_position = 'peek'
--- vim.g.OmniSharp_popup_options = {
-    -- winhl = 'Normal:NormalFloat',
-    -- border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' },
--- }
-vim.g.OmniSharp_popup_mappings = {
-    sigNext = '<C-n>',
-    sigPrev = '<C-p>',
-    pageDown = { '<C-f>', '<PageDown>' },
-    pageUp = { '<C-b>', '<PageUp>' },
+local default_plugins = {
+   "2html_plugin",
+   "getscript",
+   "getscriptPlugin",
+   -- "gzip",
+   "logipat",
+   "netrw",
+   "netrwPlugin",
+   "netrwSettings",
+   "netrwFileHandlers",
+   "matchit",
+   -- "tar",
+   -- "tarPlugin",
+   "rrhelper",
+   "spellfile_plugin",
+   "vimball",
+   "vimballPlugin",
+   -- "zip",
+   -- "zipPlugin",
 }
 
-vim.g.sharpenup_map_prefix = '<leader>o'
-vim.g.sharpenup_statusline_opts = { Text = '%s (%p/%P)' }
-vim.g.sharpenup_statusline_opts.Highlight = 0
+for _, plugin in pairs(default_plugins) do
+   vim.g["loaded_" .. plugin] = 1
+end
 
 if vim.fn.executable('rg') then
     vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
