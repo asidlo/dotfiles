@@ -20,12 +20,12 @@ local lspconfig = require('lspconfig')
 local servers = {}
 if vim.env.LSP_SERVERS ~= nil then
     servers = vim.fn.split(vim.env.LSP_SERVERS, ',')
-else
-    local server_dir = vim.fn.glob('~/.local/share/nvim/lsp_servers')
-    if vim.fn.empty(server_dir) == 0 then
-        local cmd = 'fd -t d -d 1 . ' .. server_dir .. ' -x echo {/}'
-        servers = vim.fn.systemlist(cmd)
-    end
+end
+
+local server_dir = vim.fn.glob('~/.local/share/nvim/lsp_servers')
+if vim.fn.empty(server_dir) == 0 then
+    local cmd = 'fd -t d -d 1 . ' .. server_dir .. ' -x echo {/}'
+    servers = vim.tbl_extend('force', servers, vim.fn.systemlist(cmd))
 end
 
 vim.env.LSP_SERVERS_INSTALLED = vim.fn.join(servers, ',')
