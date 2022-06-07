@@ -68,6 +68,20 @@ packer.startup(function(use)
     use('akinsho/bufferline.nvim')
     use('moll/vim-bbye')
     use({
+        config = function()
+            require 'fidget'.setup({
+                text = {
+                    spinner = "dots",
+                },
+                timer = {
+                    pinner_rate = 125, -- frame rate of spinner animation, in ms
+                    fidget_decay = 2000, -- how long to keep around empty fidget, in ms
+                    task_decay = 2000, -- how long to keep around completed task, in ms
+                },
+            })
+        end
+    })
+    use({
         'nvim-lualine/lualine.nvim',
         requires = { 'folke/tokyonight.nvim' }
     })
