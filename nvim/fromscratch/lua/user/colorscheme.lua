@@ -1,3 +1,4 @@
+vim.g.colors_name = 'tokyonight'
 vim.cmd [[
 try
   colorscheme tokyonight

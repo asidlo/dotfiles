@@ -21,6 +21,11 @@ else
     vim.env.TS_MODULES_INSTALLED = vim.fn.join(modules, ',')
 end
 
+if #vim.api.nvim_list_uis() == 0 then
+    vim.env.TS_MODULES_INSTALLED = "none"
+    modules = {}
+end
+
 configs.setup({
     ensure_installed = modules, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
     sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
