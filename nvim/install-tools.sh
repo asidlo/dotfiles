@@ -17,6 +17,7 @@ if [ -n "$INSTALL_ALL" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_BASH=1
     INSTALL_PYTHON=1
     INSTALL_DOTNET=1
+    INSTALL_NODE=1
 fi
 
 install_npm()
@@ -99,6 +100,10 @@ fi
 
 # Install nvim runtime prerequisites
 sudo apt install build-essential tmux zip unzip -y
+
+if [ -n "$INSTALL_NODE" ] && [ "$INSTALL_NODE" -eq 1 ]; then
+    install_npm
+fi
 
 # Install dotnet
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
