@@ -47,14 +47,25 @@ M.startup = function()
 
         use({
             'numToStr/Comment.nvim',
+            config = function()
+                require('user.comment')
+            end
             -- keys = { "gc", "gb" },
         })
         use('kyazdani42/nvim-web-devicons')
         use({
             'kyazdani42/nvim-tree.lua',
+            config = function()
+                require('user.nvim-tree')
+            end
             -- cmd = { "NvimTreeToggle", "NvimTreeFocus" },
         })
-        use('akinsho/bufferline.nvim')
+        use({
+            'akinsho/bufferline.nvim',
+            config = function()
+                require('user.bufferline')
+            end
+        })
         use('moll/vim-bbye')
         use({
             'j-hui/fidget.nvim',
@@ -74,24 +85,46 @@ M.startup = function()
         use({
             'nvim-lualine/lualine.nvim',
             requires = { 'folke/tokyonight.nvim', 'SmiteshP/nvim-gps' },
-            after = { 'nvim-gps' },
+            config = function ()
+                require('user.lualine')
+            end
+            -- after = { 'nvim-gps' },
         })
-        use('akinsho/toggleterm.nvim')
-        use('ahmedkhalf/project.nvim')
+        use({
+            'akinsho/toggleterm.nvim',
+            config = function ()
+                require('user.toggleterm')
+            end
+        })
+        use({
+            'ahmedkhalf/project.nvim',
+            config = function ()
+                require('user.project')
+            end
+        })
         use('lewis6991/impatient.nvim')
 
         use({
             'lukas-reineke/indent-blankline.nvim',
+            config = function ()
+                require('user.indentline')
+            end
             -- event = 'BufRead'
         })
 
         use({
             'goolord/alpha-nvim',
+            config = function ()
+                require('user.alpha')
+            end
             -- disable = true,
         })
         use('antoinemadec/FixCursorHold.nvim') -- This is needed to fix lsp doc highlight
         use({
             'folke/which-key.nvim',
+            config = function ()
+                require('user.whichkey')
+            end
             -- opt = true,
             -- setup = function()
             --     packer_lazy_load "which-key.nvim"
@@ -303,7 +336,7 @@ M.startup = function()
 
         use({
             'folke/todo-comments.nvim',
-            event = 'BufRead',
+            -- event = 'BufRead',
             config = function()
                 require('todo-comments').setup({
                     highlight = {
@@ -314,12 +347,14 @@ M.startup = function()
                 })
             end,
         })
-        use({ 'folke/trouble.nvim', cmd = 'TroubleToggle' })
-
+        use({
+            'folke/trouble.nvim',
+            -- cmd = 'TroubleToggle'
+        })
         -- Telescope
         use({
             'nvim-telescope/telescope.nvim',
-            cmd = 'Telescope',
+            -- cmd = 'Telescope',
             config = function()
                 require('user.telescope')
             end,
@@ -336,6 +371,9 @@ M.startup = function()
         -- Treesitter
         use({
             'nvim-treesitter/nvim-treesitter',
+            config = function()
+                require('user.treesitter')
+            end
             -- run = ':TSUpdate',
             -- event = { "BufRead", "BufNewFile" },
         })
@@ -384,7 +422,7 @@ M.startup = function()
         })
         use({
             'aymericbeaumet/vim-symlink',
-            event = 'BufRead',
+            -- event = 'BufRead',
             requires = {
                 { 'moll/vim-bbye' },
             },

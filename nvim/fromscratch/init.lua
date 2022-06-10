@@ -41,20 +41,8 @@ else
     plugins.init()
     plugins.startup()
 
-    -- Plugin specific settings
-    require('user.colorscheme')
-    require('user.cmp')
+    vim.g.colors_name = 'tokyonight'
+    vim.cmd 'colorscheme tokyonight'
+
     require('user.lsp')
-    require('user.telescope')
-    require('user.treesitter')
-    require('user.comment')
-    require('user.gitsigns')
-    require('user.nvim-tree')
-    require('user.bufferline')
-    require('user.lualine')
-    require('user.toggleterm')
-    require('user.project')
-    require('user.indentline')
-    require('user.alpha')
-    require('user.whichkey')
 end

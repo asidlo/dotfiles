@@ -1,19 +1,19 @@
--- local autocmd = vim.api.nvim_create_autocmd
+local autocmd = vim.api.nvim_create_autocmd
+local augroup = vim.api.nvim_create_augroup
+local settings = augroup('user_settings', { clear = true })
 
--- -- Disable statusline in dashboard
--- autocmd("FileType", {
---   pattern = "alpha",
---   callback = function()
---     vim.opt.laststatus = 0
---   end,
--- })
+autocmd("User", {
+    group = settings,
+    pattern = "AlphaReady",
+    command = "set showtabline=0 | autocmd BufLeave <buffer> set showtabline=" .. vim.opt.showtabline._value,
+})
 
--- autocmd("BufUnload", {
---   buffer = 0,
---   callback = function()
---     vim.opt.laststatus = 3
---   end,
--- })
+autocmd("User", {
+    group = settings,
+    pattern = "AlphaReady",
+    command = "set laststatus=0 | autocmd BufLeave <buffer> set laststatus=" .. vim.opt.laststatus._value,
+})
+
 vim.cmd([[
     augroup _general_settings
         autocmd!
@@ -26,11 +26,6 @@ vim.cmd([[
     augroup _auto_resize
         autocmd!
         autocmd VimResized * tabdo wincmd =
-    augroup end
-
-    augroup _alpha
-        autocmd!
-        autocmd User AlphaReady set showtabline=0 | autocmd BufUnload <buffer> set showtabline=2
     augroup end
 
     augroup _terminal
