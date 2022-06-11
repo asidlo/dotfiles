@@ -1,0 +1,79 @@
+window:
+  padding:
+    x: 2
+    y: 2
+
+scrolling:
+  # maximum number of lines in the scrollback buffer. Specifying '0' will
+  # disable scrolling.
+  history: 10000
+
+  # Number of lines the viewport will move for every line scrolled when
+  # scrollback is enabled (history > 0).
+  multiplier: 3
+
+# Font configuration
+font:
+  normal:
+    family: MesloLGM Nerd Font
+    style: Regular
+
+  size: 11.0
+  # Better font rendering for mac
+  # https://www.google.com
+  use_thin_strokes: true
+
+# TokyoNight Alacritty Colors
+colors:
+  name: TokyoNight Storm
+  author: Folke
+  # Default colors
+  primary:
+    background: '0x24283b'
+    foreground: '0xc0caf5'
+
+  # Normal colors
+  normal:
+    black:   '0x1D202F'
+    red:     '0xf7768e'
+    green:   '0x9ece6a'
+    yellow:  '0xe0af68'
+    blue:    '0x7aa2f7'
+    magenta: '0xbb9af7'
+    cyan:    '0x7dcfff'
+    white:   '0xa9b1d6'
+
+  # Bright colors
+  bright:
+    black:   '0x414868'
+    red:     '0xf7768e'
+    green:   '0x9ece6a'
+    yellow:  '0xe0af68'
+    blue:    '0x7aa2f7'
+    magenta: '0xbb9af7'
+    cyan:    '0x7dcfff'
+    white:   '0xc0caf5'
+
+  indexed_colors:
+    - { index: 16, color: '0xff9e64' }
+    - { index: 17, color: '0xdb4b4b' }
+    
+theme: TokyoNight_Storm
+
+draw_bold_text_with_bright_colors: false
+
+shell:
+  program: cmd.exe
+  args:
+    - /c
+    - wsl
+    - --cd
+    - '~'
+    - --
+    - tmux
+    - -u
+
+url:
+  launcher:
+    program: xdg-open
+    args: []
