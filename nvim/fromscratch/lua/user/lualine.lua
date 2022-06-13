@@ -123,126 +123,6 @@ if version.major > 0 or version.minor >= 7 then
     use_globalstatus = true
 end
 
-local kind_icons = {
-    Class = ' ',
-    -- Class = "ﴯ ",
-    Color = ' ',
-    -- Constant = 'ﲀ ',
-    Constant = " ",
-    -- Constructor = ' ',
-    Constructor = " ",
-    Enum = '練',
-    EnumMember = ' ',
-    Event = ' ',
-    Field = ' ',
-    File = '',
-    Folder = ' ',
-    Function = ' ',
-    -- Interface = 'ﰮ ',
-    Interface = " ",
-    Keyword = ' ',
-    -- Method = ' ',
-    Method = " ",
-    Module = ' ',
-    Operator = '',
-    Property = ' ',
-    Reference = ' ',
-    -- Snippet = ' ',
-
-    Snippet = " ",
-    -- Struct = ' ',
-    Struct = "פּ ",
-    Text = ' ',
-    TypeParameter = ' ',
-    Unit = '塞',
-    Value = ' ',
-    -- Variable = ' ',
-    Variable = " ",
-}
-
-local icons = {
-    Text = "",
-    Method = "",
-    Function = "",
-    Constructor = "",
-    Field = "ﰠ",
-    Variable = "",
-    Class = "ﴯ",
-    Interface = "",
-    Module = "",
-    Property = "ﰠ",
-    Unit = "塞",
-    Value = "",
-    Enum = "",
-    Keyword = "",
-    Snippet = "",
-    Color = "",
-    File = "",
-    Reference = "",
-    Folder = "",
-    EnumMember = "",
-    Constant = "",
-    Struct = "פּ",
-    Event = "",
-    Operator = "",
-    TypeParameter = "",
-    Table = " ",
-    Object = "",
-    Tag = " ",
-    Array = " ",
-    Boolean = "蘒",
-    Number = "",
-    String = "",
-    Calendar = " ",
-    Watch = "",
-}
-
-local gps_ok, gps = pcall(require, 'nvim-gps')
-if gps_ok then
-    gps.setup({
-        separator = '  ',
-        depth = 5,
-        icons = {
-            ["class-name"] = "%#GpsItemKindClass#" .. icons.Class .. "%*" .. " ",
-            ["function-name"] = "%#GpsItemKindFunction#" .. icons.Function .. "%*" .. " ",
-            ["method-name"] = "%#GpsItemKindMethod#" .. icons.Method .. "%*" .. " ",
-            ["container-name"] = "%#GpsItemKindProperty#" .. icons.Object .. "%*" .. " ",
-            ["tag-name"] = "%#GpsItemKindKeyword#" .. icons.Tag .. "%*" .. " ",
-            ["mapping-name"] = "%#GpsItemKindProperty#" .. icons.Object .. "%*" .. " ",
-            ["sequence-name"] = "%GpsItemKindProperty#" .. icons.Array .. "%*" .. " ",
-            ["null-name"] = "%GpsItemKindField#" .. icons.Field .. "%*" .. " ",
-            ["boolean-name"] = "%GpsItemKindValue#" .. icons.Boolean .. "%*" .. " ",
-            ["integer-name"] = "%GpsItemKindValue#" .. icons.Number .. "%*" .. " ",
-            ["float-name"] = "%GpsItemKindValue#" .. icons.Number .. "%*" .. " ",
-            ["string-name"] = "%GpsItemKindValue#" .. icons.String .. "%*" .. " ",
-            ["array-name"] = "%GpsItemKindProperty#" .. icons.Array .. "%*" .. " ",
-            ["object-name"] = "%GpsItemKindProperty#" .. icons.Object .. "%*" .. " ",
-            ["number-name"] = "%GpsItemKindValue#" .. icons.Number .. "%*" .. " ",
-            ["table-name"] = "%GpsItemKindProperty#" .. icons.Table .. "%*" .. " ",
-            ["date-name"] = "%GpsItemKindValue#" .. icons.Calendar .. "%*" .. " ",
-            ["date-time-name"] = "%GpsItemKindValue#" .. icons.Table .. "%*" .. " ",
-            ["inline-table-name"] = "%GpsItemKindProperty#" .. icons.Calendar .. "%*" .. " ",
-            ["time-name"] = "%GpsItemKindValue#" .. icons.Watch .. "%*" .. " ",
-            ["module-name"] = "%GpsItemKindModule#" .. icons.Module .. "%*" .. " ",
-        },
-        -- icons = {
-        --     ['class-name'] = kind_icons.Class,
-        --     ['function-name'] = kind_icons.Function,
-        --     ['method-name'] = kind_icons.Method,
-        --     ['container-name'] = kind_icons.Module,
-        --     ['tag-name'] = kind_icons.Snippet
-        -- },
-    })
-end
-
-local gps_component = nil
-if gps_ok then
-    gps_component = {
-        gps.get_location,
-        cond = gps.is_available,
-    }
-end
-
 local lsp_client = {
     function(msg)
         msg = msg or 'LS Inactive'
@@ -285,6 +165,11 @@ if not use_globalstatus then
     disabled_filetypes = { 'alpha', 'NvimTree', 'Outline' }
 end
 
+local navic_ok, navic = pcall(require, 'nvim-navic')
+if not navic_ok then
+    return
+end
+
 lualine.setup({
     options = {
         icons_enabled = true,
@@ -297,11 +182,11 @@ lualine.setup({
     },
     sections = {
         lualine_a = { 'mode' },
-        lualine_b = { branch, pyenv, diff },
-        lualine_c = { 'filename', gps_component },
+        lualine_b = { branch, pyenv },
+        lualine_c = { diff },
         -- lualine_x = { lsp_progress, diagnostics, lsp_client },
-        lualine_x = { lsp_progress },
-        lualine_y = { diagnostics, lsp_client },
+        lualine_x = { lsp_progress, diagnostics },
+        lualine_y = { lsp_client },
         -- lualine_y = { 'encoding', 'fileformat', 'filetype' },
         lualine_z = { 'location' },
         -- lualine_a = {'mode'},

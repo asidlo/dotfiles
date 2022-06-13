@@ -38,10 +38,15 @@ local options = {
     autowriteall = true,
     modeline = false,
     modelines = 0,
-    laststatus = 3
+    laststatus = 3,
 }
 
 vim.opt.shortmess:append('c')
+
+local version = vim.version()
+if version.major > 0 or version.minor >= 8 then
+    vim.opt.winbar = "%{%v:lua.require('user.winbar').eval()%}"
+end
 
 if vim.fn.has('unix') == 1 then
     local home = os.getenv('HOME')

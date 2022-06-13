@@ -85,20 +85,20 @@ M.startup = function()
         use({
             'nvim-lualine/lualine.nvim',
             requires = { 'folke/tokyonight.nvim', 'SmiteshP/nvim-gps' },
-            config = function ()
+            config = function()
                 require('user.lualine')
             end
             -- after = { 'nvim-gps' },
         })
         use({
             'akinsho/toggleterm.nvim',
-            config = function ()
+            config = function()
                 require('user.toggleterm')
             end
         })
         use({
             'ahmedkhalf/project.nvim',
-            config = function ()
+            config = function()
                 require('user.project')
             end
         })
@@ -106,7 +106,7 @@ M.startup = function()
 
         use({
             'lukas-reineke/indent-blankline.nvim',
-            config = function ()
+            config = function()
                 require('user.indentline')
             end
             -- event = 'BufRead'
@@ -114,7 +114,7 @@ M.startup = function()
 
         use({
             'goolord/alpha-nvim',
-            config = function ()
+            config = function()
                 require('user.alpha')
             end
             -- disable = true,
@@ -122,7 +122,7 @@ M.startup = function()
         use('antoinemadec/FixCursorHold.nvim') -- This is needed to fix lsp doc highlight
         use({
             'folke/which-key.nvim',
-            config = function ()
+            config = function()
                 require('user.whichkey')
             end
             -- opt = true,
@@ -445,6 +445,10 @@ M.startup = function()
             requires = { 'nvim-treesitter/nvim-treesitter' },
             after = 'nvim-treesitter',
         })
+        use {
+            "SmiteshP/nvim-navic",
+            requires = "neovim/nvim-lspconfig"
+        }
     end)
 end
 

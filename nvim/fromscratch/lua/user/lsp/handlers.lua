@@ -76,8 +76,16 @@ M.setup = function()
 end
 
 local function lsp_highlight_document(client)
+    local capabilities = nil
+    local version = vim.version()
+    if version.major > 0 or version.minor >= 8 then
+        capabilities = client.server_capabilities
+    else
+        capabilities = client.resolved_capabilities
+    end
+
     -- Set autocommands conditional on server_capabilities
-    if client.resolved_capabilities.document_highlight then
+    if capabilities.document_highlight then
         vim.api.nvim_exec(
             [[
                   augroup lsp_document_highlight
@@ -120,7 +128,15 @@ local function lsp_keymaps(bufnr)
 end
 
 local function lsp_code_lens_refresh(client)
-    if client.resolved_capabilities.code_lens then
+    local capabilities = nil
+    local version = vim.version()
+    if version.major > 0 or version.minor >= 8 then
+        capabilities = client.server_capabilities
+    else
+        capabilities = client.resolved_capabilities
+    end
+
+    if capabilities.code_lens then
         vim.api.nvim_exec(
             [[
                   augroup lsp_code_lens_refresh
@@ -135,11 +151,22 @@ local function lsp_code_lens_refresh(client)
 end
 
 M.on_attach = function(client, bufnr)
-    if client.resolved_capabilities.document_range_formatting then
+    local capabilities = nil
+    local version = vim.version()
+    if version.major > 0 or version.minor >= 8 then
+        capabilities = client.server_capabilities
+    else
+        capabilities = client.resolved_capabilities
+    end
+
+    if capabilities.document_range_formatting then
         vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
     end
+
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
     lsp_keymaps(bufnr)
+
     if client.name ~= 'powershell_es' then
         lsp_highlight_document(client)
     end
@@ -150,6 +177,14 @@ M.on_attach = function(client, bufnr)
         return
     end
     lspsig.on_attach()
+
+    if client.name ~= 'null-ls' then
+        local navic_ok, navic = pcall(require, 'nvim-navic')
+        if not navic_ok then
+            return
+        end
+        navic.attach(client, bufnr)
+    end
 end
 
 local status_ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
