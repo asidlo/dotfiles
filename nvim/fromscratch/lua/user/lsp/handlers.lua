@@ -117,7 +117,14 @@ local function lsp_keymaps(bufnr)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gl', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-    vim.cmd([[ command! Format execute 'lua vim.lsp.buf.formatting()' ]])
+
+    local version = vim.version()
+    if version.major > 0 or version.minor >= 8 then
+        vim.cmd([[ command! Format execute 'lua vim.lsp.buf.format { async = true }' ]])
+    else
+        vim.cmd([[ command! Format execute 'lua vim.lsp.buf.formatting()' ]])
+    end
+
     vim.api.nvim_buf_set_keymap(
         bufnr,
         'n',
