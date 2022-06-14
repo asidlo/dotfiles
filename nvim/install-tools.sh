@@ -96,7 +96,7 @@ fi
 ~/.local/src/fzf/install --xdg --key-bindings --completion --no-update-rc --no-bash --no-fish
 
 # Install nvim
-~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
+~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
 
 # Install nvim runtime prerequisites
 sudo apt install build-essential tmux zip unzip -y
