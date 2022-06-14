@@ -17,9 +17,11 @@ local disabled_filetypes = { 'alpha', 'NvimTree' }
 -- See :h statusline for %v values
 M.eval = function()
     if vim.tbl_contains(disabled_filetypes, vim.bo.filetype) then
-        vim.opt_local.winbar = nil
+        vim.opt.winbar = nil
         return
     end
+
+    vim.opt.winbar = "%{%v:lua.require('user.winbar').eval()%}"
 
     local file_path = vim.api.nvim_eval_statusline('%f', {}).str
     -- local modified = vim.api.nvim_eval_statusline('%M', {}).str
@@ -28,6 +30,10 @@ M.eval = function()
 
     local navic_ok, navic = pcall(require, 'nvim-navic')
     if not navic_ok or not navic.is_available() then
+        return string.format('     %s', file_path)
+    end
+
+    if navic.get_location() == "" then
         return string.format('     %s', file_path)
     end
 

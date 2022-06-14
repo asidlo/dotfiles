@@ -43,11 +43,6 @@ local options = {
 
 vim.opt.shortmess:append('c')
 
-local version = vim.version()
-if version.major > 0 or version.minor >= 8 then
-    vim.opt.winbar = "%{%v:lua.require('user.winbar').eval()%}"
-end
-
 if vim.fn.has('unix') == 1 then
     local home = os.getenv('HOME')
     vim.opt['dictionary'] = '/usr/share/dict/words'
