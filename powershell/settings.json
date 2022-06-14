@@ -229,7 +229,7 @@
                 "source": "Windows.Terminal.Azure"
             },
             {
-                "commandline": "wsl.exe nvim -S ~/.local/share/nvim/sessions/notes.vim",
+                "commandline": "wsl.exe -- ~/.local/bin/nvim -S ~/.local/share/nvim/sessions/notes.vim",
                 "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\notepad.png",
