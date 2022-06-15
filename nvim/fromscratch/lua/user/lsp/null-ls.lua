@@ -26,16 +26,16 @@ null_ls.setup({
         formatting.black.with({ extra_args = { '--fast' } }),
 
         -- Lua
-        formatting.stylua.with({
-            extra_args = {
-                '--indent-width',
-                '4',
-                '--quote-style',
-                'AutoPreferSingle',
-                '--indent-type',
-                'Spaces',
-            },
-        }),
+        -- formatting.stylua.with({
+        --     extra_args = {
+        --         '--indent-width',
+        --         '4',
+        --         '--quote-style',
+        --         'AutoPreferSingle',
+        --         '--indent-type',
+        --         'Spaces',
+        --     },
+        -- }),
         diagnostics.luacheck.with({
             extra_args = {
                 '--globals',

@@ -12,17 +12,17 @@ end
 local diagnostics = {
     'diagnostics',
     sources = { 'nvim_diagnostic' },
-    sections = { 'error', 'warn' },
-    symbols = { error = ' ', warn = ' ' },
+    sections = { 'error', 'warn', 'info', 'hint' },
+    symbols = { error = ' ', warn = ' ', info = ' ', hint = ' ' },
     colored = true,
     diagnostics_color = {
         error = { fg = colors.red },
         warn = { fg = colors.yellow },
-        info = { fg = colors.fg },
+        info = { fg = colors.green },
         hint = { fg = colors.cyan },
     },
     update_in_insert = false,
-    always_visible = false,
+    always_visible = false
 }
 
 local diff = {
@@ -37,17 +37,10 @@ local diff = {
     cond = hide_in_width,
 }
 
-local mode = {
-    'mode',
-    fmt = function(str)
-        return '-- ' .. str .. ' --'
-    end,
-}
-
 local branch = {
     'branch',
     icons_enabled = true,
-    icon = '',
+    icon = ''
 }
 
 local env_cleanup = function(venv)
@@ -80,25 +73,25 @@ local pyenv = {
     cond = hide_in_width,
 }
 
-local lsp_progress = {
-    function()
-        local Lsp = vim.lsp.util.get_progress_messages()[1]
-
-        if vim.o.columns < 120 or not Lsp then
-            return ''
-        end
-
-        local msg = Lsp.message or ''
-        local percentage = Lsp.percentage or 0
-        local title = Lsp.title or ''
-        local spinners = { '', '' }
-        local ms = vim.loop.hrtime() / 1000000
-        local frame = math.floor(ms / 120) % #spinners
-        local content = string.format(' %%<%s %s %s (%s%%%%) ', spinners[frame + 1], title, msg, percentage)
-
-        return ('%#St_LspProgress#' .. content) or ''
-    end,
-}
+-- local lsp_progress = {
+--     function()
+--         local Lsp = vim.lsp.util.get_progress_messages()[1]
+--
+--         if vim.o.columns < 120 or not Lsp then
+--             return ''
+--         end
+--
+--         local msg = Lsp.message or ''
+--         local percentage = Lsp.percentage or 0
+--         local title = Lsp.title or ''
+--         local spinners = { '', '' }
+--         local ms = vim.loop.hrtime() / 1000000
+--         local frame = math.floor(ms / 120) % #spinners
+--         local content = string.format(' %%<%s %s %s (%s%%%%) ', spinners[frame + 1], title, msg, percentage)
+--
+--         return ('%#St_LspProgress#' .. content) or ''
+--     end,
+-- }
 
 local spaces = function()
     return 'spaces: ' .. vim.api.nvim_buf_get_option(0, 'shiftwidth')
@@ -185,7 +178,7 @@ lualine.setup({
         lualine_b = { branch, pyenv },
         lualine_c = { diff },
         -- lualine_x = { lsp_progress, diagnostics, lsp_client },
-        lualine_x = { lsp_progress, diagnostics },
+        lualine_x = { diagnostics },
         lualine_y = { lsp_client },
         -- lualine_y = { 'encoding', 'fileformat', 'filetype' },
         lualine_z = { 'location' },
