@@ -12,16 +12,19 @@ vim.api.nvim_set_hl(0, 'WinBar', { bg = colors.bg_dark, fg = colors.comment })
 
 local separator = ''
 
-local disabled_filetypes = { 'alpha', 'NvimTree' }
+local disabled_filetypes = {
+    'alpha', 'NvimTree', 'packer', 'toggleterm', 'help',
+    'Trouble', 'Outline', 'TelescopePrompt', ''
+}
 
 -- See :h statusline for %v values
 M.eval = function()
     if vim.tbl_contains(disabled_filetypes, vim.bo.filetype) then
-        vim.opt.winbar = nil
+        vim.opt_local.winbar = nil
         return
     end
 
-    vim.opt.winbar = "%{%v:lua.require('user.winbar').eval()%}"
+    vim.opt_local.winbar = "%{%v:lua.require('user.winbar').eval()%}"
 
     local file_path = vim.api.nvim_eval_statusline('%f', {}).str
     -- local modified = vim.api.nvim_eval_statusline('%M', {}).str

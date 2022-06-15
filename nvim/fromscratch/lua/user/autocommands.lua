@@ -20,7 +20,7 @@ autocmd('User', {
     group = settings,
     desc = 'Removes winbar from Alpha buffer via AlphaReady event',
     pattern = 'AlphaReady',
-    callback = function ()
+    callback = function()
         local version = vim.version()
         if version.major > 0 or version.minor >= 8 then
             vim.opt.winbar = nil
@@ -31,7 +31,6 @@ autocmd('User', {
 autocmd({ 'BufEnter', 'BufWinEnter' }, {
     group = settings,
     desc = 'Adds winbar based on ft',
-    pattern = '*',
     callback = function()
         local version = vim.version()
         if version.major > 0 or version.minor >= 8 then
