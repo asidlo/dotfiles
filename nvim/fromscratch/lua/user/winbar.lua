@@ -8,7 +8,7 @@ colors = colors.setup()
 
 -- vim.api.nvim_set_hl(0, 'WinBarPath', {bg = colors.black, fg = colors.fg_dark})
 -- vim.api.nvim_set_hl(0, 'WinBarModified', {bg = colors.bg_dark, fg = colors.fg_dark})
-vim.api.nvim_set_hl(0, 'WinBar', { bg = colors.bg_dark, fg = colors.comment })
+vim.api.nvim_set_hl(0, 'WinBar', { bg = colors.bg, fg = colors.comment })
 
 local separator = ''
 
