@@ -51,8 +51,8 @@ export GPG_TTY=$(tty)
 LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 [[ -d "$LUAROCKS_HOME/lua_modules/bin" ]] && export PATH=$PATH:"$LUAROCKS_HOME/lua_modules/bin"
 
-[ -z $LSP_SERVERS ] && export LSP_SERVERS="jdtls,jsonls,cmake,omnisharp,rust_analyzer,sumneko_lua,pyright,gopls,bashls,clangd,dockerls,yamlls,taplo"
-[ -z $TS_MODULES ] && export TS_MODULES="all"
+# [ -z $LSP_SERVERS ] && export LSP_SERVERS="jdtls,jsonls,cmake,omnisharp,rust_analyzer,sumneko_lua,pyright,gopls,bashls,clangd,dockerls,yamlls,taplo"
+# [ -z $TS_MODULES ] && export TS_MODULES="all"
 
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
