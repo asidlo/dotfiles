@@ -8,12 +8,6 @@ if vim.env.TS_MODULES ~= nil then
     modules = vim.fn.split(vim.env.TS_MODULES, ',')
 end
 
-local server_dir = vim.fn.glob('~/.local/share/nvim/site/pack/packer/start/nvim-treesitter/parser/')
-if vim.fn.empty(server_dir) == 0 then
-    local cmd = 'fd -I -t f -e so -d 1 . ' .. server_dir .. ' -x echo {/.}'
-    modules = vim.tbl_extend('force', modules, vim.fn.systemlist(cmd))
-end
-
 if vim.env.TS_MODULES == "all" then
     vim.env.TS_MODULES_INSTALLED = "all"
     modules = "all"
@@ -21,6 +15,8 @@ else
     vim.env.TS_MODULES_INSTALLED = vim.fn.join(modules, ',')
 end
 
+-- No need to auto install modules when running in headless mode. Specific
+-- command will be used instead.
 if #vim.api.nvim_list_uis() == 0 then
     vim.env.TS_MODULES_INSTALLED = "none"
     modules = {}
