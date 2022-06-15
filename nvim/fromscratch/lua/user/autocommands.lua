@@ -21,7 +21,10 @@ autocmd('User', {
     desc = 'Removes winbar from Alpha buffer via AlphaReady event',
     pattern = 'AlphaReady',
     callback = function ()
-        vim.opt.winbar = nil
+        local version = vim.version()
+        if version.major > 0 or version.minor >= 8 then
+            vim.opt.winbar = nil
+        end
     end
 })
 
