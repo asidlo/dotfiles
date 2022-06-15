@@ -44,6 +44,51 @@ M.startup = function()
         use('wbthomason/packer.nvim')
         use('folke/tokyonight.nvim')
         use(require('user.autopairs').use())
+        -- use {
+        --     'fgheng/winbar.nvim',
+        --     config = function()
+        --         local colors_ok, colors = pcall(require, 'tokyonight.colors')
+        --         if not colors_ok then
+        --             return
+        --         end
+        --         colors = colors.setup()
+        --         require('winbar').setup({
+        --             enabled = true,
+        --
+        --             show_file_path = true,
+        --             show_symbols = true,
+        --
+        --             colors = {
+        --                 path = colors.comment,
+        --                 file_name = colors.comment,
+        --                 symbols = '',
+        --             },
+        --
+        --             icons = {
+        --                 file_icon_default = '',
+        --                 seperator = '>',
+        --                 editor_state = '●',
+        --                 lock_icon = '',
+        --             },
+        --
+        --             exclude_filetype = {
+        --                 'help',
+        --                 'startify',
+        --                 'dashboard',
+        --                 'packer',
+        --                 'neogitstatus',
+        --                 'NvimTree',
+        --                 'Trouble',
+        --                 'alpha',
+        --                 'lir',
+        --                 'Outline',
+        --                 'spectre_panel',
+        --                 'toggleterm',
+        --                 'qf',
+        --             }
+        --         })
+        --     end
+        -- }
 
         use({
             'numToStr/Comment.nvim',
