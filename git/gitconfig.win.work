@@ -48,13 +48,13 @@
 	# a = author
 	l = log
 	lo = log --oneline
-	loa = log --oneline --decorate --pretty='* %C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-	lod = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
-	lodr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
-	lods = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
-	load = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-	loadr = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
-	loads = log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
+	loa = log --oneline --decorate --pretty='%C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+	lod = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
+	lodr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
+	lods = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
+	load = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+	loadr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
+	loads = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
 
 	# g = graph
 	lg = log --graph

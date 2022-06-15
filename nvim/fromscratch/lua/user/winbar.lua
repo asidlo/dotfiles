@@ -14,7 +14,7 @@ local separator = ''
 
 local disabled_filetypes = {
     'alpha', 'NvimTree', 'packer', 'toggleterm', 'help',
-    'Trouble', 'Outline', 'TelescopePrompt', ''
+    'Trouble', 'Outline', 'TelescopePrompt', '', 'git'
 }
 
 -- See :h statusline for %v values
