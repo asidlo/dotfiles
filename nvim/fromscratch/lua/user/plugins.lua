@@ -308,10 +308,11 @@ M.startup = function()
                     max_height = 22,
                     max_width = 120, -- max_width of signature floating_window, line will be wrapped if exceed max_width
                     handler_opts = {
-                        border = 'single', -- double, single, shadow, none
+                        border = 'rounded', -- double, single, shadow, none
                     },
                     zindex = 200, -- by default it will be on top of all floating windows, set to 50 send it to bottom
                     padding = '', -- character to pad on left and right of signature can be ' ', or '|'  etc
+                    toggle_keymap = '<C-h>'
                 }
                 require('lsp_signature').setup(options)
             end,
@@ -368,7 +369,14 @@ M.startup = function()
             end,
         })
         use('mfussenegger/nvim-jdtls')
-        use('simrat39/symbols-outline.nvim')
+        use({
+            'simrat39/symbols-outline.nvim',
+            setup = function ()
+                vim.g.symbols_outline = {
+                    auto_preview = false
+                }
+            end
+        })
         use({
             'stevearc/aerial.nvim',
             config = function()
