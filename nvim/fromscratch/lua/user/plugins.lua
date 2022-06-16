@@ -24,11 +24,11 @@ M.init = function(opts)
         compile_on_sync = true,
         git = { clone_timeout = 6000 },
         display = {
-            working_sym = ' ﲊ',
-            error_sym = '✗ ',
-            done_sym = ' ',
+            working_sym = ' ',
+            error_sym = ' ',
+            done_sym = ' ',
             removed_sym = ' ',
-            moved_sym = '',
+            moved_sym = ' ',
             open_fn = function()
                 return require('packer.util').float({ border = 'rounded' })
             end,
@@ -371,7 +371,7 @@ M.startup = function()
         use('mfussenegger/nvim-jdtls')
         use({
             'simrat39/symbols-outline.nvim',
-            setup = function ()
+            setup = function()
                 vim.g.symbols_outline = {
                     auto_preview = false
                 }
@@ -444,10 +444,17 @@ M.startup = function()
         -- Gi
         use({
             'lewis6991/gitsigns.nvim',
-            setup = function()
+            config = function()
                 require('user.gitsigns').setup()
             end,
             -- event = { 'BufEnter' },
+        })
+
+        use({
+            'rhysd/git-messenger.vim',
+            setup = function()
+                vim.g.git_messenger_floating_win_opts = { border = 'rounded' }
+            end
         })
 
         -- Tpope

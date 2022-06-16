@@ -14,8 +14,13 @@ local separator = ''
 
 local disabled_filetypes = {
     'alpha', 'NvimTree', 'packer', 'toggleterm', 'help',
-    'Trouble', 'Outline', 'TelescopePrompt', '', 'git'
+    'Trouble', 'Outline', 'TelescopePrompt', '', 'git', 'gitmessengerpopup'
 }
+
+local navic_ok, navic = pcall(require, 'nvim-navic')
+navic.setup({
+    separator = ' ' .. separator .. ' '
+})
 
 -- See :h statusline for %v values
 M.eval = function()
@@ -31,7 +36,6 @@ M.eval = function()
 
     file_path = file_path:gsub('/', string.format(' %s ', separator))
 
-    local navic_ok, navic = pcall(require, 'nvim-navic')
     if not navic_ok or not navic.is_available() then
         return string.format('     %s', file_path)
     end
