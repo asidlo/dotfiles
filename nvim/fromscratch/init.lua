@@ -44,5 +44,10 @@ else
     vim.g.colors_name = 'tokyonight'
     vim.cmd 'colorscheme tokyonight'
 
+    local colors = require('tokyonight.colors')
+    colors = colors.setup()
+    vim.api.nvim_set_hl(0, 'NormalFloat', {bg = colors.bg})
+    vim.api.nvim_set_hl(0, 'FloatBorder', {bg = colors.bg})
+
     require('user.lsp')
 end
