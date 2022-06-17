@@ -11,7 +11,7 @@ M.separator = ''
 
 M.disabled_filetypes = {
     'alpha', 'NvimTree', 'packer', 'toggleterm', 'help',
-    'Trouble', 'Outline', 'TelescopePrompt', '', 'git', 'gitmessengerpopup'
+    'Trouble', 'Outline', 'TelescopePrompt', '', 'git', 'gitmessengerpopup', 'notify'
 }
 
 M.setup = function()

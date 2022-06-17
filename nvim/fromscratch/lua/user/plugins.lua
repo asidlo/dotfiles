@@ -17,7 +17,7 @@ M.packer_lazy_load = function(plugin, timer)
 end
 
 M.installed_plugins = function()
-	return require('packer.plugin_utils').list_installed_plugins()
+    return require('packer.plugin_utils').list_installed_plugins()
 end
 
 -- Have packer use a popup window
@@ -37,9 +37,16 @@ M.init = function(opts)
                 return require('packer.util').float({ border = 'rounded' })
             end,
         },
+        luarocks = {
+            python_cmd = 'python3' -- Set the python command to use for running hererocks
+        }
     }
     local cfg = vim.tbl_deep_extend('force', defaults, opts)
     packer.init(cfg)
+
+    local rocks = require('packer.luarocks')
+    rocks.install_commands()
+    rocks.setup_paths()
 end
 
 -- Install your plugins here
@@ -270,10 +277,8 @@ M.startup = function()
         use({ 'Tastyep/structlog.nvim' })
         use({
             'rcarriga/nvim-notify',
-            -- config = function()
-            --   require("lvim.core.notify").setup()
-            -- end,
             requires = { 'nvim-telescope/telescope.nvim', 'Tastyep/structlog.nvim' },
+            rocks = {'json-lua', 'inspect'}
         })
         use('jose-elias-alvarez/null-ls.nvim')
         use('Pocco81/dap-buddy.nvim')

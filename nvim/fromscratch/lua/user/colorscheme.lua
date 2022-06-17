@@ -27,11 +27,12 @@ M.change = function(name, callback)
     if callback then
         local ok, msg = pcall(callback)
         if not ok then
-            push_error(string.format('Unable to execute colorscheme.change(' % s ') callback; %s', name, msg))
+            push_error(string.format('Unable to execute colorscheme.change("%s") callback; %s', name, msg))
             return
         end
     end
 
+    -- If successfully run then reset err
     M.err = nil
 end
 
@@ -45,7 +46,7 @@ if not ok_colors then
         vim.api.nvim_set_hl(0, 'DiffChange', { bg = nil, fg = 'yellow' })
         vim.api.nvim_set_hl(0, 'SignColumn', { bg = nil })
     end)
-    push_error('Missing tokyonight.colors')
+    vim.notify('Unable to load tokyonight.colors', vim.log.levels.WARN, {title = 'Missing Dependencies'})
 else
     M.colors = colors.setup()
     M.change('tokyonight', function()

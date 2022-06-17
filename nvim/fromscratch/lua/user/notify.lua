@@ -1,11 +1,6 @@
 local M = {}
 
-local Log = require "lvim.core.log"
-
 local opts = {
-  active = false,
-  on_config_done = nil,
-  opts = {
     ---@usage Animation style one of { "fade", "slide", "fade_in_slide_out", "static" }
     stages = "slide",
 
@@ -22,28 +17,80 @@ local opts = {
     render = "default",
 
     ---@usage highlight behind the window for stages that change opacity
-    background_colour = "Normal",
+    background_colour = "#000000",
 
     ---@usage minimum width for notification windows
     minimum_width = 50,
 
     ---@usage Icons for the different levels
     icons = {
-      ERROR = "",
-      WARN = "",
-      INFO = "",
-      DEBUG = "",
-      TRACE = "✎",
+        ERROR = "",
+        WARN = "",
+        INFO = "",
+        DEBUG = "",
+        TRACE = "✎",
     },
-  },
 }
 
 function M.setup()
-  local notify = require "notify"
+    local ok, notify = pcall(require, 'notify')
+    if not ok then
+        vim.notify('Missing notify', vim.log.levels.WARN)
+        return
+    end
 
-  notify.setup(opts)
-  vim.notify = notify
-  Log:configure_notifications(notify)
+    notify.setup(opts)
+    vim.notify = notify
+end
+
+local format_json = function(msg)
+    local json = require("JSON")
+    return json:encode_pretty(msg, nil, {
+        pretty = true,
+        align_keys = false,
+        array_newline = true,
+        indent = "  "
+    })
+end
+
+M.info = function(title, msg)
+    vim.notify(format_json(msg), vim.log.levels.INFO, {
+        title = title,
+        on_open = function(win)
+            local buf = vim.api.nvim_win_get_buf(win)
+            vim.api.nvim_buf_set_option(buf, "filetype", "json")
+        end,
+    })
+end
+
+M.debug = function(title, msg)
+    vim.notify(format_json(msg), vim.log.levels.DEBUG, {
+        title = title,
+        on_open = function(win)
+            local buf = vim.api.nvim_win_get_buf(win)
+            vim.api.nvim_buf_set_option(buf, "filetype", "json")
+        end,
+    })
+end
+
+M.warn = function(title, msg)
+    vim.notify(format_json(msg), vim.log.levels.WARN, {
+        title = title,
+        on_open = function(win)
+            local buf = vim.api.nvim_win_get_buf(win)
+            vim.api.nvim_buf_set_option(buf, "filetype", "json")
+        end,
+    })
+end
+
+M.error = function(title, msg)
+    vim.notify(format_json(msg), vim.log.levels.ERROR, {
+        title = title,
+        on_open = function(win)
+            local buf = vim.api.nvim_win_get_buf(win)
+            vim.api.nvim_buf_set_option(buf, "filetype", "json")
+        end,
+    })
 end
 
 return M
