@@ -1,6 +1,6 @@
 function _G.dump(...)
     local objects = vim.tbl_map(vim.inspect, { ... })
-    print(unpack(objects))
+    print(table.unpack(objects))
 end
 
 function _G.new_buf(...)

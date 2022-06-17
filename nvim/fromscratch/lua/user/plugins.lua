@@ -16,6 +16,10 @@ M.packer_lazy_load = function(plugin, timer)
     end
 end
 
+M.installed_plugins = function()
+	return require('packer.plugin_utils').list_installed_plugins()
+end
+
 -- Have packer use a popup window
 M.init = function(opts)
     opts = opts or {}
@@ -28,7 +32,7 @@ M.init = function(opts)
             error_sym = ' ',
             done_sym = ' ',
             removed_sym = ' ',
-            moved_sym = ' ',
+            moved_sym = ' ',
             open_fn = function()
                 return require('packer.util').float({ border = 'rounded' })
             end,

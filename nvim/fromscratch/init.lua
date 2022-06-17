@@ -1,53 +1,39 @@
+-- In order to have a smooth experience, make sure you run nvim in headless mode the first time
+-- via `nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'`.  This will
+-- install all of the plugins and cache them so the next execution of nvim will start quick.
+-- TODO (AS): Figure out whichkey+Ferret conflict during headless install
+
 local present, impatient = pcall(require, 'impatient')
 
 if present then
     impatient.enable_profile()
 end
 
-require('user.options')
-require('user.util')
-require('user.autocommands')
-require('user.keymaps')
-
 local fn = vim.fn
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
-
-vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#1e222a' })
 
 if fn.empty(fn.glob(install_path)) > 0 then
     fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
     vim.cmd('packadd packer.nvim')
+end
 
-    -- if plugin install dir is missing, then remove the complied file if it exists
-    if fn.empty(fn.glob('~/.config/nvim/plugin/packer_compiled.lua')) == 0 then
-        fn.system({ 'rm', '~/.config/nvim/plugin/packer_compiled.lua' })
-    end
+local plugins = require('user.plugins')
+plugins.init()
+plugins.startup()
 
-    local plugins = require('user.plugins')
+if vim.tbl_isempty(plugins.installed_plugins()) then
+    return
+end
 
-    if #vim.api.nvim_list_uis() == 0 then
-        plugins.init({ display = nil })
-        plugins.startup()
-    else
-        plugins.init()
-        require('packer').on_complete = vim.schedule_wrap(function()
-            vim.cmd('source $MYVIMRC')
-        end)
-        plugins.startup()
-        vim.cmd('PackerSync')
-    end
-else
-    local plugins = require('user.plugins')
-    plugins.init()
-    plugins.startup()
+require('user.options')
+require('user.util')
+require('user.keymaps')
 
-    vim.g.colors_name = 'tokyonight'
-    vim.cmd 'colorscheme tokyonight'
+require('user.autocommands')
+require('user.lsp')
 
-    local colors = require('tokyonight.colors')
-    colors = colors.setup()
-    vim.api.nvim_set_hl(0, 'NormalFloat', {bg = colors.bg})
-    vim.api.nvim_set_hl(0, 'FloatBorder', {bg = colors.bg})
-
-    require('user.lsp')
+local scheme = require('user.colorscheme')
+if scheme.err ~= nil then
+    local msg = string.format('Unable to load colorscheme -> %s', vim.inspect(scheme.err))
+    vim.notify(msg, vim.log.levels.WARN)
 end
