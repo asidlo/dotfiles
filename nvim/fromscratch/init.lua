@@ -26,6 +26,12 @@ if running_headless then
     return
 end
 
+local scheme = require('user.colorscheme')
+if scheme.err ~= nil then
+    local msg = string.format('Unable to load colorscheme -> %s', vim.inspect(scheme.err))
+    vim.notify(msg, vim.log.levels.WARN)
+end
+
 require('user.options')
 require('user.util')
 require('user.keymaps')
@@ -33,8 +39,3 @@ require('user.keymaps')
 require('user.autocommands')
 require('user.lsp')
 
-local scheme = require('user.colorscheme')
-if scheme.err ~= nil then
-    local msg = string.format('Unable to load colorscheme -> %s', vim.inspect(scheme.err))
-    vim.notify(msg, vim.log.levels.WARN)
-end

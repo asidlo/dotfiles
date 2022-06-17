@@ -1,6 +1,7 @@
 local autocmd = vim.api.nvim_create_autocmd
 local augroup = vim.api.nvim_create_augroup
 local settings = augroup('user_settings', { clear = true })
+local version = vim.version()
 
 autocmd('User', {
     group = settings,
@@ -28,16 +29,25 @@ autocmd('User', {
     end
 })
 
-autocmd({ 'BufEnter', 'BufWinEnter' }, {
-    group = settings,
-    desc = 'Adds winbar based on ft',
-    callback = function()
-        local version = vim.version()
-        if version.major > 0 or version.minor >= 8 then
-            require('user.winbar').eval()
+if version.major > 0 or version.minor >= 8 then
+    local ok, winbar = pcall(require, 'user.winbar')
+    if not ok then
+        vim.notify(string.format('user.autocommands -> Unable to import user.winbar; %s', winbar), vim.log.levels.ERROR)
+        return
+    end
+    winbar.setup()
+    if winbar.err then
+        vim.notify(string.format('user.autocommands -> Unable to setup winbar %s', vim.inspect(winbar.err)), vim.log.levels.ERROR)
+        return
+    end
+    autocmd({ 'BufEnter', 'BufWinEnter' }, {
+        group = settings,
+        desc = 'Adds winbar based on ft',
+        callback = function()
+            winbar.eval()
         end
-    end,
-})
+    })
+end
 
 vim.cmd([[
     augroup _general_settings

@@ -1,30 +1,44 @@
 local M = {}
 
-local colors_ok, colors = pcall(require, 'tokyonight.colors')
-if not colors_ok then
-    return
+local push_error = function(error)
+    if not M.err then
+        M.err = {}
+    end
+    table.insert(M.err, error)
 end
-colors = colors.setup()
 
--- vim.api.nvim_set_hl(0, 'WinBarPath', {bg = colors.black, fg = colors.fg_dark})
--- vim.api.nvim_set_hl(0, 'WinBarModified', {bg = colors.bg_dark, fg = colors.fg_dark})
-vim.api.nvim_set_hl(0, 'WinBar', { bg = colors.bg, fg = colors.comment })
+M.separator = ''
 
-local separator = ''
-
-local disabled_filetypes = {
+M.disabled_filetypes = {
     'alpha', 'NvimTree', 'packer', 'toggleterm', 'help',
     'Trouble', 'Outline', 'TelescopePrompt', '', 'git', 'gitmessengerpopup'
 }
 
-local navic_ok, navic = pcall(require, 'nvim-navic')
-navic.setup({
-    separator = ' ' .. separator .. ' '
-})
+M.setup = function()
+    local colors_ok, colors = pcall(require, 'tokyonight.colors')
+    if not colors_ok then
+        vim.notify(string.format('user.winbar.setup() -> Missing tokyonight.colors', vim.log.levels.WARN))
+    else
+        M.colors = colors.setup()
+        vim.api.nvim_set_hl(0, 'WinBar', { bg = M.colors.bg, fg = M.colors.comment })
+    end
+
+    local navic_ok, navic = pcall(require, 'nvim-navic')
+    if not navic_ok then
+        vim.notify(string.format('user.winbar.setup() -> Missing nvim-navic', vim.log.levels.WARN))
+        return
+    end
+
+    M.navic = navic
+
+    M.navic.setup({
+        separator = ' ' .. M.separator .. ' '
+    })
+end
 
 -- See :h statusline for %v values
 M.eval = function()
-    if vim.tbl_contains(disabled_filetypes, vim.bo.filetype) then
+    if vim.tbl_contains(M.disabled_filetypes, vim.bo.filetype) then
         vim.opt_local.winbar = nil
         return
     end
@@ -34,17 +48,17 @@ M.eval = function()
     local file_path = vim.api.nvim_eval_statusline('%f', {}).str
     -- local modified = vim.api.nvim_eval_statusline('%M', {}).str
 
-    file_path = file_path:gsub('/', string.format(' %s ', separator))
+    file_path = file_path:gsub('/', string.format(' %s ', M.separator))
 
-    if not navic_ok or not navic.is_available() then
+    if not M.navic or not M.navic.is_available() then
         return string.format('     %s', file_path)
     end
 
-    if navic.get_location() == "" then
+    if M.navic.get_location() == "" then
         return string.format('     %s', file_path)
     end
 
-    return string.format('     %s %s %s', file_path, separator, navic.get_location())
+    return string.format('     %s %s %s', file_path, M.separator, M.navic.get_location())
 
     -- return '%#WinBarPath#' .. file_path .. '%*' .. '%#WinBarModified#' .. modified .. '%*'
 end
