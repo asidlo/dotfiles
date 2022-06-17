@@ -21,7 +21,8 @@ local plugins = require('user.plugins')
 plugins.init()
 plugins.startup()
 
-if vim.tbl_isempty(plugins.installed_plugins()) then
+local running_headless = #vim.api.nvim_list_uis() == 0
+if running_headless then
     return
 end
 

@@ -35,7 +35,7 @@ M.change = function(name, callback)
     M.err = nil
 end
 
-local ok_colors, colors = pcall(require, 'tokyonight.color')
+local ok_colors, colors = pcall(require, 'tokyonight.colors')
 if not ok_colors then
     M.change('default', function()
         vim.cmd({ cmd = 'highlight', args = { 'link', 'FloatBorder', 'Normal' } })
