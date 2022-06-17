@@ -1,9 +1,12 @@
 {
-    // %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json
-    // %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": [
+    "actions": 
+    [
+        {
+            "command": "find",
+            "keys": "ctrl+shift+f"
+        },
         {
             "command": "unbound",
             "keys": "alt+enter"
@@ -13,24 +16,27 @@
             "keys": "ctrl+shift+6"
         },
         {
-            "command": {
+            "command": "paste",
+            "keys": "ctrl+v"
+        },
+        {
+            "command": 
+            {
                 "action": "copy",
                 "singleLine": false
             },
             "keys": "ctrl+c"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "commandPalette"
             },
             "keys": "ctrl+shift+p"
         },
         {
-            "command": "paste",
-            "keys": "ctrl+v"
-        },
-        {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "Notes",
                 "suppressApplicationTitle": true,
@@ -39,20 +45,26 @@
             "keys": "ctrl+alt+n"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
+                "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
+            },
+            "keys": "ctrl+alt+b"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "elevate": false,
                 "profile": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
-                "suppressApplicationTitle": true,
-                "elevate": true
+                "suppressApplicationTitle": true
             },
             "keys": "ctrl+alt+d"
         },
         {
-            "command": "find",
-            "keys": "ctrl+shift+f"
-        },
-        {
-            "command": {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "auto",
                 "splitMode": "duplicate"
@@ -60,49 +72,48 @@
             "keys": "alt+shift+d"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
             },
             "keys": "ctrl+alt+a"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
             },
             "keys": "ctrl+alt+p"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{60e15043-d159-5a45-bf85-42f758c872dd}"
             },
             "keys": "ctrl+alt+v"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
             },
             "keys": "ctrl+alt+c"
         },
         {
-            "command": {
-                "action": "newTab",
-                "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
-            },
-            "keys": "ctrl+alt+b"
-        },
-        {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
             },
             "keys": "ctrl+alt+t"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
             },
@@ -114,16 +125,20 @@
     "defaultProfile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
     "largePasteWarning": false,
     "multiLinePasteWarning": false,
-    "profiles": {
-        "defaults": {
+    "profiles": 
+    {
+        "defaults": 
+        {
             "colorScheme": "Tokyonight",
-            "font": {
+            "font": 
+            {
                 "face": "MesloLGM Nerd Font",
                 "size": 11
             },
             "suppressApplicationTitle": true
         },
-        "list": [
+        "list": 
+        [
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
@@ -150,49 +165,31 @@
                 "suppressApplicationTitle": true
             },
             {
+                "colorScheme": "Dracula",
                 "commandline": "C:/Program Files/Git/bin/bash.exe",
                 "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
                 "icon": "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
-                "colorScheme": "Dracula",
                 "name": "Git Bash",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "guid": "{60e15043-d159-5a45-bf85-42f758c872dd}",
-                "hidden": false,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
-                "name": "VS2019 Cmd",
-                "source": "Windows.Terminal.VisualStudio",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b2559349\"",
                 "guid": "{1b88e339-8e3c-54df-8c1d-a50846a1363d}",
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84\"",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
                 "name": "VS2019 Powershell",
-                // "source": "Windows.Terminal.VisualStudio",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "guid": "{72851954-311e-507d-8cf1-1789f240dcee}",
-                "hidden": false,
-                "name": "VS2022 Cmd",
-                "source": "Windows.Terminal.VisualStudio",
-                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2022.png",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "guid": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}",
                 "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b48227b7}\"",
-                "hidden": false,
-                "name": "VS2022 Powershell",
-                // "source": "Windows.Terminal.VisualStudio",
+                "guid": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}",
+                "hidden": true,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2022.png",
+                "name": "VS2022 Powershell",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b3b56d84; cd D:\\Networking-nfv; .\\AddModules.ps1}\"",
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b2559349; cd D:\\Networking-nfv; .\\AddModules.ps1}\"",
                 "guid": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
@@ -237,14 +234,21 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "guid": "{91b25fda-2fc2-51ed-8980-d77576323d2f}",
-                "hidden": true,
-                "name": "Developer Command Prompt for VS 2017",
+                "guid": "{59f5289d-2884-54f3-b2a6-ec0ac4dc8ccd}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2019",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{ef156f01-ea02-5adb-83c9-cb8b5fbdc4bb}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2019",
                 "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
-    "schemes": [
+    "schemes": 
+    [
         {
             "background": "#0C0C0C",
             "black": "#0C0C0C",
