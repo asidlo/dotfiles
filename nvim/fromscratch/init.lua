@@ -1,8 +1,6 @@
 -- In order to have a smooth experience, make sure you run nvim in headless mode the first time
 -- via `nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'`.  This will
 -- install all of the plugins and cache them so the next execution of nvim will start quick.
--- TODO (AS): Figure out whichkey+Ferret conflict during headless install
-
 local present, impatient = pcall(require, 'impatient')
 
 if present then

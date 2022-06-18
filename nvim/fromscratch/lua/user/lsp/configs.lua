@@ -3,7 +3,22 @@ if not status_ok then
     return
 end
 
+lsp_installer.setup({
+    ui = {
+        border = 'rounded'
+    }
+})
+
 local lspconfig = require('lspconfig')
+
+local win = require('lspconfig.ui.windows')
+local _default_opts = win.default_opts
+
+win.default_opts = function(options)
+  local opts = _default_opts(options)
+  opts.border = 'rounded'
+  return opts
+end
 
 -- Env variable should override all values. If a user specifies lsps via the
 -- env var, then ensure those are installed and configured

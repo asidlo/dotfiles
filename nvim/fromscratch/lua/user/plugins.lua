@@ -506,8 +506,13 @@ M.startup = function()
             end,
         })
         -- use 'TamaMcGlinn/quickfixdd'
-        use('wincent/loupe')
-        use('wincent/ferret')
+        -- use('wincent/loupe')
+        -- use({
+        --     'wincent/ferret',
+        --     setup = function()
+        --         vim.g.FerretMap = 0
+        --     end
+        -- })
         use('romainl/vim-qf')
         use({ 'segeljakt/vim-silicon' })
 
