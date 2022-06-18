@@ -44,6 +44,9 @@ M.init = function(opts)
     local cfg = vim.tbl_deep_extend('force', defaults, opts)
     packer.init(cfg)
 
+    if vim.fn.has('mac') == 1 then
+        vim.fn.setenv("MACOSX_DEPLOYMENT_TARGET", "10.15")
+    end
     local rocks = require('packer.luarocks')
     rocks.install_commands()
     rocks.setup_paths()
