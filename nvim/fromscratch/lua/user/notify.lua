@@ -20,7 +20,11 @@ local opts = {
     background_colour = "#000000",
 
     ---@usage minimum width for notification windows
-    minimum_width = 50,
+    minimum_width = 40,
+
+    max_width = 80,
+
+    max_height = 40,
 
     ---@usage Icons for the different levels
     icons = {
@@ -33,6 +37,11 @@ local opts = {
 }
 
 function M.setup()
+    if #vim.api.nvim_list_uis() == 0 then
+        -- no need to configure notifications in headless
+        return
+    end
+
     local ok, notify = pcall(require, 'notify')
     if not ok then
         vim.notify('Missing notify', vim.log.levels.WARN)
