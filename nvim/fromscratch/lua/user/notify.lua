@@ -53,13 +53,14 @@ function M.setup()
 end
 
 local format_json = function(msg)
-    local json = require("JSON")
-    return json:encode_pretty(msg, nil, {
-        pretty = true,
-        align_keys = false,
-        array_newline = true,
-        indent = "  "
-    })
+    -- local json = require("JSON")
+    -- return json:encode_pretty(msg, nil, {
+    --     pretty = true,
+    --     align_keys = false,
+    --     array_newline = true,
+    --     indent = "  "
+    -- })
+    return msg
 end
 
 M.info = function(title, msg)

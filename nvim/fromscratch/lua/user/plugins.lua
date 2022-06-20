@@ -44,12 +44,12 @@ M.init = function(opts)
     local cfg = vim.tbl_deep_extend('force', defaults, opts)
     packer.init(cfg)
 
-    if vim.fn.has('mac') == 1 then
-        vim.fn.setenv("MACOSX_DEPLOYMENT_TARGET", "10.15")
-    end
-    local rocks = require('packer.luarocks')
-    rocks.install_commands()
-    rocks.setup_paths()
+    -- if vim.fn.has('mac') == 1 then
+    --     vim.fn.setenv("MACOSX_DEPLOYMENT_TARGET", "10.15")
+    -- end
+    -- local rocks = require('packer.luarocks')
+    -- rocks.install_commands()
+    -- rocks.setup_paths()
 end
 
 -- Install your plugins here
@@ -281,7 +281,7 @@ M.startup = function()
         use({
             'rcarriga/nvim-notify',
             requires = { 'nvim-telescope/telescope.nvim', 'Tastyep/structlog.nvim' },
-            rocks = {'json-lua', 'inspect'}
+            -- rocks = {'json-lua', 'inspect'}
         })
         use('jose-elias-alvarez/null-ls.nvim')
         use('Pocco81/dap-buddy.nvim')
