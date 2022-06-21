@@ -156,7 +156,7 @@ if [ -n "$INSTALL_LUA" ] && [ "$INSTALL_LUA" -eq 1 ]; then
     cd luarocks-3.8.0
     ./configure --with-lua-include=/usr/local/include
     make
-    make install
+    sudo make install
     cd ..
     rm -rf luarocks-3.8.0
 
