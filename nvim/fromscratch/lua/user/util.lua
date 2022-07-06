@@ -19,6 +19,9 @@ end
 -- Appends content followed by a newline char to a file
 _G.append_to_file = function(content, file)
     local out = io.open(file, 'a')
+    if not out then
+        return
+    end
     out:write(content)
     out:write('\n')
     out:close()

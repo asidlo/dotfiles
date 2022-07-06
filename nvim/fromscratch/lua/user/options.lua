@@ -42,6 +42,7 @@ local options = {
 }
 
 vim.opt.shortmess:append('c')
+vim.opt.formatoptions:remove('cro')
 
 if vim.fn.has('unix') == 1 then
     local home = os.getenv('HOME')

@@ -17,17 +17,16 @@ autocmd('User', {
     command = 'set laststatus=0 | autocmd BufLeave <buffer> set laststatus=' .. vim.opt.laststatus._value,
 })
 
-autocmd('User', {
-    group = settings,
-    desc = 'Removes winbar from Alpha buffer via AlphaReady event',
-    pattern = 'AlphaReady',
-    callback = function()
-        local version = vim.version()
-        if version.major > 0 or version.minor >= 8 then
+if version.major > 0 or version.minor >= 8 then
+    autocmd('User', {
+        group = settings,
+        desc = 'Removes winbar from Alpha buffer via AlphaReady event',
+        pattern = 'AlphaReady',
+        callback = function()
             vim.opt.winbar = nil
         end
-    end
-})
+    })
+end
 
 if version.major > 0 or version.minor >= 8 then
     local ok, winbar = pcall(require, 'user.winbar')
@@ -37,7 +36,8 @@ if version.major > 0 or version.minor >= 8 then
     end
     winbar.setup()
     if winbar.err then
-        vim.notify(string.format('user.autocommands -> Unable to setup winbar %s', vim.inspect(winbar.err)), vim.log.levels.ERROR)
+        vim.notify(string.format('user.autocommands -> Unable to setup winbar %s', vim.inspect(winbar.err)),
+            vim.log.levels.ERROR)
         return
     end
     autocmd({ 'BufEnter', 'BufWinEnter' }, {
@@ -49,23 +49,64 @@ if version.major > 0 or version.minor >= 8 then
     })
 end
 
-vim.cmd([[
-    augroup _general_settings
-        autocmd!
-        autocmd FileType qf,help,man,lspinfo,null-ls-info,dap-float,git,notify nnoremap <silent> <buffer> q :close<CR>
-        autocmd TextYankPost * silent!lua require('vim.highlight').on_yank({higroup = 'Search', timeout = 200})
-        autocmd BufWinEnter * :set formatoptions-=cro
-        autocmd FileType qf set nobuflisted
-    augroup end
+local buf_keymap = vim.api.nvim_buf_set_keymap
+local opts = { noremap = true, silent = true }
 
-    augroup _auto_resize
-        autocmd!
-        autocmd VimResized * tabdo wincmd =
-    augroup end
+autocmd({ 'FileType' }, {
+    group = settings,
+    pattern = 'qf,help,man,lspinfo,null-ls-info,dap-float,git,notify',
+    desc = 'Closes buffer with q',
+    callback = function(tbl)
+        local bufnr = tbl.buf
+        buf_keymap(bufnr, 'n', 'q', '<Cmd>close<CR>', opts)
+    end
+})
 
-    augroup _terminal
-        autocmd!
-        autocmd TermOpen,TermEnter term://* startinsert!
-        autocmd TermEnter term://* setlocal nonumber norelativenumber signcolumn=no
-    augroup end
-]])
+autocmd({ 'TextYankPost' }, {
+    group = settings,
+    desc = 'Highlight yanked text',
+    callback = function()
+        local ok, hl = pcall(require, 'vim.highlight')
+        if not ok then
+            return
+        end
+        hl.on_yank({ higroup = 'Search', timeout = 200 })
+    end
+})
+
+autocmd({ 'FileType' }, {
+    group = settings,
+    pattern = 'qf',
+    desc = 'Remove qf from buffer list',
+    callback = function()
+        vim.opt_local.buflisted = false
+    end
+})
+
+autocmd({ 'VimResized' }, {
+    group = settings,
+    desc = 'Auto resize',
+    callback = function()
+        vim.cmd('tabdo wincmd =')
+    end
+})
+
+autocmd({ 'TermOpen', 'TermEnter' }, {
+    group = settings,
+    pattern = 'term://*',
+    desc = 'Start terminal in insert mode',
+    callback = function()
+        vim.cmd('startinsert!')
+    end
+})
+
+autocmd({ 'TermEnter' }, {
+    group = settings,
+    pattern = 'term://*',
+    desc = 'Change terminal settings',
+    callback = function()
+        vim.opt_local.number = false
+        vim.opt_local.relativenumber = false
+        vim.opt_local.signcolumn = 'no'
+    end
+})
