@@ -526,6 +526,9 @@ M.startup = function()
             "SmiteshP/nvim-navic",
             requires = "neovim/nvim-lspconfig"
         }
+        use {
+            'vim-test/vim-test'
+        }
     end)
 end
 
