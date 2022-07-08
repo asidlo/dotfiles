@@ -115,6 +115,19 @@ if [ -n "$INSTALL_DOTNET" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
       sudo apt-get install -y apt-transport-https && \
       sudo apt-get update && \
       sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
+
+    # dotnet debugger deps for netcoredbg
+    # https://stackoverflow.com/a/66465559
+    sudo apt update
+    sudo apt install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
+    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    sudo apt update
+    sudo apt-get install -y --only-upgrade libstdc++6
+
+    curl -L https://github.com/Samsung/netcoredbg/releases/download/2.0.0-915/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
+    tar xzvf /tmp/netcoredbg-linux-amd64.tar.gz -C /tmp
+    mv /tmp/netcoredbg/* ~/.local/bin
+    rm /tmp/netcoredbg-linux-amd64.tar.gz && rm -rf /tmp/netcoredbg
 fi
 
 if [ -n "$INSTALL_PYTHON" ] && [ "$INSTALL_PYTHON" -eq 1 ]; then
