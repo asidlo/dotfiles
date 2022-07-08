@@ -36,3 +36,4 @@ end
 require('user.dap.lldb-vscode')
 require('user.dap.debugpy')
 require('user.dap.dlv')
+require('user.dap.netcoredbg')
