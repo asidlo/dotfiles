@@ -99,7 +99,7 @@ fi
 ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
 
 # Install nvim runtime prerequisites
-sudo apt install build-essential tmux wget curl zip unzip -y
+sudo apt install build-essential tmux wget curl zip unzip xclip -y
 
 if [ -n "$INSTALL_NODE" ] && [ "$INSTALL_NODE" -eq 1 ]; then
     install_npm
