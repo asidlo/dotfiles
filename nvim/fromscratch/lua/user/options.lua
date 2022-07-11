@@ -103,13 +103,3 @@ if vim.fn.executable('rg') then
     vim.opt.grepprg = 'rg --vimgrep --no-heading --smart-case'
     vim.opt.grepformat = '%f:%l:%c:%m,%f:%l:%m'
 end
-
--- https://jdhao.github.io/2020/03/14/nvim_search_replace_multiple_file/
--- https://stackoverflow.com/a/51962260
--- https://thoughtbot.com/blog/faster-grepping-in-vim
-vim.cmd('packadd cfilter')
-
-vim.cmd('iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>')
-vim.cmd('iab ddate <c-r>=strftime("%Y-%m-%d")<cr>')
-vim.cmd('cab ddate <c-r>=strftime("%Y_%m_%d")<cr>')
-vim.cmd('iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>')

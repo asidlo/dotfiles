@@ -54,6 +54,11 @@ end
 
 -- Install your plugins here
 M.startup = function()
+    -- https://jdhao.github.io/2020/03/14/nvim_search_replace_multiple_file/
+    -- https://stackoverflow.com/a/51962260
+    -- https://thoughtbot.com/blog/faster-grepping-in-vim
+    vim.cmd('packadd cfilter')
+
     packer.startup(function(use)
         use('wbthomason/packer.nvim')
         use('folke/tokyonight.nvim')
@@ -548,6 +553,14 @@ M.startup = function()
                         }),
                     },
                 })
+            end
+        }
+        use {
+            'anuvyklack/hydra.nvim',
+            -- requires = { 'sindrets/winshift.nvim', 'mrjones2014/smart-splits.nvim' },
+            requires = 'anuvyklack/keymap-layer.nvim',
+            config = function()
+                require('user.hydra').setup()
             end
         }
     end)

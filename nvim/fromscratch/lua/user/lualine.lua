@@ -163,6 +163,82 @@ if not navic_ok then
     return
 end
 
+local hydra_ok, hydra = pcall(require, 'hydra.statusline')
+if not hydra_ok then
+    return
+end
+
+local mode_map = {
+    ['n']     = 'NORMAL',
+    ['no']    = 'O-PENDING',
+    ['nov']   = 'O-PENDING',
+    ['noV']   = 'O-PENDING',
+    ['no\22'] = 'O-PENDING',
+    ['niI']   = 'NORMAL',
+    ['niR']   = 'NORMAL',
+    ['niV']   = 'NORMAL',
+    ['nt']    = 'NORMAL',
+    ['v']     = 'VISUAL',
+    ['vs']    = 'VISUAL',
+    ['V']     = 'V-LINE',
+    ['Vs']    = 'V-LINE',
+    ['\22']   = 'V-BLOCK',
+    ['\22s']  = 'V-BLOCK',
+    ['s']     = 'SELECT',
+    ['S']     = 'S-LINE',
+    ['\19']   = 'S-BLOCK',
+    ['i']     = 'INSERT',
+    ['ic']    = 'INSERT',
+    ['ix']    = 'INSERT',
+    ['R']     = 'REPLACE',
+    ['Rc']    = 'REPLACE',
+    ['Rx']    = 'REPLACE',
+    ['Rv']    = 'V-REPLACE',
+    ['Rvc']   = 'V-REPLACE',
+    ['Rvx']   = 'V-REPLACE',
+    ['c']     = 'COMMAND',
+    ['cv']    = 'EX',
+    ['ce']    = 'EX',
+    ['r']     = 'REPLACE',
+    ['rm']    = 'MORE',
+    ['r?']    = 'CONFIRM',
+    ['!']     = 'SHELL',
+    ['t']     = 'TERMINAL',
+}
+
+local mode = {
+    function()
+        if hydra.is_active() then
+            return hydra.get_name()
+        end
+        local mode_code = vim.api.nvim_get_mode().mode
+        if mode_map[mode_code] == nil then
+            return mode_code
+        end
+        return mode_map[mode_code]
+    end,
+    separator = {
+        right = ''
+    },
+    color = function()
+        if hydra.is_active() then
+            return { bg = colors.magenta }
+        end
+
+        return nil
+    end
+}
+
+-- local hydra_hint = {
+--     function()
+--         if hydra.is_active then
+--             return hydra.get_hint()
+--         end
+--
+--         return ''
+--     end
+-- }
+
 lualine.setup({
     options = {
         icons_enabled = true,
@@ -174,7 +250,7 @@ lualine.setup({
         globalstatus = use_globalstatus,
     },
     sections = {
-        lualine_a = { 'mode' },
+        lualine_a = { mode },
         lualine_b = { branch, pyenv },
         lualine_c = { diff },
         -- lualine_x = { lsp_progress, diagnostics, lsp_client },

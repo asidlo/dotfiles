@@ -44,12 +44,12 @@ keymap("n", "<S-l>", ":bnext<CR>", opts)
 keymap("n", "<S-h>", ":bprevious<CR>", opts)
 
 -- Move text up and down
-keymap('n', '<A-j>', '<Esc>:m .+1<CR>==', opts)
-keymap('n', '<A-k>', '<Esc>:m .-2<CR>==', opts)
+keymap('n', '<A-Down>', '<Esc>:m .+1<CR>==', opts)
+keymap('n', '<A-Up>', '<Esc>:m .-2<CR>==', opts)
 
 -- Insert --
-keymap('i', '<A-j>', '<Esc>:m .+1<CR>==gi', opts)
-keymap('i', '<A-k>', '<Esc>:m .+1<CR>==gi', opts)
+keymap('i', '<A-Down>', '<Esc>:m .+1<CR>==gi', opts)
+keymap('i', '<A-Up>', '<Esc>:m .+1<CR>==gi', opts)
 
 -- Visual --
 -- Stay in indent mode
@@ -57,15 +57,15 @@ keymap('v', '<', '<gv', opts)
 keymap('v', '>', '>gv', opts)
 
 -- Move text up and down
-keymap('v', '<A-j>', ':m .+1<CR>==', opts)
-keymap('v', '<A-k>', ':m .-2<CR>==', opts)
+keymap('v', '<A-Down>', ':m .+1<CR>==', opts)
+keymap('v', '<A-Up>', ':m .-2<CR>==', opts)
 
 -- Visual Block --
 -- Move text up and down
 keymap('x', 'J', ":move '>+1<CR>gv-gv", opts)
 keymap('x', 'K', ":move '<-2<CR>gv-gv", opts)
-keymap('x', '<A-j>', ":move '>+1<CR>gv-gv", opts)
-keymap('x', '<A-k>', ":move '<-2<CR>gv-gv", opts)
+keymap('x', '<A-Down>', ":move '>+1<CR>gv-gv", opts)
+keymap('x', '<A-Up>', ":move '<-2<CR>gv-gv", opts)
 
 -- Terminal --
 -- Better terminal navigation
@@ -86,4 +86,9 @@ keymap('n', '<S-Right>', '<Cmd>BufferLineCycleNext<CR>', opts)
 keymap('n', 'K', '<cmd>lua require("user.lsp.handlers").show_documentation()<CR>', opts)
 
 -- Prevent * search from moving forward to first hit
--- vim.cmd [[ nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR> ]]
+vim.cmd [[ nnoremap * :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR> ]]
+
+vim.cmd('iab tdate <c-r>=strftime("%Y/%m/%d %H:%M:%S")<cr>')
+vim.cmd('iab ddate <c-r>=strftime("%Y-%m-%d")<cr>')
+vim.cmd('cab ddate <c-r>=strftime("%Y_%m_%d")<cr>')
+vim.cmd('iab sdate <c-r>=strftime("%A %B %d, %Y")<cr>')
