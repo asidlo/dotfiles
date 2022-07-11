@@ -38,3 +38,47 @@ _G.add_to_dictionary = function(word)
 
     vim.cmd('normal! `a')
 end
+
+local signs = true
+local diag = require('user.lsp.handlers')
+
+_G.toggle_glyphs = function()
+    vim.opt.relativenumber = not vim.opt.relativenumber._value
+    vim.opt.number = not vim.opt.number._value
+
+    vim.cmd({ cmd = 'Gitsigns', args = { 'toggle_signs' } })
+    signs = not signs
+    vim.cmd('IndentBlanklineToggle')
+
+    diag.toggle_diagnostics()
+end
+
+_G.enable_glyphs = function()
+    vim.opt.relativenumber = true
+    vim.opt.number = true
+    if not signs then
+        vim.cmd({ cmd = 'Gitsigns', args = { 'toggle_signs' } })
+        signs = true
+    end
+    vim.cmd('IndentBlanklineEnable')
+
+    if not vim.g.diagnostics_visible then
+        diag.toggle_diagnostics()
+    end
+end
+
+_G.disable_glyphs = function()
+    vim.opt.relativenumber = false
+    vim.opt.number = false
+
+    if signs then
+        vim.cmd({ cmd = 'Gitsigns', args = { 'toggle_signs' } })
+        signs = false
+    end
+
+    vim.cmd('IndentBlanklineDisable')
+
+    if vim.g.diagnostics_visible then
+        diag.toggle_diagnostics()
+    end
+end
