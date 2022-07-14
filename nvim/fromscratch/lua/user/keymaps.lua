@@ -20,10 +20,10 @@ vim.g.maplocalleader = ' '
 
 -- Normal --
 -- Better window navigation
--- keymap("n", "<C-h>", "<C-w>h", opts)
--- keymap("n", "<C-j>", "<C-w>j", opts)
--- keymap("n", "<C-k>", "<C-w>k", opts)
--- keymap("n", "<C-l>", "<C-w>l", opts)
+keymap("n", "<C-h>", "<C-w>h", opts)
+keymap("n", "<C-j>", "<C-w>j", opts)
+keymap("n", "<C-k>", "<C-w>k", opts)
+keymap("n", "<C-l>", "<C-w>l", opts)
 
 keymap('n', 'Y', 'y$', opts)
 keymap('n', 'n', 'nzzzv', opts)
@@ -46,10 +46,14 @@ keymap("n", "<S-h>", ":bprevious<CR>", opts)
 -- Move text up and down
 keymap('n', '<A-Down>', '<Esc>:m .+1<CR>==', opts)
 keymap('n', '<A-Up>', '<Esc>:m .-2<CR>==', opts)
+keymap('n', '<A-j>', '<Esc>:m .+1<CR>==', opts)
+keymap('n', '<A-k>', '<Esc>:m .-2<CR>==', opts)
 
 -- Insert --
 keymap('i', '<A-Down>', '<Esc>:m .+1<CR>==gi', opts)
 keymap('i', '<A-Up>', '<Esc>:m .+1<CR>==gi', opts)
+keymap('i', '<A-j>', '<Esc>:m .+1<CR>==gi', opts)
+keymap('i', '<A-k>', '<Esc>:m .+1<CR>==gi', opts)
 
 -- Visual --
 -- Stay in indent mode
@@ -59,6 +63,8 @@ keymap('v', '>', '>gv', opts)
 -- Move text up and down
 keymap('v', '<A-Down>', ':m .+1<CR>==', opts)
 keymap('v', '<A-Up>', ':m .-2<CR>==', opts)
+keymap('v', '<A-j>', ':m .+1<CR>==', opts)
+keymap('v', '<A-k>', ':m .-2<CR>==', opts)
 
 -- Visual Block --
 -- Move text up and down
@@ -66,13 +72,15 @@ keymap('x', 'J', ":move '>+1<CR>gv-gv", opts)
 keymap('x', 'K', ":move '<-2<CR>gv-gv", opts)
 keymap('x', '<A-Down>', ":move '>+1<CR>gv-gv", opts)
 keymap('x', '<A-Up>', ":move '<-2<CR>gv-gv", opts)
+keymap('x', '<A-j>', ":move '>+1<CR>gv-gv", opts)
+keymap('x', '<A-k>', ":move '<-2<CR>gv-gv", opts)
 
 -- Terminal --
 -- Better terminal navigation
--- keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
--- keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", term_opts)
--- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
--- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
+keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
+keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", term_opts)
+keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
+keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
 -- TODO (AS): Create a custom code-action for vale to add to dictionary
 -- could also add the top 10 entries in z=
