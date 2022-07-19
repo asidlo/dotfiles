@@ -87,6 +87,7 @@
     # fastprompt = !git config --local status.showUntrackedFiles no
     # slowprompt = !git config --local --unset status.showUntrackedFiles
     # st  = status -sb -unormal
+# https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git#git-credential-manager-setup
  [credential]
 	helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager-core.exe
  	credentialStore = gpg
