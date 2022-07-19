@@ -87,10 +87,10 @@
     # fastprompt = !git config --local status.showUntrackedFiles no
     # slowprompt = !git config --local --unset status.showUntrackedFiles
     # st  = status -sb -unormal
-[credential]
-	helper = /usr/local/share/gcm-core/git-credential-manager-core
-	credentialStore = gpg
-[credential "https://dev.azure.com"]
-	useHttpPath = true
+ [credential]
+	helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager-core.exe
+ 	credentialStore = gpg
+ [credential "https://dev.azure.com"]
+ 	useHttpPath = true
 [safe]
 	directory = /azure/appgw
