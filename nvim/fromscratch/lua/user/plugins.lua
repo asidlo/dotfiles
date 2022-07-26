@@ -25,8 +25,10 @@ M.init = function(opts)
     opts = opts or {}
     local defaults = {
         auto_clean = true,
+        max_jobs = 40,
         compile_on_sync = true,
-        git = { clone_timeout = 6000 },
+        git = { clone_timeout = 300 },
+        log = { level = "warn" },
         display = {
             working_sym = ' ',
             error_sym = ' ',
