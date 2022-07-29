@@ -2,13 +2,14 @@
 
 set -e
 
-RG_VERSION="13.0.0"
-FD_VERSION="8.4.0"
-DOTNET_VERSION="6.0"
-UBUNTU_VERSION="18.04"
-BAT_VERSION="0.21.0"
-GO_VERSION="1.18.3"
-GITCONFIG="gitconfig.work"
+[ -n "$RG_VERSION" ] || RG_VERSION="13.0.0"
+[ -n "$FD_VERSION" ] || FD_VERSION="8.4.0"
+[ -n "$DOTNET_VERSION" ] || DOTNET_VERSION="6.0"
+[ -n "$UBUNTU_VERSION" ] || UBUNTU_VERSION="18.04"
+[ -n "$BAT_VERSION" ] || BAT_VERSION="0.21.0"
+[ -n "$GO_VERSION" ] || GO_VERSION="1.18.4"
+[ -n "$GITCONFIG" ] || GITCONFIG="gitconfig.work"
+[ -n "$DOTFILES_DIR" ] || DOTFILES_DIR="$HOME/.local/src/dotfiles"
 
 if [ -n "$INSTALL_ALL" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_MARKDOWN=1
@@ -18,6 +19,7 @@ if [ -n "$INSTALL_ALL" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_PYTHON=1
     INSTALL_DOTNET=1
     INSTALL_NODE=1
+    INSTALL_NVIM=1
 fi
 
 install_npm()
@@ -53,17 +55,17 @@ sudo apt install zsh -y
 sudo chsh -s /bin/zsh
 
 # Download dotfiles and link if file is not already present and a symlink
-[ -L ~/.gitconfig ] || ln -sv ~/.local/src/dotfiles/git/"$GITCONFIG" ~/.gitconfig
-[ -L ~/.zshrc ] || ln -sv ~/.local/src/dotfiles/zsh/zshrc.min ~/.zshrc
-[ -L ~/.zshenv ] || ln -sv ~/.local/src/dotfiles/zsh/zshenv ~/.zshenv
-[ -L ~/.tmux.conf ] || ln -sv ~/.local/src/dotfiles/misc/tmux.conf ~/.tmux.conf
+[ -L ~/.gitconfig ] || ln -sv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
+[ -L ~/.zshrc ] || ln -sv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
+[ -L ~/.zshenv ] || ln -sv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
+[ -L ~/.tmux.conf ] || ln -sv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
 
 mkdir -p ~/.omnisharp
-[ -L ~/.omnisharp/omnisharp.json ] || ln -sv ~/.local/src/dotfiles/misc/omnisharp.json ~/.omnisharp/omnisharp.json
+[ -L ~/.omnisharp/omnisharp.json ] || ln -sv "$DOTFILES_DIR/misc/omnisharp.json" ~/.omnisharp/omnisharp.json
 
 mkdir -p ~/.config
-[ -L ~/.config/starship.toml ] || ln -sv ~/.local/src/dotfiles/zsh/starship.toml ~/.config/starship.toml
-[ -L ~/.config/nvim ] || ln -sv ~/.local/src/dotfiles/nvim/fromscratch ~/.config/nvim
+[ -L ~/.config/starship.toml ] || ln -sv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
+[ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
 
 mkdir -p ~/.local/bin
 curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
@@ -95,11 +97,13 @@ if [ ! -d ~/.local/src/fzf/ ]; then
 fi
 ~/.local/src/fzf/install --xdg --key-bindings --completion --no-update-rc --no-bash --no-fish
 
-# Install nvim
-~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
+if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
+    # Install nvim runtime prerequisites
+    sudo apt install build-essential tmux wget curl zip unzip -y
 
-# Install nvim runtime prerequisites
-sudo apt install build-essential tmux wget curl zip unzip xclip -y
+    # Install nvim
+    ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
+fi
 
 if [ -n "$INSTALL_NODE" ] && [ "$INSTALL_NODE" -eq 1 ]; then
     install_npm
