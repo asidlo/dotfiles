@@ -49,19 +49,10 @@ install_cargo()
 }
 
 if is_root; then
-    apt update -y && apt install sudo -y
+    apt-get update -y && apt-get install sudo -y
 else
-    apt update -y
+    apt-get update -y
 fi
-
-# For generating english locales to be set via zshrc and used for character rendering
-sudo apt install language-pack-en -y
-
-# Install zsh
-sudo apt install zsh -y
-
-# Set zsh as current shell
-sudo chsh -s /bin/zsh
 
 # Download dotfiles and link if file is not already present and a symlink
 [ -L ~/.gitconfig ] || ln -sv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
@@ -82,18 +73,18 @@ curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/"$RG_VERSION"/ripgrep_13.0.0_amd64.deb
-sudo apt install ./ripgrep_"$RG_VERSION"_amd64.deb
+sudo apt-get install ./ripgrep_"$RG_VERSION"_amd64.deb
 rm ./ripgrep_"$RG_VERSION"_amd64.deb
 
 # Install fd
 # https://github.com/sharkdp/fd
 curl -LO https://github.com/sharkdp/fd/releases/download/v"$FD_VERSION"/fd_"$FD_VERSION"_amd64.deb
-sudo apt install ./fd_"$FD_VERSION"_amd64.deb
+sudo apt-get install ./fd_"$FD_VERSION"_amd64.deb
 rm ./fd_"$FD_VERSION"_amd64.deb
 
 # Install bat
 curl -LO https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$BAT_VERSION"_amd64.deb
-sudo apt install ./bat_"$BAT_VERSION"_amd64.deb
+sudo apt-get install ./bat_"$BAT_VERSION"_amd64.deb
 rm ./bat_"$BAT_VERSION"_amd64.deb
 
 # Install starship
@@ -106,9 +97,18 @@ if [ ! -d ~/.local/src/fzf/ ]; then
 fi
 ~/.local/src/fzf/install --xdg --key-bindings --completion --no-update-rc --no-bash --no-fish
 
+# For generating english locales to be set via zshrc and used for character rendering
+# sudo apt-get install language-pack-en -y
+
+# Install zsh
+sudo apt-get install zsh -y
+
+# Set zsh as current shell
+sudo chsh -s /bin/zsh
+
 if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     # Install nvim runtime prerequisites
-    sudo apt install build-essential tmux wget curl zip unzip -y
+    sudo apt-get install build-essential tmux wget curl zip unzip -y
 
     # Install nvim
     ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
@@ -124,18 +124,18 @@ if [ -n "$INSTALL_DOTNET" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
     wget https://packages.microsoft.com/config/ubuntu/"$UBUNTU_VERSION"/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg -i packages-microsoft-prod.deb
     rm packages-microsoft-prod.deb
-    sudo apt-get update; \
-      sudo apt-get install -y apt-transport-https && \
-      sudo apt-get update && \
-      sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
+    sudo apt-get-get update; \
+      sudo apt-get-get install -y apt-get-transport-https && \
+      sudo apt-get-get update && \
+      sudo apt-get-get install -y dotnet-sdk-"$DOTNET_VERSION"
 
     # dotnet debugger deps for netcoredbg
     # https://stackoverflow.com/a/66465559
-    sudo apt update
-    sudo apt install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
-    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    sudo apt update
-    sudo apt-get install -y --only-upgrade libstdc++6
+    sudo apt-get update
+    sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
+    sudo add-apt-get-repository -y ppa:ubuntu-toolchain-r/test
+    sudo apt-get update
+    sudo apt-get-get install -y --only-upgrade libstdc++6
 
     curl -L https://github.com/Samsung/netcoredbg/releases/download/2.0.0-915/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
     tar xzvf /tmp/netcoredbg-linux-amd64.tar.gz -C /tmp
@@ -144,7 +144,7 @@ if [ -n "$INSTALL_DOTNET" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
 fi
 
 if [ -n "$INSTALL_PYTHON" ] && [ "$INSTALL_PYTHON" -eq 1 ]; then
-    sudo apt install python3-venv python3-pip -y
+    sudo apt-get install python3-venv python3-pip -y
     /usr/bin/python3 -m pip install pynvim
     pip3 install black
 fi
@@ -166,7 +166,7 @@ fi
 if [ -n "$INSTALL_LUA" ] && [ "$INSTALL_LUA" -eq 1 ]; then
     install_cargo && cargo install stylua
 
-    sudo apt install build-essential libreadline-dev unzip -y
+    sudo apt-get install build-essential libreadline-dev unzip -y
     curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
     tar -zxf lua-5.3.5.tar.gz
     rm lua-5.3.5.tar.gz
@@ -192,7 +192,7 @@ fi
 
 if [ -n "$INSTALL_BASH" ] && [ "$INSTALL_BASH" -eq 1 ]; then
     install_cargo && cargo install shellharden
-    sudo apt install shellcheck -y
+    sudo apt-get install shellcheck -y
 fi
 
 if [ -n "$INSTALL_MARKDOWN" ] && [ "$INSTALL_MARKDOWN" -eq 1 ]; then
