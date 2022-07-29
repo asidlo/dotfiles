@@ -1,7 +1,6 @@
 #!/bin/bash
 
-export DOTFILES_DIR=$(dirname "${BASH_SOURCE[0]}")
-export GITCONFIG="gitconfig.work"
+DOTFILES_DIR=$(dirname "${BASH_SOURCE[0]}")
 
 pushd "$DOTFILES_DIR/nvim" || exit
 

@@ -11,6 +11,12 @@ set -e
 [ -n "$GITCONFIG" ] || GITCONFIG="gitconfig.work"
 [ -n "$DOTFILES_DIR" ] || DOTFILES_DIR="$HOME/.local/src/dotfiles"
 
+USER=$(whoami)
+is_root()
+{
+    [ -n "$USER" ] && [ "$USER" == "root" ]
+}
+
 if [ -n "$INSTALL_ALL" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_MARKDOWN=1
     INSTALL_JAVA=1
@@ -44,6 +50,12 @@ install_cargo()
 
 # Needs to be run as root if sudo isnt already installed
 command -v sudo 2&> /dev/null || apt install sudo
+
+if is_root; then
+    apt update && apt install sudo -y
+else
+    apt update -y
+fi
 
 # For generating english locales to be set via zshrc and used for character rendering
 sudo apt install language-pack-en -y
