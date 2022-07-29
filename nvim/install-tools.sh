@@ -55,17 +55,16 @@ else
 fi
 
 # Download dotfiles and link if file is not already present and a symlink
-[ -L ~/.gitconfig ] || ln -sv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
-[ -L ~/.zshrc ] || ln -sv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
-[ -L ~/.zshenv ] || ln -sv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
-[ -L ~/.tmux.conf ] || ln -sv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
+ln -sfv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
+ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
+ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
+ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
 
 mkdir -p ~/.omnisharp
-[ -L ~/.omnisharp/omnisharp.json ] || ln -sv "$DOTFILES_DIR/misc/omnisharp.json" ~/.omnisharp/omnisharp.json
+ln -sfv "$DOTFILES_DIR/misc/omnisharp.json" ~/.omnisharp/omnisharp.json
 
 mkdir -p ~/.config
-[ -L ~/.config/starship.toml ] || ln -sv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
-[ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
+ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
 mkdir -p ~/.local/bin
 curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
@@ -115,6 +114,8 @@ if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
 
     # Install nvim
     ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
+
+    [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
 fi
 
 if [ -n "$INSTALL_NODE" ] && [ "$INSTALL_NODE" -eq 1 ]; then
