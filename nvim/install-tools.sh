@@ -101,6 +101,9 @@ fi
 # sudo apt-get install language-pack-en -y
 
 # Install zsh
+if [ -f /etc/zsh/zlogin ]; then
+    rm /etc/zsh/zlogin
+fi
 sudo apt-get install zsh -y
 
 # Set zsh as current shell
