@@ -48,11 +48,8 @@ install_cargo()
     source "$HOME"/.cargo/env
 }
 
-# Needs to be run as root if sudo isnt already installed
-command -v sudo 2&> /dev/null || apt install sudo
-
 if is_root; then
-    apt update && apt install sudo -y
+    apt update -y && apt install sudo -y
 else
     apt update -y
 fi

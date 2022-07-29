@@ -6,6 +6,6 @@ export DOTFILES_DIR
 
 pushd "$DOTFILES_DIR/nvim" || exit
 
-source install.sh
+source install-tools.sh
 
 popd || exit
