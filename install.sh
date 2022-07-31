@@ -8,7 +8,7 @@ DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 [ -n "$UBUNTU_VERSION" ] || UBUNTU_VERSION="18.04"
 [ -n "$BAT_VERSION" ] || BAT_VERSION="0.21.0"
 [ -n "$GO_VERSION" ] || GO_VERSION="1.18.4"
-[ -n "$GITCONFIG" ] || GITCONFIG="gitconfig.work"
+[ -n "$GITCONFIG" ] || GITCONFIG="gitconfig.work.codespaces"
 
 USER=$(whoami)
 is_root()
