@@ -109,7 +109,13 @@ fi
 
 # Install zsh
 if ! type zsh > /dev/null 2>&1; then
+    if [ -f /etc/zsh/zlogin ]; then
+        mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
+    fi
     sudo apt-get install zsh -y
+    if [ -f /etc/zsh/zlogin.bkp ]; then
+        mv /etc/zsh/zlogin.bkp /etc/zsh/zlogin
+    fi
 fi
 
 # Set zsh as current shell
