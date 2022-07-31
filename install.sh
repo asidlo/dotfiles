@@ -99,7 +99,16 @@ fi
 ln -svf ~/.local/src/fzf/bin/fzf ~/.local/bin/fzf
 
 # For generating english locales to be set via zshrc and used for character rendering
-sudo apt-get update -y && sudo apt-get install language-pack-en -y
+# sudo apt-get update -y && sudo apt-get install language-pack-en -y
+
+sudo apt-get install locales -y
+
+# Ensure at least the en_US.UTF-8 UTF-8 locale is available.
+# Common need for both applications and things like the agnoster ZSH theme.
+if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen 
+    locale-gen
+fi
 
 # Install zsh
 if ! type zsh > /dev/null 2>&1; then
