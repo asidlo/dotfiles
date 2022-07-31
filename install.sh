@@ -108,7 +108,9 @@ if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
 fi
 
 # Install zsh
-sudo apt-get install zsh -y
+if ! type zsh > /dev/null 2>&1; then
+    sudo apt-get install zsh -y
+fi
 
 # Set zsh as current shell
 sudo chsh -s /bin/zsh
