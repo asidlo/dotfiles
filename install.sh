@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOTFILES_DIR=$(dirname "${BASH_SOURCE[0]}")
+DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
 [ -n "$RG_VERSION" ] || RG_VERSION="13.0.0"
 [ -n "$FD_VERSION" ] || FD_VERSION="8.4.0"
