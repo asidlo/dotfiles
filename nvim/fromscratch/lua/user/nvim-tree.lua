@@ -75,7 +75,7 @@ nvim_tree.setup({
     },
     filters = {
         dotfiles = false,
-        custom = { '.git', 'node_modules', '.cache', '.DS_Store' },
+        custom = { 'node_modules', '.cache', '.DS_Store' },
     },
     git = {
         enable = true,
