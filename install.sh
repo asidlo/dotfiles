@@ -144,18 +144,18 @@ if [ -n "$INSTALL_DOTNET" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
     wget https://packages.microsoft.com/config/ubuntu/"$UBUNTU_VERSION"/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg -i packages-microsoft-prod.deb
     rm packages-microsoft-prod.deb
-    sudo apt-get-get update; \
-      sudo apt-get-get install -y apt-get-transport-https && \
-      sudo apt-get-get update && \
-      sudo apt-get-get install -y dotnet-sdk-"$DOTNET_VERSION"
+    sudo apt-get update; \
+      sudo apt-get install -y apt-transport-https && \
+      sudo apt-get update && \
+      sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
 
     # dotnet debugger deps for netcoredbg
     # https://stackoverflow.com/a/66465559
     sudo apt-get update
     sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
-    sudo add-apt-get-repository -y ppa:ubuntu-toolchain-r/test
+    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     sudo apt-get update
-    sudo apt-get-get install -y --only-upgrade libstdc++6
+    sudo apt-get install -y --only-upgrade libstdc++6
 
     curl -L https://github.com/Samsung/netcoredbg/releases/download/2.0.0-915/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
     tar xzvf /tmp/netcoredbg-linux-amd64.tar.gz -C /tmp
