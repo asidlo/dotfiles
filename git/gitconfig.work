@@ -88,10 +88,10 @@
     # slowprompt = !git config --local --unset status.showUntrackedFiles
     # st  = status -sb -unormal
 # https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git#git-credential-manager-setup
- [credential]
+[credential]
 	helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager-core.exe
  	credentialStore = gpg
- [credential "https://dev.azure.com"]
+[credential "https://dev.azure.com"]
  	useHttpPath = true
 [safe]
 	directory = /azure/appgw
