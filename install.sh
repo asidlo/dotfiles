@@ -90,6 +90,20 @@ rm ./bat_"$BAT_VERSION"_amd64.deb
 # Install starship
 curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
+# Install zsh
+if ! type zsh > /dev/null 2>&1; then
+    if [ -f /etc/zsh/zlogin ]; then
+        mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
+    fi
+    sudo apt-get install zsh -y
+    if [ -f /etc/zsh/zlogin.bkp ]; then
+        mv /etc/zsh/zlogin.bkp /etc/zsh/zlogin
+    fi
+fi
+
+# Set zsh as current shell
+sudo chsh -s /bin/zsh
+
 # Install fzf
 mkdir -p ~/.local/src
 if [ ! -d ~/.local/src/fzf/ ]; then
@@ -109,20 +123,6 @@ if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen 
     locale-gen
 fi
-
-# Install zsh
-if ! type zsh > /dev/null 2>&1; then
-    if [ -f /etc/zsh/zlogin ]; then
-        mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
-    fi
-    sudo apt-get install zsh -y
-    if [ -f /etc/zsh/zlogin.bkp ]; then
-        mv /etc/zsh/zlogin.bkp /etc/zsh/zlogin
-    fi
-fi
-
-# Set zsh as current shell
-sudo chsh -s /bin/zsh
 
 if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     # Install nvim runtime prerequisites
