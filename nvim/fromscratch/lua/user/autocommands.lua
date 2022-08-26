@@ -58,7 +58,7 @@ autocmd({ 'FileType' }, {
     desc = 'Closes buffer with q',
     callback = function(tbl)
         local bufnr = tbl.buf
-        buf_keymap(bufnr, 'n', 'q', '<Cmd>close<CR>', opts)
+        buf_keymap(bufnr, 'n', 'q', '<Cmd>quit<CR>', opts)
     end
 })
 
