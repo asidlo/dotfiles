@@ -1,5 +1,13 @@
 #!/bin/bash
 
+set -e -o pipefail
+
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+
+# echo an error message before exiting
+trap '[ $? -ne 0 ] && echo "\"${last_command}\" command failed with exit code $?."' EXIT
+
 DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
 [ -n "$RG_VERSION" ] || RG_VERSION="13.0.0"
