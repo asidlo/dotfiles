@@ -51,9 +51,8 @@ export DEBIAN_FRONTEND=noninteractive
 
 if is_root; then
     apt-get update -y && apt-get install sudo -y
-else
-    apt-get update -y
 fi
+apt-get update -y
 
 # Download dotfiles and link if file is not already present and a symlink
 ln -sfv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
@@ -91,6 +90,7 @@ rm ./bat_"$BAT_VERSION"_amd64.deb
 curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
 # Install zsh
+# codespaces adds a zlogin by default
 if ! type zsh > /dev/null 2>&1; then
     if [ -f /etc/zsh/zlogin ]; then
         mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp

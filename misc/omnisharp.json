@@ -5,7 +5,7 @@
         "enableImportCompletion": true,
         "enableAnalyzersSupport": true,
         "inlayHintsOptions": {
-            "enableForParameters": true,
+            "enableForParameters": false,
             "forLiteralParameters": true,
             "forIndexerParameters": true,
             "forObjectCreationParameters": true,
