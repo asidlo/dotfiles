@@ -60,7 +60,7 @@ export DEBIAN_FRONTEND=noninteractive
 if is_root; then
     apt-get update -y && apt-get install sudo -y
 fi
-apt-get update -y
+sudo apt-get update -y
 
 # Download dotfiles and link if file is not already present and a symlink
 ln -sfv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
@@ -101,11 +101,11 @@ curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 # codespaces adds a zlogin by default
 if ! type zsh > /dev/null 2>&1; then
     if [ -f /etc/zsh/zlogin ]; then
-        mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
+        sudo mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
     fi
     sudo apt-get install zsh -y
     if [ -f /etc/zsh/zlogin.bkp ]; then
-        mv /etc/zsh/zlogin.bkp /etc/zsh/zlogin
+        sudo mv /etc/zsh/zlogin.bkp /etc/zsh/zlogin
     fi
 fi
 
@@ -129,7 +129,7 @@ sudo apt-get install locales -y
 # Common need for both applications and things like the agnoster ZSH theme.
 if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen 
-    locale-gen
+    sudo locale-gen
 fi
 
 if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
