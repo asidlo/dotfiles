@@ -19,7 +19,9 @@ bufferline.setup {
         -- NOTE: this plugin is designed with this icon in mind,
         -- and so changing this is NOT recommended, this is intended
         -- as an escape hatch for people who cannot bear it for whatever reason
-        indicator_icon = "▎",
+        indicator = {
+            icon = "▎"
+        },
         buffer_close_icon = "",
         -- buffer_close_icon = '',
         modified_icon = "●",
@@ -95,7 +97,7 @@ bufferline.setup {
         show_buffer_close_icons = true,
         show_close_icon = false,
         show_tab_indicators = true,
-        persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
+        persist_buffer_sort = true, -- whether or not custom sorted buffers should persistbuffer
         -- can also be a table containing 2 custom separators
         -- [focused and unfocused]. eg: { '|', '|' }
         separator_style = "thin", -- | "thick" | "thin" | { 'any', 'any' },
@@ -108,10 +110,10 @@ bufferline.setup {
     },
     highlights = {
         background = {
-            gui = "italic",
+            italic = true
         },
         buffer_selected = {
-            gui = "bold",
+            bold = true
         },
     },
     --     highlights = {
