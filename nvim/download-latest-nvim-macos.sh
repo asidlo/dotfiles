@@ -8,7 +8,7 @@ curl -L https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.ta
 
 tar xzvf /tmp/nvim/nvim-macos.tar.gz -C /tmp/nvim
 
-mv /tmp/nvim/nvim-osx64 ~/.local/nvim
+mv /tmp/nvim/nvim-macos ~/.local/nvim
 
 ln -svf  ~/.local/nvim/bin/nvim ~/.local/bin/nvim
 
