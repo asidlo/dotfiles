@@ -5,7 +5,7 @@
 	excludesfile = ~/.gitignore
 	editor = nvim
     fsmonitor = true
-	# autocrlf = false
+	autocrlf = false
 [log]
 	date = iso
 [fetch]
