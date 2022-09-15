@@ -137,9 +137,26 @@ if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     sudo apt-get install build-essential tmux wget curl zip unzip -y
 
     # Install nvim
-    ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
+    # ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
+    # [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
+    
+    # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
+    latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
+    echo "Using version $latest_tag"
 
-    [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
+    curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
+    unzip /tmp/bob.zip -d /tmp/bob
+    chmod +x /tmp/bob/bob
+    mv /tmp/bob/bob ~/.local/bin
+    rm -f /tmp/bob.zip && rm -rf /tmp/bob
+
+    # Install nightly neovim
+    bob use nightly
+
+    # Add current neovim version to PATH
+    ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
+
+    git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1
     ln -svf "$DOTFILES_DIR/nvim/nvchad/custom" ~/.config/nvim/custom
 fi
 
