@@ -3,7 +3,7 @@ local capabilities = require("plugins.configs.lspconfig").capabilities
 
 local lspconfig = require "lspconfig"
 
-local servers = { "omnisharp" }
+local servers = { "sumneko_lua", "omnisharp" }
 
 local on_attach_override = function(client, bufnr)
   on_attach(client, bufnr)

@@ -41,8 +41,8 @@ return {
     end,
   },
 
-  ['Hoffs/omnisharp-extended-lsp.nvim'] = {}
-
-  -- remove plugin
-  -- ["hrsh7th/cmp-path"] = false,
+  ['Hoffs/omnisharp-extended-lsp.nvim'] = {},
+  ['folke/which-key.nvim'] = {
+    disable = false
+  }
 }
