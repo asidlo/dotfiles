@@ -3,6 +3,12 @@ local M = {}
 M.general = {
   n = {
     [";"] = { ":", "command mode", opts = { nowait = true } },
+    ["<leader>fm"] = {
+      function()
+        vim.lsp.buf.formatting { async = true }
+      end,
+      "lsp formatting",
+    },
   },
 }
 

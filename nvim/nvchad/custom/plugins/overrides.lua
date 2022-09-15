@@ -4,7 +4,8 @@ M.treesitter = {
   ensure_installed = {
     "vim",
     "lua",
-    "markdown"
+    "markdown",
+    "c_sharp"
   },
 }
 
@@ -16,7 +17,8 @@ M.mason = {
     "markdownlint",
     "prettierd",
     "shellcheck",
-    "shellharden"
+    "shellharden",
+    "omnisharp"
   },
 }
 
