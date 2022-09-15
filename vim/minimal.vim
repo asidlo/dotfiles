@@ -77,7 +77,7 @@ set completeopt=menuone,noinsert,noselect
 set clipboard=unnamed
 set wildmode=longest:full,full
 set wildmenu
-set cmdheight=2
+set cmdheight=1
 
 set hlsearch
 set incsearch
