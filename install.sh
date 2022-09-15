@@ -140,6 +140,7 @@ if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
 
     [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
+    ln -svf "$DOTFILES_DIR/nvim/nvchad/custom" ~/.config/nvim/custom
 fi
 
 if [ -n "$INSTALL_NODE" ] && [ "$INSTALL_NODE" -eq 1 ]; then
