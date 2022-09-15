@@ -5,7 +5,7 @@ M.general = {
     [";"] = { ":", "command mode", opts = { nowait = true } },
     ["<leader>fm"] = {
       function()
-        vim.lsp.buf.formatting { async = true }
+        vim.lsp.buf.format { async = true }
       end,
       "lsp formatting",
     },
