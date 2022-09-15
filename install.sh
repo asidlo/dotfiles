@@ -157,7 +157,7 @@ if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
 
     git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1
-    ln -svf "$DOTFILES_DIR/nvim/nvchad/custom" ~/.config/nvim/custom
+    ln -svf "$DOTFILES_DIR/nvim/nvchad/custom" ~/.config/nvim/lua/custom
 fi
 
 if [ -n "$INSTALL_NODE" ] && [ "$INSTALL_NODE" -eq 1 ]; then
