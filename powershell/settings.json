@@ -114,7 +114,7 @@
     "multiLinePasteWarning": false,
     "profiles": {
         "defaults": {
-            "colorScheme": "OneDarker",
+            "colorScheme": "Tokyonight",
             "font": {
                 "face": "MesloLGM Nerd Font",
                 "size": 11
@@ -145,7 +145,7 @@
                 "hidden": false,
                 "name": "Ubuntu",
                 "source": "Windows.Terminal.Wsl",
-                "padding": "0,0,0,0",
+                "padding": "0,0,-4,-6",
                 "scrollbarState": "hidden",
                 "suppressApplicationTitle": true
             },
@@ -218,7 +218,7 @@
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\notepad.png",
                 "name": "Notes",
-                "padding": "0,0,0,0",
+                "padding": "0,0,-4,-6",
                 "scrollbarState": "hidden",
                 "startingDirectory": "%USERPROFILE%"
             },
