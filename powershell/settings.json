@@ -161,7 +161,7 @@
                 "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
                 "hidden": false,
                 "name": "Ubuntu",
-                "padding": "0,0,-4,-5",
+                "padding": "0,0,-4,0",
                 "scrollbarState": "hidden",
                 "source": "Windows.Terminal.Wsl",
                 "suppressApplicationTitle": true
@@ -172,8 +172,6 @@
                 "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
                 "icon": "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
                 "name": "Git Bash",
-                "padding": "0,0,0,0",
-                "scrollbarState": "hidden",
                 "startingDirectory": "%USERPROFILE%"
             },
             {
@@ -243,7 +241,7 @@
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\notepad.png",
                 "name": "Notes",
-                "padding": "0,0,-4,-6",
+                "padding": "0,0,-4,0",
                 "scrollbarState": "hidden",
                 "startingDirectory": "%USERPROFILE%"
             },
