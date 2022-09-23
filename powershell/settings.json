@@ -191,7 +191,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 26ada057; cd D:\\Networking-nfv; .\\AddModules.ps1}\"",
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 26ada057; cd D:\\Networking-nfv; .\\AddModules.ps1; ipmo -Force D:\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
                 "guid": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2022.png",
@@ -199,7 +199,7 @@
                 "startingDirectory": "D:\\Networking-nfv"
             },
             {
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b2559349; cd D:\\Networking-nfv; .\\AddModules.ps1}\"",
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b2559349; cd D:\\Networking-nfv; .\\AddModules.ps1; ipmo -Force D:\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
                 "guid": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
                 "hidden": true,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\vs2019.png",
