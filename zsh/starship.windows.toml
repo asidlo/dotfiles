@@ -1,8 +1,8 @@
 add_newline = false
 
 [character]
-success_symbol = "[❯](green)"
-error_symbol = "[❯](red)"
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
 
 [git_status]
 disabled = true
@@ -18,14 +18,14 @@ symbol = " "
 
 [directory]
 read_only = " "
-style = "cyan"
+style = "bold cyan"
 
 [docker_context]
 symbol = " "
 
 [git_branch]
 symbol = " "
-style = "purple"
+style = "bold purple"
 
 [golang]
 symbol = " "
@@ -50,20 +50,20 @@ symbol = " "
 symbol = " "
 
 [container]
-style = "purple"
+style = "bold purple"
 
 [username]
-style_root = "red"
-style_user = "white"
+style_root = "bold red"
+style_user = "bold white"
 
 [hostname]
-style = "yellow"
+style = "bold yellow"
 
 [localip]
-style = "green"
+style = "bold green"
 
 [dotnet]
-style = "blue"
+style = "bold blue"
 
 [time]
-style = "yellow"
+style = "bold yellow"
