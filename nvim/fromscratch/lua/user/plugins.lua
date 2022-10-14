@@ -231,6 +231,10 @@ M.startup = function()
             'hrsh7th/cmp-nvim-lua',
             -- after = "cmp_luasnip",
         })
+        use({
+            'hrsh7th/cmp-emoji',
+            -- after = "cmp_luasnip",
+        })
         use('f3fora/cmp-spell')
         -- use('uga-rosa/cmp-dictionary')
         use({
