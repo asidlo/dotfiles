@@ -525,8 +525,13 @@ M.startup = function()
         --     end
         -- })
         use('romainl/vim-qf')
-        use({ 'segeljakt/vim-silicon' })
-
+        -- use {
+        --     'krivahtoo/silicon.nvim',
+        --     run = './install.sh',
+        --     config = function()
+        --         require('silicon').setup()
+        --     end
+        -- }
         use('carlsmedstad/vim-bicep')
         use({
             'SmiteshP/nvim-gps',
