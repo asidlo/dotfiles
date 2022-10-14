@@ -294,6 +294,18 @@ M.startup = function()
             requires = { 'nvim-telescope/telescope.nvim', 'Tastyep/structlog.nvim' },
             -- rocks = {'json-lua', 'inspect'}
         })
+        -- use({
+        --     "folke/noice.nvim",
+        --     event = "VimEnter",
+        --     config = function()
+        --         require("noice").setup()
+        --     end,
+        --     requires = {
+        --         -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+        --         "MunifTanjim/nui.nvim",
+        --         "rcarriga/nvim-notify",
+        --     }
+        -- })
         use('jose-elias-alvarez/null-ls.nvim')
         use('Pocco81/dap-buddy.nvim')
         use('b0o/schemastore.nvim')
@@ -525,13 +537,6 @@ M.startup = function()
         --     end
         -- })
         use('romainl/vim-qf')
-        -- use {
-        --     'krivahtoo/silicon.nvim',
-        --     run = './install.sh',
-        --     config = function()
-        --         require('silicon').setup()
-        --     end
-        -- }
         use('carlsmedstad/vim-bicep')
         use({
             'SmiteshP/nvim-gps',
