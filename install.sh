@@ -151,7 +151,7 @@ if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     rm -f /tmp/bob.zip && rm -rf /tmp/bob
 
     # Install nightly neovim
-    bob use nightly
+    ~/.local/bin/bob use nightly
 
     # Add current neovim version to PATH
     ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
