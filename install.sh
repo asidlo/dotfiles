@@ -37,6 +37,7 @@ fi
 
 install_npm()
 {
+    sudo apt-get remove nodejs -y
     command -v npm > /dev/null 2&>1 && return 0
 
     # Install nvm for npm and nodejs
