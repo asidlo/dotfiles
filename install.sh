@@ -37,14 +37,13 @@ fi
 
 install_npm()
 {
-    sudo apt-get remove nodejs -y
     command -v npm > /dev/null 2&>1 && return 0
 
     # Install nvm for npm and nodejs
     curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    nvm install --lts
+    nvm install 16.15.1
 }
 
 install_cargo()
