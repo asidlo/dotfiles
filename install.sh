@@ -133,8 +133,10 @@ if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
 fi
 
 if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
+    echo “deb http://ftp.us.debian.org/debian testing main contrib non-free” >> /etc/apt/sources.list
+
     # Install nvim runtime prerequisites
-    sudo apt-get install build-essential tmux wget curl zip unzip -y
+    sudo apt-get update && sudo apt-get install build-essential tmux wget curl zip unzip -y
 
     # Install nvim
     # ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
