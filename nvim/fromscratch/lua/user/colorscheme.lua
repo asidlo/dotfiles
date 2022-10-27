@@ -38,7 +38,7 @@ end
 
 local ok_colors, colors = pcall(require, 'tokyonight.colors')
 if not ok_colors then
-    M.change('default', function()
+    M.change('habamax', function()
         vim.cmd({ cmd = 'highlight', args = { 'link', 'FloatBorder', 'Normal' } })
         vim.cmd({ cmd = 'highlight', args = { 'link', 'NormalFloat', 'Normal' } })
         vim.api.nvim_set_hl(0, 'DiffDelete', { bg = nil, fg = 'red' })

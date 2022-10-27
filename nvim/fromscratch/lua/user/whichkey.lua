@@ -156,6 +156,7 @@ local mappings = {
             'Workspace Symbols',
         },
     },
+    m = { '<cmd>Telescope notify<cr>', 'Messages' },
     s = {
         name = 'Search',
         b = { '<cmd>Telescope git_branches<cr>', 'Checkout branch' },

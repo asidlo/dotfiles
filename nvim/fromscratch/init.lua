@@ -15,15 +15,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
     vim.cmd('packadd packer.nvim')
 end
 
-local plugins = require('user.plugins')
-plugins.init()
-plugins.startup()
-
-local running_headless = #vim.api.nvim_list_uis() == 0
-if running_headless then
-    return
-end
-
 local ok, notify = pcall(require, 'user.notify')
 if ok then
     notify.setup()
@@ -32,11 +23,22 @@ end
 require('user.options')
 require('user.util')
 require('user.keymaps')
-require('user.autocommands')
-require('user.lsp')
 
 local scheme = require('user.colorscheme')
 if scheme.err ~= nil then
     notify.error('Unable to load user.colorscheme', scheme.err)
     return
 end
+
+local plugins = require('user.plugins')
+plugins.init()
+plugins.startup()
+
+-- local running_headless = #vim.api.nvim_list_uis() == 0
+-- if running_headless then
+--     return
+-- end
+
+require('user.autocommands')
+require('user.lsp')
+

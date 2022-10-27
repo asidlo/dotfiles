@@ -242,7 +242,7 @@ local mode = {
 lualine.setup({
     options = {
         icons_enabled = true,
-        theme = 'tokyonight', -- TODO (AS): Figure out why 'auto' fails
+        theme = 'auto',
         component_separators = { left = '', right = '' },
         section_separators = { left = '', right = '' },
         disabled_filetypes = disabled_filetypes,
