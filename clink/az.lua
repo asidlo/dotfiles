@@ -15,7 +15,10 @@ clink.argmatcher('az')({
                     { 'delete', description = 'Delete Alias.' },
                     { 'list', description = 'List Alias Subscriptions.' },
                     { 'show', description = 'Get Alias Subscription.' },
-                    { 'wait', description = 'Place the CLI in a waiting state until a condition of the account alias is met.' }
+                    {
+                        'wait',
+                        description = 'Place the CLI in a waiting state until a condition of the account alias is met.',
+                    }
                 ),
             'clear',
             'create',
@@ -24,7 +27,13 @@ clink.argmatcher('az')({
             'list-locations',
             'lock',
             'management-group',
-            'set',
+            'set' .. clink.argmatcher():nofiles():addflags('--name', '--subscription', '-s', '-n'):adddescriptions({
+                '--name',
+                '--subscription',
+                '-n',
+                '-s',
+                description = 'Name or ID of subscription.',
+            }),
             'show',
             'subscription',
             'tenant',
@@ -60,6 +69,21 @@ clink.argmatcher('az')({
     'appservice',
     'arcappliance',
     'arcdata',
+    'extension' .. clink.argmatcher()
+        :addarg({
+            'add',
+            'list',
+            'list-available',
+            'list-versions',
+            'remove',
+            'show',
+            'update',
+        })
+        :adddescriptions(
+            -- {'add', description = 'Add an extension.'},
+            -- {'list', description = ''},
+            -- {'list-available', description = ''},
+        ),
 }):adddescriptions(
     { '-h', '--help', '-?', description = 'Show help text' },
     { 'account', description = 'Manage Azure subscription information.' },
@@ -76,5 +100,6 @@ clink.argmatcher('az')({
     { 'appconfig', description = 'Manage App Configurations.' },
     { 'appservice', description = 'Manage App Service plans.' },
     { 'arcappliance', description = 'Commands to manage an Appliance resource.' },
-    { 'arcdata', description = 'Commands for using Azure Arc-enabled data services.' }
+    { 'arcdata', description = 'Commands for using Azure Arc-enabled data services.' },
+    { 'extension', description = 'Manage and update CLI extensions.' }
 )
