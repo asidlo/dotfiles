@@ -1,0 +1,5265 @@
+|CTAG_1642089920_64772437_21868_0
+|s
+|ir
+|:
+|ir
+|:
+|link info
+|:
+clink
+|link info
+del C:\Users\andrewsidlo\.inputrc 
+mklink C:\Users\andrewsidlo\.inputrc D:\workspace\src\dotfiles\misc\inputrc 
+clink set --help
+|link set
+clink set autosuggest.enable 0
+clink set autosuggest.enable 1
+clink set autosuggest.enable True
+|link set clink.logo short
+clink set cmd.auto_answer answer_yest
+|link info
+|link info
+|link set
+clink set clink.logo short
+|link info
+|link set
+|link set
+|link set
+|sl --shutdown
+|sl --shutdown
+|sl
+|sl --shutdown
+dir // %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\
+dir  %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\
+cargo install win32yank
+|hich nvim
+|here nvim
+|vim
+|:
+|d workspace\
+|ir
+|d src\dotfiles\
+|ir
+D:L
+|:
+|d workspace\src\dotfiles\
+git 
+git status 
+git_prompt
+git_prompt()
+|d AppData\Local
+|ir
+git clone git@github.com:vladimir-kotikov/clink-completions.git
+|d clink-completions\
+|ir
+fd -t lua
+fd -e lua
+|s
+|ir
+|d ..
+|ir
+move clink-completions\ clink
+move clink-completions\ clink\
+|ir
+move /?
+move clink-completions\ clink\clink-completions
+|s
+|ir
+dir clink-completions\
+move clink-completions clink
+dir clink
+|ir
+|d clink
+move clink-completions ../
+|d ..
+|ir
+|d clink
+|ir
+mkdir spec
+mkdir modules
+|d ..
+|ir
+cd clink-completions\
+|ir
+move *.lua ..\clink\
+move spec\*.lua ..\clink\spec\
+move modules\*.lua ..\clink\modules\
+|vim
+|ir
+|link info
+|d AppData\Local
+|ir
+cd clink\
+|ir
+|ir
+|d ..
+|ir
+git clone git@github.com:chrisant996/clink-fzf.git
+cd clink-fzf\
+|ir
+copy fzf.lua ..\clink\
+cd ..\clink
+|ir
+|sd
+dwd
+lsd.exe -l
+cargo install exa
+|d AppData\Local
+|ir
+|d clink
+|ir
+|at
+type git_prompt.lua 
+git_prompt_filter()
+git_prompt_filter
+clink.prompt
+tcc
+color
+bat
+cargo install lsd
+|sd
+|sd
+vim 
+mkdir C:\Users\andrewsidlo\AppData\lsd
+|vim C:\Users\andrewsidlo\AppData\lsd\config.yaml
+|sd
+|sd
+nvim C:\Users\andrewsidlo\AppData\lsd\config.yaml
+|sd
+|sd
+cargo install du-dust
+dust
+where go
+echo %GOPATH%
+|o install github.com/muesli/duf@latest
+|o install github.com/muesli/duf
+|ir
+|d D:
+|:
+cd workspace\src\go\
+go install github.com/muesli/duf
+go install github.com/muesli/duf@latest
+|ir
+mkdir src\github.com
+|d src\
+cd github.com\
+|s
+|ir
+|ir
+mkdir muesli
+cd muesli\
+git clone https://github.com/muesli/duf.git
+cd duf\
+go build
+|ir
+|ir
+|d .
+|d ..
+|s
+|ir
+|d ..
+|ir
+|d ..
+|ir
+|d ..
+|ir
+|d ..
+|ir
+move go ..\
+mklink D:\workspace\go\bin\duf.exe D:\workspace\go\src\github.com\muesli\duf\duf.exe 
+|uf
+duf.exe
+|uf
+|cho %PATH
+|cho %PATH
+echo %Path%
+|uf
+cargo install broot
+|root
+br
+|xa
+|d C:\Users\andrewsidlo\
+|xa
+|xa -l
+|sl -
+wsl -e ls -al
+wsl -e ls
+wsl -e ls -C
+wsl -e ls -c
+wsl -e ls -l
+|xa
+|xa -l
+|root
+br
+br -s
+|root -s
+broot --help
+broot --outcmd .
+|root -s
+|:
+|ir
+broot -s
+cargo install procs
+|rocs
+cargo install dog
+cargo install --no-default-features --git https://github.com/skyline75489/exa.git --branch chesterliu/dev/win-support
+|xa
+|d
+|d ~
+|d ~
+|d C:\Users\andrewsidlo\
+|ir
+|xa
+edxa
+|xa
+exa -l
+exa --icons -l
+exa --icons
+exa --icons --
+exa --icons --help
+exa --icons -1
+|xa --help
+exa --color=auto
+exa --color=auto -l
+exa --color=never -l
+exa -F
+|xa -F --icons
+exa -F --icon
+exa -F --icons
+exa --color-scale
+|xa --color-scale -l
+exa --no-color-scale -l
+exa --color-scale -l
+exa  -l
+exa  -l --color-scale no
+exa --he
+exa --help
+|xa
+doskey ls=exa
+|s
+|link info
+|d C:\Users\andrewsidlo\AppData\Local\clink
+|s
+doskey ll="exa -l"
+|l
+doskey ll=exa -l
+|l
+|s
+|s -l
+|s -l
+ls --
+|link 
+clink set
+|link info
+|vim clink_start.cmd
+|s
+|l
+|s -al
+|s
+|s -l
+|d C:\Users\andrewsidlo\AppData\Local
+|s
+|d clink
+|l
+copy clink_start.cmd D:\workspace\src\dotfiles\misc\
+ll D:\workspace\src\dotfiles\misc\
+|:
+|d workspace\src\dotfiles\
+|it ss
+|it d
+nvim bash\winbashrc 
+|it ss
+|it d
+|it aa
+git cmsg "Adds clink_start for ls alias to exa""
+|s
+|l
+|s
+nvim cmd\env.md 
+|s
+|:
+|s
+|d workspace\
+|s
+|d src\dotfiles\
+|s
+|d
+cd C:\Users\andrewsidlo\AppData\Local
+|s
+|:
+git clone git@github.com:chrisant996/clink-flex-prompt.git
+|s
+cd clink-flex-prompt\
+|s
+move *.lua ../clink
+|s
+|s
+|s
+|:
+|d workspace\
+|s
+|d src\
+|s
+|d dotfiles\
+|s
+|l
+|:
+|d workspace\src\dotfiles\
+|s
+|s
+|:
+|d workspace\src\dotfiles\
+|s
+|:
+|d workspace\src\dotfiles\
+|:
+|d workspace\src\dotfiles\
+flexprompt configure
+|s
+|l
+|s
+|:
+|d workspace\src\dotfiles\
+|s
+|d
+|:
+|d
+|d ~
+|d C:\Users\andrewsidlo\
+|d AppData\Local
+|s
+|d clink
+|s
+|l
+nvim flexprompt_autoconfig.lua 
+nvim flexprompt_config.lua
+copy flexprompt_config.lua D:\workspace\src\dotfiles\misc\
+|s
+|l
+|s
+|d Pictures\
+|s
+|d icons\
+|s
+|l
+cd terminal
+|s
+|l
+|:
+|s
+|l
+|s
+|l
+|d workspace\
+|l
+|d src\
+|s
+|d dotfiles\
+|s
+|it ss
+|it d
+|it aa
+git cmsg "Adds flexprompt config"
+|it push
+|d C:\Users\andrewsidlo\
+|s
+|:
+|d AppData\Local
+|s
+cd nvim-data\
+|l
+|d ..
+|s
+|d nvim
+|l
+mkdir nvim
+|d nvim
+|l
+|d ..
+|s
+|mdir nvim
+|l
+mklink C:\Users\andrewsidlo\AppData\Local\nvim D:\workspace\src\dotfiles\nvim\fromscratch /D
+|l
+cd nvim
+|l
+|vim
+which cl
+where cl
+|here clang
+|vim
+|
+|:
+|d 
+|d workspace\src\
+|d dotfiles\
+|s
+|it ss
+|here clang
+|vim
+|inget list
+|inget list --help
+winget list --name llvm
+winget search llvim
+winget search llvm
+winget install llvm
+|here clang
+|here clang
+|s
+|vim
+|s
+|vim
+|here python
+|ip freeze
+|ip3 freeze
+python -m pip freeze
+|s
+|:
+|d workspace\src\dotfiles\
+nvim misc\flexprompt_config.lua 
+|s
+|:
+|d workspace\
+|l
+|s
+|d src\
+|s
+|kdir test
+|d test\
+|s
+python -m venv
+python -m venv venv
+|s
+|l
+|\venv\Scripts\activate.bat 
+|:
+|d workspace\src\test\
+|s
+|\venv\Scripts\activate.bat 
+|:
+cd workspace\src\test\
+|ir
+|s
+.\venv\Scripts\activate.bat 
+conda env
+conda env list
+|ip freeze
+pip env list
+pip --help
+|cho %VIRTUAL_ENV%
+.\venv\Scripts\deactivate.bat 
+echo %VIRTUAL_ENV%
+echo %CONDA_PYTHON_EXE%%
+echo %CONDA_DEFAULT_ENV%\
+echo %CONDA_DEFAULT_ENV%
+|:
+|d workspace\
+|s
+|d src\
+|s
+rmdir test /F
+rmdir test
+|l
+rmdir /?
+rmdir /sq test\
+rmdir /q test
+rmdir /s test
+rmdir /s /q tst
+rmdir /s /q test
+|l
+C:\Users\andrewsidlo\AppData\Local\Anaconda3\python.exe -m pip install pynvim
+|vim
+C:\Users\andrewsidlo\AppData\Local\Anaconda3\python.exe -m pip install pynvim
+echo %MANPAGER%
+|:
+|d workspace\src\
+|s
+|l
+|d dotfiles\
+|it ss
+|it d
+|it aa
+git cmsg "Fixes new python location, adds clink"
+|it ca
+bash --help
+bash.exe --help
+bash.exe nvim
+bash.exe -c nvim
+|obs
+|rocs
+|s
+|s
+|:
+|d workspace\src\dotfiles\
+|it ca
+type C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd 
+|:
+cd workspace\src\dotfiles\
+git ca
+|s
+rmdir /s/q source\
+|l
+|s
+|l
+|:
+cd workspace\src\
+|s
+|l
+rmdir /s/q Networking-nfv\
+|l
+|s
+|s
+|it ss
+|it lo -n 10
+git show - Go through new hire page
+git show 12a29e1
+|:
+cd workspace\src
+|l
+|el $null 
+|l
+|s
+|l
+git clone https://msazure.visualstudio.com/DefaultCollection/One/_git/Networking-nfv
+|s
+|d Networking-nfv\
+|s
+|l
+|l
+|d ..
+|l
+git clone https://msazure.visualstudio.com/DefaultCollection/One/_git/Networking-nrp
+|s
+|l
+|d Networking-nfv\
+|l
+|it shortlog -s -n
+git shortlog -s -n 5
+git shortlog -s -n --help
+git shortlog -s -n5
+git shortlog -s -n5 --rev
+git sup
+git alias
+git shortlog -s
+git shortlog -s --help
+git shortlog --help
+git shortlog -s -n
+|it config
+|it config -l
+|l
+|d ..
+|l
+du
+duf
+duf .
+duf Networking-nfv\
+duf --help
+broot
+|ree
+|here tree
+tree -L 3
+tree -L3
+|at C:\Users\andrewsidlo\.bashrc 
+type ~/.bashrc
+bat C:\Users\andrewsidlo\.bashrc 
+|vim C:\Users\andrewsidlo\.bashrc 
+nvim C:\Users\andrewsidlo\.bashrc 
+tree --help
+|ree /?
+tree /F
+tree
+tree /?
+|s
+rmdir /s/q C:\Users\andrewsidlo\source\
+|l
+|d dotfiles\
+|it ss
+|it pull
+|it push
+cd .
+|d ..
+|s
+|d notes\
+|it ss
+|it pull
+|s
+|here msbuild
+|:
+|d workspace\src\Networking-nfv\
+|l
+powershell -c AddModules.ps1
+|owershell -c .\AddModules.ps1
+|:
+cd workspace\src\Networking-nfv\
+|l
+powershell -c .\AddModules.ps1
+powershell -c Update-NugetCredentials
+|wsh
+|here msbuild
+|:
+|s
+|l
+cd workspace\
+|s
+|l
+|d src\
+ll ..\bin\
+ll ..\etc\
+where jq
+ls C:\Users\andrewsidlo\.cargo\bin\
+|l
+|d Networking-nfv\
+|l
+|lias
+doskey
+|s
+pwsh -c Get-Alias
+powershell -c Get-Alias
+|it ss
+|l
+|s
+|hich dotnet
+|here dotnet
+powershell -c .\AddModules.ps1 
+.\init.cmd 
+|here dotnet
+|here dotnet
+|here dotnet
+|here dotnet
+dotnet tool list -g | Where-Object {$_ -like "*dotnet-format*"}
+|otnet tool list -g
+dotnet tool search format
+|s
+where conda
+|d C:\Users\andrewsidlo\
+|s
+|l
+ls -l
+|s -al
+mklink /?
+del .bashrc 
+mklink C:\Users\andrewsidlo\.bashrc C:\Users\andrewsidlo\Workspace\src\dotfiles\bash\winbashrc 
+del .gitconfig 
+mklink C:\Users\andrewsidlo\.gitconfig C:\Users\andrewsidlo\Workspace\src\dotfiles\git\gitconfig.work 
+del .inputrc 
+mklink C:\Users\andrewsidlo\.inputrc C:\Users\andrewsidlo\Workspace\src\dotfiles\misc\inputrc 
+|el .vimrc 
+|klink C:\Users\andrewsidlo\.vimrc C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\minimal.vim 
+ll -al
+|d AppData\Local
+|l
+|el nvim
+del nvim
+del nvim\
+|mdir nvim
+mklink C:\Users\andrewsidlo\AppData\Local\nvim ~\Workspace\src\dotfiles\nvim\fromscratch /D
+cd Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\
+|l
+|s -al
+cd Settings\
+|l
+|d ..
+|s
+|l
+cd LocalState\
+|l
+del settings.json
+mklink C:\Users\andrewsidlo\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|d
+|d ~
+|d C:\Users\andrewsidlo\
+|s
+cd Pictures\
+|l
+cd icons\
+|l
+rmdir terminal\ 
+mklink C:\Users\andrewsidlo\Pictures\icons\terminal C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\icons /D
+|l
+|d C:\Users\andrewsidlo\
+|l
+|d C:\Users\andrewsidlo\
+cd C:\Users\andrewsidlo\Documents\
+|l
+cd WindowsPowershell\
+|l
+|el profile.ps1 
+mklink C:\Users\andrewsidlo\Documents\WindowsPowershell\profile.ps1 C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\profile.ps1 
+|d ..
+|s
+cd Powershell\
+|l
+del profile.ps1 
+mklink C:\Users\andrewsidlo\Documents\Powershell\profile.ps1 C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\pwsh-profile.ps1 
+|l
+|d ..
+|l
+|s
+|d Workspace\
+|d src\
+|s
+|d dotfiles\
+|it ss
+|it d
+|it aa
+git cmsg "Reformatted settings.json"
+|it pull
+git psuh
+|it push
+|d ..
+|s
+|d notes\
+|it pull
+|s
+cd AppData\Local
+|l
+ll nvim
+rmdir nvim
+|l
+mklink C:\Users\andrewsidlo\AppData\Local\nvim C:\Users\andrewsidlo\Workspace\src\dotfiles\nvim\fromscratch\ /D
+|l
+cd .config\
+|l
+del starship.toml 
+mklink C:\Users\andrewsidlo\.config\starship.toml C:\Users\andrewsidlo\Workspace\src\dotfiles\zsh\starship.toml 
+|s
+|l
+|s
+|s
+|d
+|d ~
+|d C:\Users\andrewsidlo\
+dism /online /Enable-Feature /FeatureName:TelnetClient
+where telnet
+!hello
+#heel
+|pconfig
+|pconfig /all
+|slookup google.com
+|slookup google.com
+|slookup
+dotnet-format --help
+nslookup
+ipconfig /a;;
+|pconfig /all
+|slookup corp.microsoft.com
+where telnet
+dism /online /Enable-Feature /FeatureName:TelnetClient
+uuidgen
+|uidgen.exe
+rustc --version
+rustup update stable
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d dotfiles\
+|it ss
+|it d
+|it ss
+|it aa
+git cmsg "Updated terminal mappings, added which alias"
+|it pull
+|it push
+|s
+|:
+|s
+|d Networking-nfv\
+|l
+|d C:\Users\andrewsidlo\
+echo %HOMEDRIVE%
+echo %HOMEPATH%
+|el C:\Users\andrewsidlo\.config\starship.toml 
+mklink C:\Users\andrewsidlo\.config\starship.toml C:\Users\andrewsidlo\Workspace\src\dotfiles\zsh\starship.windows.toml 
+|it config -l
+|it config -e
+git config -g -e
+|it config --global -e
+nvim-q
+nvim-qt.exe 
+|it config --global -e
+|:
+|d Networking-nfv\
+|it config -e
+|it config -e
+nvim-qt --wait
+nvim-qt --h
+|it config -e
+|ython
+nodejs
+|vim
+|vim C:\Users\andrewsidlo\.gitconfig 
+|it config -e
+|it config -e
+|it config -e
+|vim C:\Users\andrewsidlo\.gitconfig 
+|vim C:\Users\andrewsidlo\.gitconfig 
+vi
+|it config -e
+|vim C:\Users\andrewsidlo\.gitconfig 
+|d C:\Users\andrewsidlo\
+mklink C:\Users\andrewsidlo\_vimrc C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\minimal.vim 
+|it config -e --global
+|it config -e --global
+ls .vimrc
+ll .vimrc
+|im
+|it config -e --global
+where dos2unix
+|it config -e --global
+|el .vimrc 
+|it config -e --global
+git config --global core.editor vim
+|it config -e --global
+git config --global core.editor nvim
+|it config -e --global
+git config --global core.editor emacs
+git config -e --global
+git config --global core.editor code --wait
+|it config --global -e
+git config --global core.editor nvim-qt
+|vim C:\Users\andrewsidlo\.gitconfig 
+|vim C:\Users\andrewsidlo\.gitconfig 
+|it config --global -e
+nvim-qt --help
+nvim-qa --embed
+nvim-qt --embed
+nvim-qt startup --embed
+|vim-qt
+|s
+|rocs
+procs -h
+|it ss
+|it d
+|it ss
+|it aa
+git cmsg "Adds starship windows updated git editor for windows"
+|it push
+|it ss
+|it fetch
+|it pull
+|s
+|it ss
+|it ss
+|it aa
+git cmsg "Changes colorscheme to Tokyonight"
+|it pull
+|l
+|wd
+|ir
+|s
+|it ss
+|it pull
+|it push
+|vim
+|here clang
+colortool
+|it ss
+|it fetch
+|s
+|l
+|d D:\Networking-nfv\
+|:
+|s
+|l
+|s
+|vim
+|s
+|l
+|s
+|d C:\Users\andrewsidlo\
+|s
+|l
+|s
+|l
+nvim C:\Users\andrewsidlo\AppData\Local\clink\ssh.lua 
+|:
+|s
+|l
+|s
+|d Networking-nfv\
+|s
+|l
+|s
+|it ss
+|it s
+|s
+|l
+nvim NuGet.Config 
+|s
+nvim .\src\NfvRp\Core\NfvRpCore.csproj
+|vim .\src\tools\GatewayMesh\Program.cs
+|it ss
+|:
+|d Networking-nfv\
+|s
+nvim .\src\tools\GatewayMesh\Program.cs
+|it ss
+|pconfig /all
+|otnet run Main.cs 
+bat csharp.csproj 
+dotnet run Main.cs 
+|otnet run 
+dotnet run --help
+|s
+|:
+|s
+|d
+|d C:\Users\andrewsidlo\
+|:
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|kdir csharp
+|d csharp\
+|s
+|otnet --help
+|otnet --version
+cat
+bat D:\Networking-nfv\global.json 
+|otnet --help
+pwsh --version
+|s
+dotnet new test
+dotnet new
+|otnet new console
+|s
+|l
+|l obj\
+|s
+bat csharp.csproj 
+|vim Program.cs 
+|s
+|d ..
+|s
+mkdir temp
+cd temp\
+|s
+|vim Test.cs
+|it init
+|s
+nvim Test.cs
+|l
+|d ..
+|s
+rm -rf temp\
+rmdir /s/q temp\
+|l
+|d csharp\
+|l
+|s
+|l
+rm Main.cs 
+del Main.cs 
+|l
+|vim Program.cs 
+|s
+|d ..
+|s
+rm csharp\
+|mdir /s/q csharp\
+prcos
+|rocs
+procs Omni
+procs Omni*
+procs Omnisharp
+procs git
+|rocs
+|s
+|mdir /s/q csharp\
+|rocs --help
+procs -l
+procs
+procs donet
+|rocs dotnet
+procs --help
+procs --thread
+procs --thread dotnet
+|rocs dotnet
+taskkill.exe /?
+taskkill.exe /F dotnet
+|rocs dotnet
+taskkill.exe /F 2148
+taskkill.exe /F /PID 2148
+procs dotnet
+|s
+|mdir /s/q csharp\
+rmdir /s/q csharp\
+|s
+mkdir csharp-fundamentals
+|s
+move csharp-fundamentals\ csharp-fundamentals
+|s
+cd csharp-fundamentals\
+|s
+dotnet new classlib 
+|s
+|l
+cat csharp-fundamentals.csproj 
+bat csharp-fundamentals.csproj 
+bat --help
+bat --style plain csharp-fundamentals.csproj 
+bat --style plain csharp-fundamentals.csproj --color never
+bat  csharp-fundamentals.csproj --color never
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd 
+copy C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd C:\Users\andrewsidlo\Workspace\src\dotfiles\misc\clink_start.cmd 
+|s
+|at Class1.cs --color
+winget list 7z
+winget search 7z
+winget install 7zip.7zip
+|s
+|d Workspace\
+|s
+|d src\
+|s
+mkdir rustbook
+|d rustbook\
+|s
+cargo new guessing_game
+|d guessing_game\
+|l
+|vim Cargo.toml 
+|s
+cat C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd 
+cat C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd --style auto
+cat C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd --style auto --color always
+cat C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd --style plain --color always
+bat --help
+|:
+|:
+cd Workspace\src\csharp-fundamentals\
+|s
+cat Class1.cs --color
+cat Class1.cs
+cat Class1.cs --color auto
+cat Class1.cs --color auto --style auto
+|s
+nvim Class1.cs 
+cd D:\
+|s
+|d ..
+|s
+rmdir /s/q csharp-fundamentals\
+|s
+cat notes\README.md 
+|at notes\README.md --help
+|at notes\README.md --pager always
+cat notes\README.md --pager auto
+cat notes\README.md --pager always
+cat notes\README.md --help
+|at -h
+|here 7z
+which 7z
+|here 7z
+where 7z
+|s
+|d Workspace\src\rustbook\
+|s
+|d guessing_game\
+|l
+|vim Cargo.toml 
+|it ss
+|it d
+|it aa
+git cmsg "Adds cat to clink aliases"
+|it pull
+luaformat
+luastyl
+|it ss
+|it d
+|it aa
+|it dh
+git cmsg "Updates whichkey mappings"
+|it ss
+|it push
+|d ..
+|s
+|d ..
+|d
+|s
+|d dotfiles\
+|s
+|it ss
+|it pull
+|d Workspace\src\rustbook\
+|s
+|d guessing_game\
+|s
+|vim Cargo.toml 
+|vim
+|vim
+|l
+|vim Cargo.toml 
+|vim Cargo.toml 
+|vim
+|s
+|l
+|vim src\main.rs 
+nvim-qt.exe src\main.rs 
+|s
+cd Workspace\src\rustbook\guessing_game\
+|s
+|vim src\main.rs 
+|s
+|d Workspace\
+|s
+|d src\
+|s
+cd rus
+|d rustbook\
+|s
+|d guessing_game\
+|s
+|vim src\main.rs 
+|s
+|l
+|d
+|d C:\Users\andrewsidlo\Workspace\
+|s
+|d src\
+|s
+|d dotfiles\
+|it ss
+|it pull
+|it push
+|d ..
+|s
+nvim --help
+nvim -u NORC
+nvim -u NORC --noplugin
+|s
+|d Workspace\
+|s
+echo 
+|cho
+echo off
+|it ss
+|s
+cd Workspace\src\dotfiles\nvim\
+|s
+|d fromscratch\
+|s
+nvim lua\user\options.lua 
+nvim-qt
+|s
+|d ..
+|d fromscratch\
+|s
+cat ginit.vim 
+|it ss
+|it aa
+git cmsg "Removed issue with monospace"
+|it push
+|it pull
+echo %HOME%
+echo %USERPROFILE%%
+|d Workspace\
+|s
+|d src\
+|s
+|here dotnet
+|otnet --version
+dotnet new --help
+|ks
+|s
+mkdir dotnet
+cd dot
+cd dotnet\
+|s
+dotnet new console
+|l
+|d ..
+|s
+rmdir /s/q dotnet
+|s
+mkdir csharp
+|d csharp\
+|s
+dotnet new console --name sandbox
+|l
+cd sandbox\
+|l
+|l
+|d ..
+|s
+rmdir /s/q sandbox\
+|s
+|l
+dotnet new console --name democli
+|l
+|s
+|s
+rm democli\
+rmdir /s/q democli\
+|s
+|l
+dotnet new console --name DemoCli
+|s
+|d DemoCli\
+|l
+|at DemoCli.csproj 
+|d ..
+|l
+|l HelloWorld\
+|l DemoCli\
+cat HelloWorld\HelloWorld.sln 
+|l HelloWorld\
+|s
+|l
+|d HelloWorld\
+|l
+ll HelloWorld
+|l HelloWorld\
+|l
+|d ..
+|s
+|l DemoCli\
+where dotnet-format
+|l
+|d HelloWorld\
+|l
+dotnet-format Program.cs 
+dotnet-format .
+dotnet-format HelloWorld
+|otnet-format HelloWorld.sln 
+dotnet-format HelloWorld.sln 
+|s
+|d ..
+|s
+|d HelloWorld\
+|l
+ll bin
+ls -T
+|s -T bin
+ls -t bin\
+|s -T bin
+|otnet --help
+|otnet build --help
+|otnet build
+|l
+ls -T bin
+dotnet build --help
+|otnet --help
+dotnet run 
+|s
+cd bin
+|s
+ll Release\
+ll Release\net5.0\
+ll Release\net5.0\ref\
+|s
+dotnet msbuild build
+|otnet msbuild
+|otnet build
+|s
+|d ..
+|s
+|d ..
+|d HelloWorld\
+dotnet msbuild
+|otnet build
+|otnet build --configuration release
+|s
+ls -T bin\
+.\bin\Release\net5.0\HelloWorld.exe 
+move bin\Release\net5.0\HelloWorld.exe .
+|s
+.\HelloWorld.exe 
+del HelloWorld.exe 
+dotnet build --configuration release
+|pconfig
+arp -a
+arp /?
+|rp -v
+arp -v
+|pconfig
+tracert 
+ping 8.8.8.8
+tracert -d 8.8.8.8
+|pconfig
+nslookup corp.microsoft.com
+|s
+cd D:\Networking-nfv; .\AddModules.ps1}
+cd D:\Networking-nfv;
+cd D:\Networking-nfv && .\AddModules.ps1
+cd D:\Networking-nfv; echo ":"
+cd D:\Networking-nfv\ ; echo ""
+cd D:\Networking-nfv\ ` echo ""
+|s
+|l
+dotnet tool install --global Microsoft.VisualStudio.SlnGen.Tool
+|d Workspace\bin\
+|l
+ll Fabric\
+|s
+ll KeyVault\
+|s
+ping 100.64.106.126
+|s
+|d Workspace\src\dotfiles\
+|it s
+|it pull
+|d Workspace\src\dotfiles\
+|it push
+|inget list terminal
+|inget list --help
+|inget list
+winget install --id=Microsoft.WindowsTerminal -e
+|d C:\Users\andrewsidlo\Workspace\src\dotfiles\
+|it ss
+|it d
+|it ss
+|it d
+|it stash
+|it pull
+git stash pop
+|here pip
+|here python
+|here npm
+|here nodejs
+|here node
+|it ss
+|it ss
+|it d
+winget list gzip
+winget list zip
+|inget search zip
+|it pull
+|it ss
+|it d
+|it ss
+|it aa
+|it d
+|it dh
+git cmsg "Update keybindings and added all profiles"
+|it pull
+|it push
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|l
+|d rustbook\
+|s
+where ls
+alias
+|s
+|d
+|d ~
+|d C:\Users\andrewsidlo\
+|s
+cd .cargo\bin\
+|s
+|l
+exa
+lsd
+|s
+|d
+|s
+|d C:\Users\andrewsidlo\
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d rustbook\
+|l
+|d guessing_game\
+|l
+|vim src\main.rs 
+|s
+|d src\
+|s
+|vim
+|vim
+|vim
+|vim
+|s
+nvim main.rs 
+|s
+|here python
+|here clang
+|s
+|d Workspace\
+|d src\
+|s
+|d rustbook\
+|s
+nvim guessing_game\src\main.rs 
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d rustbook\
+|s
+|l
+|d guessing_game\
+|s
+|vim
+|vim
+|s
+|vim
+|vim
+|it ss
+|it aa
+git cmsg "Consolidates default settings"
+|it push
+|s
+|vim
+|vim
+|vim
+|vim
+|s
+|vim
+|s
+|d Workspace\
+|s
+|:
+|s
+|d Networking-nfv\
+|s
+|it ss
+|l
+|d src\
+|l
+where tree
+tree ApplicationGateway\
+|l
+tree gateway\
+rg vpn
+rg vpn -t file
+fd vpn
+nvim gateway\Common\GatewaySdk\VpnGateway.cs
+|otnet --list-runtimes
+|d Workspace\src\
+|s
+|d csharp\
+|s
+|d HelloWorld\
+|l
+|vim Program.cs 
+|l
+|d ..
+|s
+|d DemoCli\
+|s
+|vim Program.cs 
+|otnet --list-runtimes
+cat C:\Users\andrewsidlo\AppData\Local\Temp\nvim\lsp.log
+|otnet --version
+|otnet --info
+|here dotnet
+C:\Program Files (x86)\dotnet\dotnet.exe --info
+"C:\Program Files (x86)\dotnet\dotnet.exe" --info
+|vim C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|it ss
+|it d
+ 
+|it d
+|it aa
+git cmsg "Replaces vs cli with profiles
+|it lo -n 10
+|it push
+|here dotnet
+|vim C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|here dotnet
+|here dotnet
+|vim C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|here dotnet
+|otnet --info
+|hich dotnet
+|here dotnet
+|it ss
+|it aa
+git checkout
+|it ss
+git co powershell\settings.json 
+|it ss
+git reset powershell/settings.json
+|it ss
+|it ss
+|it aa
+git cmsg "Adds vs2022 shells"
+|it push
+|here dotnet
+|vim C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|vim C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|d Workspace\src\dotfiles\
+|it ss
+|it aa
+git cmsg "Replaces icon with vs2022"
+|it push
+netstat -n
+netstat --help
+netstat -n -p tcpv6
+|s
+|d Workspace\
+|s
+|d src\
+|s
+mkdir networking
+|d networking\
+|s
+|vim win_init.c
+|d Workspace\
+|s
+cd src\networking\
+|s
+nvim win_init.c
+|d Workspace\src\networking\
+|vim win_list.c
+|s
+|d Workspace\src\
+|s
+|d networking\
+|s
+|vim win_list.c
+|l win_list.c 
+|l win_list.c 
+|\win_list.exe 
+|d Workspace\src\networking\
+|s
+|l
+|vim win_init.c 
+|vim win_init.c 
+|vim win_init.c 
+|s
+|vim win_list.c 
+nvim win_list.c 
+|l win_list.c 
+|l win_list.c 
+|l win_list.c 
+|\win_list.exe 
+|\win_list.exe 
+|l win_list.c 
+|\win_list.exe 
+|l win_list.c 
+|l win_list.c 
+|\win_list.exe 
+|\win_list.exe 
+|l win_list.c 
+|\win_list.exe 
+|l win_list.c 
+|\win_list.exe 
+|l win_list.c 
+|\win_list.exe 
+|l win_list.c 
+|\win_list.exe 
+|l win_list.c 
+|\win_list.exe 
+|l win_list.c 
+|\win_list.exe 
+|l win_list.c 
+cl win_list.c 
+.\win_list.exe 
+|vim
+|s
+cl hello_world.c 
+|s
+.\hello_world.exe 
+|here unzip
+|it ss
+|it d
+|it aa
+git cmsg "Removed ts indent for c"
+|it push
+|it pull
+|here unzip
+where peazip
+|it pull
+cd Workspace\src\networking\
+|s
+nvim win_init.c 
+|vim win_list.c
+nvim win_list.c
+|l
+|s
+|d ..
+|s
+|s
+mkdir c_fundamentals
+|s
+|d c_fundamentals\
+|s
+printf 
+|s
+|l
+|vim hello_world.c
+jobs
+|s
+|vim hello_world.c 
+|vim hello_world.c 
+|s
+|l
+mkdir orders
+|s
+|d orders\
+|s
+nvim orders.h
+cargo install codelldb
+|inget list unzip
+|inget search unzip
+winget install PeaZip
+|here unzip
+winget uninstall unzip
+winget list unzip
+winget uninstall Giorgiotani.Peazip
+winget search unzip
+winget search wget
+winget install wget
+winget install  GnuWin32.Wget
+|inget search gnu
+|cho %APPDATA%
+echo %LOCALAPPDATA%
+|cho %APPDATA%
+|vim orders.h 
+|vim
+|it ss
+|it pull
+|here unzip
+|here wget
+winget list wget
+where wgety
+|here wget
+winget list --help
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+|d orders\
+|s
+|vim orders.h 
+|here wget
+|here unzip
+|here wget
+winget search gni
+|vim 
+|d Workspace\src\
+|s
+|d c_fundamentals\
+|s
+|vim hello_world.c
+|vim 
+|d Workspace\src\
+|s
+|d c_fundamentals\
+|s
+|vim hello_world.c
+|here make
+winget install make
+winget search gnu
+winget install GnuWin32.Make
+|vim
+where make
+|vim
+where make
+|vim
+|it pull
+|vim
+|here lldb-vscode
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+|d orders\
+|s
+|vim orders.h 
+|vim orders.h 
+|s
+|vim
+cargo install stylua
+|here lldb-vscode
+|it ss
+|it d
+|it aa
+|it ss
+|it d
+|it aa
+git cmsg "lldb-vscode cross platform"
+|it pull
+|it push
+|here lldb-vscode
+|here clang
+|here lldb-vscode
+|here lldb-vscode
+|here lldb-vscode
+|here lldb-vscode
+|here lldb-vscode
+|here clang
+|here lldb-vscode
+|here clang
+|here clang
+|here lldb-vscode
+|here clang
+|here lldb-vscode
+|here clang
+|here lldb-vscode
+cl hello_world.c
+where gcc
+|here clang
+clang -g hello_world.c 
+|s
+|l
+.\a.exe 
+|here lldb-vscode
+|here clang
+|argo build
+|l
+|it ss
+|it ss
+|it d
+|it ss
+|it d
+|it aa
+git cmsg "Adds rust to lldb"
+|it push
+winget list
+winget update llvm
+winget upgrade llvm
+|vim
+|vim
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+|d orders\
+|s
+|d ..
+|s
+|vim hello_world.c 
+|vim hello_world.c 
+|vim hello_world.c 
+|vim hello_world.c 
+|vim hello_world.c 
+|vim hello_world.c 
+|vim hello_world.c 
+|vim hello_world.c 
+|vim hello_world.c 
+|s
+|l
+|d ..
+|s
+|d rustbook\
+|s
+|d guessing_game\
+|s
+|vim src\main.rs 
+|vim src\main.rs 
+|vim src\main.rs 
+|vim src\main.rs 
+|it pull
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d rustbook\
+|s
+|d guessing_game\
+|s
+|vim src\main.rs 
+|vim src\main.rs 
+|here lldb-vscode
+|s
+|d Workspace\
+|s
+|d src\
+|s
+cd rustbook\guessing_game\
+|s
+|vim src\main.rs 
+|here clang
+|here clang
+|here lldb-vscode
+|s
+|d Workspace\src\
+|s
+|d rustbook\
+|s
+|d guessing_game\
+|s
+|vim src\main.rs 
+winget list terminal
+|d Workspace\
+|s
+|d src\
+|s
+|d dotfiles\
+|s
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+|s
+del %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json
+mklink %LOCALAPPDATA%\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|vim powershell\settings.json 
+|here clang
+|here clang
+|here clang
+|here clang
+|here clang
+|here clang
+where lldb-vscode
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+|l
+where lldb
+|ldb a.exe 
+|d Workspace\src\
+|s
+|d c_fin
+cd c_fin
+|d c_fundamentals\
+|s
+|ldb a.exe 
+where python3.6dll
+|here python3.6
+|here python
+|cho %PATH%
+|ld a.exe 
+|ldb a.exe 
+|ython -V
+|inget list python
+|l
+|here clang
+|here clang
+|here python
+|here clang
+clang --version
+|here python
+where nodejs
+|here node
+|ython
+|cho %PATH%
+|s
+|s
+cd Workspace\src\rustbook\
+|s
+|d guessing_game\
+|l
+|vim src\main.rs 
+|vim
+|here python
+|here python
+|here python3
+where python3.9
+|ython
+|here python3.dll
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+lld a.exe 
+|ldb a.exe 
+|ython
+|here pip
+|cho %PATH%
+|here python3
+python3
+|ldb a.exe 
+|here python
+|here python3
+where python3.6
+where python3.9
+nvim C:\Users\andrewsidlo\Workspace\src\dotfiles\nvim\fromscratch\lua\user\dap\lldb-vscode.lua 
+cd Workspace\src\c_fin
+|d Workspace\src\c_fundamentals\
+|s
+|ldb a.exe 
+|here python
+|here python3
+|here python3.dll
+where python36.dll
+where python39.dll
+|here liblldb.dll
+|ython
+|d Workspace\src\c_fundamentals\
+|s
+|ldb a.exe
+|here clang
+|here python
+|d Workspace\src\c_fundamentals\
+|s
+|ldb a.exe
+|here clang
+|here python
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+|ldb a
+|ython
+|here python
+|ython
+|here pip
+where python3
+|here pip3
+|here python3.dll
+|d Workspace\src\
+|s
+|d c_fundamentals\
+|s
+lldb a
+|here python
+where liblldb.dll
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+|ldb a.exe 
+where liblldb.dll
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+|ldb a.exe 
+|here python
+|s
+where python3.dll
+|d Workspace\src\c_fundamentals\
+|s
+|ldb a.exe 
+|d Workspace\src\c_fundamentals\
+|s
+lldb a.exe
+|s
+nvim hello_world.c
+lldb-vscode.exe a.exe 
+lldb-vscode.exe
+lldb-vscode.exe --help
+|here python
+|ython -V
+|here python
+|ython -V
+|ython -V
+|here python
+where node
+where npm
+|ip install black
+|here pip
+where pip3
+|here python
+ls C:\Users\andrewsidlo\AppData\Local\Programs\Python\Python310
+ls C:\Users\andrewsidlo\AppData\Local\Programs\Python\Python310\Scripts
+|here python
+|here pip
+|ython
+|ython -V
+|here python
+|here pip
+pip install black
+|ip install --upgrade pip
+pip install --upgrade pip
+|ip freeze
+pip install pynvim
+|vim 
+C:\Users\andrewsidlo\AppData\Local\Anaconda3\python.exe -m pip freeze
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d dotfiles\
+|s
+nvim nvim\fromscratch\lua\user\options.lua 
+|d Workspace\
+|s
+|d src\
+|s
+|d c_fundamentals\
+|s
+lldb a.exe 
+nvim hello_world.c 
+pip3 freeze
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d dotfiles\
+|it ss
+|it d
+|it aa
+git cmsg "Adds elevate for preview v1.13"
+|it push
+|s
+|l orders.c main.c /Feorder_calc.exe
+|s
+|d Workspace\
+|s
+|d src\
+|s
+cd c_fundamentals\
+|s
+|l
+|d orders\
+|s
+|l
+nvim orders.h 
+cd orders\
+|s
+|l orders.c main.c /Feorder_calc.exe
+|s
+|l
+.\order_calc.exe 
+cl orders.c main.c /Feorder_calc.exe
+clang -g order.c main.c -o orders.exe
+clang -g orders.c main.c -o orders.exe
+|l
+.\orders.exe 
+|s
+|d ..
+|s
+cd pointers\
+|s
+|l
+cl main.c 
+|l
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|\main.exe 
+|l
+|l
+.\main.exe 
+|s
+|d 
+|d C:\Users\andrewsidlo\Workspace\src\dotfiles\
+git dd
+|it ss
+|it push
+|s
+|argo run
+|argo run
+cd Workspace\src\c_fundamentals\
+|s
+nvim orders\main.c 
+|s
+|d ..
+|s
+|l
+cargo new sample
+|d sample\
+|s
+cargo new --lib bindings
+|l
+|vim Cargo.toml 
+|s
+|argo run
+|vim src\main.rs 
+|argo run
+|argo check
+nvim bindings\Cargo.
+nvim bindings\Cargo.toml 
+cargo check
+|argo build
+|vim bindings\src\lib.rs 
+|argo run
+nvim bindings\src\lib.rs 
+|l
+rmdir /s/q bindings\
+|l
+|vim Cargo.toml 
+|argo run
+|argo run
+|argo run
+|argo run
+|argo run
+|argo run
+|argo run
+|it ss
+|it ss
+|it pull
+|argo run
+|argo run
+|argo run
+|argo run
+|argo run
+|argo build
+.\target\debug\sample.exe 
+cargo run
+|s
+|d Workspace\src\
+|s
+cd sample\
+|s
+|l
+|vim Cargo.toml 
+|vim src\main.rs 
+|vim src\main.rs 
+|vim src\main.rs 
+|vim src\main.rs 
+|vim src\main.rs 
+|vim src\main.rs 
+|l
+|d ..
+|s
+|ove sample\ winrs_rss_tutorial
+|s
+|d Workspace\
+|s
+|d src\
+|s
+move sample\ winrs_rss_tutorial
+|s
+move sample\ sample2
+|s
+ll sample\
+|ove sample winrs_rss_tutorial
+|ove sample winrs_rss_tutorial
+move sample winrs_rss_tutorial
+|s
+cd winrs_rss_tutorial\
+|s
+nvim Cargo.toml 
+|argo build
+|\target\debug\rss-tutorial.exe 
+|vim src\main.rs 
+cargo build
+.\target\debug\rss-tutorial.exe 
+|otnet --version
+|here dotnet
+|here dotnet
+|otnet --version
+|here dotnet
+|otnet --version
+|s
+ll src\unittest\NfvRp\NfvRpTests\NfvRp.UnitTests.csproj 
+|here dotnet
+|otnet --info
+|otnet --version
+|here dotnet
+|cho %DOTNET_ROOT%
+|cho %DOTNET_ROOT%
+|cho %DOTNET_ROOT%
+echo %DOTNET_ROOT%\..
+C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\
+|s C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\
+ls C:\\Program Files\\dotnet\\sdk\\6.0.200
+ls 'C:\Program Files\dotnet\sdk\6.0.200'
+ls "C:\Program Files\dotnet\sdk\6.0.200"
+|s C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\
+ls C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\sdk
+ls C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\sdk\3.1.407\
+|s
+|s C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\
+ls C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\
+ls C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\
+ls C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\run
+ls C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp
+ls C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\OmniSharp.ex
+|s C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\OmniSharp.exe 
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|l
+|d csharp\
+|s
+|l
+cat HelloWorld\
+ll HelloWorld\
+ll DemoCli\
+|d HelloWorld\
+|l
+|vim Program.cs 
+|d ..
+|s
+|d DemoCli\
+|l
+|vim DemoCli.csproj 
+dotnet --version
+|d ..
+|s
+|d HelloWorld\
+|s
+|vim 
+|el C:\Users\andrewsidlo\AppData\Local\Temp\nvim\lsp.log 
+|l
+|vim Program.cs 
+|vim
+del C:\Users\andrewsidlo\AppData\Local\Temp\nvim\lsp.log 
+|here msbuild
+|sbuild -version
+|s
+|d Workspace\
+|s
+|d src\
+|s
+git clone git@github.com:dotnet/msbuild.git
+|s
+|d msbuild\
+|s
+git checkout -b vs16.7 origin/vs16.7
+|it lo -n 10
+.\build.cmd 
+|here msbuild
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe -version
+msbuild -version
+|s
+|d Workspace\
+|s
+|d src\
+|s
+cd msbuild\
+|s
+|\build.cmd -c Release /p:CreateBootstrap=true
+.\build.cmd -c Release /p:CreateBootstrap=true
+ln 
+mklink C:\Users\andrewsidlo\Workspace\bin\MSBuild.exe C:\Users\andrewsidlo\Workspace\src\msbuild\artifacts\bin\bootstrap\net472\MSBuild\Current\Bin\MSBuild.exe
+|here msbuild
+echo %PATH
+|cho %PATH%
+|here dotnet
+dotnet --inf
+|otnet --info
+echo %PATH%
+ls ;C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\sdk\3.1.407
+ls C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\sdk\3.1.407
+ls C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\sdk\
+ls C:\Users\andrewsidlo\AppData\Local\Microsoft\dotnet\
+|otnet --info
+|here dotnet
+|here dotnet
+|here dotnet
+|s
+|:
+|s
+|d Networking-nfv\
+|s
+|d src\
+|s
+|s
+cd gateway\GatewayManager\
+|s
+|l
+cd SdkManager\
+|s
+|vim IGatewayService.cs 
+|otnet --info
+|:
+cd Networking-nfv\src\gateway\GatewayManager\SdkManager\
+|s
+nvim IGatewayService.cs 
+where msbuild
+|s
+|d Workspace\
+|s
+cd bin\
+|s
+|l
+del MSBuild.exe 
+|l
+|d ..
+|s
+|d src\
+|s
+|s
+|s
+|d ..
+|s
+|a
+|l
+|s -al
+copy .editorconfig HelloWorld\
+|l
+|it ss
+|it init
+gitignore
+ignore
+git init
+|at omnisharp.json 
+|otnet --list-sdks
+|otnet --list-runtimes
+|here python
+|ython -V
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|l
+|d csharp\
+|l
+|d HelloWorld\
+|l
+|vim Program.cs 
+|vim Program.cs 
+|s
+|vim
+|vim Program.cs 
+|vim Program.cs 
+|vim Program.cs 
+|vim Program.cs 
+cat omnisharp.json 
+|vim
+|d Workspace\
+|s
+|d src\
+|ls
+|s
+|d csharp\
+|s
+|d HelloWorld\
+|s
+|vim Program.cs 
+|s
+|vim Program.cs 
+|vim Program.cs 
+|vim Program.cs 
+|vim Program.cs 
+|vim Program.cs 
+|vim Program.cs 
+|vim Program.cs 
+dotnet --list-runtimes
+dotnet --list-sdk
+|otnet --list-sdks
+dotnet --help
+|:
+|d Networking-nfv\
+|s
+|at global.json 
+cat AddModules.ps1 
+|vim
+where wget
+|here tar
+|it ss
+|it d
+|vim
+|s
+|s
+mklink C:\Users\andrewsidlo\Documents\WindowsPowershell\Scripts\dotnet-install.ps1 C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\dotnet-install.ps1
+|s
+dotnet tool list
+dotnet tool list -g
+dotnet tool --help
+dotnet tool search 
+dotnet tool search install
+|s
+cat global.json 
+|s
+|d GatewayManager.sln
+fd *.sln
+fd 0g *.sln
+fd -g *.sln
+fd -g .*.sln
+|d -e sln
+|s
+la
+|s -al
+|s .vim
+|s _vimrc
+|l _vimrc
+del _vimrc
+nvim _vimrc
+|here vim
+winget search vim
+winget install vim.vim
+|s
+nvim Workspace\src\dotfiles\vim\minimal.vim 
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d csharp\
+|s
+|d HelloWorld\
+|s
+|im Program.cs 
+fd -e sln
+fd GatewayManager.sln
+fd --glob *.sln
+fd --glob .*.sln
+|s
+|s
+|s src\
+fd Brooklyn.sln
+fd
+fd -f
+|d -h
+|d -t f -e sln
+fd -t f
+|d -h
+fd -t f -e cs
+fd -t f -e sln
+fd -t f -g *.sln
+fd -t f -g *.cs
+ls src\
+fd -h
+|d -t f -e sln -I
+|s
+cd Workspace\src\csharp\
+|ks
+|d HelloWorld\
+|l
+|im Program.cs 
+which curl
+where curl
+|s
+|d
+cd C:\Users\andrewsidlo\.vim\
+|l
+|l plugged\
+|d ..
+|s
+cd .vim
+|s
+ll autoload\
+|d ..
+|s
+cat _vimrc 
+|vim _vimrc 
+|s
+|mdir /s/q .vim\
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d csharp\
+|s
+cd He
+|d HelloWorld\
+|s
+|im Program.cs 
+ls C:\Users\andrewsidlo\.vim
+ls C:\Users\andrewsidlo\.vim\autoload\
+cat C:\Users\andrewsidlo\.vim\autoload\plug.vim 
+|im Program.cs 
+|im Program.cs 
+|s
+|d vimfiles\
+|s
+|d ..
+|s
+rmdir /s/q .vim\
+|s
+cd vimfiles\
+|s
+|l
+ls colors\
+|s
+ls compiler\
+|l
+ls indent\
+|l
+ll plug
+ll plugged\
+|s
+|l
+ll syntax\
+|s
+ll colors\
+|l
+|d D:\Networking-nfv\
+|s
+|d -t f -e sln -I
+|s
+|it ss
+ls dirs.sln 
+|d D:\Networking-nfv\
+|:
+|s
+del src\GatewayManager.sln 
+|s src\gateway\GatewayManager\
+slngen --folders:True --property:Configuration=Debug --platform:x64 src\gateway\GatewayManager\dirs.proj
+ls src\gateway\GatewayManager\
+slngen --help
+slngen --folders:True --property:Configuration=Debug --launch:False --platform:x64 -o src\gateway\GatewayManager\GatewayManager.sln src\gateway\GatewayManager\dirs.proj
+|im src\gateway\GatewayManager\SdkManager\IGatewayService.cs 
+|s
+|vim src\gateway\GatewayManager\SdkManager\IGatewayService.cs 
+fd -t f -e sln -I
+|im src\gateway\GatewayManager\SdkManager\IGatewayService.cs 
+|d D:\Networking-nfv\
+|:
+nvim src\gateway\GatewayManager\SdkManager\IGatewayService.cs 
+|s
+|:
+|s
+|d Networking-nfv\
+|s
+vim src\gateway\GatewayManager\SdkManager\IGatewayService.cs 
+|it ss
+|it d
+|it ss
+|it d
+|it ss
+|it d
+|it aa
+|it ss
+|it aa
+|it ss
+|it aa
+|it ss
+git cmsg "Adds vstar plugin and csharp extensions"
+|it push
+|it pull
+|it push
+|it pull
+cd Workspace\src\
+|s
+|d dotfiles\
+|s
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+|vim powershell\settings.json 
+nvim powershell\settings.json 
+|vim
+|vim
+|vim
+|s
+|vim
+|s
+|vim
+|vim
+|vim
+|it ss
+|it aa
+git cmsg "Fixes issue with shell for windows"
+|it pull
+|it push
+|vim
+|vim
+|it lo -n 10
+git l -n 2
+|here python
+where pip
+|s
+|ip freeze
+python -m pip install debugpy
+|ip freeze
+|it ss
+|it d
+|it aa
+git cmsg "Adds debugpy"
+|it ss
+|it push
+|it pull
+|it push
+|it pull
+|ocker ps
+|ocker ps -a
+|ocker container ls
+|ocker image ls
+wsl.exe uname -a
+move .wslconfig .\.wslconfig.bak
+|sl --shutdown
+wsl uname -a
+|s
+move .wslconfig.bak Workspace\lib\wslconfig
+nvim C:\Users\andrewsidlo\AppData\Local\clink\starship.lua
+nvim C:\Users\andrewsidlo\AppData\Local\clink\starship.lua
+which starship
+|here starship
+cargo install starship --locked
+|s
+|l
+|d Workspace\
+|s
+|d src\
+|s
+|d csharp\
+|s
+|d HelloWorld\
+|s
+|l
+|s
+|:
+|d Networking-nfv\
+|s
+|s
+|l
+|d
+|d C:\Users\andrewsidlo\Workspace\src\
+|s
+|d src\
+|s
+|:
+|s
+|d dotfiles\
+|s
+|it ss
+|l
+|s
+|s
+|d C:\Users\andrewsidlo\Workspace\src\
+|s
+|d dotfiles\
+|s
+|l
+|d misc\
+|l
+cat clink_start.cmd 
+cat clink_settings 
+|s
+|l
+cat inputrc 
+ll C:\Users\andrewsidlo\.inputrc 
+|d ..
+|s
+mkdir clink
+cd misc\
+|s
+move clink_s* ..\clink\
+|s
+|at flexprompt_config.lua 
+move flexprompt_config.lua ..\clink\
+|s
+|d ..
+|s
+|d
+cd ~ls
+|d C:\Users\andrewsidlo\AppData\
+|s
+cd Local
+|s
+cd clink
+|s
+|l
+|s
+|opy angular-cli.lua chocolatey.lua clink_settings clink_start.cmd coho.lua cordova.lua dotnet.lua flexprompt* fzf.lua git* kubectl.lua net.lua modules\ npm.lua nvm.lua pip* scoop.lua spec\ ssh.lua starship.lua vagrant.lua yarn.lua C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+copy angular-cli.lua chocolatey.lua clink_settings clink_start.cmd coho.lua cordova.lua dotnet.lua flexprompt* fzf.lua git* kubectl.lua net.lua modules\ npm.lua nvm.lua pip* scoop.lua spec\ ssh.lua starship.lua vagrant.lua yarn.lua C:\Users\andrewsidlo\Workspace\src\dotfiles\clink
+copy angular-cli.lua chocolatey.lua clink_settings clink_start.cmd coho.lua cordova.lua dotnet.lua flexprompt* fzf.lua git* kubectl.lua net.lua modules\ npm.lua nvm.lua pip* scoop.lua spec\ ssh.lua starship.lua vagrant.lua yarn.lua C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+copy /r angular-cli.lua chocolatey.lua clink_settings clink_start.cmd coho.lua cordova.lua dotnet.lua flexprompt* fzf.lua git* kubectl.lua net.lua modules\ npm.lua nvm.lua pip* scoop.lua spec\ ssh.lua starship.lua vagrant.lua yarn.lua C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+copy /r angular-cli.lua chocolatey.lua clink_settings clink_start.cmd coho.lua cordova.lua dotnet.lua flexprompt* fzf.lua git* kubectl.lua
+copy /?
+|s
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|:
+|d D:\Networking-nfv\
+|s
+|s
+|:
+|d dotfiles\
+|it ss
+|it aa
+git cmsg "Copies all clink files"
+|it push
+|it pull
+|it push
+|et-vm
+get-vm
+get-vms
+|sh asidlo@marcel
+|sh asidlo@172.29.6.130
+|sh asidlo@172.29.6.130
+ssh asidlo@172.29.6.130
+ip link
+|s
+|vim C:\Windows\System32\Drivers\etc\hosts
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|vim C:\Windows\System32\Drivers\etc\hosts
+|sh asidlo@marcel
+|sh asidlo@marcel
+|sh asidlo@ubuntu
+|ing 192.168.121.199
+ping 192.168.121.199
+ssh asidlo@192.168.121.199
+|vim C:\Windows\System32\Drivers\etc\hosts
+|ing marcel
+|ing 172.29.6.130
+|ing 172.29.6.130
+|ing 172.29.6.130
+ping 172.29.6.130
+|pconfig /all
+|ing 192.168.1.2
+ping 172.29.0.2
+|vim C:\Windows\System32\Drivers\etc\hosts
+|sh asidlo@marcel
+nvim C:\Windows\System32\Drivers\etc\hosts
+|sh asidlo@marcel
+ssh asidlo@ubuntu
+|s
+|sh asidlo@marcel
+go get -d github.com/lemonade-command/lemonade
+cd $GOPATH/src/github.com/lemonade-command/lemonade/
+|here lemonade
+lemonade.exe server
+|sh asidlo@marcel
+|sh asidlo@marcel
+|s
+|sh asidlo@marcel
+winget search rdm
+winget search rdc
+winget search remote
+|s
+|here lemonade
+cd Workspace\bin\
+|s
+del lemonade.exe 
+|here python
+|ip freeze
+|it ss
+|it aa
+git cmsg "Changes to system python in win"
+|it push
+|it pull
+|it push
+|s
+|vim
+nvim C:\Users\andrewsidlo\AppData\Local\nvim\lua\user\options.lua 
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d abc\
+|s
+|vim web-powershell-data.ps1 
+|vim web-powershell-data.ps1 
+nvim web-powershell-data.ps1 
+mv web-powershell-data.ps1 web-powershell-data.psd1
+move web-powershell-data.ps1 web-powershell-data.psd1
+|s
+|vim web-powershell-data.psd1 
+winget list clink
+clink -version
+|link --version
+|link --version
+clink --version
+clink --verison
+|d C:\Users\andrewsidlo\AppData\Local\clink
+|s
+nvim "clink_settings" 
+|s
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|l
+cd networking\
+|s
+|d ..
+|s
+cd rustbook\
+|s
+|l
+cd guessing_game\
+|s
+|l
+|s
+|s
+|l
+ll src\
+nvim src\main.rs 
+echo %APPDATA%
+nvim C:\Users\andrewsidlo\Workspace\src\dotfiles\powershell\settings.json 
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_settings 
+|vim C:\Users\andrewsidlo\.inputrc 
+|vim C:\Users\andrewsidlo\.inputrc 
+|vim C:\Users\andrewsidlo\.inputrc 
+|vim 
+|vim C:\Users\andrewsidlo\.inputrc 
+nvim C:\Users\andrewsidlo\AppData\Local\clink\clink.log 
+cd C:\Users\andrewsidlo\AppData\Local\clink\
+|s
+del flexprompt*
+|s
+nvim C:\Users\andrewsidlo\AppData\Local\clink\.init.lua 
+|d C:\Users\andrewsidlo\AppData\Local\clink
+|s
+nvim fzf.lua 
+|link inject 
+|link set color.executable yellow
+|link info
+clink set color.executable 
+clink set color.executable red
+|link set color.executable cyan
+clink set color.executable
+|s
+|l
+|s
+ls C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+|s
+clink 
+clink set clink.gui_popups True
+nvim C:\Users\andrewsidlo\.inputrc 
+clink info
+|it ss
+|it d
+|it aa
+|it dh
+git show HEAD
+|it ss
+git diff misc\inputrc\
+git diff misc\inputrc
+git diff misc\inputrc HEAD
+git dh misc\inputrc
+git cmsg "Fixes clink Ctrl-f binding"
+|it push
+winget search whiteboard
+clink set color.executable cyan
+clink set color.executable yellow
+clink inject 
+clink echo 
+clink set color.executable default 
+clink set color.executable white
+clink set color.cmd 
+clink set color.executable green
+|opy C:\Users\andrewsidlo\AppData\Local\clink\clink_settings C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+|vim
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d abc\
+|s
+|l
+nvim web-powershell-data.psd1 
+cat web-powershell-data.psd1 
+bat web-powershell-data.psd1 
+|s
+unzip web-dsc-config.zip 
+|s
+|l
+nvim web-dsc-config.ps1 
+|it.exe
+git.exe
+|it ss
+|it aa
+|it cmsg "Moves to end of line with menu compl"
+|it push
+|it pull
+|it push
+|it ss
+|it aa
+git cmsg "Fixes colors with clink"
+|it push
+|opy C:\Users\andrewsidlo\AppData\Local\clink\clink_settings C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+clink set color.executable blue 
+clink set color.executable green
+clink set color.cmd green 
+clink set color.cmd red
+clink set color.cmd green
+clink set color.cmdsep 
+clink set color.unrecognized 
+clink set color.arg 
+clink set color.doskey
+ls --color
+ls --color always
+printf "\033[0;31mhello\33[0m, \33[0;32mworld\33[0m"
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_settings 
+|slookup.exe contosoads-andr61.eastus.cloudapp.azure.com
+ipconfig /flushdns
+|slookup.exe contosoads-andr61.eastus.cloudapp.azure.com
+|slookup.exe contosoads-andr61.eastus.cloudapp.azure.com
+nslookup.exe contosoads-andr61.eastus.cloudapp.azure.com
+psping 
+winget search psping
+|d Downloads\
+|s
+unzip WhoIs.zip 
+cd Wh
+|s
+.\whois.exe 
+.\whois.exe contosoads-andr61.eastus.cloudapp.azure.com
+|s
+TCPSVCS.EXE 
+cd TCPView\
+|s
+.\tcpvcon.exe 
+.\tcpvcon64.exe 
+.\tcpvcon64.exe /?
+psping 20.121.216.188
+psping 20.121.216.188:80
+psping 20.121.216.188:3389
+telnet 20.121.216.188 3389
+ipconfig /flushdns
+nslookup.exe contosoads-andr61.eastus.cloudapp.azure.com
+telnet 20.121.216.188 80
+|s
+|z account list
+|z
+azman.msc 
+|it ss
+|s
+|it ss
+|it d
+az
+az account list
+az account
+az account show
+|vim
+|vim --startuptime nvim.log
+|s
+|vim nvim.log 
+|vim --startuptime nvim.log
+|vim
+|vim nvim.log 
+|vim C:\Users\andrewsidlo\AppData\Local\nvim\init.lua 
+|vim C:\Users\andrewsidlo\AppData\Local\nvim\init.lua 
+|vim --startuptime nvim.log
+|vim nvim.log 
+|vim
+|vim --startuptime nvim.log
+|vim nvim.log 
+|vim C:\Users\andrewsidlo\AppData\Local\nvim\init.lua 
+|vim --startuptime nvim.log
+nvim nvim.log 
+|vim
+del C:\Users\andrewsidlo\AppData\Local\nvim\plugin\packer_compiled.lua 
+nvim --startuptime nvim.log
+|vim C:\Users\andrewsidlo\AppData\Local\nvim\init.lua 
+|vim C:\Users\andrewsidlo\AppData\Local\nvim\init.lua 
+nvim C:\Users\andrewsidlo\AppData\Local\nvim\init.lua 
+del nvim.log
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_settings 
+nvim C:\Users\andrewsidlo\AppData\Local\clink\clink_settings 
+copy C:\Users\andrewsidlo\.config\starship.toml C:\Users\andrewsidlo\Workspace\src\dotfiles\zsh\
+copy C:\Users\andrewsidlo\AppData\Local\clink\clink_settings C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+nvim C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\clink_settings 
+del C:\Users\andrewsidlo\.config\starship.toml 
+mklink C:\Users\andrewsidlo\.config\starship.toml C:\Users\andrewsidlo\Workspace\src\dotfiles\zsh\starship.windows.toml
+|s
+ll .config\starship.toml
+|d C:\Users\andrewsidlo\Workspace\src\dotfiles\
+|it ss
+|it aa
+nvim zsh\starship.toml 
+|it ss
+git cmsg "Updates windows starship slow with git status"
+|it pull
+|it push
+|vim C:\Users\andrewsidlo\AppData\Local\clink\az.lua
+az account show 
+|z account show | jq
+jq --help
+az account show | jq -C
+|opy C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+|z account show | jq
+az account list 
+az account list | jq
+|vim C:\Users\andrewsidlo\AppData\Local\clink\az.lua
+copy C:\Users\andrewsidlo\AppData\Local\clink\az.lua C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+|d Workspace\src\dotfiles\
+|it ss
+|it aa
+git cmsg "Adds az clink compl stub"
+|it push
+|here zip
+where tar
+|ar --h
+|s
+|here zip
+where gzip
+winget search zip
+where 7zip
+tar --h
+man tar
+|d C:\Users\andrewsidlo\Workspace\src\
+|s
+|d abc\
+|s
+|d StudentFiles\
+|s
+|d ..
+|s
+|d ContosoAds\
+|s
+|d ..
+|s
+|d StudentFiles\
+|s
+|l
+|vim C:\Users\andrewsidlo\AppData\Local\clink\az.lua
+|it ss
+|s
+|vim
+|d C:\Users\andrewsidlo\Workspace\src\dotfiles\
+|it ss
+|it aa
+git cmsg "Adds pwd alias"
+|it fetch
+|it push
+|s
+az extension add --name azure-devops
+|z login
+|s
+|:
+|s
+git clone https://onebranch.visualstudio.com/Bootcamp/_git/ContosoAdsSupport/ Bootcamp\ContosoAdsSupport
+|s
+|d Bootcamp\
+|s
+|d ContosoAdsSupport\
+|s
+git checkout lab/start
+|it b
+|it pull
+|s
+|s
+|s
+|s
+|d src\
+|s
+|d ContosoAdsSupport\
+|s
+|l
+nvim ContosoSupport\Program.cs 
+vim ContosoSupport\Program.cs 
+|d D:\Networking-nfv\
+|s
+cat owners.txt 
+cd -
+|s
+|l
+|d ..
+|s
+|l
+|d ..
+|s
+cat repo.config 
+cat README.md 
+bat README.md 
+|wd
+|wd
+|ir
+dir /?
+|wd
+echo %cd%
+doskey pwd=echo %cd%
+|wd
+nvim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd 
+|opy C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+|wd
+|wd
+|it pull
+git reset --hard lab/start
+git cob feature/andrewsidlo
+|it b
+|s
+|d appsettings.json
+|z account show | jq
+|z login
+|z login
+|z account show | jq
+|vim C:\Users\andrewsidlo\AppData\Local\clink\az.lua
+|wd
+|vim C:\Users\andrewsidlo\AppData\Local\clink\az.lua
+|:
+cd D:\Bootcamp\ContosoAdsSupport
+|s
+nvim C:\Users\andrewsidlo\AppData\Local\clink\az.lua
+az account set -s "Azure Boot Camp (Alpha)"
+|z account show | jq
+az cosmosdb keys list --type connection-strings --name contososupport --resource-group architecture | jq
+where start
+start src\ContosoAdsSupport\ContosoSupport.sln 
+|it ss
+|it aa
+git cmsg "Committing the connection string"
+git push origin feature/andrewsidlo 
+git reset HEAD src\ContosoAdsSupport\ContosoSupport\appsettings.json
+|it ss
+|it s
+|it lo -n 10
+git reset HEAD~1 src\ContosoAdsSupport\ContosoSupport\appsettings.json 
+|it ss
+git lsu
+|it lsa
+git lsa | echo
+git lsa
+git co src/*
+|it ss
+|it d
+|it ss
+|it dh
+|s
+|d src\
+|s
+|d ContosoAdsSupport\
+|s
+|otnet restore
+pwsh -c Update-NugetCredentials
+|wsh
+|otnet restore --interactive
+dotnet nuget 
+dotnet nuget list
+dotnet nuget list source
+dotnet nuget --help
+dotnet nuget update -h
+dotnet nuget update source
+|otnet restore
+|:
+cd Bootcamp\ContosoAdsSupport\
+|s
+|d src\
+|s
+|d ContosoAdsSupport\
+|s
+dotnet restore --interactive
+|:
+cd Bootcamp\ContosoAdsSupport\
+|s
+|d src\
+|s
+|d ContosoAdsSupport\
+|s
+dotnet restore
+|otnet restore --interactive
+cat nuget.config 
+dotnet restore --interactive
+msbuild /t:Restore /p:NuGetInteractive="true"
+|s
+nvim ContosoSupport.sln 
+D
+|:
+cd Bootcamp\ContosoAdsSupport\src\
+|s
+|d ContosoAdsSupport\
+|s
+|l
+ll ContosoSupport\
+|z account show | jq
+|s
+nvim C:\Users\andrewsidlo\AppData\Local\clink\dotnet.lua 
+|s
+|d Workspace\
+|s
+|vim
+|vim
+|vim
+|wd
+|s
+|d src\
+|s
+|d abc\
+|s
+|l
+|d StudentFiles\
+|s
+|s
+|d ..
+|s
+|d ContosoAds\
+|s
+|l
+|d ..
+|s
+cd ContosoAds\
+|l
+rg mongo
+|g connection
+|d ..
+|s
+|d ..
+|s
+cd abc\
+rg connection
+fd appsettings.json
+|:
+|d Bootcamp\
+|s
+|d ContosoAdsSupport\
+|s
+|d ..
+|s
+move C:\Users\andrewsidlo\Workspace\src\abc\ .\AzFundamentals
+move C:\Users\andrewsidlo\Workspace\src\abc\ 
+move C:\Users\andrewsidlo\Workspace\src\abc\ .
+|ove C:\Users\andrewsidlo\Workspace\src\abc .
+|ove C:\Users\andrewsidlo\Workspace\src\abc .
+move C:\Users\andrewsidlo\Workspace\src\abc .
+|:
+cd Bootcamp\
+|s
+cd ContosoAdsSupport\
+|s
+|it ss
+|it aa
+git cmsg "Committing the Keyvault integration changes"
+git push -u origin feature/andrewsidlo 
+|d ..
+|s
+cd AzFundamentals\
+|
+|s
+|d StudentFiles\
+|s
+|l
+|s
+|d ..
+|s
+cd StudentFiles\
+|s
+nvim ContosoDatabaseConnection.tst
+move ContosoDatabaseConnection.tst ContosoDatabaseConnection.txt
+|l
+|s
+nvim azuredeploy.json
+az account show | jq
+|z login
+az network vnet show -g "<alias>-rg" -n "contosoads-vnet" --query addressSpace
+az network vnet show -g "andr61-rg" -n "contosoads-vnet" --query addressSpace
+az network vnet subnet list -g "andr61-rg" -n "contosoads-vnet"
+az network vnet subnet list -g "andr61-rg" --vnet-name "contosoads-vnet" | jq
+|here vim
+|s
+vim azuredeploy.json 
+nvim azuredeploy.json 
+|s
+move ContosoDatabaseConnection.txt secrets.txt
+nvim secrets.txt 
+move secrets.txt secrets.md
+nvim secrets.md 
+|s
+mkdir ContosoAdsWeb
+move ContosoAds.Web.zip ContosoAdsWeb\
+cd ContosoAdsWeb\
+|s
+unzip ContosoAds.Web.zip 
+|s
+del ContosoAds.Web.zip 
+|wsh
+|s
+|l
+|it ss
+|it d
+|it aa
+git cmsg "Removes custom psreadline colors"
+|it fetch
+|it push
+|it ss
+|it aa
+git cmsg "Moves to end of line with menu compl"
+|it push
+|s
+|wsh
+|it ss
+|it aa
+git cmsg "Adds pwsh kubectl completion"
+|it push
+|ocker ps
+|ocker images
+|s
+|d Workspace\
+sl
+|s
+|d src\
+|s
+|d dotfiles\
+|it ss
+|it pull
+|it ss
+|it aa
+git cmsg "Adds naive keymapping for qfix toggle"
+|it push
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd
+klist.exe /?
+ksetup.exe /?
+kubelogin.exe /?
+kubelogin.exe --help
+kubelogin.exe -h
+|it ss
+|it d
+|it aa
+git cmsg "Adds alias for kubectl for pwsh"
+|it ss
+|it push
+powershell
+pwsh -noe -c "C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"  
+pwsh -noe -c &"C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"
+pwsh -noe -c & "C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"
+pwsh -noe -c """C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"""
+pwsh -noe -c &"""C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"""
+pwsh -noe -c Invoke-Expression "C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"
+pwsh -noe -c Invoke-Expression -Command "C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"
+pwsh -noe -c Invoke-Expression -Command "C:\Program\ Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"
+pwsh -noe -c Invoke-Expression -Command "C:\\Program\\ Files\\Ev2_PowerShell\\AzureServiceDeployClient.ps1"
+pwsh -noe -c  &{"""C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"""}
+pwsh -noe -c  Invoke-Command -Command &{"""C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"""}
+pwsh -c "C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"
+|s
+|l
+pwsh -c 'C:\Program Files\Ev2_PowerShell\AzureServiceDeployClient.ps1'
+pwsh -c "C:\Program' 'Files\Ev2_PowerShell\AzureServiceDeployClient.ps1"
+|s
+powershell -c [guid]::NewGuid()
+|it ss
+|it aa
+git cmsg "Adds Ev2 profile"
+|it fetch
+|it push
+|it ss
+|it aa
+git cmsg "Reverts ev2 addition, use dedicated shell"
+|it ss
+|pm start 
+npm start 
+cargo install silicon
+silicon --list-themes
+|:
+|s
+nvim template.json 
+|s
+nvim .\_vimrc
+|vim
+|cho %FZF_DEFAULT_COMMAND%
+echo 'git ls-files --cached --others --exclude-standard 2> $null | fd --type f --type l --follow --exclude .git --exclude node_modules --exclude "*.class"'
+echo 'git ls-files --cached --others --exclude-standard 2>nul | fd --type f --type l --follow --exclude .git --exclude node_modules --exclude "*.class"'
+|it ss
+|vim 
+|s
+|s
+|el $null 
+|s
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd
+del $null 
+|s
+|vim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd
+cmd
+|opy C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+|d Workspace\src\dotfiles\
+|it ss
+|it d
+|it aa
+git cmsg "Fixes pwsh vs cmd fzf null"
+|it fetch
+|it pull
+|it push
+|vim
+|s
+|s
+|l _vimrc
+ls _vimrc
+dir _vimrc 
+copy _vimrc C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\csharp.vimrc
+rmdir /s/q .vim
+del _viminfo,_vimrc
+rmdir vimfiles\
+rmdir vimfiles\ /s/q
+|hich vim
+|here vim
+mklink ~\_vimfiles
+|klink C:\Users\andrewsidlo\_vimfiles C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\csharp.vimrc 
+|im _vimfiles 
+|im _vimfiles 
+vim _vimfiles 
+rmdir C:\Users\andrewsidlo\.vim\ /s/q
+ls .vim
+ls _vimfiles 
+|l
+|s
+ll _vimfiles 
+del _vimfiles 
+ll _viminfo 
+|l
+ls _*
+ls _
+rm _viminfo 
+|el _viminfo 
+|s -H
+ls -h
+|im
+|here vim
+ls .vimrc 
+del .vimrc 
+del _viminfo 
+rmdir .vim /s/qw
+rmdir .vim /s/q
+|s
+|s -H
+del .viminfo 
+|im
+mklink C:\Users\andrewsidlo\_vimfiles C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\csharp.vimrc 
+|l
+|s -H
+ll -H
+dir _vimrc
+ll _vimrc
+|l
+|d Workspace\src\dotfiles\
+|s
+ll vim
+mklink C:\Users\andrewsidlo\_vimrc C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\csharp.vimrc 
+|d
+|s
+cd ~!
+|d C:\Users\andrewsidlo\
+|s
+ls -H
+explore
+explorer.exe 
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+vim +PlugInstall
+|im
+|im
+|im
+|im
+|im
+|im
+|im
+|s _vimrc 
+ll _vimrc 
+|vim _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+|im _vimrc 
+vim _vimrc 
+|d D:\Networking-nfv\
+|:
+|s
+|im .\src\gateway\GatewayManager\SdkManager\IGatewayService.cs
+|im .\src\gateway\GatewayManager\SdkManager\IGatewayService.cs
+|im .\src\gateway\GatewayManager\SdkManager\IGatewayService.cs
+vim .\src\gateway\GatewayManager\SdkManager\IGatewayService.cs
+|im
+|im
+|im
+|d Workspace\
+|s
+cd src\dotfiles\
+|s
+cd nvim\
+|s
+cd config\
+|d ..
+|s
+cd fromscratch\
+|s
+|l lua\
+|l
+ll lua\l
+ll lua\
+ll lua\user
+ll lua\user\lsp
+|here python
+fd C:\Users\andrewsidlo\AppData\Local\Programs\Python\Python36
+fd -t f python310.dll C:\Users\andrewsidlo\AppData\Local\Programs\Python\Python36
+fd -t f -e dll C:\Users\andrewsidlo\AppData\Local\Programs\Python\Python36
+fd -t f -e dll . C:\Users\andrewsidlo\AppData\Local\Programs\Python\Python36
+fd -t f -e dll . C:\Users\andrewsidlo\AppData\Local\Programs\Python\
+winget list python
+|here python
+ll C:\Users\andrewsidlo\AppData\Local\Microsoft\WindowsApps\python.exe
+|it ss
+git d ../../powershell/settings.json
+|it aa
+git cmsg "Updates csharp vim; switch git bash to dracula"
+|it pull
+|it push
+|im
+|zf
+|zf
+echo %FZF_DEFAULT_COMMAND%
+|cho %FZF_CTRL_T_COMMAND%
+git ls-files --cached --others --exclude-standard 2>nul
+|s
+git ls-files --cached --others --exclude-standard 2> nul
+|zf
+vim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd 
+|zf
+|d Workspace\src\dotfiles\
+|zf
+nvim C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd
+copy C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\
+|d Workspace\src\dotfiles\
+|it ss
+|it d
+|vim vim\csharp.vimrc 
+fzf
+|zf
+|d Workspace\src\dotfiles\
+fzf
+nvim vim\csharp.vimrc 
+|q
+|im
+|im
+|d
+|s
+cd C:\Users\andrewsidlo\Workspace\
+|s
+|d src\
+|s
+|d csharp\
+|s
+|d HelloWorld\
+|s
+|im Program.cs 
+|im Program.cs 
+|im Program.cs 
+nvim C:\Users\andrewsidlo\_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+|im ~/_vimrc
+vim ~/_vimrc
+|s
+|im Program.cs 
+|im Program.cs 
+|im Program.cs 
+|im Program.cs 
+|im Program.cs 
+vim Program.cs 
+cd C:\Users\andrewsidlo\Workspace\src\
+|s
+|d dotfiles\
+|s
+|it ss
+|it aa
+git cmsg "Adds nice border for csharp vim"
+|it push
+|vim 
+|vim
+:q
+|vim
+|vim
+|vim
+mklink ~\.vimrc C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\minimal.vim 
+mklink C:\Users\andrewsidlo\.vimrc C:\Users\andrewsidlo\Workspace\src\dotfiles\vim\minimal.vim 
+cmd /c /noe
+cmd /c .aws\/?
+cmd /c /?
+cmd /?
+|it ss
+|it d
+|it aa
+git cmsg "Adds Ev2 shell, rm omnisharp autostart"
+|it push
+|xplorer.exe .
+echo %FZF_CTRL_T_COMMAND%
+|it ss
+|it aa
+git cmsg "Adds fzf to powershell"
+|it push
+|it ss
+|it aa
+git can
+|it push
+git push --force
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|vim
+|vim
+|s
+|vim
+ls C:\Users\andrewsidlo\Workspace\src\dotfiles\misc\ConEmu.xml 
+mklink "C:\Program Files\ConEmu\ConEmu.xml" C:\Users\andrewsidlo\Workspace\src\dotfiles\misc\ConEmu.xml
+|it ss
+fd -t d -e csfg
+|it ss
+|it d
+|it aa
+git cmsg "Changes work git editor to vim"
+|it push
+diff C:\Users\andrewsidlo\AppData\Local\clink\clink_start.cmd C:\Users\andrewsidlo\Workspace\src\dotfiles\clink\clink_start.cmd 
+|vim
+cd Workspace\src\dotfiles\vim
+lks
+|s
+|l
+nvim ~/_vimrc
+|s
+|d
+|s
+cd ~
+cd C:\Users\andrewsidlo\
+|s
+ls _vimrc 
+nvim _vimrc 
+|hich vim
+where vim
+|im
+vim
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|g gui
+|s
+|d dotfiles\
+|s
+cd vim\
+rg gui
+nvim vimrc
+cd C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\
+|s
+|:
+|s
+|d omnisharp\
+|s
+|l
+|d omnisharp\
+|l
+.\OmniSharp.exe 
+cd AppData\Local\nvim-data\lsp_servers\
+|s
+|d omnisharp\
+|s
+|l
+cat nvim-lsp-installer-receipt.json 
+|d omnisharp\
+|s
+fd -t f -e exe
+.\OmniSharp.exe /?
+.\OmniSharp.exe -h
+|wd
+cwd
+|ir
+|:
+|d Networking-nfv\
+|s
+|l
+|it ss
+git co src/Brooklyn.sln
+|it ss
+C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\OmniSharp.exe -h
+C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\OmniSharp.exe -lsp -s D:\Networking-nfv\Networking-nfv.sln -v
+C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\OmniSharp.exe -s D:\Networking-nfv\Networking-nfv.sln -v
+C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\OmniSharp.exe -s D:\Networking-nfv\Networking-nfv.sln
+|vim 
+|s
+|vim
+|vim
+|vim
+|vim
+ls C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\omnisharp\OmniSharp.exe 
+ls C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\
+cd 
+cd C:
+|:
+|d C:\Users\andrewsidlo\Downloads\
+|s
+mkdir omnisharp
+move omnisharp.http-win-x64.zip omnisharp-win-x64.zip omnisharp\
+move omnisharp.http-win-x64.zip,omnisharp-win-x64.zip omnisharp\
+move omnisharp-win-x64.zip omnisharp\
+|s
+|d omnisharp\
+|s
+unzip omnisharp-win-x64.zip 
+|s
+|mniSharp.exe -h
+|d ..
+|s
+cd omnisharp\
+|s
+|d ..
+|s
+mkdir omnisharp-http
+move omnisharp.http-win-x64.zip omnisharp-http\
+cd omnisharp-http\
+|s
+unzip.exe omnisharp.http-win-x64.zip 
+OmniSharp.exe -h
+|s
+|d ..
+|s
+move omnisharp\ D:\
+move omnisharp\ D:
+move omnisharp D:\
+|:
+|s
+|vim
+|vim
+D:\omnisharp\OmniSharp.exe -h
+pwsh
+pwsh -c Get-Content C:\Users\andrewsidlo\AppData\Local\Temp\nvim\lsp.log -Tail 20 -Wait
+|el C:\Users\andrewsidlo\AppData\Local\Temp\nvim\lsp.log
+ps
+del C:\Users\andrewsidlo\AppData\Local\Temp\nvim\lsp.log
+|wsh -c Get-Content ~\AppData\Local\Temp\nvim\lsp.log -Tail 20 -Wait
+|wsh -c Get-Content ~\AppData\Local\Temp\nvim\lsp.log -Tail 20 -Wait
+pwsh -c Get-Content ~\AppData\Local\Temp\nvim\lsp.log -Tail 20 -Wait
+|it ss
+|it d
+|ython
+|here python
+|ython
+python -V
+|cho %DOTNET_ROOT%
+echo %DOTNET_ROOT%
+where dotnet
+which dotnet
+dotnet --list-sdks
+|s
+|vim
+|it ss
+|it d
+|it aa
+|it ss
+git cmsg "Removes custom omnisharp and adds winvimrc"
+|it push
+|it ss
+|d D:\Networking-nfv\
+|s
+|:
+AddToolsToPath.cmd 
+|d src\unittest\gateway\GatewayManager\AsyncWorkItems\
+|s
+|otnet test --filter TestCanRetrieveAllTablesContents
+|otnet --info
+|:
+|d Networking-nfv\
+|s
+cd src\unittest\gateway\GatewayManager\AsyncWorkItems\
+|s
+dotnet test --filter TestCanRetrieveAllTablesContents
+|otnet --info
+|d D:\Networking-nfv\
+|s
+dotnet test --filter TestCanRetrieveAllTablesContents src\unittest\gateway\GatewayManager\AsyncWorkItems\obj\x64\Debug\Microsoft.Azure.Networking.Gateway.AsyncWorkItems.UnitTests.dll 
+|:
+|d Networking-nfv\
+|s
+.\AddToolsToPath.cmd 
+cd src\unittest\
+|s
+cd gateway\GatewayManager\AsyncWorkItems\
+|s
+dotnet test --filter TestCanRetrieveAllTablesContents
+|it ss
+|it d
+|it aa
+git cmsg "Adds vs2017 to terminal settings"
+|d ..
+|s
+cd notes\
+|it ss
+|it aa
+|it ss
+git cmsg "Adds vscode scripts for nfv repo"
+|it push
+|it pull
+|it push
+|d ..
+|s
+|d dotfiles\
+|it pull
+|it push
+mklink D:\Networking-nfv\.vscode\tasks.json C:\Users\andrewsidlo\Workspace\src\notes\microsoft\vscode\tasks.json 
+mklink D:\Networking-nfv\.vscode\build.ps1 C:\Users\andrewsidlo\Workspace\src\notes\microsoft\vscode\build.ps1 
+mklink D:\Networking-nfv\.vscode\test.ps1 C:\Users\andrewsidlo\Workspace\src\notes\microsoft\vscode\test.ps1
+mklink /? D:\Networking-nfv\.vscode
+|klink /D D:\Networking-nfv\.vscode C:\Users\andrewsidlo\Workspace\src\notes\microsoft\vscode
+|klink /D D:\Networking-nfv\.vscode C:\Users\andrewsidlo\Workspace\src\notes\microsoft\vscode
+|sh asidlo@marcel
+|s
+mklink /D D:\Networking-nfv\.vscode C:\Users\andrewsidlo\Workspace\src\notes\microsoft\vscode
+|pconfig
+|s
+|s
+|sh asidlo@marcel
+|d D:\Networking-nfv\
+|:
+|d out\Debug-x64\VNet\Tests\
+|s
+PRODBVTGWM.cmd 
+|s
+|sh asidlo@marcel
+|d D:\Networking-nfv\
+|:
+cd out\Debug-x64\VNet\Tests\
+|s
+PRODBVTGWM.cmd
+|:
+|d D:\Networking-nfv\
+cd out\Debug-x64\VNet\Tests\
+fd -t f --glob XmlLog-*.xml
+fd -t f --glob XmlLog-*.txt
+fd -t f -e txt
+fd Microsoft.CloudNet.Test.Logger.dll
+cat VMSSTestbench\Microsoft.CloudNet.Test.Logger.dll.config
+cat VMSSTestbench\TextLog-758e4642.txt
+ll VMSSTestbench\
+cat VNetTestConfig.xml 
+nvim VNetTestConfig.xml 
+nvim VMSSTestbench\Invoke-DscBvt.ps1 
+|it ss
+cat VMSSTestbench\Invoke-DscBvt.ps1 
+cat Scripts\findVsTestConsole.ps1 
+|sh asidlo@marcel
+|s
+|sh asidlo@marcel
+|sh asidlo@marcel
+msbuild /?
+|l
+|d D:
+|s
+|:
+|s
+|s
+takeown /F D:\Networking-nfv
+takeown /F D:\Networking-nfv /R /D Y
+|s
+dotnet build
+dotnet test
+|otnet test --filter TestCalcAdd
+dotnet test --filter TestCalcAdd
+dotnet test --filter Tests.TestCalcAdd
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d csharp\
+|s
+cd DemoCli\
+|s
+|l
+nvim DemoCli.csproj 
+|otnet test
+|otnet run
+|otnet test
+cat Program.cs 
+dotnet new nunit -n Test
+|l
+cat DemoCli.csproj 
+cat Test\Test.csproj 
+|otnet test
+cd Test\
+dotnet test
+|l
+|at Test.csproj 
+|l
+ll on
+ll obj\
+ll obj\Debug\
+|s
+|l
+cat UnitTest1.cs 
+ls Test.csproj 
+cat Test.csproj 
+nvim Test.csproj 
+|s
+|d ..
+|s
+rmdir Test\ /sq
+rmdir /q /s Test\
+|s
+|l
+dotnet new nunit -n CalcTest
+dotnet new classlib -n Calc
+|s
+ll Calc\
+cat Calc\Calc.csproj 
+cd Calc\ls
+cd Calc\
+|s
+|l
+cat Calc.csproj 
+|l
+|l
+move Class1.cs Calc.cs
+|s
+nvim Calc.cs 
+|l
+|d ..
+|s
+cd CalcTest\
+|s
+|l
+move UnitTest1.cs CalcTest.cs
+|l
+|vim CalcTest.cs 
+|s
+|vim CalcTest.cs 
+nvim CalcTest.cs 
+|s
+|it ss
+git fetch
+|it pull
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|d dotfiles\
+|it pull
+mklink C:\Users\andrewsidlo\.omnisharp\omnisharp.json C:\Users\andrewsidlo\Workspace\src\dotfiles\misc\omnisharp.json 
+|sh labuser@20.122.199.173 -p 1112
+|sh labuser@kerneldev
+|sh labuser@kerneldev -p1112
+|sh asidlo@marcel
+cat "C:\Windows\System32\drivers\etc\hosts"
+|sh asidlo@marcel
+|sh asidlo@marcel
+|ing marcel
+|it ss
+|it pull
+|vim
+|sh labuser@kerneldev -p1112
+ssh labuser@kerneldev -p1112
+wsl 
+wsl --list
+|sl -h
+|sl  --shutdown
+|sl  --shutdown
+|sl  --shutdown
+ping kerneldev
+wsl  --shutdown
+ssh labuser@ica51308v4.eastus2.cloudapp.azure.com -p 1112
+|ing google.com
+ping -6 google.com
+ssh -p 1112 labuser@ica51308v4.eastus2.cloudapp.azure.com
+netsh advFirewall Firewall add rule name="ASIDLO Custom Rule PING IPv4" protocol=icmpv4:8,any dir=in action=allow 
+|ing marcel
+|ing marcel
+|pconfig
+|pconfig /all
+ping 192.168.1.2
+|ing marcel
+ping 172.29.176.2
+ping 172.29.176.1
+|s
+|sh asidlo@marcel
+|sh -p 65351 TA274231907ANDREW63_@20.102.133.10
+|sh -p 65351 TA274231907ANDREW63_@20.102.133.10
+|sh -p 65351 TA274231907ANDREW63_@20.102.133.10
+ssh -p 65351 TA274231907ANDREW63_@20.102.133.10
+|ing 20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh asidlo@172.29.188.170
+|sh asidlo@marcel
+|sh asidlo@172.29.191.172
+|sh asidlo@172.29.191.172
+|sh asidlo@172.29.191.172
+ssh asidlo@172.29.191.172
+ssh asidlo@172.29.188.170
+|sh asidlo@marcel
+ssh asidlo@172.29.188.170
+|here lemonade
+|here lemonade
+where lemonade
+|s
+|d Downloads\
+|s
+unzip lemonade_windows_amd64.zip 
+|s
+|ove lemonade.exe C:\Users\andrewsidlo\AppData\Local\Programs\
+get-job
+get-jobs
+cd C:\Users\andrewsidlo\AppData
+|ls
+|s
+|d Local\ls
+|d Local\
+|s
+|d Programs\
+|s
+.\lemonade.exe 
+|\lemonade.exe server
+|
+.
+|\lemonade.exe server
+.\lemonade.exe -h
+|\lemonade.exe server
+.\lemonade.exe server
+|s
+move lemonade.exe C:\Users\andrewsidlo\AppData\Local\clink
+cd C:\Users\andrewsidlo\AppData\Local\clink
+|s
+nvim clink_start.cmd
+powershell -c start-job -scriptblock { .\lemonade.exe server }
+powershell -c get-job
+move lemonade.exe C:\Users\andrewsidlo\AppData\Local\Programs\
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+ssh -p 65352 TA657375070ANDREW54_@20.102.133.10
+ssh -p 65350 TA657375070ANDREW54_@20.102.133.10
+ssh -p 65353 TA657375070ANDREW54_@20.102.133.10
+ssh -p 65354 TA657375070ANDREW54_@20.102.133.10
+ping 20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+nslookup google.com
+ping 172.29.191.172
+python -m http.server
+|pconfig
+python -m http.server -bind 192.168.1.97
+python -m http.server 8080 -bind 192.168.1.97
+|ython -m http.server 8080 --bind 192.168.1.97
+|s
+|s
+|d Workspace\
+|s
+|d D:
+|s
+|:
+|s
+cd
+|s
+cd C:\Users\andrewsidlo\Downloads\
+|s
+|:
+|s
+|s
+|ython -m http.server 8080 --bind 192.168.1.97
+python -m http.server 8080
+|pconfig
+python -m http.server 8080 --bind fe80::9c6d:6b7d:81b4:7f30
+|ython -m http.server 8080 --bind 192.168.1.97
+python -m http.server 8080 --bind 192.168.1.97
+|s
+|sh asidlo@marcel
+|sh asidlo@marcel
+ssh asidlo@marcel
+|s
+|sh -R 2489:127.0.0.1:2489 asidlo@marcel
+|sh -R 2489:127.0.0.1:2489 asidlo@marcel
+|sh -R 2489:127.0.0.1:2489 asidlo@marcel
+ssh asidlo@172.29.188.255
+ssh asidlo@172.29.186.255
+ssh -R 2489:127.0.0.1:2489 asidlo@172.29.188.255
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.186.255
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.186.255
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.186.255
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.186.255
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.186.255
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.186.255
+ssh -R 2489:127.0.0.1:2489 asidlo@172.29.186.255
+ssh -R 2489:127.0.0.1:2489 asidlo@alan
+ssh asidlo@172.29.180.178
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.180.178
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.180.178
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.180.178
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.180.178
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.180.178
+|sh -R 2489:127.0.0.1:2489 asidlo@172.29.180.178
+ssh -R 2489:127.0.0.1:2489 asidlo@172.29.180.178
+ssh -R 2489:127.0.0.1:2489 asidlo@dave
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|vim C:\Users\andrewsidlo\.ssh\known_hosts 
+|sh -p 65351 TA657375070ANDREW54_@20.102.133.10
+ssh -p 65351 TA657375070ANDREW54_@20.102.133.10
+|sh -p 65351 TA89203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+nvim C:\Users\andrewsidlo\.ssh\known_hosts
+nvim C:\Users\andrewsidlo\.ssh\known_hosts 
+|sh -p 65351 TA89203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA818100333ANDREW12_@20.102.133.10
+|sh asidlo@alan
+|sh asidlo@alan
+|ing alan
+ping alan
+ssh asidlo@alan
+ping dave
+ping marcel
+|pconfig
+|sh -p 65351 TA818100333ANDREW12_@20.102.133.10
+|sh -p 65351 TA818100333ANDREW12_@20.102.133.10
+ssh -p 65351 TA818100333ANDREW12_@20.47.247.2
+ssh -p 65350 TA818100333ANDREW12_@20.47.247.2
+|elnet 20.47.247.2 65351
+telnet 20.47.247.2 65351
+telnet 20.102.133.1 65351
+route print
+|pconfig
+|pconfig /all
+ssh asidlo@172.24.168.48
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.168.48
+ssh asidlo@172.24.168.48
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.168.48
+ssh asidlo@172.24.168.48
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.168.48
+ssh asidlo@172.24.169.22
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.169.22
+ssh asidlo@172.24.169.22
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.169.22
+ssh asidlo@172.24.169.22
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.169.22
+ssh asidlo@172.24.167.30
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.167.30
+ssh asidlo@172.24.167.30
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.167.30
+ssh asidlo@172.24.167.30
+ssh -R 2489:127.0.0.1:2489 asidlo@172.24.167.30
+|sh -p 65351 TA818100333ANDREW12_@20.102.133.10
+ssh asidlo@20.127.34.203
+ssh -i C:\Users\andrewsidlo\Downloads\ginandag.pem ginandag@20.127.34.203
+|ing 20.127.34.203
+ping 20.127.34.203
+ping 20.102.62.128
+|ing ubuntuvmssipv4.eastus.cloudapp.azure.com
+ping ubuntuvmssipv4.eastus.cloudapp.azure.com
+ssh asidlo@20.97.220.158
+ssh -p 2222 asidlo@20.97.220.158
+ssh -i C:\Users\andrewsidlo\Downloads\ginandag.pem ginandag@20.102.62.128
+get-vm | start-vm
+|d Workspace\src\dotfiles\
+|it ss
+|it pull
+|wd
+|s
+|d ..
+|s
+copy C:\Users\andrewsidlo\Downloads\dotfiles
+copy .\dotfiles C:\Users\andrewsidlo\Downloads\dotfiles
+|s
+ls C:\Users\andrewsidlo\Downloads\dotfiles 
+where starship
+az --version
+cat C:\Users\andrewsidlo\.bashrc 
+|ing 40.79.35.215
+|elnet 40.79.35.215 22
+cat C:\Users\andrewsidlo\.ssh\id_rsa.pub 
+|sh asidlo@40.79.35.215
+|sh asidlo@40.79.35.215
+telnet 40.79.35.215 22
+|s
+|s
+|vim --version
+cd C:\Users\andrewsidlo\AppData\
+cd Local\ls
+cd Local\
+|s
+cd Programs\
+|s
+|d ..
+|s
+rmdir /q /s Neovim\
+|s
+which nvim
+where nvim
+|it pull
+git config add core.fsmonitor true
+git config --add core.fsmonitor true
+|it config -e
+git pll
+|it pull
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\site\pack\packer\start\nvim-dap\ 
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\site\pack\packer\start\telescope-dap.nvim
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\site\pack\packer\start\bufferline.nvim
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\site\pack\packer\start\toggleterm.nvim\
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim
+|d D:
+ls C:\Users\andrewsidlo\.dotnet
+ls ~/.
+ls C:\Users\andrewsidlo\Workspace\src\dotfiles\misc\
+ls C:\Users\andrewsidlo\.omnisharp\omnisharp.json 
+|:
+|d Networking-nfv\
+|s
+|d src\
+|s
+|d ..
+|s
+nvim .\src\unittest\gateway\GatewayManager\SdkManager\SdkManager.UnitTests.csproj
+|sl --shutdown
+ssh labuser@kerneldev
+ssh labuser@20.122.199.173 -p 1112
+ssh asidlo@172.29.130.53
+ssh asidlo@172.29.130.53
+ls C:\Users\andrewsidlo\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json 
+ll C:\Users\andrewsidlo\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json 
+|sh asidlo@172.29.142.100
+ls C:\Users\andrewsidlo\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json 
+ll C:\Users\andrewsidlo\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json 
+|sh asidlo@172.29.142.100
+ls C:\Users\andrewsidlo\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json 
+ll C:\Users\andrewsidlo\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json 
+|sh asidlo@172.29.142.100
+ssh asidlo@172.29.132.34
+ssh -p 65351 TA89203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+ssh -p 65351 TA289203366ANDREW55_@20.102.133.10
+ssh -p 65351 TA818100333ANDREW12_@20.102.133.10
+|sh -p 65351 TA63739747ANDREWS77_@20.102.133.10
+|sh -p 65351 TA63739747ANDREWS77_@20.102.133.10
+|s
+ssh -p 65351 TA63739747ANDREWS77_@20.102.133.10
+ssh -p 65351 TA785947719ANDREW48_@20.102.133.10
+ssh -p 65351 TA89203366ANDREW55_@20.102.133.10
+|sh -p 65351 TA289203366ANDREW55_@20.102.133.10
+ssh -p 65351 TA289203366ANDREW55_@20.102.133.10
+ssh -p 65351 TA818100333ANDREW12_@20.102.133.10
+|sh -p 65351 TA63739747ANDREWS77_@20.102.133.10
+|sh -p 65351 TA63739747ANDREWS77_@20.102.133.10
+|s
+ssh -p 65351 TA63739747ANDREWS77_@20.102.133.10
+ssh -p 65351 TA785947719ANDREW48_@20.102.133.10
+where psping
+where psping
+where psping
+|d Workspace\src\dotfiles\
+|it ss
+|it lo -n 10
+|it pull
+|it lo -n 10
+|sl --shutdown
+ssh asidlo@172.29.142.100
+|s
+|d D:\Networking-nfv\
+|s
+|it ss
+|it aa
+git cmsg "Fixing warning about deprecation"
+|it pull
+|it push
+|it pull
+|it ss
+|it aa
+git cmsg "Removes diagnostics from nvim-tree"
+|it push
+|:
+lls
+|s
+|l
+|it clone https://msazure.visualstudio.com/DefaultCollection/One/_git/Networking-AppGW
+git config
+|it config -l
+|vim C:\Users\andrewsidlo\.gitconfig 
+|it config --local -l
+|it config --local
+|s
+|d Networking-AppGW\
+git config --local
+|it config --local -l
+|it config -l
+|it config -e
+|it config --global -e
+|it config --global add core.fsmonitor true
+git config add core.fsmonitor trueito --global
+git config --global add core.fsmonitor true
+git config --global core.fsmonitor true
+|it config --global -e
+|it ss
+|it ss
+|s
+|l
+|vim C:\Users\andrewsidlo\.gitconfig 
+|it ss
+|vim C:\Users\andrewsidlo\.gitconfig 
+|it ss
+nvim C:\Users\andrewsidlo\.gitconfig 
+|s
+|it ss
+|ocker ps
+|s
+|vim docker-compose.yml 
+|ocker ps
+docker iamges
+|ocker images
+|at docker-compose.yml 
+bat -h
+bat --list-themes
+bat --theme dracula docker-compose.yml 
+bat --theme Dracula docker-compose.yml 
+bat --theme Nord docker-compose.yml 
+bat --theme base16 docker-compose.yml 
+bat docker-compose.yml 
+|s
+|l
+ls -al
+ls .devcontainer\
+|d .devcontainer\
+|s
+nvim docker-compose.yml 
+|ocker images ls -a
+|ocker images -a
+docker rmi b370e4266063
+docker rmi b370e4266063 5d28a1b45d48
+docker rmi b370e4266063 -f
+|ocker images -a
+docker rmi 389b4ef9696e 0bd16e5e1b64 51af0fc60b1b 67718da4c101
+docker rmi 389b4ef9696e 0bd16e5e1b64 51af0fc60b1b 67718da4c101 -f
+|ocker images -a
+|ocker images
+nvim 
+|ocker images -a
+|ocker ps
+docker commit dcc13aabc2bc appgw:1.30
+|ocker ps
+docker commit 3a75be03262f appgw:1.30
+|ocker ps
+ssh asidlo@172.27.37.16
+ssh asidlo@172.27.37.116
+ssh asidlo@172.27.47.41
+ping 40.79.35.215
+ssh asidlo@40.79.35.215
+|ocker images -a
+|ocker ps -a
+|sh -p 65350 TA885929113ANDREW29_@20.47.152.182
+ssh -p 65351 TA885929113ANDREW29_@20.47.152.182
+|sh -p 65350 TA885929113ANDREW29_@20.47.152.182
+telnet 20.47.152.182 65350
+telnet 20.47.152.182 65351
+|sh -p 65350 TA885929113ANDREW29_@20.47.152.182
+ssh -p 65350 TA885929113ANDREW29_@20.47.152.182
+ssh -p 65350 TA307837791ANDREW23_@20.47.152.182
+|s
+|it ss
+|:
+|d C:\Users\andrewsidlo\Workspace\src\dotfiles\
+|it ss
+|it pull
+|s
+|:
+|it ss
+|it ss
+|it config -l
+|d D:\Networking-AppGW\
+|;
+|;
+|;
+|:
+|it ss
+|it s
+git confi g-l
+|it config -l
+|it ss
+|it d
+del C:\Users\andrewsidlo\.gitconfig 
+mklink C:\Users\andrewsidlo\.gitconfig C:\Users\andrewsidlo\Workspace\src\dotfiles\git\gitconfig.win.work 
+which zip
+where zip
+where unzip
+|here python
+pip freeze
+|here python
+where python
+|it pull
+|s
+|it config --local core.autocrlf false
+|it config -l
+git config --local 
+|it config --local -l
+|it ss
+git config --global core.autocrlf false
+git config --global core.autocrlf true
+|it config -l
+git config --local -l
+|it submodule init
+|it submodule update
+|it config -l
+ssh -p 65350 TA307837791ANDREW23_@169.254.11.178
+docker-compose build dev
+|ocker images -a
+takeown /F "C:\Users\andrewsidlo\AppData\Local\Programs\Microsoft VS Code\ /R /D Y
+takeown /F "C:\Users\andrewsidlo\AppData\Local\Programs\Microsoft VS Code\" /R /D Y
+takeown /F "C:\Users\andrewsidlo\AppData\Local\Programs\Microsoft VS Code" /R /D Y
+where code
+|s
+|d Workspace\
+|vim
+|vim
+|it submodule update
+|it config -l
+|s
+del QF_NginxConfiguration.txt 
+|d C:\Users\andrewsidlo\Workspace\src\dotfiles\
+|it pull
+|:
+|it pull
+|it ss
+|it d
+|it aa
+git cmsg "Adding qf plugin"
+|it pull
+ssh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com
+cd C:\Users\andrewsidlo\.ssh\
+|s
+nvim appgw-id_rsa
+|vim appgw-id_rsa.pub
+nvim appgw-id_rsa.pub
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|s
+|it ss
+|s
+|s
+|it ss
+|it aa
+git cmsg "Fixes for min vim install"
+|it push
+|it ss
+|it d
+|it aa
+git cmsg "Fixes issue with vim tmux colors"
+|it push
+where az
+az group create \
+where scp
+|otnet run
+|s
+|it ss
+|it d
+az login
+az account set --subscription c98607a2-9bd8-4d5a-9c29-98135c2865e7
+az acr login -n cdpxLinuxTest
+|ocker-compose run --rm --service-ports dev
+|ocker ps
+git config -l
+|d Workspace\
+|s
+|d src\
+|s
+cd csharp\
+|s
+cd HelloWorld\
+|s
+nvim Program.cs 
+ssh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\site\pack\packer\start\nvim-tree.lua\
+|it ss
+|it d
+|it aa
+|it ss
+|it d
+|it aa
+git cmsg "Switch to nvim editor, remove autocrlf"
+|it pull
+git pish
+|it push
+where clipe
+where clip
+|d Workspace\src\dotfiles\
+|it pull
+|it ss
+|it pull
+|:
+|wd
+|d D:\Networking-AppGW\
+|wd
+|;
+|;
+|:
+|wd
+ssh -R 2489:127.0.0.1:2489 asidlo@marcel
+ssh -R 2489:127.0.0.1:2489 asidlo@172.27.45.53
+|akeown /F "C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\" /R /D Y
+takeown /F "C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\" /R /D Y
+takeown /F "C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp" /R /D Y
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp\
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\lsp_servers\omnisharp
+|ocker ps
+|ocker ps
+|it ss
+|it d
+|it pull
+|it lo -n 10
+cd D:\Networking-AppGW\
+|s
+|;
+|;
+|:
+|s
+|ocker-compose run --rm --service-ports dev
+docker-compose run --rm --service-ports dev
+|vim
+|s
+|d Workspace\
+|s
+|d src\
+|s
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|s
+|ython
+python
+ssh asidlo@ajb.eastus.cloudapp.azure.com
+ssh id=0,gw=03347f81-3e8b-46bc-b402-76a9db4e5745,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com
+|sh id=0,gw=03347f81-3e8b-46bc-b402-76a9db4e5745,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ssh id=0,gw=03347f81-3e8b-46bc-b402-76a9db4e5745,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ssh id=0,gw=03347f81-3e8b-46bc-b402-76a9db4e5745,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ssh id=2,gw=59f856f5-e875-416e-a114-b1b5b487d24b,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=2,gw=59f856f5-e875-416e-a114-b1b5b487d24b,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=2,gw=59f856f5-e875-416e-a114-b1b5b487d24b,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ssh id=2,gw=59f856f5-e875-416e-a114-b1b5b487d24b,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ssh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|s
+ssh asidlo@172.26.240.222
+man ls
+|sl --shutdown
+printf
+echo
+echo ''
+echo 'eded'
+where doker
+|here docker
+cd "C:\Program Files\Docker\
+|s
+cd cli-plugins\
+|s
+|d ..
+|s
+cd Docker\
+|s
+|d ..
+|s
+|d ..
+|s
+|ocker ps
+where docker
+|ocker ps
+telnet 20.121.9.134 8080
+ping 20.121.9.134
+|sl --shutdown
+cat C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+cat C:\Users\andrewsidlo\.ssh\appgw-id_rsa.pub
+ssh azureuser@20.112.133.16
+ssh azureuser@20.112.133.16 -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|s
+|s
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|s
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+ssh asidlo@172.26.251.245
+ssh -R 2489:127.0.0.1:2489 asidlo@172.26.251.245
+ssh asidlo@172.26.241.222
+ssh asidlo@172.26.246.29
+ssh -R 2489:127.0.0.1:2489 asidlo@172.26.246.29
+|s
+|s
+|s
+bash --login
+bash
+bash -c /bin/zsh
+bash -c /bin/zsh --login
+bash -c /bin/zsh -c cd ~
+pwd
+bash -c /usr/bin/zsh -c cd ~
+|sl -h
+|sl
+wsl --cd ~
+|sl -h
+wsl --cd ~ -e 'tmux -u attach || tmux -u'
+wsl --cd ~ -e "tmux -u attach || tmux -u"
+wsl -e "tmux -u attach || tmux -u"
+|sl -h
+wsl -- "tmux -u attach || tmux -u"
+wsl -- tmux -u attach || tmux -u
+wsl -- tmux -u attach
+wsl -- tmux -u
+|s
+cd Workspace\
+|s
+cd src\
+ld
+|s
+cd dotfiles\
+|s
+|it ss
+|it d
+del nvim\fromscratch\lua\user\lsp\settings\omnisharp-test.lua 
+|it aa
+|it ss
+git cmsg "Adds alacritty config"
+|it push
+|it pull
+git push
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+wsl -- nvim 
+wsl -e nvim
+wsl -
+wsl
+wsl --cd ~ -e "nvim"
+wsl --cd ~ -e ~/.local/bin/nvim
+wsl --cd ~ -e "~/.local/bin/nvim"
+wsl "~/.local/bin/nvim"
+wsl --user asidlo --cd ~ -e "~/.local/bin/nvim"
+wsl --user asidlo --cd ~ -- ~/.local/bin/nvim
+wsl --user asidlo --cd ~ -- nvim
+1234
+|235
+|236
+|237
+|238
+|239
+|240
+|241
+1242
+1243
+1244
+1245
+1246
+1247
+"1234
+1235
+1236
+1237
+1238
+1239
+1240
+1241
+|it ss
+|it d
+|it aa
+git cmsg "Fixes forgotten winbar version check"
+ll C:\Users\andrewsidlo\.omnisharp\omnisharp.json 
+cat C:\Users\andrewsidlo\.omnisharp\omnisharp.json 
+|vim
+|vim
+|vim
+cd Workspace\src\dotfiles\
+|it ss
+|it d
+|it ss
+git reset *configs*
+|it ss
+git co *configs*
+|it s
+|it ss
+git d *tree*
+git co *tree*
+|it ss
+|it aa
+git dh
+|it aa
+git cmsg "Updates terminal settings.json"
+|it pull
+|vim
+|mdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\
+rm "C:\Users\andrewsidlo\AppData\Local\nvim\plugin\packer_compiled.lua" 
+|el "C:\Users\andrewsidlo\AppData\Local\nvim\plugin\packer_compiled.lua" 
+|vim
+|vim
+|el "C:\Users\andrewsidlo\AppData\Local\nvim\plugin\packer_compiled.lua" 
+|mdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\
+|vim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+|mdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\
+|el "C:\Users\andrewsidlo\AppData\Local\nvim\plugin\packer_compiled.lua" 
+|it pull
+|vim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim --version
+nvim --version
+|vim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+|s
+|it ss
+|mdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\
+del "C:\Users\andrewsidlo\AppData\Local\nvim\plugin\packer_compiled.lua" 
+|vim
+nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim
+|vim
+which clang
+where clang
+|vim
+|vim
+|vim
+ssh id=0,gw=1a81c4a6-4ea1-4e8e-ba6e-75119cd854ad,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ssh id=0,gw=56644664-8cd1-4e6b-be55-a46008e5771d,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@vpn.ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|s
+|it pull
+|it ss
+|it d
+|it reset --hard HEAD
+|it pull
+|it pull
+|it ss
+|it d
+|it aa
+git cmsg "Comments out rocks deps for now"
+|it pull
+|vim
+|otnet --info
+|pconfig
+ipconfig /all
+|s
+|s
+|s
+l
+|s
+dir
+winget search wingdb
+winget search windbg
+winget install windbg
+WinDbgX.exe 
+|slookup centralindia.nfvrp.azure.com
+nslookup centralindia.nfvrp.azure.com
+|pconfig
+|at C:\Users\andrewsidlo\.ssh\appgw-id_rsa.pub 
+|at C:\Users\andrewsidlo\.ssh\appgw-id_rsa.pub 
+cat C:\Users\andrewsidlo\.ssh\appgw-id_rsa.pub 
+ssh id=2,gw=b0a75a49-4489-41c8-b4ca-1f331fd44ad4,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+ssh id=1,gw=6c6125b9-acdd-469b-9fc6-e3dbc49dfe30,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+cat flexprompt_config.lua 
+cat C:\Users\andrewsidlo\.ssh\appgw-id_rsa.pub 
+cat C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+nslookup example.com
+nslookup bing.com
+nslookup facebook.com
+|sh azureuser@20.45.253.157
+|sh azureuser@20.45.253.157
+ssh id=2,gw=0c241e61-3c29-4802-b2ec-7e438d14f632,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com
+ssh id=2,gw=0c241e61-3c29-4802-b2ec-7e438d14f632,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+ssh  azureuser@pipv4-uqkd65qaj2you-2.centraluseuap.cloudapp.azure.com
+ssh  azureuser@pipv4-uqkd65qaj2you-1.centraluseuap.cloudapp.azure.com
+ls C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ls %USERPROFILE%
+ssh asidlo@ajb.eastus.cloudapp.azure.com -i %USERPROFILE%\.ssh\appgw-id_rsa
+ssh azureuser@20.45.253.157
+ssh azureuser@20.228.18.158
+|it ss
+|d C:\Users\andrewsidlo\Workspace\src\dotfiles\
+C;
+|:
+|it s
+|it d
+git stash
+|it pull
+|it ss
+|it d
+C:
+cd C:\Users\andrewsidlo\Workspace\src\dotfiles\
+git s
+git aa
+git rebase --continue
+|it ss
+|sh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+ssh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa.pub 
+|sh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+which vim
+ssh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+|sh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\saw-id_rsa
+|sh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\saw-id_rsa
+|ocker ps
+|ocker container ls
+|ocker container ls -a
+|ocker container ls -a
+|ocker container ls -a
+|s
+|s
+|d D:\AspDotnetTutorial\
+|s
+|:
+|s
+|d CityInfo\
+|s
+dotnet run
+|d CityInfo.API\
+|s
+dotnet run -h
+dotnet run --launch-profile DOcker
+dotnet run --launch-profile Docker
+dotnet run --launch-profile CityInfo.API
+curl -X 'GET' \
+curl https://localhost:8080/WeatherForecast
+curl https://localhost:8080/api/cities
+curl https://localhost:8080/api/cities/1
+|d D:
+|:
+cd AspDotnetTutorial\
+|s
+|l
+cd CityInfo\
+|s
+|ocker ps
+|ocker images -a
+|ocker ps -a
+|ocker container ls -a
+|ocker container ls
+|ocker container ls -a
+docker rm f78de4b0afd0
+|ocker container ls -a
+|ocker image ls
+docker rmi 0591505b24d1
+|s
+|s
+cd CityInfo.API\
+|s
+c d..
+|s
+|d ..
+|s
+|d ..
+|s
+cd CityInfoVscode\
+|s
+cd CityInfo.Api\
+|s
+cd .b
+cd .vscode\
+|s
+|l
+|d ..
+|s
+cd .devcontainer\
+|s
+docker run
+docker run --rm Dockerfile 
+|ocker ps
+docker ps -a
+docker images -a
+docker run --rm vsc-cityinfo.api-ec8337c085d240e68f0e05066d0fcd42
+|ocker ps
+docker run --rm vsc-cityinfo.api-ec8337c085d240e68f0e05066d0fcd42 --exec -it
+docker run --rm vsc-cityinfo.api-ec8337c085d240e68f0e05066d0fcd42 -it /bin/nasj
+docker exec -it --rm vsc-cityinfo.api-ec8337c085d240e68f0e05066d0fcd42 /bin/bash
+docker exec -it vsc-cityinfo.api-ec8337c085d240e68f0e05066d0fcd42 /bin/bash
+|ocker ps
+|ocker images
+docker run --rm -it vsc-cityinfo.api-ec8337c085d240e68f0e05066d0fcd42 /bin/basj
+docker run --rm -it vsc-cityinfo.api-ec8337c085d240e68f0e05066d0fcd42 /bin/bash
+|s
+docker build . -t vscode-test
+docker image -a
+|ocker image ls -a
+docker rmi vscode-test
+docker build . -t vscode-test --no-cache
+|ocker build --no-cache . -t vscode-test
+|ocker images
+docker build --no-cache . -t vscode-test
+docker images ls -a
+|ocker image ls -a
+|s
+|d D;
+|s
+cd D;
+|d D:
+|s
+cd D:\AspDotnetTutorial\
+|s
+|kdir test
+|d test\
+|s
+dotnet new webapi -o test
+|s
+|d test\
+|s
+|ode .
+|sh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\saw-id_rsa
+|it ss
+|it d
+git config -e
+|it config --global -e
+|ocker ps
+|ocker ps
+|ocker ps
+|sl --restart
+|sl --shutdown
+curl -L http://40.121.64.78
+curl -L http://40.121.64.78 -h
+cat D:\https.pfx 
+|:
+|d Networking-nfv\
+cd src\gateway\
+cd GatewayManager\
+|l
+cd D:\Networking-nfv\out\Debug-x64\gateway\ServiceGroupRoot
+|s
+nvim GatewayManager\Update\Test\RolloutSpecServiceUpdateVMSS.karnaprodnext.json 
+nvim GatewayManager\deploy\Test\RolloutSpecServiceUpdateVMSS.karnaprodnext.json 
+nvim GatewayManager\deploy\Test\RolloutSpecDeployVMSS.karnaprodnext.json 
+ll C:\Users\andrewsidlo\.aspnet\
+|l C:\Users\andrewsidlo\.aspnet\https\
+dotnet dev-certs https --trust; dotnet dev-certs https -ep "$env:USERPROFILE/.aspnet/https/aspnetapp.pfx" -p adminPassword12345
+ssh asidlo@172.24.219.217
+ssh asidlo@172.24.222.66
+|d D:
+|;
+|;
+|:
+|s
+|d Networking-AppGW\
+|it ss
+git d
+|it ss
+git reset --hard HEAD
+git pull origin develop
+|ocker ps
+|ocker ps
+docker images
+|ocker container ls
+|ocker container ls -a
+|ocker ps
+|ocker container ls
+|ocker container ls -a
+docker run --rm -it 650f232a034c /bin/bash
+docker exec run -it 650f232a034c /bin/bash
+docker exex -it 650f232a034c /bin/bash
+docker exec -it 650f232a034c /bin/bash
+|ocker container ls -a
+|ocker start 650f232a034c
+|ocker ps
+|ocker container ls -a
+docker start -it 650f232a034c /bin/bash
+docker start -h
+docker start -t 650f232a034c /bin/bash
+docker start -t 650f232a034c 
+|ocker container ls -a
+docker start 650f232a034c
+docker start 650f232a034c -i
+|ocker ps
+|ocker container ls -a
+docker start 427c138085fb
+|ocker ps
+docker start 427c138085fb -i
+docker exec -it 427c138085fb /bin/bash
+docker container run -it 427c138085fb /bin/bash
+docker run -rm -it cdpxlinuxtest.azurecr.io/user/networking-appgw/networking-appgw:1.30 /bin/bash
+docker run --rm -it cdpxlinuxtest.azurecr.io/user/networking-appgw/networking-appgw:1.30 /bin/bash
+ssh asidlo@ajb.eastus.cloudapp.azure.com -i C:\Users\andrewsidlo\.ssh\saw-id_rsa
+ssh id=0,gw=c080e19b-e56e-4ea5-8d4f-595cf42e3beb,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa
+code --mount-workspace-git-root -h
+|sh id=1,gw=15cd605c-1b45-4ef6-807b-a5cc62ea654a,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+|sh id=1,gw=15cd605c-1b45-4ef6-807b-a5cc62ea654a,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+ssh id=1,gw=15cd605c-1b45-4ef6-807b-a5cc62ea654a,tenant=7b2ba94f-cbb9-4be4-8748-a65833f8d28b@ssh.gsabuddy.azure.com -i C:\Users\andrewsidlo\.ssh\appgw-id_rsa 
+cat D:\Networking-nfv\global.json 
+cd D:
+|s
+|:
+|it clone https://msazure.visualstudio.com/DefaultCollection/One/_git/Networking-AppGW
+|s
+git config --global -e
+git clone https://msazure.visualstudio.com/DefaultCollection/One/_git/Networking-AppGW
+cd Networking-AppGW\
+|it config --local --list
+git config --local core.autocrlf false
+git config --local --list
+git submodule init
+git submodule update
+|ode .
+|ocker ps
+docker container stop 21
+|ocker ps
+wsl --upgrade
+|sl --update
+|ocker ps
+nvim
+|s
+|s
+|s
+|d D:\Networking-nfv\
+|it ss
+|:
+|it ss
+|it b
+|it pull origin develop2
+|s
+|d D:\Networking-nfv\
+|:
+|s
+|it pull origin develop2
+|:
+|s
+|d Networking-nfv\
+|s
+git b
+|it pull origin develop2
+|s
+|l
+git pull origin develop2
+git lo -n 10
+|otnet --info
+cd Downloads\
+|s
+mkdir dotnet4
+move microsoft.netframework.referenceassemblies.net40.1.0.3.nupkg dotnet4\
+cd dotnet4\
+|s
+unzip microsoft.netframework.referenceassemblies.net40.1.0.3.nupkg 
+|s
+|:
+|d Networking-nfv\
+|s
+|otnet --info
+|s
+curl https://microsoft-my.sharepoint.com/personal/hufeng_microsoft_com/Documents/Microsoft%20Teams%20Chat%20Files/netvma-lo5bv3omxbxds-netvma-public-aad-cert-20220131.pfx
+|s
+curl https://microsoft-my.sharepoint.com/personal/hufeng_microsoft_com/Documents/Microsoft%20Teams%20Chat%20Files/netvma-lo5bv3omxbxds-netvma-public-aad-cert-20220131.pfx -O
+|s
+nvim netvma-lo5bv3omxbxds-netvma-public-aad-cert-20220131.pfx 
+del netvma-lo5bv3omxbxds-netvma-public-aad-cert-20220131.pfx 
+dotnet --info
+|otnet dev-certs https -ep C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx -p adminPassword12345!
+|el C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx 
+|otnet dev-certs https -ep C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx -p adminPassword12345!
+|el C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx 
+del C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx 
+|otnet dev-certs https
+ll C:\Users\andrewsidlo\.aspnet\https\
+rmdir /q /s C:\Users\andrewsidlo\.aspnet\
+dotnet dev-certs https
+|otnet dev-certs https -ep C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx -p adminPassword12345!
+|otnet dev-certs https -ep C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx -p adminPassword12345! -f
+dotnet dev-certs -h
+dotnet dev-certs https -h
+rmdir /q /s C:\Users\andrewsidlo\.aspnet\https\
+ls C:\Users\andrewsidlo\.aspnet\
+dotnet dev-certs https -ep C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx -p adminPassword12345! -f
+|otnet dev-certs https -ep C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx -p adminPassword12345!
+dotnet dev-certs https --clean
+dotnet dev-certs https -ep C:\Users\andrewsidlo\.aspnet\https\aspnetapp.pfx -p adminPassword12345!
+docker run -p 9080:80 -p 9443:443 -e ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD=admin ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/cert.pfx asid
+docker run -p 9080:80 -p 9443:443 -e ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD=admin ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/cert.pfx asidlo/codespaces-test -v C:\Users\andrewsidlo\.aspnet\https\:/app/certs
+docker run -p 9080:80 -p 9443:443 -e ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD=admin ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/cert.pfx asidlo/codespaces-test -v "C:\Users\andrewsidlo\.aspnet\https\:/app/certs"
+docker run -p 9080:80 -p 9443:443 -e ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD=admin ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/cert.pfx asidlo/codespaces-test -v "C:\Users\andrewsidlo\.aspnet\https:/app/certs"
+|ocker ps
+docker run -p 9080:9080 -p 9443:9443 -e ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD=adminPassword12345! -e ASPNETCORE_URLS="https://localhost:9443;http://localhost:9080" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/aspnetapp.pfx -e ASPNETCORE_ENVIRONMENT=Development -v "/c/Users/andrewsidlo/.aspnet/https:/app/certs" asidl
+docker run -p 9080:9080 -p 9443:9443 -e ASPNETCORE_KESTREL__CERTIFICATES__DEFAULT__PASSWORD=adminPassword12345! -e ASPNETCORE_URLS="https://localhost:9443;http://localhost:9080" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/aspnetapp.pfx -e ASPNETCORE_ENVIRONMENT=Development -v "/c/Users/andrewsidlo/.aspnet/https:/app/certs" asidlo/codespaces-test
+git ss
+git pull
+rmdir /q /s C:\Users\andrewsidlo\AppData\Local\nvim-data\
+ifconfig
+ipconfig
+ping google.com
+|s
+|s
+ls vsdbg\
+rmdir /q /s vsdbg\
+|s
+ll
+|d D:\Networking-nfv\
+|s
+|s
+powershell -c "while ($true) { sleep 1; echo 'hey'; }"
+|s
+|ocker-compose run --rm dev
+|ocker ps
+nvim .dockerignore
+docker-compose run --rm dev
+|s
+|ocker build -t nfv .
+cd D:\Networking-nfv\
+|ocker build -t nfv .
+D;
+D:
+|ocker build -t nfv .
+|s
+|ocker build -t nfv .
+|s
+|at Dockerfile 
+|ocker build -t nfv .
+|ocker build --no-cache -t nfv .
+docker build --no-cache -t nfv .
+docker run -it --entrypoint=powershell mcr.microsoft.com/windows/servercore:ltsc2019
+|s
+|d ..
+|s
+mkdir test
+copy Networking-nfv\Dockerfile test\
+cd test\
+|s
+|ocker image ls -a
+|ocker build -t nfv .
+|s
+docker image ls -a
+docker image prune -h
+docker image prune
+|ocker image ls
+cd ..
+|s
+rmdir /q /s test\
+cd Networking-nfv\
+|s
+cat Dockerfile 
+docker build -t nfv .
+docker image ls
+sleep
+timeout /?
+timeout /t -1
+|C:\Program Files\Git\bin\git.exe" status
+"C:\Program Files\Git\bin\git.exe" status
+cat ~/.vimrc
+uuidgen.exe
+explorer.exe .
+explorer.exe
+|sl --shutdown
+|ocker ps
+|sl --update
+|ocker ps
+code
+|ode --disable-gpu
+|ode --h
+|ode --disable-gpu
+|ocker ps
+|ocker ps
+|ode --disable-gpu
+code .
+code --h
+code --disable-extensions
+code --disable-extensions --disable-gpu 
+code --disable-gpu
+|et stop winnat
+|et stop winnat
+|et start winnat
+netstat -ano | findstr :61000
+netstat -ano | findstr 61000
+netstat -ano | findstr 6100
+netstat -ano
+|etsh interface ipv4 show excludedportrange protocol=tcp
+ls
+net stop winnat
+|ocker ps
+docker container ls
+|ocker container ls -a
+|ocker start 0ed
+|ocker ps
+|et start winnat
+|ocker ps
+|ocker container ls -a
+docker start 0ed
+docker container ls -a
+docker start appgw_devcontainer-dev-1
+|ocker ps
+netsh interface ipv6 show excludedportrange protocol=tcp
+|etsh interface ipv4 show excludedportrange protocol=tcp
+netsh interface ipv4 show excludedportrange protocol=udp
+netsh interface ipv4 show excludedportrange protocol=tcp
+net start winnat
+wsl --restart
+|sl --shutdown
+wsl --h
+wsl --update
+wsl -h
+wsl --help
+wsl --
+wsl --shutdown
+docker ls
+docker ps
+which fzf
+where fzf
+where fd
