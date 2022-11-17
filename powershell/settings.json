@@ -288,7 +288,7 @@
                 "padding": "0,0,-4,0",
                 "scrollbarState": "hidden",
                 "startingDirectory": "%USERPROFILE%"
-            },
+            }
         ]
     },
     "schemes": 
