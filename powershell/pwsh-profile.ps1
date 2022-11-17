@@ -1,7 +1,7 @@
 #--------------------------------------------------------------
 # Module Imports
 #--------------------------------------------------------------
-Import-Module -Name PSReadLine -RequiredVersion 2.1.0 
+Import-Module -Name PSReadLine -MinimumVersion 2.1.0 
 Import-Module posh-git 
 Import-Module Get-ChildItemColor
 Import-Module DockerCompletion
@@ -143,7 +143,7 @@ Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
 # Aliases
 #--------------------------------------------------------------
 Set-Alias -Name ls -Value Get-ChildItemColorFormatWide -Option AllScope
-Set-Alias -Name ll -Value Get-ChildItem
+Set-Alias -Name ll -Value Get-ChildItemColor
 Set-Alias -Name cd -Value Set-LocationEnhanced -Option AllScope
 Set-Alias -Name which -Value Get-Command
 Set-Alias -Name k -Value kubectl

@@ -37,7 +37,7 @@ function prompt {
     "`n$('>' * ($nestedPromptLevel + 1)) "
 }
 
-Import-Module -Name PSReadLine -RequiredVersion 2.1.0
+Import-Module -Name PSReadLine -MinimumVersion 2.1.0
 Import-Module PSFzf
 
 Set-PSReadLineOption -EditMode Emacs
@@ -116,4 +116,3 @@ function Set-LocationEnhanced {
 # Set-Alias -Name ll -Value Get-ChildItem
 Set-Alias -Name cd -Value Set-LocationEnhanced -Option AllScope
 Set-Alias -Name which -Value Get-Command
-Remove-Item Alias:curl
