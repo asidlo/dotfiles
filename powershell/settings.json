@@ -252,6 +252,16 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
+                "commandline": "wsl.exe -- ssh labuser@20.25.165.180 -p 1112",
+                "guid": "{3a5426af-6e6c-4fba-9889-862ad5a38699}",
+                "hidden": false,
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\tux.png",
+                "name": "LKD VM",
+                "padding": "0,0,-4,0",
+                "scrollbarState": "hidden",
+                "startingDirectory": "%USERPROFILE%"
+            },
+            {
                 "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
                 "hidden": true,
                 "name": "Visual Studio Debug Console",
@@ -268,7 +278,17 @@
                 "hidden": true,
                 "name": "Developer PowerShell for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
-            }
+            },
+            {
+                "commandline": "wsl.exe -- ssh asidlo@ajb.eastus.cloudapp.azure.com",
+                "guid": "{523a600a-2166-4f9a-b688-2525d0e760a4}",
+                "hidden": false,
+                "icon": "%USERPROFILE%\\Pictures\\icons\\terminal\\tux.png",
+                "name": "Azure Jump Box",
+                "padding": "0,0,-4,0",
+                "scrollbarState": "hidden",
+                "startingDirectory": "%USERPROFILE%"
+            },
         ]
     },
     "schemes": 
