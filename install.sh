@@ -8,23 +8,30 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
 trap '[ $? -ne 0 ] && echo "\"${last_command}\" command failed with exit code $?."' EXIT
 
+# Check if running in WSL and make sure to symlink /etc/wsl.conf since we dont want to
+# include windows paths when using npm
+
 DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
-[ -n "$RG_VERSION" ] || RG_VERSION="13.0.0"
-[ -n "$FD_VERSION" ] || FD_VERSION="8.4.0"
-[ -n "$DOTNET_VERSION" ] || DOTNET_VERSION="6.0"
-[ -n "$UBUNTU_VERSION" ] || UBUNTU_VERSION="18.04"
-[ -n "$BAT_VERSION" ] || BAT_VERSION="0.21.0"
-[ -n "$GO_VERSION" ] || GO_VERSION="1.18.4"
-[ -n "$GITCONFIG" ] || GITCONFIG="gitconfig.work.codespaces"
+[ "$RG_VERSION" != "" ] || RG_VERSION="13.0.0"
+[ "$FD_VERSION" != "" ] || FD_VERSION="8.6.0"
+[ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
+[ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="22.04"
+[ "$BAT_VERSION" != "" ] || BAT_VERSION="0.22.1"
+[ "$GO_VERSION" != "" ] || GO_VERSION="1.19.4"
+[ "$GITCONFIG" != "" ] || GITCONFIG="gitconfig"
+[ "$LUA_VERSION" != "" ] || LUA_VERSION="5.4.4"
+[ "$LUAROCKS_VERSION" != "" ] || LUAROCKS_VERSION="3.9.1"
+[ "$JAVA_VERSION" != "" ] || JAVA_VERSION="17.0.3-ms"
+[ "$NETCOREDBG_VERSION" != "" ] || NETCOREDBG_VERSION="2.2.0-947"
 
 USER=$(whoami)
 is_root()
 {
-    [ -n "$USER" ] && [ "$USER" == "root" ]
+    [ "$USER" != "" ] && [ "$USER" == "root" ]
 }
 
-if [ -n "$INSTALL_ALL" ] && [ "$INSTALL_ALL" -eq 1 ]; then
+if [ "$INSTALL_ALL" != "" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_MARKDOWN=1
     INSTALL_JAVA=1
     INSTALL_LUA=1
@@ -37,13 +44,13 @@ fi
 
 install_npm()
 {
-    command -v npm > /dev/null 2&>1 && return 0
+    command -v npm > /dev/null && return 0
 
     # Install nvm for npm and nodejs
     curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    nvm install 16.15.1
+    nvm install --lts
 }
 
 install_cargo()
@@ -58,6 +65,7 @@ install_cargo()
 export DEBIAN_FRONTEND=noninteractive
 
 if is_root; then
+    export HOME=/root
     apt-get update -y && apt-get install sudo -y
 fi
 sudo apt-get update -y
@@ -110,7 +118,7 @@ if ! type zsh > /dev/null 2>&1; then
 fi
 
 # Set zsh as current shell
-sudo chsh -s /bin/zsh
+sudo chsh -s /bin/zsh "$USER"
 
 # Install fzf
 mkdir -p ~/.local/src
@@ -128,42 +136,44 @@ sudo apt-get install locales -y
 # Ensure at least the en_US.UTF-8 UTF-8 locale is available.
 # Common need for both applications and things like the agnoster ZSH theme.
 if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen 
+    sudo bash -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen' 
     sudo locale-gen
 fi
 
-if [ -n "$INSTALL_NVIM" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
+if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     # Install nvim runtime prerequisites
     sudo apt-get install build-essential tmux wget curl zip unzip -y
 
     # Install nvim
-    ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
-    [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
+    # ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
     
-    # # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
-    # latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
-    # echo "Using version $latest_tag"
-    #
-    # curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
-    # unzip /tmp/bob.zip -d /tmp/bob
-    # chmod +x /tmp/bob/bob
-    # mv /tmp/bob/bob ~/.local/bin
-    # rm -f /tmp/bob.zip && rm -rf /tmp/bob
-    #
-    # # Install nightly neovim
-    # ~/.local/bin/bob use nightly
-    #
-    # # Add current neovim version to PATH
-    # ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
+    # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
+    latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
+    echo "Using version $latest_tag"
+    
+    curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
+    unzip /tmp/bob.zip -d /tmp/bob
+    chmod +x /tmp/bob/bob
+    mv /tmp/bob/bob ~/.local/bin
+    rm -f /tmp/bob.zip && rm -rf /tmp/bob
+    
+    # Install nightly neovim
+    ~/.local/bin/bob use nightly
+    
+    # Add current neovim version to PATH
+    ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
+
+    # Add symlink for config
+    [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
 fi
 
-if [ -n "$INSTALL_NODE" ] && [ "$INSTALL_NODE" -eq 1 ]; then
+if [ "$INSTALL_NODE" != "" ] && [ "$INSTALL_NODE" -eq 1 ]; then
     install_npm
 fi
 
 # Install dotnet
 # https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
-if [ -n "$INSTALL_DOTNET" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
+if [ "$INSTALL_DOTNET" != "" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
     wget https://packages.microsoft.com/config/ubuntu/"$UBUNTU_VERSION"/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg -i packages-microsoft-prod.deb
     rm packages-microsoft-prod.deb
@@ -174,71 +184,71 @@ if [ -n "$INSTALL_DOTNET" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
 
     # dotnet debugger deps for netcoredbg
     # https://stackoverflow.com/a/66465559
-    sudo apt-get update
-    sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
-    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    sudo apt-get update
-    sudo apt-get install -y --only-upgrade libstdc++6
+#     sudo apt-get update
+#     sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
+#     sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+#     sudo apt-get update
+#     sudo apt-get install -y --only-upgrade libstdc++6
 
-    curl -L https://github.com/Samsung/netcoredbg/releases/download/2.0.0-915/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
+    curl -L https://github.com/Samsung/netcoredbg/releases/download/"$NETCOREDBG_VERSION"/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
     tar xzvf /tmp/netcoredbg-linux-amd64.tar.gz -C /tmp
     mv /tmp/netcoredbg/* ~/.local/bin
     rm /tmp/netcoredbg-linux-amd64.tar.gz && rm -rf /tmp/netcoredbg
 fi
 
-if [ -n "$INSTALL_PYTHON" ] && [ "$INSTALL_PYTHON" -eq 1 ]; then
+if [ "$INSTALL_PYTHON" != "" ] && [ "$INSTALL_PYTHON" -eq 1 ]; then
     sudo apt-get install python3-venv python3-pip -y
     /usr/bin/python3 -m pip install pynvim
     pip3 install black
 fi
 
-if [ -n "$INSTALL_GO" ] && [ "$INSTALL_GO" -eq 1 ]; then
+if [ "$INSTALL_GO" != "" ] && [ "$INSTALL_GO" -eq 1 ]; then
     curl -LO https://go.dev/dl/go"$GO_VERSION".linux-amd64.tar.gz
     sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go"$GO_VERSION".linux-amd64.tar.gz
     rm ./go"$GO_VERSION".linux-amd64.tar.gz
 fi
 
 # Install sdkman for java
-if [ -n "$INSTALL_JAVA" ] && [ "$INSTALL_JAVA" -eq 1 ]; then
+if [ "$INSTALL_JAVA" != "" ] && [ "$INSTALL_JAVA" -eq 1 ]; then
     curl -s "https://get.sdkman.io" | bash
     source "$HOME/.sdkman/bin/sdkman-init.sh"
-    sdk i java 17.0.3-ms
+    sdk i java "$JAVA_VERSION"
 fi
 
 # Install formatters/linters
-if [ -n "$INSTALL_LUA" ] && [ "$INSTALL_LUA" -eq 1 ]; then
+if [ "$INSTALL_LUA" != "" ] && [ "$INSTALL_LUA" -eq 1 ]; then
     install_cargo && cargo install stylua
 
     sudo apt-get install build-essential libreadline-dev unzip -y
-    curl -R -O http://www.lua.org/ftp/lua-5.3.5.tar.gz
-    tar -zxf lua-5.3.5.tar.gz
-    rm lua-5.3.5.tar.gz
-    cd lua-5.3.5
+    curl -R -O http://www.lua.org/ftp/lua-"$LUA_VERSION".tar.gz
+    tar -zxf lua-"$LUA_VERSION".tar.gz
+    rm lua-"$LUA_VERSION".tar.gz
+    cd lua-"$LUA_VERSION"
     make linux test
     sudo make install
     cd ..
-    rm -rf ./lua-5.3.5
+    rm -rf ./lua-"$LUA_VERSION"
 
-    wget https://luarocks.org/releases/luarocks-3.8.0.tar.gz
-    tar zxpf luarocks-3.8.0.tar.gz
-    rm luarocks-3.8.0.tar.gz
-    cd luarocks-3.8.0
+    wget https://luarocks.org/releases/luarocks-"$LUAROCKS_VERSION".tar.gz
+    tar zxpf luarocks-"$LUAROCKS_VERSION".tar.gz
+    rm luarocks-"$LUAROCKS_VERSION".tar.gz
+    cd luarocks-"$LUAROCKS_VERSION"
     ./configure --with-lua-include=/usr/local/include
     make
     sudo make install
     cd ..
-    rm -rf luarocks-3.8.0
+    rm -rf luarocks-"$LUAROCKS_VERSION"
 
     sudo luarocks install luacheck
     sudo luarocks install lanes
 fi
 
-if [ -n "$INSTALL_BASH" ] && [ "$INSTALL_BASH" -eq 1 ]; then
+if [ "$INSTALL_BASH" != "" ] && [ "$INSTALL_BASH" -eq 1 ]; then
     install_cargo && cargo install shellharden
     sudo apt-get install shellcheck -y
 fi
 
-if [ -n "$INSTALL_MARKDOWN" ] && [ "$INSTALL_MARKDOWN" -eq 1 ]; then
+if [ "$INSTALL_MARKDOWN" != "" ] && [ "$INSTALL_MARKDOWN" -eq 1 ]; then
     install_npm
     npm install -g @fsouza/prettierd
     npm install -g markdownlint-cli
