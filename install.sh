@@ -10,6 +10,7 @@ trap '[ $? -ne 0 ] && echo "\"${last_command}\" command failed with exit code $?
 
 # Check if running in WSL and make sure to symlink /etc/wsl.conf since we dont want to
 # include windows paths when using npm
+# Also symlink from C:\Program Files\Neovim\bin\win32yank.exe to ~/.local/bin/win32yank.exe
 
 DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
@@ -252,4 +253,5 @@ if [ "$INSTALL_MARKDOWN" != "" ] && [ "$INSTALL_MARKDOWN" -eq 1 ]; then
     install_npm
     npm install -g @fsouza/prettierd
     npm install -g markdownlint-cli
+    ln -sfv "$DOTFILES_DIR/markdownlint.json" ~/.markdownlint.json
 fi

@@ -111,6 +111,7 @@ if (( $+commands[nvim] )); then
 	export VISUAL=nvim
 	export EDITOR=nvim
 	export MANPAGER="$EDITOR +Man!"
+    export SUDO_EDITOR=$(which nvim)
 else
 	export VISUAL=vim
 	export EDITOR=vim
