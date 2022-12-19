@@ -56,7 +56,7 @@ install_npm()
 
 install_cargo()
 {
-    command -v cargo > /dev/null 2&>1 && return 0
+    command -v cargo > /dev/null 2>&1 && return 0
 
     # Install cargo for rust dev
     curl https://sh.rustup.rs -sSf | sh -s -- -y
