@@ -71,8 +71,6 @@ shell:
     - wsl
     - --cd
     - '~'
-    - --
-    - 'tmux -u attach || tmux -u'
 
 url:
   launcher:
