@@ -6,18 +6,6 @@
         {
             "command": 
             {
-                "action": "copy",
-                "singleLine": false
-            },
-            "keys": "ctrl+c"
-        },
-        {
-            "command": "paste",
-            "keys": "ctrl+v"
-        },
-        {
-            "command": 
-            {
                 "action": "newTab",
                 "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
             },
@@ -26,6 +14,18 @@
         {
             "command": "find",
             "keys": "ctrl+shift+f"
+        },
+        {
+            "command": 
+            {
+                "action": "copy",
+                "singleLine": false
+            },
+            "keys": "ctrl+c"
+        },
+        {
+            "command": "paste",
+            "keys": "ctrl+v"
         },
         {
             "command": "unbound",
@@ -38,6 +38,23 @@
         {
             "command": 
             {
+                "action": "newTab",
+                "profile": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}"
+            },
+            "keys": "ctrl+alt+e"
+        },
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "keys": "alt+shift+d"
+        },
+        {
+            "command": 
+            {
                 "action": "commandPalette"
             },
             "keys": "ctrl+shift+p"
@@ -46,17 +63,17 @@
             "command": 
             {
                 "action": "newTab",
-                "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
+                "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
             },
-            "keys": "ctrl+alt+d"
+            "keys": "ctrl+alt+b"
         },
         {
             "command": 
             {
                 "action": "newTab",
-                "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
+                "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
             },
-            "keys": "ctrl+alt+b"
+            "keys": "ctrl+alt+d"
         },
         {
             "command": 
@@ -71,23 +88,6 @@
         {
             "command": 
             {
-                "action": "splitPane",
-                "split": "auto",
-                "splitMode": "duplicate"
-            },
-            "keys": "alt+shift+d"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
-            },
-            "keys": "ctrl+alt+a"
-        },
-        {
-            "command": 
-            {
                 "action": "newTab",
                 "profile": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}"
             },
@@ -97,9 +97,9 @@
             "command": 
             {
                 "action": "newTab",
-                "profile": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}"
+                "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
             },
-            "keys": "ctrl+alt+e"
+            "keys": "ctrl+alt+a"
         },
         {
             "command": 
@@ -174,7 +174,7 @@
                 "suppressApplicationTitle": true
             },
             {
-                "colorScheme": "Dracula",
+                "colorScheme": "Tokyonight",
                 "commandline": "C:/Program Files/Git/bin/bash.exe",
                 "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
                 "icon": "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
