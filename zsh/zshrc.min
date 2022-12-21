@@ -178,13 +178,14 @@ fi
 # https://tech.serhatteker.com/post/2019-12/remove-duplicates-in-path-zsh/
 typeset -U path
 
+# Added this already to the devcontainer Dockerfile, leaving for historical ref
 # Adds env variables for working in vscode devcontainer ssh for git ops
-VSCODE_SOCKET_FILE=$(ls /tmp/vscode-remote-containers-ipc-*.sock 2> /dev/null)
-VSCODE_AUTH_SOCK=$(ls /tmp/vscode-ssh-auth-*.sock 2> /dev/null)
-if [ -S "$VSCODE_AUTH_SOCK" ] && [ -S "$VSCODE_SOCKET_FILE" ]; then
-    export REMOTE_CONTAINERS_IPC=$VSCODE_SOCKET_FILE
-    export REMOTE_CONTAINERS_SOCKETS="[$VSCODE_AUTH_SOCK,/home/vscode/.gnupg/S.gpg-agent]"
-fi
+# VSCODE_SOCKET_FILE=$(ls /tmp/vscode-remote-containers-ipc-*.sock 2> /dev/null)
+# VSCODE_AUTH_SOCK=$(ls /tmp/vscode-ssh-auth-*.sock 2> /dev/null)
+# if [ -S "$VSCODE_AUTH_SOCK" ] && [ -S "$VSCODE_SOCKET_FILE" ]; then
+#     export REMOTE_CONTAINERS_IPC=$VSCODE_SOCKET_FILE
+#     export REMOTE_CONTAINERS_SOCKETS="[$VSCODE_AUTH_SOCK,/home/vscode/.gnupg/S.gpg-agent]"
+# fi
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"

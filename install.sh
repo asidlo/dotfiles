@@ -8,9 +8,13 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
 trap '[ $? -ne 0 ] && echo "\"${last_command}\" command failed with exit code $?."' EXIT
 
-# Check if running in WSL and make sure to symlink /etc/wsl.conf since we dont want to
-# include windows paths when using npm
-# Also symlink from C:\Program Files\Neovim\bin\win32yank.exe to ~/.local/bin/win32yank.exe
+# * Check if running in WSL and make sure to symlink /etc/wsl.conf since we dont want to
+#   include windows paths when using npm
+# * Also symlink from C:\Program Files\Neovim\bin\win32yank.exe to ~/.local/bin/win32yank.exe
+# * If running ubuntu 18 then when installing node use nvm install 16.15.1 instead of latest
+#   This will prevent the GCLIB_2.28 not found error
+# * Also would be good to maybe have it install the lsps and the treesitter syntaxs when installing nvim
+# * And should refactor into functions that can be called via flags
 
 DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
