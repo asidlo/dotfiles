@@ -52,8 +52,12 @@ function parse_git_dirty {
 	fi
 }
 
-export PS1="\[\e[36m\]\u\[\e[m\] at \[\e[35m\]\h\[\e[m\] in \[\e[34m\]\w\[\e[m\] \`parse_git_branch\`
-\\$ "
+# Check if using git bash on windows, use optimized function instead
+if [[ $(type -t __git_ps1) == function ]]; then
+	export PS1="\[\e[36m\]\u\[\e[m\] at \[\e[35m\]\h\[\e[m\] in \[\e[34m\]\w\[\e[m\]\`__git_ps1\`\n$ "
+else
+	export PS1="\[\e[36m\]\u\[\e[m\] at \[\e[35m\]\h\[\e[m\] in \[\e[34m\]\w\[\e[m\] \`parse_git_branch\`\n$ "
+fi
 
 alias ls="ls -G --color=auto"
 alias ll="ls -l"
