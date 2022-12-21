@@ -1,6 +1,10 @@
 @echo off
-doskey ls=exa $*
-doskey ll=exa -l $*
+:: doskey ls=exa $*
+:: doskey ll=exa -l $*
+doskey ls=dir /W $*
+doskey ll=dir $*
+doskey rm=del $*
+doskey cp=copy $*
 doskey cat=bat --style plain --color never $*
 doskey jq=jq -C $*
 doskey pwd=echo %cd%

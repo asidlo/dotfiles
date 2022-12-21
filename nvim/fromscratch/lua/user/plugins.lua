@@ -368,41 +368,41 @@ M.startup = function()
             end,
         })
         use('leoluz/nvim-dap-go')
-        use({
-            'simrat39/rust-tools.nvim',
-            -- after = 'nvim-lsp-installer',
-            config = function()
-                local path = require('nvim-lsp-installer.core.path')
-                local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
-
-                local exe = '/usr/bin/lldb-vscode'
-                if vim.fn.has('win32') == 1 then
-                    exe = 'C:\\Program Files\\LLVM\\bin\\lldb-vscode.exe'
-                else
-                    exe = '/usr/local/bin/lldb-vscode'
-                end
-
-                require('rust-tools').setup({
-                    server = {
-                        cmd = { install_root_dir .. '/rust_analyzer/rust-analyzer' },
-                        on_attach = require('user.lsp.handlers').on_attach,
-                        capabilities = require('user.lsp.handlers').capabilities,
-                        settings = {
-                            ['rust-analyzer'] = {
-                                checkOnSave = { command = 'clippy' },
-                            },
-                        },
-                    },
-                    dap = {
-                        adapter = {
-                            type = 'executable',
-                            command = exe,
-                            name = 'rt_lldb',
-                        },
-                    },
-                })
-            end,
-        })
+        -- use({
+        --     'simrat39/rust-tools.nvim',
+        --     -- after = 'nvim-lsp-installer',
+        --     config = function()
+        --         local path = require('nvim-lsp-installer.core.path')
+        --         local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
+        --
+        --         local exe = '/usr/bin/lldb-vscode'
+        --         if vim.fn.has('win32') == 1 then
+        --             exe = 'C:\\Program Files\\LLVM\\bin\\lldb-vscode.exe'
+        --         else
+        --             exe = '/usr/local/bin/lldb-vscode'
+        --         end
+        --
+        --         require('rust-tools').setup({
+        --             server = {
+        --                 cmd = { install_root_dir .. '/rust_analyzer/rust-analyzer' },
+        --                 on_attach = require('user.lsp.handlers').on_attach,
+        --                 capabilities = require('user.lsp.handlers').capabilities,
+        --                 settings = {
+        --                     ['rust-analyzer'] = {
+        --                         checkOnSave = { command = 'clippy' },
+        --                     },
+        --                 },
+        --             },
+        --             dap = {
+        --                 adapter = {
+        --                     type = 'executable',
+        --                     command = exe,
+        --                     name = 'rt_lldb',
+        --                 },
+        --             },
+        --         })
+        --     end,
+        -- })
         use('mfussenegger/nvim-jdtls')
         use({
             'simrat39/symbols-outline.nvim',
