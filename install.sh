@@ -11,8 +11,6 @@ trap '[ $? -ne 0 ] && echo "\"${last_command}\" command failed with exit code $?
 # * Check if running in WSL and make sure to symlink /etc/wsl.conf since we dont want to
 #   include windows paths when using npm
 # * Also symlink from C:\Program Files\Neovim\bin\win32yank.exe to ~/.local/bin/win32yank.exe
-# * If running ubuntu 18 then when installing node use nvm install 16.15.1 instead of latest
-#   This will prevent the GCLIB_2.28 not found error
 # * Also would be good to maybe have it install the lsps and the treesitter syntaxs when installing nvim
 # * And should refactor into functions that can be called via flags
 
@@ -55,7 +53,12 @@ install_npm()
     curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    nvm install --lts
+
+    if (("$UBUNTU_VERSION" > 18)); then
+        nvm install --lts
+    else
+        nvm install 16.15.1
+    fi
 }
 
 install_cargo()
@@ -150,24 +153,26 @@ if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     sudo apt-get install build-essential tmux wget curl zip unzip -y
 
     # Install nvim
-    # ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
-    
-    # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
-    latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
-    echo "Using version $latest_tag"
-    
-    curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
-    unzip /tmp/bob.zip -d /tmp/bob
-    chmod +x /tmp/bob/bob
-    mv /tmp/bob/bob ~/.local/bin
-    rm -f /tmp/bob.zip && rm -rf /tmp/bob
-    
-    # Install nightly neovim
-    mkdir -p ~/.local/share
-    ~/.local/bin/bob use nightly
-    
-    # Add current neovim version to PATH
-    ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
+    if (("$UBUNTU_VERSION" > 18)); then
+        # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
+        latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
+        echo "Using version $latest_tag"
+        
+        curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
+        unzip /tmp/bob.zip -d /tmp/bob
+        chmod +x /tmp/bob/bob
+        mv /tmp/bob/bob ~/.local/bin
+        rm -f /tmp/bob.zip && rm -rf /tmp/bob
+        
+        # Install nightly neovim
+        mkdir -p ~/.local/share
+        ~/.local/bin/bob use nightly
+        
+        # Add current neovim version to PATH
+        ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
+    else
+        ~/.local/src/dotfiles/nvim/download-latest-nvim-local.sh
+    fi
 
     # Add symlink for config
     [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
