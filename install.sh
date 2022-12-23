@@ -95,20 +95,20 @@ curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
 
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
-curl -LO https://github.com/BurntSushi/ripgrep/releases/download/"$RG_VERSION"/ripgrep_13.0.0_amd64.deb
-sudo apt-get install ./ripgrep_"$RG_VERSION"_amd64.deb
-rm ./ripgrep_"$RG_VERSION"_amd64.deb
+curl -L https://github.com/BurntSushi/ripgrep/releases/download/"$RG_VERSION"/ripgrep_"$RG_VERSION"_amd64.deb -o /tmp/ripgrep.deb
+sudo apt-get install /tmp/ripgrep.deb
+rm /tmp/ripgrep.deb
 
 # Install fd
 # https://github.com/sharkdp/fd
-curl -LO https://github.com/sharkdp/fd/releases/download/v"$FD_VERSION"/fd_"$FD_VERSION"_amd64.deb
-sudo apt-get install ./fd_"$FD_VERSION"_amd64.deb
-rm ./fd_"$FD_VERSION"_amd64.deb
+curl -L https://github.com/sharkdp/fd/releases/download/v"$FD_VERSION"/fd_"$FD_VERSION"_amd64.deb -o /tmp/fd.deb
+sudo apt-get install /tmp/fd.deb
+rm /tmp/fd.deb
 
 # Install bat
-curl -LO https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$BAT_VERSION"_amd64.deb
-sudo apt-get install ./bat_"$BAT_VERSION"_amd64.deb
-rm ./bat_"$BAT_VERSION"_amd64.deb
+curl -L https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$BAT_VERSION"_amd64.deb -o /tmp/bat.deb
+sudo apt-get install /tmp/bat.deb
+rm /tmp/bat.deb
 
 # Install starship
 curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
@@ -214,9 +214,9 @@ if [ "$INSTALL_PYTHON" != "" ] && [ "$INSTALL_PYTHON" -eq 1 ]; then
 fi
 
 if [ "$INSTALL_GO" != "" ] && [ "$INSTALL_GO" -eq 1 ]; then
-    curl -LO https://go.dev/dl/go"$GO_VERSION".linux-amd64.tar.gz
-    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go"$GO_VERSION".linux-amd64.tar.gz
-    rm ./go"$GO_VERSION".linux-amd64.tar.gz
+    curl -L https://go.dev/dl/go"$GO_VERSION".linux-amd64.tar.gz -o /tmp/go.tar.gz
+    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+    rm /tmp/go.tar.gz
 fi
 
 # Install sdkman for java
@@ -231,10 +231,11 @@ if [ "$INSTALL_LUA" != "" ] && [ "$INSTALL_LUA" -eq 1 ]; then
     install_cargo && cargo install stylua
 
     sudo apt-get install build-essential libreadline-dev unzip -y
-    curl -R -O http://www.lua.org/ftp/lua-"$LUA_VERSION".tar.gz
-    tar -zxf lua-"$LUA_VERSION".tar.gz
-    rm lua-"$LUA_VERSION".tar.gz
-    cd lua-"$LUA_VERSION"
+    curl -R http://www.lua.org/ftp/lua-"$LUA_VERSION".tar.gz -o /tmp/lua.tar.gz
+    cd /tmp
+    tar -zxf lua.tar.gz
+    rm /tmp/lua.tar.gz
+    cd /tmp/lua-"$LUA_VERSION"
     make linux test
     sudo make install
     cd ..
