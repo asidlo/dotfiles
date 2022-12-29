@@ -13,6 +13,7 @@ trap '[ $? -ne 0 ] && echo "\"${last_command}\" command failed with exit code $?
 # * Also symlink from C:\Program Files\Neovim\bin\win32yank.exe to ~/.local/bin/win32yank.exe
 # * Also would be good to maybe have it install the lsps and the treesitter syntaxs when installing nvim
 # * And should refactor into functions that can be called via flags
+# * Figure out how to install latest instead of fixed versions
 
 DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
@@ -83,6 +84,7 @@ ln -sfv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
 ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
 ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
 ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
+ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
 
 mkdir -p ~/.omnisharp
 ln -sfv "$DOTFILES_DIR/misc/omnisharp.json" ~/.omnisharp/omnisharp.json
