@@ -20,7 +20,7 @@ DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 [ "$RG_VERSION" != "" ] || RG_VERSION="13.0.0"
 [ "$FD_VERSION" != "" ] || FD_VERSION="8.6.0"
 [ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
-[ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="22.04"
+[ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="$(lsb_release -r -s)"
 [ "$BAT_VERSION" != "" ] || BAT_VERSION="0.22.1"
 [ "$GO_VERSION" != "" ] || GO_VERSION="1.19.4"
 [ "$GITCONFIG" != "" ] || GITCONFIG="gitconfig"
