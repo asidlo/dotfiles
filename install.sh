@@ -55,7 +55,8 @@ install_npm()
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-    if (("$UBUNTU_VERSION" > 18)); then
+    # Removes decimal to use built in integer math instead of floats
+    if (($(echo "$UBUNTU_VERSION" | sed 's/\.//g') > 1800)); then
         nvm install --lts
     else
         nvm install 16.15.1
@@ -155,7 +156,7 @@ if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
     sudo apt-get install build-essential tmux wget curl zip unzip -y
 
     # Install nvim
-    if (("$UBUNTU_VERSION" > 18)); then
+    if (($(echo "$UBUNTU_VERSION" | sed 's/\.//g') > 1800)); then
         # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
         latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
         echo "Using version $latest_tag"
