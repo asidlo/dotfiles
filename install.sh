@@ -17,6 +17,8 @@ trap '[ $? -ne 0 ] && echo "\"${last_command}\" command failed with exit code $?
 
 DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
+echo "Installing using the following configuration:"
+
 [ "$RG_VERSION" != "" ] || RG_VERSION="13.0.0"
 [ "$FD_VERSION" != "" ] || FD_VERSION="8.6.0"
 [ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
@@ -29,12 +31,6 @@ DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 [ "$JAVA_VERSION" != "" ] || JAVA_VERSION="17.0.3-ms"
 [ "$NETCOREDBG_VERSION" != "" ] || NETCOREDBG_VERSION="2.2.0-947"
 
-USER=$(whoami)
-is_root()
-{
-    [ "$USER" != "" ] && [ "$USER" == "root" ]
-}
-
 if [ "$INSTALL_ALL" != "" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_MARKDOWN=1
     INSTALL_JAVA=1
@@ -45,6 +41,34 @@ if [ "$INSTALL_ALL" != "" ] && [ "$INSTALL_ALL" -eq 1 ]; then
     INSTALL_NODE=1
     INSTALL_NVIM=1
 fi
+
+echo "Installing using the following configuration:"
+echo "- RG_VERSION=$RG_VERSION"
+echo "- FD_VERSION=$FG_VERSION"
+echo "- DOTNET_VERSION=$DOTNET_VERSION"
+echo "- UBUNTU_VERSION=$UBUNTU_VERSION"
+echo "- BAT_VERSION=$BAT_VERSION"
+echo "- GO_VERSION=$GO_VERSION"
+echo "- GITCONFIG=$GITCONFIG"
+echo "- LUA_VERSION=$LUA_VERSION"
+echo "- LUAROCKS_VERSION=$LUAROCKS_VERSION"
+echo "- JAVA_VERSION=$JAVA_VERSION"
+echo "- NETCOREDBG_VERSION=$NETCOREDBG_VERSION"
+echo "- INSTALL_MARKDOWN=$INSTALL_MARKDOWN"
+echo "- INSTALL_JAVA=$INSTALL_JAVA"
+echo "- INSTALL_LUA=$INSTALL_LUA"
+echo "- INSTALL_BASH=$INSTALL_BASH"
+echo "- INSTALL_PYTHON=$INSTALL_PYTHON"
+echo "- INSTALL_DOTNET=$INSTALL_DOTNET"
+echo "- INSTALL_NODE=$INSTALL_NODE"
+echo "- INSTALL_NVIM=$INSTALL_NVIM"
+
+USER=$(whoami)
+is_root()
+{
+    [ "$USER" != "" ] && [ "$USER" == "root" ]
+}
+
 
 install_npm()
 {
