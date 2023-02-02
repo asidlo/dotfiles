@@ -24,9 +24,9 @@
         "OrganizeImports": true
     },
     "RenameOptions": {
-        "RenameInComments": true,
+        "RenameInComments": false,
         "RenameOverloads": true,
-        "RenameInStrings": true
+        "RenameInStrings": false
     },
     "ImplementTypeOptions": {
         "PropertyGenerationBehavior": "PreferAutoProperties",
