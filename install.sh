@@ -19,11 +19,11 @@ DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
 echo "Installing using the following configuration:"
 
-[ "$RG_VERSION" != "" ] || RG_VERSION="13.0.0"
-[ "$FD_VERSION" != "" ] || FD_VERSION="8.6.0"
+[ "$RG_VERSION" != "" ] || RG_VERSION="$(curl -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}')"
+[ "$FD_VERSION" != "" ] || FD_VERSION="$(curl -I https://github.com/sharkdp/fd/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
 [ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
 [ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="$(cat /etc/os-release | grep "VERSION_ID" | cut -d"=" -f2 | sed 's/"//g')"
-[ "$BAT_VERSION" != "" ] || BAT_VERSION="0.22.1"
+[ "$BAT_VERSION" != "" ] || BAT_VERSION="$(curl -I https://github.com/sharkdp/bat/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
 [ "$GO_VERSION" != "" ] || GO_VERSION="1.19.4"
 [ "$GITCONFIG" != "" ] || GITCONFIG="gitconfig"
 [ "$LUA_VERSION" != "" ] || LUA_VERSION="5.4.4"
@@ -75,7 +75,7 @@ install_npm()
     command -v npm > /dev/null && return 0
 
     # Install nvm for npm and nodejs
-    curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
