@@ -19,11 +19,11 @@ DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
 echo "Installing using the following configuration:"
 
-[ "$RG_VERSION" != "" ] || RG_VERSION="$(curl -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}')"
-[ "$FD_VERSION" != "" ] || FD_VERSION="$(curl -I https://github.com/sharkdp/fd/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
+[ "$RG_VERSION" != "" ] || RG_VERSION="$(curl -s -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}')"
+[ "$FD_VERSION" != "" ] || FD_VERSION="$(curl -s -I https://github.com/sharkdp/fd/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
 [ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
 [ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="$(cat /etc/os-release | grep "VERSION_ID" | cut -d"=" -f2 | sed 's/"//g')"
-[ "$BAT_VERSION" != "" ] || BAT_VERSION="$(curl -I https://github.com/sharkdp/bat/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
+[ "$BAT_VERSION" != "" ] || BAT_VERSION="$(curl -s -I https://github.com/sharkdp/bat/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
 [ "$GO_VERSION" != "" ] || GO_VERSION="1.19.4"
 [ "$GITCONFIG" != "" ] || GITCONFIG="gitconfig"
 [ "$LUA_VERSION" != "" ] || LUA_VERSION="5.4.4"
@@ -100,6 +100,9 @@ export DEBIAN_FRONTEND=noninteractive
 
 if is_root; then
     export HOME=/root
+
+    # Had issues in container with following error: dpkg: error: PATH is not set
+    export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     apt-get update -y && apt-get install sudo -y
 fi
 sudo apt-get update -y
