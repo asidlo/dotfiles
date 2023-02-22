@@ -23,7 +23,23 @@ end
 -- end
 
 configs.setup({
-    ensure_installed = {"bash", "lua", "c_sharp"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+    ensure_installed = {
+        "bash",
+        "lua",
+        "c_sharp",
+        "vim",
+        "help",
+        "rust",
+        "jsonc",
+        "make",
+        "markdown",
+        "python",
+        "go",
+        "dockerfile",
+        "gitcommit",
+        "gitattributes",
+        "git_rebase"
+    },
     sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
     ignore_install = {}, -- List of parsers to ignore installing
     autopairs = {
@@ -60,10 +76,10 @@ configs.setup({
         },
         move = {
             enable = true,
-            goto_next_start = { [']m'] = '@function.outer', [']]'] = '@class.outer' },
-            goto_next_end = { [']M'] = '@function.outer', [']['] = '@class.outer' },
-            goto_previous_start = { ['[m'] = '@function.outer', ['[['] = '@class.outer' },
-            goto_previous_end = { ['[M'] = '@function.outer', ['[]'] = '@class.outer' },
+            goto_next_start = { [']m'] = '@function.outer',[']]'] = '@class.outer' },
+            goto_next_end = { [']M'] = '@function.outer',[']['] = '@class.outer' },
+            goto_previous_start = { ['[m'] = '@function.outer',['[['] = '@class.outer' },
+            goto_previous_end = { ['[M'] = '@function.outer',['[]'] = '@class.outer' },
         },
         swap = {
             enable = false,
