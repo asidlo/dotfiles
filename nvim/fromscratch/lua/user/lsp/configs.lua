@@ -1,13 +1,13 @@
-local status_ok, lsp_installer = pcall(require, 'nvim-lsp-installer')
-if not status_ok then
-    return
-end
-
-lsp_installer.setup({
-    ui = {
-        border = 'rounded'
-    }
-})
+-- local status_ok, lsp_installer = pcall(require, 'nvim-lsp-installer')
+-- if not status_ok then
+--     return
+-- end
+--
+-- lsp_installer.setup({
+--     ui = {
+--         border = 'rounded'
+--     }
+-- })
 
 local lspconfig = require('lspconfig')
 
@@ -22,32 +22,32 @@ end
 
 -- Env variable should override all values. If a user specifies lsps via the
 -- env var, then ensure those are installed and configured
-local servers = {}
-if vim.env.LSP_SERVERS ~= nil then
-    local server_names = vim.fn.split(vim.env.LSP_SERVERS, ',')
-    for _, server_name in ipairs(server_names) do
-        servers[server_name] = true
-    end
-end
+-- local servers = {}
+-- if vim.env.LSP_SERVERS ~= nil then
+--     local server_names = vim.fn.split(vim.env.LSP_SERVERS, ',')
+--     for _, server_name in ipairs(server_names) do
+--         servers[server_name] = true
+--     end
+-- end
 
 -- Merge installed lsps + to be installed to ensure all are configured
-local available_servers = require('nvim-lsp-installer.servers').get_installed_server_names()
-for _, server in ipairs(available_servers) do
-    servers[server] = true
-end
+-- local available_servers = require('nvim-lsp-installer.servers').get_installed_server_names()
+-- for _, server in ipairs(available_servers) do
+--     servers[server] = true
+-- end
 
 -- No need to install lsps when running headless.
 -- Specific command will be used instead.
-if #vim.api.nvim_list_uis() == 0 then
-    servers = {}
-end
+-- if #vim.api.nvim_list_uis() == 0 then
+--     servers = {}
+-- end
 
-local server_names = vim.tbl_keys(servers)
-vim.env.LSP_SERVERS_INSTALLED = vim.fn.join(server_names, ',')
+-- local server_names = vim.tbl_keys(servers)
+-- vim.env.LSP_SERVERS_INSTALLED = vim.fn.join(server_names, ',')
 
-lsp_installer.setup({
-    ensure_installed = server_names,
-})
+-- lsp_installer.setup({
+--     ensure_installed = server_names,
+-- })
 
 for _, server in pairs(server_names) do
     local opts = {

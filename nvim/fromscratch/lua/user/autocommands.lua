@@ -54,7 +54,7 @@ local opts = { noremap = true, silent = true }
 
 autocmd({ 'FileType' }, {
     group = settings,
-    pattern = 'qf,help,man,lspinfo,null-ls-info,dap-float,git,notify',
+    pattern = 'qf,help,man,lspinfo,null-ls-info,dap-float,git,notify,mason',
     desc = 'Closes buffer with q',
     callback = function(tbl)
         local bufnr = tbl.buf

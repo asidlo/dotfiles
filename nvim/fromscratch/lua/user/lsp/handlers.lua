@@ -158,15 +158,9 @@ local function lsp_code_lens_refresh(client)
 end
 
 M.on_attach = function(client, bufnr)
-    local capabilities = nil
-    local version = vim.version()
-    if version.major > 0 or version.minor >= 8 then
-        capabilities = client.server_capabilities
-    else
-        capabilities = client.resolved_capabilities
-    end
+    local capabilities = client.server_capabilities
 
-    if capabilities.document_range_formatting then
+    if capabilities.documentRangeFormattingProvider then
         vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.lsp_formatexpr()')
     end
 
@@ -193,13 +187,6 @@ M.on_attach = function(client, bufnr)
         navic.attach(client, bufnr)
     end
 end
-
-local status_ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
-if not status_ok then
-    return
-end
-
-M.capabilities = cmp_nvim_lsp.default_capabilities()
 
 -- https://github.com/neovim/neovim/issues/14825
 vim.g.diagnostics_visible = true
@@ -229,5 +216,12 @@ M.show_documentation = function()
         vim.lsp.buf.hover()
     end
 end
+
+local status_ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+if not status_ok then
+    return
+end
+
+M.capabilities = cmp_nvim_lsp.default_capabilities()
 
 return M

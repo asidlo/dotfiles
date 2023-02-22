@@ -3,27 +3,27 @@ if not status_ok then
     return
 end
 
-local modules = {}
-if vim.env.TS_MODULES ~= nil then
-    modules = vim.fn.split(vim.env.TS_MODULES, ',')
-end
-
-if vim.env.TS_MODULES == "all" then
-    vim.env.TS_MODULES_INSTALLED = "all"
-    modules = "all"
-else
-    vim.env.TS_MODULES_INSTALLED = vim.fn.join(modules, ',')
-end
+-- local modules = {}
+-- if vim.env.TS_MODULES ~= nil then
+--     modules = vim.fn.split(vim.env.TS_MODULES, ',')
+-- end
+--
+-- if vim.env.TS_MODULES == "all" then
+--     vim.env.TS_MODULES_INSTALLED = "all"
+--     modules = "all"
+-- else
+--     vim.env.TS_MODULES_INSTALLED = vim.fn.join(modules, ',')
+-- end
 
 -- No need to auto install modules when running in headless mode. Specific
 -- command will be used instead.
-if #vim.api.nvim_list_uis() == 0 then
-    vim.env.TS_MODULES_INSTALLED = "none"
-    modules = {}
-end
+-- if #vim.api.nvim_list_uis() == 0 then
+--     vim.env.TS_MODULES_INSTALLED = "none"
+--     modules = {}
+-- end
 
 configs.setup({
-    ensure_installed = modules, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+    ensure_installed = {"bash", "lua", "c_sharp"}, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
     sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
     ignore_install = {}, -- List of parsers to ignore installing
     autopairs = {

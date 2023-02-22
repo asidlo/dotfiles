@@ -269,31 +269,46 @@ M.startup = function()
         -- LSP
         use({
             'neovim/nvim-lspconfig',
+            config = function()
+                require('user.lspconfig')
+            end
             -- after = "nvim-lsp-installer",
         })
         use({
-            'williamboman/nvim-lsp-installer',
-            -- opt = true,
-            -- setup = function()
-            --     packer_lazy_load "nvim-lsp-installer"
-            --     -- reload the current file so lsp actually starts for it
-            --     vim.defer_fn(function()
-            --         vim.cmd 'if &ft == "packer" | echo "" | else | silent! e %'
-            --     end, 0)
-            -- end,
+            'williamboman/mason.nvim',
+            config = function()
+                require('user.mason')
+            end
         })
+        use({
+            'williamboman/mason-lspconfig.nvim',
+            config = function()
+                require('user.mason-lspconfig')
+            end
+        })
+        -- use({
+        --     'williamboman/nvim-lsp-installer',
+        --     -- opt = true,
+        --     -- setup = function()
+        --     --     packer_lazy_load "nvim-lsp-installer"
+        --     --     -- reload the current file so lsp actually starts for it
+        --     --     vim.defer_fn(function()
+        --     --         vim.cmd 'if &ft == "packer" | echo "" | else | silent! e %'
+        --     --     end, 0)
+        --     -- end,
+        -- })
         use({
             'tamago324/nlsp-settings.nvim',
             -- config = function()
             --     require('nlspsettings').setup()
             -- end,
         })
-        use({ 'Tastyep/structlog.nvim' })
-        use({
-            'rcarriga/nvim-notify',
-            requires = { 'nvim-telescope/telescope.nvim', 'Tastyep/structlog.nvim' },
-            -- rocks = {'json-lua', 'inspect'}
-        })
+        -- use({ 'Tastyep/structlog.nvim' })
+        -- use({
+        --     'rcarriga/nvim-notify',
+        --     requires = { 'nvim-telescope/telescope.nvim', 'Tastyep/structlog.nvim' },
+        --     -- rocks = {'json-lua', 'inspect'}
+        -- })
         -- use({
         --     "folke/noice.nvim",
         --     event = "VimEnter",
@@ -352,22 +367,22 @@ M.startup = function()
                 require('lsp_signature').setup(options)
             end,
         })
-        use({
-            'ray-x/go.nvim',
-            -- after = 'nvim-lsp-installer',
-            config = function()
-                local path = require('nvim-lsp-installer.core.path')
-                local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
-                require('go').setup({
-                    lsp_keymaps = false,
-                    gopls_cmd = { install_root_dir .. '/gopls/gopls' },
-                    filstruct = 'gopls',
-                    dap_debug = false,
-                    dap_debug_gui = false,
-                })
-            end,
-        })
-        use('leoluz/nvim-dap-go')
+        -- use({
+        --     'ray-x/go.nvim',
+        --     -- after = 'nvim-lsp-installer',
+        --     config = function()
+        --         local path = require('nvim-lsp-installer.core.path')
+        --         local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
+        --         require('go').setup({
+        --             lsp_keymaps = false,
+        --             gopls_cmd = { install_root_dir .. '/gopls/gopls' },
+        --             filstruct = 'gopls',
+        --             dap_debug = false,
+        --             dap_debug_gui = false,
+        --         })
+        --     end,
+        -- })
+        -- use('leoluz/nvim-dap-go')
         -- use({
         --     'simrat39/rust-tools.nvim',
         --     -- after = 'nvim-lsp-installer',
@@ -403,7 +418,7 @@ M.startup = function()
         --         })
         --     end,
         -- })
-        use('mfussenegger/nvim-jdtls')
+        -- use('mfussenegger/nvim-jdtls')
         use({
             'simrat39/symbols-outline.nvim',
             setup = function()

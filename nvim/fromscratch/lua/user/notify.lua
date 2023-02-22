@@ -49,7 +49,7 @@ function M.setup()
     end
 
     notify.setup(opts)
-    vim.notify = notify
+    -- vim.notify = notify
 end
 
 local format_json = function(msg)
