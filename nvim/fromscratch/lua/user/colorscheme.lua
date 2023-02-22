@@ -46,7 +46,7 @@ if not ok_colors then
         vim.api.nvim_set_hl(0, 'DiffChange', { bg = nil, fg = 'yellow' })
         vim.api.nvim_set_hl(0, 'SignColumn', { bg = nil })
     end)
-    vim.notify('Unable to load tokyonight.colors', vim.log.levels.WARN, {title = 'Missing Dependencies'})
+    -- vim.notify('Unable to load tokyonight.colors', vim.log.levels.WARN, {title = 'Missing Dependencies'})
 else
     M.colors = colors.setup()
     M.change('tokyonight', function()
