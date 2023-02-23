@@ -1,6 +1,8 @@
-vim.defer_fn(function()
-  pcall(require, "impatient")
-end, 0)
+local present, impatient = pcall(require, 'impatient')
+
+if present then
+    impatient.enable_profile()
+end
 
 require('user.colorscheme')
 
