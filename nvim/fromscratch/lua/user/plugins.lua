@@ -367,21 +367,17 @@ M.startup = function()
                 require('lsp_signature').setup(options)
             end,
         })
-        -- use({
-        --     'ray-x/go.nvim',
-        --     -- after = 'nvim-lsp-installer',
-        --     config = function()
-        --         local path = require('nvim-lsp-installer.core.path')
-        --         local install_root_dir = path.concat({ vim.fn.stdpath('data'), 'lsp_servers' })
-        --         require('go').setup({
-        --             lsp_keymaps = false,
-        --             gopls_cmd = { install_root_dir .. '/gopls/gopls' },
-        --             filstruct = 'gopls',
-        --             dap_debug = false,
-        --             dap_debug_gui = false,
-        --         })
-        --     end,
-        -- })
+        use({
+            'ray-x/go.nvim',
+            -- after = 'nvim-lsp-installer',
+            config = function()
+                require('go').setup({
+                    lsp_keymaps = false,
+                    dap_debug = false,
+                    dap_debug_gui = false,
+                })
+            end,
+        })
         -- use('leoluz/nvim-dap-go')
         -- use({
         --     'simrat39/rust-tools.nvim',
