@@ -378,11 +378,7 @@ M.startup = function()
             'ray-x/go.nvim',
             -- after = 'nvim-lsp-installer',
             config = function()
-                require('go').setup({
-                    lsp_keymaps = false,
-                    dap_debug = false,
-                    dap_debug_gui = false,
-                })
+                require('user.go')
             end,
         })
         -- use('leoluz/nvim-dap-go')
