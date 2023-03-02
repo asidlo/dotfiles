@@ -28,7 +28,10 @@ local options = {
         "docker-compose-language-service",
         "bicep-lsp",
         "clangd",
-        "cmake-language-server"
+        "cmake-language-server",
+        "marksman",
+        "prosemd-lsp",
+        "markdownlint"
     },
     PATH = "skip",
     ui = {

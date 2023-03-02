@@ -179,7 +179,8 @@ M.on_attach = function(client, bufnr)
     end
     lspsig.on_attach()
 
-    if client.name ~= 'null-ls' then
+    local blacklist_clients = { 'null-ls', 'prosemd_lsp' }
+    if not vim.tbl_contains(blacklist_clients, client.name) then
         local navic_ok, navic = pcall(require, 'nvim-navic')
         if not navic_ok then
             return

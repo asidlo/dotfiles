@@ -137,13 +137,13 @@ local lsp_client = {
             -- end
         end
 
-        if #buf_client_names > 1 then
-            for index, value in ipairs(buf_client_names) do
-                if value == 'null-ls' then
-                    table.remove(buf_client_names, index)
-                end
-            end
-        end
+        -- if #buf_client_names > 1 then
+        --     for index, value in ipairs(buf_client_names) do
+        --         if value == 'null-ls' then
+        --             table.remove(buf_client_names, index)
+        --         end
+        --     end
+        -- end
 
         return '  ' .. table.concat(buf_client_names, ', ')
     end,

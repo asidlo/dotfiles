@@ -286,6 +286,14 @@ M.startup = function()
                 require('user.mason-lspconfig')
             end
         })
+        use('jose-elias-alvarez/null-ls.nvim')
+        use({
+            'jay-babu/mason-null-ls.nvim',
+            requires = { 'jose-elias-alvarez/null-ls.nvim' },
+            config = function()
+                require('user.mason-null-ls')
+            end
+        })
         -- use({
         --     'williamboman/nvim-lsp-installer',
         --     -- opt = true,
@@ -321,7 +329,6 @@ M.startup = function()
         --         "rcarriga/nvim-notify",
         --     }
         -- })
-        use('jose-elias-alvarez/null-ls.nvim')
         use('Pocco81/dap-buddy.nvim')
         use('b0o/schemastore.nvim')
         use({
