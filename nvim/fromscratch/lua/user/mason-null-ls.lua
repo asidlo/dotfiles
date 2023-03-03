@@ -22,6 +22,5 @@ mason_null_ls.setup_handlers {
         null_ls.register(null_ls.builtins.diagnostics.markdownlint.with({
             extra_args = { '-c', home .. '/.markdownlint.json' }
         }))
-        null_ls.register(null_ls.builtins.formatting.markdownlint)
     end,
 }

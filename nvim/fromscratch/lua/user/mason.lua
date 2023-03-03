@@ -31,7 +31,9 @@ local options = {
         "cmake-language-server",
         "marksman",
         "prosemd-lsp",
-        "markdownlint"
+        "markdownlint",
+        "prettierd",
+        "shfmt"
     },
     PATH = "skip",
     ui = {
