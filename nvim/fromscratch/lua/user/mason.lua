@@ -33,7 +33,9 @@ local options = {
         "prosemd-lsp",
         "markdownlint",
         "prettierd",
-        "shfmt"
+        "shfmt",
+        "typescript-language-server",
+        "eslint_d"
     },
     PATH = "skip",
     ui = {

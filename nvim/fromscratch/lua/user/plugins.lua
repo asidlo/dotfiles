@@ -294,6 +294,7 @@ M.startup = function()
                 require('user.mason-null-ls')
             end
         })
+        use('github/copilot.vim')
         -- use({
         --     'williamboman/nvim-lsp-installer',
         --     -- opt = true,
