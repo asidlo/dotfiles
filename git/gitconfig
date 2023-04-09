@@ -92,4 +92,4 @@
     # slowprompt = !git config --local --unset status.showUntrackedFiles
     # st  = status -sb -unormal
 [init]
-	defaultBranch = master
+	defaultBranch = main
