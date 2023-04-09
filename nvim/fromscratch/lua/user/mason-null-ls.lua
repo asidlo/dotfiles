@@ -13,14 +13,16 @@ if not home then
     home = os.getenv('HOMEPATH')
 end
 
-mason_null_ls.setup({ automatic_setup = true })
-mason_null_ls.setup_handlers {
-    function(source_name, methods)
-        require("mason-null-ls.automatic_setup")(source_name, methods)
-    end,
-    markdownlint = function(_, _)
-        null_ls.register(null_ls.builtins.diagnostics.markdownlint.with({
-            extra_args = { '-c', home .. '/.markdownlint.json' }
-        }))
-    end,
-}
+mason_null_ls.setup({
+    automatic_setup = true,
+    handlers = {
+        function(source_name, methods)
+            require("mason-null-ls.automatic_setup")(source_name, methods)
+        end,
+        markdownlint = function(_, _)
+            null_ls.register(null_ls.builtins.diagnostics.markdownlint.with({
+                extra_args = { '-c', home .. '/.markdownlint.json' }
+            }))
+        end,
+    }
+})

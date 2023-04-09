@@ -28,7 +28,6 @@ configs.setup({
         "lua",
         "c_sharp",
         "vim",
-        "help",
         "rust",
         "jsonc",
         "make",
