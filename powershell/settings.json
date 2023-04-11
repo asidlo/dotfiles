@@ -281,6 +281,7 @@
                 "source": "Windows.Terminal.VisualStudio"
             },
             {
+                // az vm start --resource-group azure-jump-box --name ajb-vm-20220518 --subscription b85d32d2-bdbe-4bff-808a-c04ebde9c08b &&
                 "commandline": "wsl.exe -- ssh asidlo@ajb.eastus.cloudapp.azure.com",
                 "guid": "{523a600a-2166-4f9a-b688-2525d0e760a4}",
                 "hidden": false,
