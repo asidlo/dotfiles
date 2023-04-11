@@ -35,7 +35,8 @@ local options = {
         "prettierd",
         "shfmt",
         "typescript-language-server",
-        "eslint_d"
+        "eslint_d",
+        "yaml-language-server"
     },
     PATH = "skip",
     ui = {

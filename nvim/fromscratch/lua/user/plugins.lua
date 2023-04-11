@@ -112,6 +112,12 @@ M.startup = function()
         -- }
 
         use({
+            'karb94/neoscroll.nvim',
+            config = function ()
+                require('neoscroll').setup()
+            end
+        })
+        use({
             'numToStr/Comment.nvim',
             config = function()
                 require('user.comment')
