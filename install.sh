@@ -199,7 +199,7 @@ if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
         ~/.local/bin/bob use stable
         
         # Add current neovim version to PATH
-        ln -svf ~/.local/share/neovim/bin/nvim ~/.local/bin/nvim
+        ln -svf ~/.local/share/bob/nvim-bin/nvim ~/.local/bin/nvim
     else
         ~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
     fi
