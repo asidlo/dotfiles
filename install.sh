@@ -64,18 +64,15 @@ echo "- INSTALL_NODE=$INSTALL_NODE"
 echo "- INSTALL_NVIM=$INSTALL_NVIM"
 
 USER=$(whoami)
-is_root()
-{
+is_root() {
     [ "$USER" != "" ] && [ "$USER" == "root" ]
 }
 
-
-install_npm()
-{
-    command -v npm > /dev/null && return 0
+install_npm() {
+    command -v npm >/dev/null && return 0
 
     # Install nvm for npm and nodejs
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash 
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -87,9 +84,8 @@ install_npm()
     fi
 }
 
-install_cargo()
-{
-    command -v cargo > /dev/null 2>&1 && return 0
+install_cargo() {
+    command -v cargo >/dev/null 2>&1 && return 0
 
     # Install cargo for rust dev
     curl https://sh.rustup.rs -sSf | sh -s -- -y
@@ -113,6 +109,7 @@ ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
 ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
 ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
 ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
+ln -sfv "$DOTFILES_DIR/misc/hushlogin" ~/.hushlogin
 
 mkdir -p ~/.omnisharp
 ln -sfv "$DOTFILES_DIR/misc/omnisharp.json" ~/.omnisharp/omnisharp.json
@@ -145,7 +142,7 @@ curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 
 # Install zsh
 # codespaces adds a zlogin by default
-if ! type zsh > /dev/null 2>&1; then
+if ! type zsh >/dev/null 2>&1; then
     if [ -f /etc/zsh/zlogin ]; then
         sudo mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
     fi
@@ -173,8 +170,8 @@ sudo apt-get install locales -y
 
 # Ensure at least the en_US.UTF-8 UTF-8 locale is available.
 # Common need for both applications and things like the agnoster ZSH theme.
-if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen > /dev/null; then
-    sudo bash -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen' 
+if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen >/dev/null; then
+    sudo bash -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen'
     sudo locale-gen
 fi
 
@@ -187,17 +184,17 @@ if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
         # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
         latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
         echo "Using version $latest_tag"
-        
+
         curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
         unzip /tmp/bob.zip -d /tmp/bob
         chmod +x /tmp/bob/bob
         mv /tmp/bob/bob ~/.local/bin
         rm -f /tmp/bob.zip && rm -rf /tmp/bob
-        
+
         # Install nightly neovim
         mkdir -p ~/.local/share
         ~/.local/bin/bob use stable
-        
+
         # Add current neovim version to PATH
         ln -svf ~/.local/share/bob/nvim-bin/nvim ~/.local/bin/nvim
     else
@@ -218,18 +215,18 @@ if [ "$INSTALL_DOTNET" != "" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
     wget https://packages.microsoft.com/config/ubuntu/"$UBUNTU_VERSION"/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     sudo dpkg -i packages-microsoft-prod.deb
     rm packages-microsoft-prod.deb
-    sudo apt-get update; \
-      sudo apt-get install -y apt-transport-https && \
-      sudo apt-get update && \
-      sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
+    sudo apt-get update
+    sudo apt-get install -y apt-transport-https &&
+        sudo apt-get update &&
+        sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
 
     # dotnet debugger deps for netcoredbg
     # https://stackoverflow.com/a/66465559
-#     sudo apt-get update
-#     sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
-#     sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-#     sudo apt-get update
-#     sudo apt-get install -y --only-upgrade libstdc++6
+    #     sudo apt-get update
+    #     sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
+    #     sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    #     sudo apt-get update
+    #     sudo apt-get install -y --only-upgrade libstdc++6
 
     curl -L https://github.com/Samsung/netcoredbg/releases/download/"$NETCOREDBG_VERSION"/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
     tar xzvf /tmp/netcoredbg-linux-amd64.tar.gz -C /tmp

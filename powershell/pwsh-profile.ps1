@@ -1,11 +1,28 @@
-#--------------------------------------------------------------
-# Module Imports
-#--------------------------------------------------------------
-Import-Module -Name PSReadLine -MinimumVersion 2.1.0 
-Import-Module posh-git 
-Import-Module Get-ChildItemColor
-Import-Module DockerCompletion
-Import-Module PSFzf
+$modules = @(
+    "PSReadLine",
+    "posh-git",
+    "Get-ChildItemColor",
+    "DockerCompletion",
+    "PSFzf"
+)
+
+foreach ($module in $modules) {
+    if (-Not(Get-Module -ListAvailable -Name $module)) {
+        Install-Module -Force -Name $module -Scope CurrentUser
+    }
+    if ($module -eq "PSReadLine") {
+        try {
+            Import-Module -Name $module -MinimumVersion 2.1.0 -ErrorAction Ignore
+        }
+        catch {
+            Install-Module -Name $module -MinimumVersion 2.1.0 -Force
+            Import-Module -Name $module -MinimumVersion 2.1.0
+        }
+    }
+    else {
+        Import-Module -Name $module
+    }
+}
 
 #--------------------------------------------------------------
 # PSReadline Config
@@ -49,22 +66,22 @@ Set-PSReadLineKeyHandler -Key Ctrl+C -Function Copy
 Set-PSReadLineKeyHandler -Key Ctrl+v -Function Paste
 
 Set-PSReadLineOption -Colors @{
-#     "ContinuationPrompt" = [ConsoleColor]:: Magenta
-#     "Emphasis"           = [ConsoleColor]:: Gray
-#     "Error"              = [ConsoleColor]:: Red
-#     "Selection"          = [ConsoleColor]:: Cyan
-#     "Default"            = [ConsoleColor]:: White
-#     "Comment"            = [ConsoleColor]:: Gray
-#     "Keyword"            = [ConsoleColor]:: Green
-#     "String"             = [ConsoleColor]:: White
-    "Operator"           = [ConsoleColor]:: Gray
-#     "Variable"           = [ConsoleColor]:: Blue
-#     "Command"            = [ConsoleColor]:: Yellow
-    "Parameter"          = [ConsoleColor]:: Gray
-#     "Type"               = [ConsoleColor]:: Yellow
-#     "Number"             = [ConsoleColor]:: White
-#     "Member"             = [ConsoleColor]:: Cyan
-    "InlinePrediction"   = [ConsoleColor]:: DarkGray
+    #     "ContinuationPrompt" = [ConsoleColor]:: Magenta
+    #     "Emphasis"           = [ConsoleColor]:: Gray
+    #     "Error"              = [ConsoleColor]:: Red
+    #     "Selection"          = [ConsoleColor]:: Cyan
+    #     "Default"            = [ConsoleColor]:: White
+    #     "Comment"            = [ConsoleColor]:: Gray
+    #     "Keyword"            = [ConsoleColor]:: Green
+    #     "String"             = [ConsoleColor]:: White
+    "Operator"         = [ConsoleColor]:: Gray
+    #     "Variable"           = [ConsoleColor]:: Blue
+    #     "Command"            = [ConsoleColor]:: Yellow
+    "Parameter"        = [ConsoleColor]:: Gray
+    #     "Type"               = [ConsoleColor]:: Yellow
+    #     "Number"             = [ConsoleColor]:: White
+    #     "Member"             = [ConsoleColor]:: Cyan
+    "InlinePrediction" = [ConsoleColor]:: DarkGray
 }
 
 #--------------------------------------------------------------
@@ -134,9 +151,9 @@ function Stop-JavaProcesses {
 # Dotnet cli completion
 Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
     param($commandName, $wordToComplete, $cursorPosition)
-        dotnet complete --position $cursorPosition "$wordToComplete" | ForEach-Object {
-           [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
-        }
+    dotnet complete --position $cursorPosition "$wordToComplete" | ForEach-Object {
+        [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+    }
 }
 
 #--------------------------------------------------------------

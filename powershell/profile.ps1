@@ -1,3 +1,26 @@
+$modules = @(
+    "PSReadLine",
+    "PSFzf"
+)
+
+foreach ($module in $modules) {
+    if (-Not(Get-Module -ListAvailable -Name $module)) {
+        Install-Module -Force -Name $module -Scope CurrentUser
+    }
+    if ($module -eq "PSReadLine") {
+        try {
+            Import-Module -Name $module -MinimumVersion 2.1.0 -ErrorAction Ignore
+        }
+        catch {
+            Install-Module -Name $module -MinimumVersion 2.1.0 -Force
+            Import-Module -Name $module -MinimumVersion 2.1.0
+        }
+    }
+    else {
+        Import-Module -Name $module
+    }
+}
+
 # https://joonro.github.io/blog/posts/powershell-customizations.html
 # https://hodgkins.io/ultimate-powershell-prompt-and-git-setup
 # - https://github.com/MattHodge/MattHodgePowerShell/blob/master/PowerShellProfile/Microsoft.PowerShell_profile.ps1
@@ -37,8 +60,7 @@ function prompt {
     "`n$('>' * ($nestedPromptLevel + 1)) "
 }
 
-Import-Module -Name PSReadLine -MinimumVersion 2.1.0
-Import-Module PSFzf
+Import-Module -Name PSReadLine 
 
 Set-PSReadLineOption -EditMode Emacs
 
@@ -79,9 +101,9 @@ Set-PSReadLineKeyHandler -Key Ctrl+C -Function Copy
 Set-PSReadLineKeyHandler -Key Ctrl+v -Function Paste
 
 Set-PSReadLineOption -Colors @{
-    "Operator"           = [ConsoleColor]:: Gray
-    "Parameter"          = [ConsoleColor]:: Gray
-    "InlinePrediction"   = [ConsoleColor]:: DarkGray
+    "Operator"         = [ConsoleColor]:: Gray
+    "Parameter"        = [ConsoleColor]:: Gray
+    "InlinePrediction" = [ConsoleColor]:: DarkGray
 }
 
 $host.PrivateData.ProgressBackgroundColor = "DarkGray"
