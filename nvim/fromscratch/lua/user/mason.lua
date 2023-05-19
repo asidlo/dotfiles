@@ -36,7 +36,8 @@ local options = {
         "shfmt",
         "typescript-language-server",
         "eslint_d",
-        "yaml-language-server"
+        "yaml-language-server",
+        "helm-ls"
     },
     PATH = "skip",
     ui = {

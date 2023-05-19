@@ -600,6 +600,7 @@ M.startup = function()
                 require('user.hydra').setup()
             end
         }
+        use { 'towolf/vim-helm' }
     end)
 end
 
