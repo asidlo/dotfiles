@@ -89,3 +89,5 @@
     # fastprompt = !git config --local status.showUntrackedFiles no
     # slowprompt = !git config --local --unset status.showUntrackedFiles
     # st  = status -sb -unormal
+[safe]
+	directory = C:/Users/andrewsidlo/AppData/Local/dotfiles
