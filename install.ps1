@@ -273,7 +273,8 @@ New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\.gitconfig" 
 
 # Check if running in WSL and symlink from C:\tools\neovim\bin\win32yank.exe to ~/.local/bin/win32yank.exe and
 # make sure to symlink /etc/wsl.conf to the one in this repo
-wsl -- mkdir -p ~/.local/src && git clone ~/.local/src/dotfiles
+wsl -- mkdir -p ~/.local/src
+wsl -- git clone https://github.com/asidlo/dotfiles ~/.local/src/dotfiles
 wsl -- ln -svf ~/.local/src/dotfiles/etc/wsl.conf /etc/wsl.conf
 wsl --shutdown
 wsl -- INSTALL_ALL=1 GITCONFIG="gitconfig.work" ~/.local/src/dofiles/install.sh
