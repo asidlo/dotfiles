@@ -222,11 +222,11 @@ if ($ChocoError) {
     Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 
-if ($Packages -eq $null) {
+if ([string]::IsNullOrEmpty($Packages)) {
     $pkgs = $defaultPackages
 }
 else {
-    $pkgs = Get-Content -Raw $Packages | ConvertFrom-Json
+    $pkgs = Get-Content -Raw -Path $Packages | ConvertFrom-Json
 }
 
 ForEach ($pkg in $pkgs) {
@@ -275,13 +275,13 @@ New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\.gitconfig" 
 # make sure to symlink /etc/wsl.conf to the one in this repo
 wsl -- mkdir -p ~/.local/src
 wsl -- git clone https://github.com/asidlo/dotfiles ~/.local/src/dotfiles
-wsl -- ln -svf ~/.local/src/dotfiles/etc/wsl.conf /etc/wsl.conf
+wsl -- sudo ln -svf ~/.local/src/dotfiles/etc/wsl.conf /etc/wsl.conf
 wsl --shutdown
 wsl -- INSTALL_ALL=1 GITCONFIG="gitconfig.work" ~/.local/src/dofiles/install.sh
 wsl -- ln -svf /mnt/c/tools/neovim/bin/win32yank.exe ~/.local/bin/win32yank.exe
 
 # Generate ssh key in wsl
-wsl -- ssh-keygen -f id_rsa -t rsa -N ''
+wsl -- ssh-keygen -f id_rsa -t rsa -N \'\'
 
 # Install clink and copy over files for setup
 
