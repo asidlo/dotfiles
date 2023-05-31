@@ -60,6 +60,28 @@ function prompt {
     "`n$('>' * ($nestedPromptLevel + 1)) "
 }
 
+function IsVirtualTerminalProcessingEnabled {
+    $MethodDefinitions = @'
+[DllImport("kernel32.dll", SetLastError = true)]
+public static extern IntPtr GetStdHandle(int nStdHandle);
+[DllImport("kernel32.dll", SetLastError = true)]
+public static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+'@
+    $Kernel32 = Add-Type -MemberDefinition $MethodDefinitions -Name 'Kernel32' -Namespace 'Win32' -PassThru
+    $hConsoleHandle = $Kernel32::GetStdHandle(-11) # STD_OUTPUT_HANDLE
+    $mode = 0
+    $Kernel32::GetConsoleMode($hConsoleHandle, [ref]$mode) >$null
+    if ($mode -band 0x0004) {
+        # 0x0004 ENABLE_VIRTUAL_TERMINAL_PROCESSING
+        return $true
+    }
+    return $false
+}
+
+function CanUsePredictionSource {
+    return (! [System.Console]::IsOutputRedirected) -and (IsVirtualTerminalProcessingEnabled)
+}
+
 Import-Module -Name PSReadLine 
 
 Set-PSReadLineOption -EditMode Emacs
@@ -72,7 +94,10 @@ Set-PSReadLineOption -HistorySearchCursorMovesToEnd
 Set-PSReadLineOption -HistorySaveStyle SaveIncrementally
 Set-PSReadLineOption -MaximumHistoryCount 4000
 
-Set-PSReadLineOption -PredictionSource History
+# https://github.com/PowerShell/PSReadLine/issues/2046
+if (CanUsePredictionSource) {
+    Set-PSReadLineOption -PredictionSource History
+}
 
 # history substring search
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
