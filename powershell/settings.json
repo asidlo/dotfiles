@@ -182,12 +182,13 @@
             },
             {
                 // "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 26ada057; cd D:\\Networking-nfv; .\\AddModules.ps1; ipmo -Force D:\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell f069c930; cd D:\\Networking-nfv; .\\AddModules.ps1; ipmo -Force D:\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
+                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell f069c930; cd C:\\src\\Networking-nfv; .\\AddModules.ps1; ipmo -Force C:\\src\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
                 "guid": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\vs2022.png",
                 "name": "Networking-nfv",
-                "startingDirectory": "D:\\Networking-nfv"
+                // "startingDirectory": "D:\\Networking-nfv"
+                "startingDirectory": "C:\\src\\Networking-nfv"
             },
             {
                 "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b2559349; cd D:\\Networking-nfv; .\\AddModules.ps1; ipmo -Force D:\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
@@ -198,7 +199,8 @@
                 "startingDirectory": "D:\\Networking-nfv"
             },
             {
-                "commandline": "powershell -noe -c \"cd D:\\Ev2\\Ev2_PowerShell; .\\AzureServiceDeployClient.ps1 \"",
+                // "commandline": "powershell -noe -c \"cd D:\\Ev2\\Ev2_PowerShell; .\\AzureServiceDeployClient.ps1 \"",
+                "commandline": "powershell -noe -c \"cd C:\\src\\Ev2\\Ev2_PowerShell; .\\AzureServiceDeployClient.ps1 \"",
                 "guid": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\vs2019.png",
