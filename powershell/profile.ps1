@@ -8,12 +8,10 @@ foreach ($module in $modules) {
         Install-Module -Force -Name $module -Scope CurrentUser
     }
     if ($module -eq "PSReadLine") {
-        try {
-            Import-Module -Name $module -MinimumVersion 2.1.0 -ErrorAction Ignore
-        }
-        catch {
+        Import-Module -Name $module -MinimumVersion 2.1.0 -ErrorAction SilentlyContinue -ErrorVariable ReadlineImportError
+        if ($ReadlineImportError -ne $nul) {
             Install-Module -Name $module -MinimumVersion 2.1.0 -Force
-            Import-Module -Name $module -MinimumVersion 2.1.0
+            Import-Module -Name $module -MinimumVersion 2.1.0 -Force -NoClobber
         }
     }
     else {
