@@ -86,6 +86,7 @@
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 [safe]
 	directory = C:/Users/andrewsidlo/AppData/Local/dotfiles
+	directory = %(prefix)///wsl.localhost/Ubuntu/azure/appgw
 [credential]
 	helper = manager
 	useHttpPath = true
