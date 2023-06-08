@@ -290,3 +290,14 @@ wsl -- ssh-keygen -f id_rsa -t rsa -N \'\'
 # Settings > Accounts > Access Work or School > Click on msft account > Info > Sync
 # Make sure to download updates and restart vm
 # Connect to MSFTVpn at least once before any scripts will work
+
+# Figure out issue with starting docker at login
+# $account = "northamerica\andrewsidlo"
+# $npipe = "\\.\pipe\docker_engine"                                                                                 
+# $dInfo = New-Object "System.IO.DirectoryInfo" -ArgumentList $npipe                                               
+# $dSec = $dInfo.GetAccessControl()                                                                                 
+# $fullControl = [System.Security.AccessControl.FileSystemRights]::FullControl                                       
+# $allow = [System.Security.AccessControl.AccessControlType]::Allow                                                  
+# $rule = New-Object "System.Security.AccessControl.FileSystemAccessRule" -ArgumentList $account, $fullControl, $allow
+# $dSec.AddAccessRule($rule)                                                                                        
+# $dInfo.SetAccessControl($dSec)

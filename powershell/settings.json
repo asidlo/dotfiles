@@ -164,16 +164,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b2559349\"",
-                "guid": "{1b88e339-8e3c-54df-8c1d-a50846a1363d}",
-                "hidden": true,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\vs2019.png",
-                "name": "VS2019 Powershell",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                // "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 26ada057}\"",
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell f069c930}\"",
+                "commandline": "pwsh -noe -c \"$vsPath = &(Join-Path 'C:\\Program Files (x86)' '\\Microsoft Visual Studio\\Installer\\vswhere.exe') -property installationpath -latest; Import-Module (Join-Path $vsPath 'Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll'); Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation\"",
                 "guid": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\vs2022.png",
@@ -181,25 +172,14 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                // "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell 26ada057; cd D:\\Networking-nfv; .\\AddModules.ps1; ipmo -Force D:\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell f069c930; cd C:\\src\\Networking-nfv; .\\AddModules.ps1; ipmo -Force C:\\src\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
+                "commandline": "pwsh -noe -c \"$vsPath = &(Join-Path 'C:\\Program Files (x86)' '\\Microsoft Visual Studio\\Installer\\vswhere.exe') -property installationpath -latest; Import-Module (Join-Path $vsPath 'Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll'); Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation; .\\AddModules.ps1; ipmo -Force .\\src\\unittest\\scripts\\NFVUT.psm1\"",
                 "guid": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\vs2022.png",
                 "name": "Networking-nfv",
-                // "startingDirectory": "D:\\Networking-nfv"
                 "startingDirectory": "C:\\src\\Networking-nfv"
             },
             {
-                "commandline": "pwsh -noe -c \"&{Import-Module \"\"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"\"\"; Enter-VsDevShell b2559349; cd D:\\Networking-nfv; .\\AddModules.ps1; ipmo -Force D:\\Networking-nfv\\src\\unittest\\scripts\\NFVUT.psm1}\"",
-                "guid": "{df389664-a316-4b0f-8b9b-e3cd9b1fb07e}",
-                "hidden": true,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\vs2019.png",
-                "name": "Networking-nfv",
-                "startingDirectory": "D:\\Networking-nfv"
-            },
-            {
-                // "commandline": "powershell -noe -c \"cd D:\\Ev2\\Ev2_PowerShell; .\\AzureServiceDeployClient.ps1 \"",
                 "commandline": "powershell -noe -c \"cd C:\\src\\Ev2\\Ev2_PowerShell; .\\AzureServiceDeployClient.ps1 \"",
                 "guid": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}",
                 "hidden": false,
@@ -249,7 +229,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "wsl.exe -- ssh asidlo@ajb.eastus.cloudapp.azure.com",
+                "commandline": "wsl.exe -- ssh asidlo@ajb.eastus.cloudapp.azure.com -i ~/.ssh/DESKTOP-8FFMR4F/id_rsa",
                 "guid": "{523a600a-2166-4f9a-b688-2525d0e760a4}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\tux.png",
@@ -257,12 +237,6 @@
                 "padding": "0,0,-4,0",
                 "scrollbarState": "hidden",
                 "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "guid": "{51855cb2-8cce-5362-8f54-464b92b32386}",
-                "hidden": false,
-                "name": "Ubuntu",
-                "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
             },
             {
                 "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
