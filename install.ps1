@@ -301,3 +301,5 @@ wsl -- ssh-keygen -f id_rsa -t rsa -N \'\'
 # $rule = New-Object "System.Security.AccessControl.FileSystemAccessRule" -ArgumentList $account, $fullControl, $allow
 # $dSec.AddAccessRule($rule)                                                                                        
 # $dInfo.SetAccessControl($dSec)
+
+# TODO (AS): Change multitasking to System > Multitasking > SHow tabs from apps when snapping or pressing alt+tab (dont show tabs)
