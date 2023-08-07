@@ -18,9 +18,15 @@ case $OS in
         local MSEDGE_PATH=/mnt/c/Program\ Files\ \(x86\)/Microsoft/Edge/Application/msedge.exe
         if [ -f "$MSEDGE_PATH" ]; then
             if [ ! -L ~/.local/bin/msedge.exe ]; then
-                ln -svf "$MSEDGE_PATH" ~/.local/bin/msedge.exe
+                ln -sf "$MSEDGE_PATH" ~/.local/bin/msedge.exe
             fi
             export BROWSER=msedge.exe
+        fi
+        local WIN32YANK_PATH=/mnt/c/tools/neovim/nvim-win64/bin/win32yank.exe
+        if [ -f "$WIN32YANK_PATH" ]; then
+            if [ ! -L ~/.local/bin/win32yank.exe ]; then
+                ln -sf "$WIN32YANK_PATH" ~/.local/bin/win32yank.exe
+            fi
         fi
     fi
 	;;
