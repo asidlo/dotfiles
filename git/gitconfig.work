@@ -95,5 +95,15 @@
  	useHttpPath = true
 [safe]
 	directory = /azure/appgw
+	directory = /azure/appgw/src/datapath/nginx
+	directory = /azure/appgw/src/datapath/mods/modsecurity
+	directory = /azure/appgw/src/datapath/mods/ngx-devel-kit
+	directory = /azure/appgw/src/datapath/mods/lua-nginx-module
+	directory = /azure/appgw/src/datapath/mods/echo-nginx-module
+	directory = /azure/appgw/src/Tenant/ConnDraining
+	directory = /azure/appgw/src/datapath/azwaf
+	directory = /azure/appgw/src/datapath/mods/nginx-module-vts
+	directory = /azure/appgw/src/Tools/FloodBuddy/WbClient/WAFBench
+	directory = /azure/appgw/src/datapath/luajit2
 [init]
 	defaultBranch = main

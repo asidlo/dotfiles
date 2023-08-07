@@ -14,6 +14,15 @@ case $OS in
 *$LINUX*)
 	alias ls='ls --color=auto'
 	export GOROOT=/usr/local/go
+    if [[ "$OS" =~ "WSL" ]]; then
+        local MSEDGE_PATH=/mnt/c/Program\ Files\ \(x86\)/Microsoft/Edge/Application/msedge.exe
+        if [ -f "$MSEDGE_PATH" ]; then
+            if [ ! -L ~/.local/bin/msedge.exe ]; then
+                ln -svf "$MSEDGE_PATH" ~/.local/bin/msedge.exe
+            fi
+            export BROWSER=msedge.exe
+        fi
+    fi
 	;;
 esac
 
