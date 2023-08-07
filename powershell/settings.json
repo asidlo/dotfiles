@@ -172,7 +172,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "pwsh -noe -c \"$vsPath = &(Join-Path 'C:\\Program Files (x86)' '\\Microsoft Visual Studio\\Installer\\vswhere.exe') -property installationpath -latest; Import-Module (Join-Path $vsPath 'Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll'); Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation; .\\AddModules.ps1; ipmo -Force .\\src\\unittest\\scripts\\NFVUT.psm1\"",
+                "commandline": "pwsh -noe -c \"$vsPath = &(Join-Path 'C:\\Program Files (x86)' '\\Microsoft Visual Studio\\Installer\\vswhere.exe') -property installationpath -latest; Import-Module (Join-Path $vsPath 'Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll'); Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation; .\\AddModules.ps1\"",
                 "guid": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\vs2022.png",
