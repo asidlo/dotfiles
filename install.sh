@@ -24,6 +24,7 @@ echo "Installing using the following configuration:"
 [ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
 [ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="$(cat /etc/os-release | grep "VERSION_ID" | cut -d"=" -f2 | sed 's/"//g')"
 [ "$BAT_VERSION" != "" ] || BAT_VERSION="$(curl -s -I https://github.com/sharkdp/bat/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
+[ "$NERDFONT_VERSION" != "" ] || NERDFONT_VERSION="$(curl -s -I https://github.com/ryanoasis/nerd-fonts/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
 [ "$GO_VERSION" != "" ] || GO_VERSION="1.19.4"
 [ "$GITCONFIG" != "" ] || GITCONFIG="gitconfig"
 [ "$LUA_VERSION" != "" ] || LUA_VERSION="5.4.4"
@@ -54,6 +55,7 @@ echo "- LUA_VERSION=$LUA_VERSION"
 echo "- LUAROCKS_VERSION=$LUAROCKS_VERSION"
 echo "- JAVA_VERSION=$JAVA_VERSION"
 echo "- NETCOREDBG_VERSION=$NETCOREDBG_VERSION"
+echo "- NERDFONT_VERSION=$NERDFONT_VERSION"
 echo "- INSTALL_MARKDOWN=$INSTALL_MARKDOWN"
 echo "- INSTALL_JAVA=$INSTALL_JAVA"
 echo "- INSTALL_LUA=$INSTALL_LUA"
@@ -136,6 +138,12 @@ rm /tmp/fd.deb
 curl -L https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$BAT_VERSION"_amd64.deb -o /tmp/bat.deb
 sudo apt-get install /tmp/bat.deb
 rm /tmp/bat.deb
+
+# Install nerd-fonts
+curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/"$NERDFONT_VERSION"/Meslo.zip -o /tmp/Meslo.zip
+sudo unzip /tmp/Meslo.zip -d /usr/share/fonts/truetype/meslo
+sudo fc-cache -vf /usr/share/fonts/
+rm /tmp/Meslo.zip
 
 # Install starship
 curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
