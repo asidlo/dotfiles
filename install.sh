@@ -33,14 +33,14 @@ echo "Installing using the following configuration:"
 [ "$NETCOREDBG_VERSION" != "" ] || NETCOREDBG_VERSION="2.2.0-947"
 
 if [ "$INSTALL_ALL" != "" ] && [ "$INSTALL_ALL" -eq 1 ]; then
-    INSTALL_MARKDOWN=1
-    INSTALL_JAVA=1
-    INSTALL_LUA=1
-    INSTALL_BASH=1
-    INSTALL_PYTHON=1
-    INSTALL_DOTNET=1
-    INSTALL_NODE=1
-    INSTALL_NVIM=1
+	INSTALL_MARKDOWN=1
+	INSTALL_JAVA=1
+	INSTALL_LUA=1
+	INSTALL_BASH=1
+	INSTALL_PYTHON=1
+	INSTALL_DOTNET=1
+	INSTALL_NODE=1
+	INSTALL_NVIM=1
 fi
 
 echo "Installing using the following configuration:"
@@ -67,41 +67,41 @@ echo "- INSTALL_NVIM=$INSTALL_NVIM"
 
 USER=$(whoami)
 is_root() {
-    [ "$USER" != "" ] && [ "$USER" == "root" ]
+	[ "$USER" != "" ] && [ "$USER" == "root" ]
 }
 
 install_npm() {
-    command -v npm >/dev/null && return 0
+	command -v npm >/dev/null && return 0
 
-    # Install nvm for npm and nodejs
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+	# Install nvm for npm and nodejs
+	curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-    # Removes decimal to use built in integer math instead of floats
-    if (($(echo "$UBUNTU_VERSION" | sed 's/\.//g') > 1804)); then
-        nvm install --lts
-    else
-        nvm install 16.15.1
-    fi
+	# Removes decimal to use built in integer math instead of floats
+	if (($(echo "$UBUNTU_VERSION" | sed 's/\.//g') > 1804)); then
+		nvm install --lts
+	else
+		nvm install 16.15.1
+	fi
 }
 
 install_cargo() {
-    command -v cargo >/dev/null 2>&1 && return 0
+	command -v cargo >/dev/null 2>&1 && return 0
 
-    # Install cargo for rust dev
-    curl https://sh.rustup.rs -sSf | sh -s -- -y
-    source "$HOME"/.cargo/env
+	# Install cargo for rust dev
+	curl https://sh.rustup.rs -sSf | sh -s -- -y
+	source "$HOME"/.cargo/env
 }
 
 export DEBIAN_FRONTEND=noninteractive
 
 if is_root; then
-    export HOME=/root
+	export HOME=/root
 
-    # Had issues in container with following error: dpkg: error: PATH is not set
-    export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    apt-get update -y && apt-get install sudo -y
+	# Had issues in container with following error: dpkg: error: PATH is not set
+	export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+	apt-get update -y && apt-get install sudo -y
 fi
 sudo apt-get update -y
 
@@ -151,13 +151,13 @@ curl -sS https://starship.rs/install.sh | sudo sh -s -- -y
 # Install zsh
 # codespaces adds a zlogin by default
 if ! type zsh >/dev/null 2>&1; then
-    if [ -f /etc/zsh/zlogin ]; then
-        sudo mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
-    fi
-    sudo apt-get install zsh -y
-    if [ -f /etc/zsh/zlogin.bkp ]; then
-        sudo mv /etc/zsh/zlogin.bkp /etc/zsh/zlogin
-    fi
+	if [ -f /etc/zsh/zlogin ]; then
+		sudo mv /etc/zsh/zlogin /etc/zsh/zlogin.bkp
+	fi
+	sudo apt-get install zsh -y
+	if [ -f /etc/zsh/zlogin.bkp ]; then
+		sudo mv /etc/zsh/zlogin.bkp /etc/zsh/zlogin
+	fi
 fi
 
 # Set zsh as current shell
@@ -166,7 +166,7 @@ sudo chsh -s /bin/zsh "$USER"
 # Install fzf
 mkdir -p ~/.local/src
 if [ ! -d ~/.local/src/fzf/ ]; then
-    git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
+	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
 fi
 ~/.local/src/fzf/install --xdg --key-bindings --completion --no-update-rc --no-bash --no-fish
 ln -svf ~/.local/src/fzf/bin/fzf ~/.local/bin/fzf
@@ -179,42 +179,51 @@ sudo apt-get install locales -y
 # Ensure at least the en_US.UTF-8 UTF-8 locale is available.
 # Common need for both applications and things like the agnoster ZSH theme.
 if ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen >/dev/null; then
-    sudo bash -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen'
-    sudo locale-gen
+	sudo bash -c 'echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen'
+	sudo locale-gen
 fi
 
+# Install powershell
+sudo apt-get update &&
+	sudo apt-get install -y wget apt-transport-https software-properties-common &&
+	wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" &&
+	sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && sudo apt-get update &&
+	sudo apt-get install -y powershell
+
+mkdir -p ~/.config/powershell && ln -svf "$DOTFILES_DIR/powershell/pwsh-profile.linux.ps1" ~/.config/powershell/profile.ps1
+
 if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
-    # Install nvim runtime prerequisites
-    sudo apt-get install build-essential tmux wget curl zip unzip -y
+	# Install nvim runtime prerequisites
+	sudo apt-get install build-essential tmux wget curl zip unzip -y
 
-    # Install nvim
-    if (($(echo "$UBUNTU_VERSION" | sed 's/\.//g') > 1804)); then
-        # https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
-        latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
-        echo "Using version $latest_tag"
+	# Install nvim
+	if (($(echo "$UBUNTU_VERSION" | sed 's/\.//g') > 1804)); then
+		# https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
+		latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
+		echo "Using version $latest_tag"
 
-        curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
-        unzip /tmp/bob.zip -d /tmp/bob
-        chmod +x /tmp/bob/bob
-        mv /tmp/bob/bob ~/.local/bin
-        rm -f /tmp/bob.zip && rm -rf /tmp/bob
+		curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
+		unzip /tmp/bob.zip -d /tmp/bob
+		chmod +x /tmp/bob/bob
+		mv /tmp/bob/bob ~/.local/bin
+		rm -f /tmp/bob.zip && rm -rf /tmp/bob
 
-        # Install nightly neovim
-        mkdir -p ~/.local/share
-        ~/.local/bin/bob use stable
+		# Install nightly neovim
+		mkdir -p ~/.local/share
+		~/.local/bin/bob use stable
 
-        # Add current neovim version to PATH
-        ln -svf ~/.local/share/bob/nvim-bin/nvim ~/.local/bin/nvim
-    else
-        ~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
-    fi
+		# Add current neovim version to PATH
+		ln -svf ~/.local/share/bob/nvim-bin/nvim ~/.local/bin/nvim
+	else
+		~/.local/src/dotfiles/nvim/download-stable-nvim-local.sh
+	fi
 
-    # Add symlink for config
-    [ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/fromscratch" ~/.config/nvim
+	# Add symlink for config
+	[ -L ~/.config/nvim ] || ln -sv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
 fi
 
 if [ "$INSTALL_NODE" != "" ] && [ "$INSTALL_NODE" -eq 1 ]; then
-    install_npm
+	install_npm
 fi
 
 # Install dotnet
@@ -222,84 +231,84 @@ fi
 # https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu#register-the-microsoft-package-repository
 # https://learn.microsoft.com/en-us/dotnet/core/install/linux-package-mixup?pivots=os-linux-ubuntu#i-need-a-version-of-net-that-isnt-provided-by-my-linux-distribution
 if [ "$INSTALL_DOTNET" != "" ] && [ "$INSTALL_DOTNET" -eq 1 ]; then
-    wget https://packages.microsoft.com/config/ubuntu/"$UBUNTU_VERSION"/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-    sudo dpkg -i packages-microsoft-prod.deb
-    rm packages-microsoft-prod.deb
-    sudo apt-get update
-    sudo apt-get install -y apt-transport-https &&
-        sudo apt-get update &&
-        sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
+	wget https://packages.microsoft.com/config/ubuntu/"$UBUNTU_VERSION"/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+	sudo dpkg -i packages-microsoft-prod.deb
+	rm packages-microsoft-prod.deb
+	sudo apt-get update
+	sudo apt-get install -y apt-transport-https &&
+		sudo apt-get update &&
+		sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
 
-    # dotnet debugger deps for netcoredbg
-    # https://stackoverflow.com/a/66465559
-    #     sudo apt-get update
-    #     sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
-    #     sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    #     sudo apt-get update
-    #     sudo apt-get install -y --only-upgrade libstdc++6
+	# dotnet debugger deps for netcoredbg
+	# https://stackoverflow.com/a/66465559
+	#     sudo apt-get update
+	#     sudo apt-get install -y wget gcc-8 unzip libssl1.0.0 software-properties-common
+	#     sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+	#     sudo apt-get update
+	#     sudo apt-get install -y --only-upgrade libstdc++6
 
-    curl -L https://github.com/Samsung/netcoredbg/releases/download/"$NETCOREDBG_VERSION"/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
-    tar xzvf /tmp/netcoredbg-linux-amd64.tar.gz -C /tmp
-    mv /tmp/netcoredbg/* ~/.local/bin
-    rm /tmp/netcoredbg-linux-amd64.tar.gz && rm -rf /tmp/netcoredbg
+	curl -L https://github.com/Samsung/netcoredbg/releases/download/"$NETCOREDBG_VERSION"/netcoredbg-linux-amd64.tar.gz -o /tmp/netcoredbg-linux-amd64.tar.gz
+	tar xzvf /tmp/netcoredbg-linux-amd64.tar.gz -C /tmp
+	mv /tmp/netcoredbg/* ~/.local/bin
+	rm /tmp/netcoredbg-linux-amd64.tar.gz && rm -rf /tmp/netcoredbg
 fi
 
 if [ "$INSTALL_PYTHON" != "" ] && [ "$INSTALL_PYTHON" -eq 1 ]; then
-    sudo apt-get install python3-venv python3-pip -y
-    /usr/bin/python3 -m pip install pynvim
-    pip3 install black
+	sudo apt-get install python3-venv python3-pip -y
+	/usr/bin/python3 -m pip install pynvim
+	pip3 install black
 fi
 
 if [ "$INSTALL_GO" != "" ] && [ "$INSTALL_GO" -eq 1 ]; then
-    curl -L https://go.dev/dl/go"$GO_VERSION".linux-amd64.tar.gz -o /tmp/go.tar.gz
-    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz
-    rm /tmp/go.tar.gz
+	curl -L https://go.dev/dl/go"$GO_VERSION".linux-amd64.tar.gz -o /tmp/go.tar.gz
+	sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+	rm /tmp/go.tar.gz
 fi
 
 # Install sdkman for java
 if [ "$INSTALL_JAVA" != "" ] && [ "$INSTALL_JAVA" -eq 1 ]; then
-    curl -s "https://get.sdkman.io" | bash
-    source "$HOME/.sdkman/bin/sdkman-init.sh"
-    sdk i java "$JAVA_VERSION"
+	curl -s "https://get.sdkman.io" | bash
+	source "$HOME/.sdkman/bin/sdkman-init.sh"
+	sdk i java "$JAVA_VERSION"
 fi
 
 # Install formatters/linters
 if [ "$INSTALL_LUA" != "" ] && [ "$INSTALL_LUA" -eq 1 ]; then
-    install_cargo && cargo install stylua
+	install_cargo && cargo install stylua
 
-    sudo apt-get install build-essential libreadline-dev unzip -y
-    curl -R http://www.lua.org/ftp/lua-"$LUA_VERSION".tar.gz -o /tmp/lua.tar.gz
-    cd /tmp
-    tar -zxf lua.tar.gz
-    rm /tmp/lua.tar.gz
-    cd /tmp/lua-"$LUA_VERSION"
-    make linux test
-    sudo make install
-    cd ..
-    rm -rf ./lua-"$LUA_VERSION"
+	sudo apt-get install build-essential libreadline-dev unzip -y
+	curl -R http://www.lua.org/ftp/lua-"$LUA_VERSION".tar.gz -o /tmp/lua.tar.gz
+	cd /tmp
+	tar -zxf lua.tar.gz
+	rm /tmp/lua.tar.gz
+	cd /tmp/lua-"$LUA_VERSION"
+	make linux test
+	sudo make install
+	cd ..
+	rm -rf ./lua-"$LUA_VERSION"
 
-    wget https://luarocks.org/releases/luarocks-"$LUAROCKS_VERSION".tar.gz
-    tar zxpf luarocks-"$LUAROCKS_VERSION".tar.gz
-    rm luarocks-"$LUAROCKS_VERSION".tar.gz
-    cd luarocks-"$LUAROCKS_VERSION"
-    ./configure --with-lua-include=/usr/local/include
-    make
-    sudo make install
-    cd ..
-    rm -rf luarocks-"$LUAROCKS_VERSION"
+	wget https://luarocks.org/releases/luarocks-"$LUAROCKS_VERSION".tar.gz
+	tar zxpf luarocks-"$LUAROCKS_VERSION".tar.gz
+	rm luarocks-"$LUAROCKS_VERSION".tar.gz
+	cd luarocks-"$LUAROCKS_VERSION"
+	./configure --with-lua-include=/usr/local/include
+	make
+	sudo make install
+	cd ..
+	rm -rf luarocks-"$LUAROCKS_VERSION"
 
-    sudo luarocks install luacheck
-    sudo luarocks install lanes
+	sudo luarocks install luacheck
+	sudo luarocks install lanes
 fi
 
 if [ "$INSTALL_BASH" != "" ] && [ "$INSTALL_BASH" -eq 1 ]; then
-    install_cargo && cargo install shellharden
-    sudo apt-get install shellcheck -y
+	install_cargo && cargo install shellharden
+	sudo apt-get install shellcheck -y
 fi
 
 if [ "$INSTALL_MARKDOWN" != "" ] && [ "$INSTALL_MARKDOWN" -eq 1 ]; then
-    install_npm
-    npm install -g @fsouza/prettierd
-    npm install -g markdownlint-cli
-    ln -sfv "$DOTFILES_DIR/markdownlint.json" ~/.markdownlint.json
+	install_npm
+	npm install -g @fsouza/prettierd
+	npm install -g markdownlint-cli
+	ln -sfv "$DOTFILES_DIR/markdownlint.json" ~/.markdownlint.json
 fi
