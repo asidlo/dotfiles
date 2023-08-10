@@ -143,6 +143,7 @@ rm /tmp/bat.deb
 curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v"$NERDFONT_VERSION"/Meslo.zip -o /tmp/Meslo.zip
 sudo apt-get install -y unzip
 sudo unzip /tmp/Meslo.zip -d /usr/share/fonts/truetype/meslo
+sudo apt-get install -y fontconfig
 sudo fc-cache -vf /usr/share/fonts/
 rm /tmp/Meslo.zip
 
@@ -194,6 +195,15 @@ sudo apt-get update &&
 curl -L https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 -o /tmp/bicep
 chmod +x /tmp/bicep
 mv /tmp/bicep ~/.local/bin/bicep
+
+if [ ! -d ~/.tmux/plugins/tpm ]; then
+	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
+LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+mkdir /tmp/lazygit && tar xf /tmp/lazygit.tar.gz -C /tmp/lazygit
+mv /tmp/lazygit/lazygit ~/.local/bin && rm -rf /tmp/lazygit && rm /tmp/lazygit.tar.gz
 
 if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
 	# Install nvim runtime prerequisites
