@@ -140,7 +140,8 @@ sudo apt-get install /tmp/bat.deb
 rm /tmp/bat.deb
 
 # Install nerd-fonts
-curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/"$NERDFONT_VERSION"/Meslo.zip -o /tmp/Meslo.zip
+curl -L https://github.com/ryanoasis/nerd-fonts/releases/download/v"$NERDFONT_VERSION"/Meslo.zip -o /tmp/Meslo.zip
+sudo apt-get install -y unzip
 sudo unzip /tmp/Meslo.zip -d /usr/share/fonts/truetype/meslo
 sudo fc-cache -vf /usr/share/fonts/
 rm /tmp/Meslo.zip
@@ -190,7 +191,9 @@ sudo apt-get update &&
 	sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && sudo apt-get update &&
 	sudo apt-get install -y powershell
 
-mkdir -p ~/.config/powershell && ln -svf "$DOTFILES_DIR/powershell/pwsh-profile.linux.ps1" ~/.config/powershell/profile.ps1
+curl -L https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64 -o /tmp/bicep
+chmod +x /tmp/bicep
+mv /tmp/bicep ~/.local/bin/bicep
 
 if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
 	# Install nvim runtime prerequisites
