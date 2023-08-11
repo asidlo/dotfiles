@@ -43,6 +43,11 @@ if [ "$INSTALL_ALL" != "" ] && [ "$INSTALL_ALL" -eq 1 ]; then
 	INSTALL_NVIM=1
 fi
 
+if [ "$INSTALL_NVIM" -eq 1 ]; then
+	INSTALL_NODE=1
+	INSTALL_PYTHON=1
+fi
+
 echo "Installing using the following configuration:"
 echo "- RG_VERSION=$RG_VERSION"
 echo "- FD_VERSION=$FG_VERSION"
