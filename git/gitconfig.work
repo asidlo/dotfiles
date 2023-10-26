@@ -105,5 +105,6 @@
 	directory = /azure/appgw/src/datapath/mods/nginx-module-vts
 	directory = /azure/appgw/src/Tools/FloodBuddy/WbClient/WAFBench
 	directory = /azure/appgw/src/datapath/luajit2
+	directory = /azure/appgw/.devcontainer
 [init]
 	defaultBranch = main
