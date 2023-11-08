@@ -1,0 +1,9 @@
+{
+    "auths": {
+        "appgwcloudtest.azurecr.io": {},
+        "cdpx95028b6a341d461dbffdf83b7eddf59f00.azurecr.io": {}
+    },
+    "psFormat": "table {{.ID}}\\t{{.Image}}\\t{{.Status}}\\t{{.Names}}",
+    "imagesFormat": "table {{.Repository}}\\t{{.Tag}}\\t{{.Size}}",
+    "credsStore": "desktop.exe"
+}

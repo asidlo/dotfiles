@@ -90,6 +90,7 @@ set clipboard=unnamed
 set wildmode=longest:full,full
 set wildmenu
 set cmdheight=1
+set signcolumn=yes
 
 set hlsearch
 set incsearch

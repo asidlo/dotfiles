@@ -71,6 +71,7 @@ echo "- INSTALL_NODE=$INSTALL_NODE"
 echo "- INSTALL_NVIM=$INSTALL_NVIM"
 
 USER=$(whoami)
+OS=$(cat /etc/os-release | grep "^ID=*" | cut -d"=" -f2)
 is_root() {
 	[ "$USER" != "" ] && [ "$USER" == "root" ]
 }
@@ -108,7 +109,12 @@ if is_root; then
 	export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 	apt-get update -y && apt-get install sudo -y
 fi
-sudo apt-get update -y
+
+if [ "$OS" == "mariner" ]; then
+	sudo dnf update -y
+else
+	sudo apt-get update -y
+fi
 
 # Download dotfiles and link if file is not already present and a symlink
 ln -sfv "$DOTFILES_DIR/git/$GITCONFIG" ~/.gitconfig
@@ -117,6 +123,9 @@ ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
 ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
 ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
 ln -sfv "$DOTFILES_DIR/misc/hushlogin" ~/.hushlogin
+
+mkdir -p ~/.docker
+ln -sfv "$DOTFILES_DIR/misc/docker.config.json" ~/.docker/config.json
 
 mkdir -p ~/.omnisharp
 ln -sfv "$DOTFILES_DIR/misc/omnisharp.json" ~/.omnisharp/omnisharp.json
