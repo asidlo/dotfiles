@@ -19,10 +19,9 @@ DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
 echo "Installing using the following configuration:"
 
-# Latest version of rg deb (>14.0.0) includes a -1 at the end of the version for some reason.
-[ "$RG_VERSION" != "" ] || RG_VERSION="$(curl -s -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1) "-1"}')"
+[ "$RG_VERSION" != "" ] || RG_VERSION="$(curl -s -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}')"
 [ "$FD_VERSION" != "" ] || FD_VERSION="$(curl -s -I https://github.com/sharkdp/fd/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
-[ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
+[ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="8.0"
 [ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="$(cat /etc/os-release | grep "VERSION_ID" | cut -d"=" -f2 | sed 's/"//g')"
 [ "$BAT_VERSION" != "" ] || BAT_VERSION="$(curl -s -I https://github.com/sharkdp/bat/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
 [ "$NERDFONT_VERSION" != "" ] || NERDFONT_VERSION="$(curl -s -I https://github.com/ryanoasis/nerd-fonts/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
@@ -139,7 +138,8 @@ curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
 
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
-curl -L https://github.com/BurntSushi/ripgrep/releases/download/"$RG_VERSION"/ripgrep_"$RG_VERSION"_amd64.deb -o /tmp/ripgrep.deb
+# Latest version of rg deb (>14.0.0) includes a -1 at the end of the version for some reason.
+curl -L https://github.com/BurntSushi/ripgrep/releases/download/"$RG_VERSION"/ripgrep_"$RG_VERSION"-1_amd64.deb -o /tmp/ripgrep.deb
 sudo apt-get install /tmp/ripgrep.deb
 rm /tmp/ripgrep.deb
 
