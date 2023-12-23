@@ -19,7 +19,8 @@ DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 
 echo "Installing using the following configuration:"
 
-[ "$RG_VERSION" != "" ] || RG_VERSION="$(curl -s -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}')"
+# Latest version of rg deb (>14.0.0) includes a -1 at the end of the version for some reason.
+[ "$RG_VERSION" != "" ] || RG_VERSION="$(curl -s -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1) "-1"}')"
 [ "$FD_VERSION" != "" ] || FD_VERSION="$(curl -s -I https://github.com/sharkdp/fd/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}' | sed 's/^v//')"
 [ "$DOTNET_VERSION" != "" ] || DOTNET_VERSION="7.0"
 [ "$UBUNTU_VERSION" != "" ] || UBUNTU_VERSION="$(cat /etc/os-release | grep "VERSION_ID" | cut -d"=" -f2 | sed 's/"//g')"
