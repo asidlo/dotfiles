@@ -232,8 +232,8 @@ if [ "$INSTALL_NVIM" != "" ] && [ "$INSTALL_NVIM" -eq 1 ]; then
 
 		curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
 		unzip /tmp/bob.zip -d /tmp/bob
-		chmod +x /tmp/bob/bob
-		mv /tmp/bob/bob ~/.local/bin
+		chmod +x /tmp/bob/bob-linux-x86_64/bob
+		mv /tmp/bob/bob-linux-x86_64/bob ~/.local/bin
 		rm -f /tmp/bob.zip && rm -rf /tmp/bob
 
 		# Install nightly neovim
