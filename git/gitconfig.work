@@ -65,7 +65,7 @@
 	lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
 	ls = ls-files
-	lss = ! git status --porcelain=v2 | awk '{print $9}'
+    lss = ! git status --porcelain=v2 | awk '{print $9}'
     lsa = diff --name-only --staged
 	lsm = ls-files --modified
 	lsu = ls-files --others --exclude-standard

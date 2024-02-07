@@ -59,9 +59,10 @@ export PATH=$PATH:$GOPATH/bin
 [[ -v JAVA_HOME ]] && export PATH=$PATH:$JAVA_HOME/bin
 [[ -v GRADLE_HOME ]] && export PATH=$PATH:$GRADLE_HOME/bin
 
-export DOTNET_ROOT=/usr/local/share/dotnet
-export PATH=$PATH:$DOTNET_ROOT
-export PATH=$PATH:~/.dotnet/tools
+# export DOTNET_ROOT=/usr/local/share/dotnet
+export DOTNET_ROOT=~/.dotnet
+export PATH=$DOTNET_ROOT:$PATH
+export PATH=$DOTNET_ROOT/tools:$PATH
 
 # For using gpg for pass and git credential manager
 # See https://github.com/GitCredentialManager/git-credential-manager/blob/main/docs/credstores.md#gpgpass-compatible-files

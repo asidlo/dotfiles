@@ -113,7 +113,7 @@ M.startup = function()
 
         use({
             'karb94/neoscroll.nvim',
-            config = function ()
+            config = function()
                 require('neoscroll').setup()
             end
         })
