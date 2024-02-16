@@ -28,6 +28,7 @@ case $OS in
                 ln -sf "$WIN32YANK_PATH" ~/.local/bin/win32yank.exe
             fi
         fi
+        alias copy="win32yank.exe -i"
     fi
 	;;
 esac
