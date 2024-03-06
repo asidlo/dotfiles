@@ -1,3 +1,5 @@
+#!/bin/bash
+
 INSTALL_DIR=/usr/local/bin
 
 function print_help() {
@@ -54,7 +56,7 @@ install_nvim_appimage() {
 	curl -L https://github.com/neovim/neovim/releases/latest/download/nvim.appimage -o ~/.local/nvim.appimage
 	chmod +x ~/.local/nvim.appimage
 
-	pushd ~/.local
+	pushd ~/.local || return
 	./nvim.appimage --appimage-extract
 
 	if [ -d ~/.local/nvim ]; then
@@ -65,7 +67,7 @@ install_nvim_appimage() {
 	ln -svf ~/.local/nvim/AppRun "$INSTALL_DIR/nvim"
 	rm ./nvim.appimage
 
-	popd
+	popd || return
 }
 
 case "$ID" in
