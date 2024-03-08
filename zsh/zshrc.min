@@ -120,7 +120,7 @@ fi
 
 # https://github.com/ohmyzsh/ohmyzsh/issues/5157
 export LC_CTYPE=en_US.UTF-8
-export TERM=xterm-256color
+# export TERM=xterm-256color
 
 if (( $+commands[tree] )); then
 	alias tree='tree -C'
