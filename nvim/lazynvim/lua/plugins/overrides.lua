@@ -6,16 +6,6 @@ return {
     end,
   },
   {
-    "nvim-cmp",
-    opts = function(_, opts)
-      table.insert(opts.sources, 1, {
-        name = "copilot",
-        group_index = 1,
-        priority = 1,
-      })
-    end,
-  },
-  {
     "mfussenegger/nvim-lint",
     opts = {
       linters_by_ft = {
@@ -42,6 +32,7 @@ return {
         "codespell",
         "markdownlint",
         "vale",
+        "bicep-lsp",
       },
     },
   },
