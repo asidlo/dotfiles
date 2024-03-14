@@ -20,5 +20,7 @@ DOTFILES_DIR=$(dirname "$SCRIPT_DIR")
 
 ln -sfv "$DOTFILES_DIR/git/gitconfig.work" ~/.gitconfig
 ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
+ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
+ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
 ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
 mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
