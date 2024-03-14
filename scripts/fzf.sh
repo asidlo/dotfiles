@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install fzf
-mkdir -p ~/.local/src
+mkdir -p ~/.local/{src,bin}
 if [ ! -d ~/.local/src/fzf/ ]; then
 	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.local/src/fzf
 fi
