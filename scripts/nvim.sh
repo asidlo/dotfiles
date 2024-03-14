@@ -73,7 +73,7 @@ install_nvim_appimage() {
 case "$ID" in
 ubuntu)
 	# Install nvim runtime prerequisites
-	sudo apt-get install build-essential tmux wget curl zip unzip -y
+	sudo apt-get install build-essential tmux wget curl zip unzip python3 python3-pip -y
 	if (($(echo "$VERSION_ID" | sed 's/\.//g') > 1804)); then
 		install_bob
 	else
@@ -81,7 +81,7 @@ ubuntu)
 	fi
 	;;
 mariner)
-	sudo tdnf install build-essential tmux wget curl zip unzip -y
+	sudo tdnf install build-essential tmux wget curl zip unzip python3 python3-pip -y
 	install_bob
 	;;
 *)
@@ -89,3 +89,5 @@ mariner)
 	exit 1
 	;;
 esac
+
+# /usr/bin/python3 -m pip install pynvim
