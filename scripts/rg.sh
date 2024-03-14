@@ -4,6 +4,8 @@ if [ -z "$RG_VERSION" ]; then
 	RG_VERSION="$(curl -s -I https://github.com/BurntSushi/ripgrep/releases/latest | awk -F '/' '/^location/ {print  substr($NF, 1, length($NF)-1)}')"
 fi
 
+source /etc/os-release
+
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
 case "$ID" in
