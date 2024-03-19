@@ -32,4 +32,8 @@ return {
       "nvim-telescope/telescope-fzf-native.nvim",
     },
   },
+  {
+    -- Temporary until https://github.com/LazyVim/LazyVim/pull/2763/files#diff-3692ec208899061a5a395aad778f00c3040151016d8a1fa5da4bc6b46c72b0a2 is merged
+    "nvim-neotest/nvim-nio",
+  },
 }
