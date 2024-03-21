@@ -85,5 +85,3 @@
 
 	# Get all aliases defined in gitconfig
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
-[safe]
-    directory = /azure/appgw
