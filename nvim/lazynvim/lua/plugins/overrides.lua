@@ -9,31 +9,36 @@ return {
     "mfussenegger/nvim-lint",
     opts = {
       linters_by_ft = {
-        javascript = { "eslint" },
-        javascriptreact = { "eslint" },
-        typescript = { "eslint" },
-        typescriptreact = { "eslint" },
         bash = { "shellcheck" },
         sh = { "shellcheck" },
         gitcommit = { "gitlint" },
         text = { "vale" },
-        markdown = { "markdownlint", "vale" },
+        markdown = { "vale", "markdownlint" },
         ["*"] = { "codespell" },
       },
     },
   },
   {
-    "williamboman/mason.nvim",
+    "stevearc/conform.nvim",
     opts = {
-      ensure_installed = {
-        "gitlint",
-        "eslint-lsp",
-        "shellcheck",
-        "codespell",
-        "markdownlint",
-        "vale",
-        "bicep-lsp",
+      formatters_by_ft = {
+        markdown = { "markdownlint", "cbfmt" },
       },
     },
+  },
+  {
+    "williamboman/mason.nvim",
+    opts = function(_, opts)
+      if type(opts.ensure_installed) ~= "table" then
+        vim.list_extend(opts.ensure_installed, {
+          "gitlint",
+          "shellcheck",
+          "codespell",
+          "vale",
+          "bicep-lsp",
+          "cbfmt",
+        })
+      end
+    end,
   },
 }
