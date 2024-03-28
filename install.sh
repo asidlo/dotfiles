@@ -13,7 +13,7 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 "$SCRIPT_DIR/bat.sh"
 "$SCRIPT_DIR/rg.sh"
 "$SCRIPT_DIR/lazygit.sh"
-"$SCRIPT_DIR/nvim.sh"
+"$SCRIPT_DIR/nvim.sh" -d ~/.local/bin
 "$SCRIPT_DIR/starship.sh"
 "$SCRIPT_DIR/tmux.sh"
 "$SCRIPT_DIR/zsh.sh"

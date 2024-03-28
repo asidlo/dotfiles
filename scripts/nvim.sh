@@ -45,7 +45,7 @@ install_bob() {
 
 	# Install nightly neovim
 	mkdir -p ~/.local/share
-	~/.local/bin/bob use stable
+	"$INSTALL_DIR/bob" use stable
 
 	# Add current neovim version to PATH
 	ln -svf ~/.local/share/bob/nvim-bin/nvim "$INSTALL_DIR/nvim"
