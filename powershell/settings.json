@@ -10,23 +10,6 @@
             "keys": "ctrl+alt+c"
         },
         {
-            "command": "find",
-            "keys": "ctrl+shift+f"
-        },
-        {
-            "command": {
-                "action": "copy",
-                "singleLine": false
-            },
-            "keys": "ctrl+c"
-        },
-        {
-            "command": {
-                "action": "commandPalette"
-            },
-            "keys": "ctrl+shift+p"
-        },
-        {
             "command": "paste",
             "keys": "ctrl+v"
         },
@@ -38,12 +21,15 @@
             "keys": "ctrl+alt+e"
         },
         {
-            "command": "unbound",
-            "keys": "alt+enter"
+            "command": {
+                "action": "newTab",
+                "profile": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}"
+            },
+            "keys": "ctrl+alt+v"
         },
         {
-            "command": "unbound",
-            "keys": "ctrl+shift+6"
+            "command": "find",
+            "keys": "ctrl+shift+f"
         },
         {
             "command": {
@@ -52,6 +38,34 @@
                 "splitMode": "duplicate"
             },
             "keys": "alt+shift+d"
+        },
+        {
+            "command": {
+                "action": "copy",
+                "singleLine": false
+            },
+            "keys": "ctrl+c"
+        },
+        {
+            "command": {
+                "action": "newTab",
+                "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
+            },
+            "keys": "ctrl+alt+p"
+        },
+        {
+            "command": {
+                "action": "commandPalette"
+            },
+            "keys": "ctrl+shift+p"
+        },
+        {
+            "command": "unbound",
+            "keys": "alt+enter"
+        },
+        {
+            "command": "unbound",
+            "keys": "ctrl+shift+6"
         },
         {
             "command": {
@@ -75,20 +89,6 @@
                 "tabTitle": "Notes"
             },
             "keys": "ctrl+alt+n"
-        },
-        {
-            "command": {
-                "action": "newTab",
-                "profile": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}"
-            },
-            "keys": "ctrl+alt+v"
-        },
-        {
-            "command": {
-                "action": "newTab",
-                "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
-            },
-            "keys": "ctrl+alt+p"
         },
         {
             "command": {
@@ -117,6 +117,11 @@
     "defaultProfile": "{2c4de342-38b7-51cf-b940-2309a097f518}",
     "largePasteWarning": false,
     "multiLinePasteWarning": false,
+    "newTabMenu": [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
     "profiles": {
         "defaults": {
             "colorScheme": "Tokyonight",
@@ -147,6 +152,9 @@
             {
                 "bellStyle": "none",
                 "commandline": "wsl.exe ~ -d Ubuntu",
+                "font": {
+                    "face": "MesloLGM Nerd Font"
+                },
                 "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
                 "hidden": false,
                 "name": "Ubuntu",
@@ -219,7 +227,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "wsl.exe -- ssh labuser@20.25.165.180 -p 1112",
+                "commandline": "wsl.exe -- ssh labuser@ica25229v4.westus3.cloudapp.azure.com -p 1112",
                 "guid": "{3a5426af-6e6c-4fba-9889-862ad5a38699}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\tux.png",
@@ -229,7 +237,7 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "commandline": "wsl.exe -- ssh asidlo@ajb.eastus.cloudapp.azure.com -i ~/.ssh/DESKTOP-8FFMR4F/id_rsa",
+                "commandline": "wsl.exe -- az vm start --resource-group azure-jump-box --name ajb-vm-20220518 --subscription b85d32d2-bdbe-4bff-808a-c04ebde9c08b && ssh asidlo@ajb.eastus.cloudapp.azure.com -i ~/.ssh/id_rsa",
                 "guid": "{523a600a-2166-4f9a-b688-2525d0e760a4}",
                 "hidden": false,
                 "icon": "%USERPROFILE%\\Pictures\\icons\\tux.png",
