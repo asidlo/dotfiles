@@ -171,6 +171,23 @@ function Stop-JavaProcesses {
     jps -l | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru } 
 }
 
+Function New-SymLink ($Source, $Target)
+{
+    $Source = (Get-Item $Source).FullName
+    $Target = $Target.replace("~", $env:HOMEDRIVE + $env:HOMEPATH)
+
+    if (test-path -pathtype container $source)
+    {
+        $command = "cmd /c mklink /d"
+    }
+    else
+    {
+        $command = "cmd /c mklink"
+    }
+
+    Invoke-Expression "$command $Target $Source"
+}
+
 # Dotnet cli completion
 Register-ArgumentCompleter -Native -CommandName dotnet -ScriptBlock {
     param($commandName, $wordToComplete, $cursorPosition)
@@ -187,6 +204,7 @@ Set-Alias -Name ll -Value Get-ChildItemColor
 Set-Alias -Name cd -Value Set-LocationEnhanced -Option AllScope
 Set-Alias -Name which -Value Get-Command
 Set-Alias -Name k -Value kubectl
+Set-Alias -Name ln -Value New-Symlink
 
 #--------------------------------------------------------------
 # Prompt
