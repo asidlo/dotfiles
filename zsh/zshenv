@@ -10,6 +10,8 @@ case $OS in
 	alias copy='pbcopy'
 	export PATH=/usr/local/opt/openssl/bin:$PATH
 	export JAVA_HOME=$(/usr/libexec/java_home)
+  # Cocoapods for ios dev
+  export PATH=$HOME/.gem/bin:$PATH
 	;;
 *$LINUX*)
 	alias ls='ls --color=auto'
