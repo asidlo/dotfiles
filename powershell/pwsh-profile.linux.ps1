@@ -2,9 +2,7 @@ $modules = @(
     "PSReadLine",
     "posh-git",
     "Get-ChildItemColor",
-    "DockerCompletion",
-    "PSFzf",
-    "Az"
+    "PSFzf"
 )
 
 foreach ($module in $modules) {

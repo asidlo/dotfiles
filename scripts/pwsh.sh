@@ -16,3 +16,6 @@ ubuntu)
 	exit 1
 	;;
 esac
+
+mkdir -p ~/.config/powershell
+ln -svf ~/.local/src/dotfiles/powershell/pwsh-profile.linux.ps1 /home/asidlo/.config/powershell/Microsoft.PowerShell_profile.ps1
