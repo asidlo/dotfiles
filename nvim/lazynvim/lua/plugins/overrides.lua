@@ -29,16 +29,15 @@ return {
   {
     "williamboman/mason.nvim",
     opts = function(_, opts)
-      if type(opts.ensure_installed) ~= "table" then
-        vim.list_extend(opts.ensure_installed, {
-          "gitlint",
-          "shellcheck",
-          "codespell",
-          "vale",
-          "bicep-lsp",
-          "cbfmt",
-        })
-      end
+      vim.list_extend(opts.ensure_installed, {
+        "gitlint",
+        "shellcheck",
+        "codespell",
+        "vale",
+        "bicep-lsp",
+        "cbfmt",
+        "lemminx",
+      })
     end,
   },
 }
