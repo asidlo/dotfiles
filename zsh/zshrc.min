@@ -189,6 +189,10 @@ typeset -U path
 #     fi
 # fi
 
+# Setting for the new UTF-8 terminal support in Lion
+LANG=en_US.utf-8
+LC_ALL=en_US.utf-8
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
