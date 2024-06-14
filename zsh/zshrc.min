@@ -119,10 +119,6 @@ else
 	export MANPAGER="vim -M +MANPAGER -"
 fi
 
-# https://github.com/ohmyzsh/ohmyzsh/issues/5157
-export LC_CTYPE=en_US.UTF-8
-# export TERM=xterm-256color
-
 if (( $+commands[tree] )); then
 	alias tree='tree -C'
 fi
@@ -190,13 +186,8 @@ typeset -U path
 # fi
 
 # Setting for the new UTF-8 terminal support in Lion
+# https://github.com/ohmyzsh/ohmyzsh/issues/5157
 LANG=en_US.utf-8
 LC_ALL=en_US.utf-8
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+LC_CTYPE=en_US.UTF-8
+# export TERM=xterm-256color

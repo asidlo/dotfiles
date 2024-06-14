@@ -1,30 +1,30 @@
 autoload -U colors && colors
 
-local OS=$(uname -a)
-local MAC='Darwin'
-local LINUX='Linux'
+OS=$(uname -a)
+MAC='Darwin'
+LINUX='Linux'
 
 case $OS in
 *$MAC*)
-	alias ls='ls -G'
-	alias copy='pbcopy'
-	export PATH=/usr/local/opt/openssl/bin:$PATH
-	export JAVA_HOME=$(/usr/libexec/java_home)
-  # Cocoapods for ios dev
-  export PATH=$HOME/.gem/bin:$PATH
-	;;
+    alias ls='ls -G'
+    alias copy='pbcopy'
+    export PATH=/usr/local/opt/openssl/bin:$PATH
+    export JAVA_HOME=$(/usr/libexec/java_home)
+    # Cocoapods for ios dev
+    export PATH=$HOME/.gem/bin:$PATH
+    ;;
 *$LINUX*)
-	alias ls='ls --color=auto'
-	export GOROOT=/usr/local/go
+    alias ls='ls --color=auto'
+    export GOROOT=/usr/local/go
     if [[ "$OS" =~ "WSL" ]]; then
-        local MSEDGE_PATH=/mnt/c/Program\ Files\ \(x86\)/Microsoft/Edge/Application/msedge.exe
+        MSEDGE_PATH=/mnt/c/Program\ Files\ \(x86\)/Microsoft/Edge/Application/msedge.exe
         if [ -f "$MSEDGE_PATH" ]; then
             if [ ! -L ~/.local/bin/msedge.exe ]; then
                 ln -sf "$MSEDGE_PATH" ~/.local/bin/msedge.exe
             fi
             export BROWSER=msedge.exe
         fi
-        local WIN32YANK_PATH=/mnt/c/tools/neovim/nvim-win64/bin/win32yank.exe
+        WIN32YANK_PATH=/mnt/c/tools/neovim/nvim-win64/bin/win32yank.exe
         if [ -f "$WIN32YANK_PATH" ]; then
             if [ ! -L ~/.local/bin/win32yank.exe ]; then
                 ln -sf "$WIN32YANK_PATH" ~/.local/bin/win32yank.exe
@@ -32,7 +32,7 @@ case $OS in
         fi
         alias copy="win32yank.exe -i"
     fi
-	;;
+    ;;
 esac
 
 export PATH=/bin:$PATH
@@ -77,12 +77,8 @@ LUAROCKS_HOME=~/.local/src/luarocks-3.3.1
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
 export NVM_DIR="$HOME/.nvm"
-if [ -d $NVM_DIR ]; then
-    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"  # This loads nvm
-    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-fi
+    [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh" || true
+    [ -s "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion" || true
 
 export SDKMAN_DIR="$HOME/.sdkman"
-if [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]]; then
-    source "$SDKMAN_DIR/bin/sdkman-init.sh"
-fi
+    [ -s "$SDKMAN_DIR/bin/sdkman-init.sh"  ] && source "$SDKMAN_DIR/bin/sdkman-init.sh" || true
