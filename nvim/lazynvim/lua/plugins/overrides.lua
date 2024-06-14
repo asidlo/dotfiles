@@ -23,6 +23,9 @@ return {
     opts = {
       formatters_by_ft = {
         markdown = { "markdownlint", "cbfmt" },
+        bash = { "shfmt" },
+        zsh = { "shfmt" },
+        sh = { "shfmt" },
       },
     },
   },
@@ -37,6 +40,7 @@ return {
         "bicep-lsp",
         "cbfmt",
         "lemminx",
+        "beautysh",
       })
     end,
   },

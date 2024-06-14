@@ -30,8 +30,6 @@ while getopts "d:h" opt; do
 	esac
 done
 
-source /etc/os-release
-
 install_bob() {
 	# https://gist.github.com/gvenzl/1386755861fb42db492276d3864a378c
 	latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
@@ -69,6 +67,18 @@ install_nvim_appimage() {
 
 	popd || return
 }
+
+# unameOut="$(uname -s)"
+# case "$(uname -s)" in
+# 		Linux*)     machine=Linux;;
+# 		Darwin*)    machine=Mac;;
+# 		CYGWIN*)    machine=Cygwin;;
+# 		MINGW*)     machine=MinGw;;
+# 		MSYS_NT*)   machine=Git;;
+# 		*)          machine="UNKNOWN:${unameOut}"
+# esac
+
+source /etc/os-release
 
 case "$ID" in
 ubuntu)
