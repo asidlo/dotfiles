@@ -4,6 +4,8 @@ if (-not($IsUserAdmin)) {
     Write-Error "You need to run this script as an admin user." -Category AuthenticationError
 }
 
+# TODO (AS): Set terminal as default terminal   
+
 # https://learn.microsoft.com/en-us/windows/configuration/customize-taskbar-windows-11
 
 # (Never notify) Change user account settings to not prompt for admin
@@ -52,13 +54,13 @@ $shortcuts = Get-ChildItem -Path $env:PUBLIC\Desktop
 foreach ($shortcut in $shortcuts) {
     Remove-Item -Path $shortcut
 }
-# $oneDriveDesktopPath = "$env:USERPROFILE\OneDrive - Microsoft\Desktop"
-# if (Test-Path -Path $oneDriveDesktopPath -PathType Container) {
-#     $shortcuts = Get-ChildItem -Recurse -Path $oneDriveDesktopPath
-#     foreach ($shortcut in $shortcuts) {
-#         Remove-Item -Recurse -Force -Path $shortcut
-#     }
-# }
+$oneDriveDesktopPath = "$env:USERPROFILE\OneDrive - Microsoft\Desktop"
+if (Test-Path -Path $oneDriveDesktopPath -PathType Container) {
+    $shortcuts = Get-ChildItem -Recurse -Path $oneDriveDesktopPath
+    foreach ($shortcut in $shortcuts) {
+        Remove-Item -Recurse -Force -Path $shortcut
+    }
+}
 
 # Left align taskbar (0 left; 1 center)
 Set-ItemProperty `
@@ -161,3 +163,14 @@ foreach ($path in $bagPaths) {
         Remove-Item -Recurse -Force $path
     }
 }
+
+# TODO (AS): Disable multitasking
+# 0 = Show open windows and all tabs in Microsoft Edge
+# 1 = Show Open windows and 5 most recent tabs in Microsoft Edge
+# 2 = Show Open windows and 3 most recent Edge tabs
+# 3 = Disable alt+tab
+Set-ItemProperty `
+    -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced `
+    -Name MultiTaskingAltTabFilter `
+    -Value 3 `
+    -Force

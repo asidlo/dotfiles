@@ -88,6 +88,7 @@
 	directory = C:/Users/andrewsidlo/AppData/Local/dotfiles
 	directory = %(prefix)///wsl.localhost/Ubuntu/azure/appgw
 	directory = %(prefix)///wsl.localhost/Ubuntu/azure/AppGwPerf
+	directory = C:/src/dotfiles
 [credential]
 	helper = manager
 	useHttpPath = true

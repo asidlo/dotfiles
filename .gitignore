@@ -3,3 +3,6 @@
 /vim/view/
 !/vim/java/bin
 .DS_Store
+clink/clink_history*
+clink/clink_error*
+clink/clink.log

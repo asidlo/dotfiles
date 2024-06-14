@@ -1,5 +1,5 @@
-" let g:vim_dir = expand('~/vimfiles')
-let g:vim_dir = expand('~/.vim')
+let g:vim_dir = expand('~/vimfiles')
+" let g:vim_dir = expand('~/.vim')
 
 if empty(glob(g:vim_dir . '/autoload/plug.vim'))
 	let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -9,7 +9,7 @@ if empty(glob(g:vim_dir . '/autoload/plug.vim'))
 	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-call plug#begin(expand('~/vimfiles/plugged'))
+call plug#begin(glob(g:vim_dir . '/plugged')
     Plug 'sheerun/vim-polyglot'
     Plug 'dracula/vim', { 'as': 'dracula' }
 
@@ -83,7 +83,7 @@ set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 
 set undofile
-set undodir=~/vimfiles/undo
+set undodir=glob(g:vim_dir . '/undo')
 
 set termguicolors
 set t_Co=256
