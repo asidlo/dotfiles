@@ -77,6 +77,8 @@ Get-WinGetPackage maps | Uninstall-WinGetPackage
 
 Get-AppxPackage -Name "Microsoft.Getstarted" | Remove-AppxPackage
 
+# Get-AppxPackage -user | Remove-AppxPackage
+
 # Disable wsl and reenable to ensure latest version is installed; otherwise group policy warnings occur
 # dism.exe /online /disable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 
