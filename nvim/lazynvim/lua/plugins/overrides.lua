@@ -6,18 +6,6 @@ return {
     end,
   },
   {
-    "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      if vim.loop.os_uname().sysname == "Windows_NT" then
-        return vim.tbl_extend("force", opts, {
-          install = { compilers = { "clang" } },
-        })
-      else
-        return opts
-      end
-    end,
-  },
-  {
     "mfussenegger/nvim-lint",
     opts = {
       linters_by_ft = {
