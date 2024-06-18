@@ -54,6 +54,9 @@ if (-Not(Test-Path -Path "C:\Program Files\LLVM\bin")) {
     -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' \
     -Name PATH \
     -Value $newpath
+
+    # Refresh path
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 }
 
 # Terminal settings
