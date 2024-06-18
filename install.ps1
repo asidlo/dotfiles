@@ -22,10 +22,10 @@ $PackagesToKeep = @(
     "Microsoft.OutlookForWindows"
 )
 Get-AppxPackage `
-    | where {!$_.NonRemovable} `
-    | where {$_.Name -notmatch ($PackagesToKeep -join "|")} `
-    | where {!$_.IsFramework} `
-    | Remove-AppxPackage
+| Where-Object { !$_.NonRemovable } `
+| Where-Object { $_.Name -notmatch ($PackagesToKeep -join "|") } `
+| Where-Object { !$_.IsFramework } `
+| Remove-AppxPackage
 
 # Install packages
 # TODO (AS): Make generic to pass list of packages similar to choco setup
@@ -38,7 +38,6 @@ winget install --id chrisant996.Clink --accept-source-agreements --disable-inter
 winget install --id junegunn.fzf --accept-source-agreements --disable-interactivity -h
 winget install --id Neovim.Neovim --accept-source-agreements --disable-interactivity -h
 winget install --id JesseDuffield.lazygit --accept-source-agreements --disable-interactivity -h
-winget install --id LLVM.LLVM --accept-source-agreements --disable-interactivity -h
 winget install --id GoLang.Go --accept-source-agreements --disable-interactivity -h
 winget install --id vim.vim --accept-source-agreements --disable-interactivity -h
 winget install azcopy --accept-source-agreements --disable-interactivity -h
@@ -46,6 +45,16 @@ winget install python3 --accept-source-agreements --disable-interactivity -h
 winget install "Outlook for Windows" --accept-source-agreements --disable-interactivity -h
 winget install --id Microsoft.WindowsTerminal --accept-source-agreements --disable-interactivity -h
 winget install --id Microsoft.Teams --accept-source-agreements --disable-interactivity -h
+winget install --id LLVM.LLVM --accept-source-agreements --disable-interactivity -h
+
+if (-Not(Test-Path -Path "C:\Program Files\LLVM\bin")) {
+    $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
+    $newpath = "$oldpath;C:\Program Files\LLVM\bin"
+    Set-ItemProperty \
+    -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' \
+    -Name PATH \
+    -Value $newpath
+}
 
 # Terminal settings
 $settingsPath = "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
