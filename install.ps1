@@ -4,22 +4,6 @@ if (-not($IsUserAdmin)) {
     Write-Error "You need to run this script as an admin user." -Category AuthenticationError
 }
 
-# Disable wsl and reenable to ensure latest version is installed; otherwise group policy warnings occur
-# dism.exe /online /disable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-
-&"$PSScriptRoot\devbox\settings.ps1"
-&"$PSScriptRoot\devbox\features.ps1"
-
-# TODO (AS): Restart devbox
-
-# Install wsl
-# Doesnt seem to work, needs to be run without n flag. Running wsl --install -d ubuntu afterwards works, but asks
-# for username and password interactively. If we could automate this that would be great.
-# wsl --install -d ubuntu -n
-
-# TODO (AS): Restart devbox (Restart-Computer -Force)
-# TODO (AS): Remove linux shortcut on desktop 
-
 # Install packages
 # TODO (AS): Make generic to pass list of packages similar to choco setup
 choco install nerd-fonts-meslo -y
@@ -41,7 +25,7 @@ winget install python3 --accept-source-agreements --disable-interactivity -h
 $settingsPath = "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 New-Item -ItemType SymbolicLink -Path $settingsPath -Target $PSScriptRoot\powershell\settings.json -Force
 
-Install-Module -Name PSDesiredStateConfiguration
+Install-Module -Name PSDesiredStateConfiguration -Force
 # TODO (AS): run Optimize-WindowsDefnender
 
 # Install Ev2
@@ -84,6 +68,30 @@ if (Test-Path -Path $nvimDir -PathType Container) {
     Remove-Item -Path $nvimDir -Force
 }
 New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\nvim" -Target $PSScriptRoot\nvim\lazynvim -Force
+
+Get-WinGetPackage xbox | Uninstall-WinGetPackage
+Get-WinGetPackage "feedback hub" | Uninstall-WinGetPackage
+Get-WinGetPackage "phone link" | Uninstall-WinGetPackage
+Get-WinGetPackage "get help" | Uninstall-WinGetPackage
+Get-WinGetPackage maps | Uninstall-WinGetPackage
+
+Get-AppxPackage -Name "Microsoft.Getstarted" | Remove-AppxPackage
+
+# Disable wsl and reenable to ensure latest version is installed; otherwise group policy warnings occur
+# dism.exe /online /disable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+&"$PSScriptRoot\devbox\settings.ps1"
+&"$PSScriptRoot\devbox\features.ps1"
+
+# TODO (AS): Restart devbox
+
+# Install wsl
+# Doesnt seem to work, needs to be run without n flag. Running wsl --install -d ubuntu afterwards works, but asks
+# for username and password interactively. If we could automate this that would be great.
+# wsl --install -d ubuntu -n
+
+# TODO (AS): Restart devbox (Restart-Computer -Force)
+# TODO (AS): Remove linux shortcut on desktop 
 
 # Check if running in WSL and symlink from C:\tools\neovim\bin\win32yank.exe to ~/.local/bin/win32yank.exe and
 # make sure to symlink /etc/wsl.conf to the one in this repo
