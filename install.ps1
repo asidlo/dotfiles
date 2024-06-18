@@ -4,6 +4,22 @@ if (-not($IsUserAdmin)) {
     Write-Error "You need to run this script as an admin user." -Category AuthenticationError
 }
 
+$PackagesToKeep = @(
+    "Microsoft.Windows.Photos",
+    "Microsoft.Windows.DevHome",
+    "Microsoft.WindowsCalculator",
+    "Microsoft.WindowsNotepad",
+    "Microsoft.Paint",
+    "Microsoft.Todos",
+    "Microsoft.WindowsStore",
+    "Microsoft.WindowsTerminal"
+)
+Get-AppxPackage -AllUsers `
+    | where {!$_.NonRemovable} `
+    | where {$_.Name -notmatch ($PackagesToKeep -join "|")} `
+    | where {!$_.IsFramework} `
+    | Remove-AppxPackage
+
 # Install packages
 # TODO (AS): Make generic to pass list of packages similar to choco setup
 choco install nerd-fonts-meslo -y
@@ -20,6 +36,7 @@ winget install --id GoLang.Go --accept-source-agreements --disable-interactivity
 winget install --id vim.vim --accept-source-agreements --disable-interactivity -h
 winget install azcopy --accept-source-agreements --disable-interactivity -h
 winget install python3 --accept-source-agreements --disable-interactivity -h
+winget install --id Microsoft.WindowsTerminal --accept-source-agreements --disable-interactivity -h
 
 # Terminal settings
 $settingsPath = "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
@@ -68,16 +85,6 @@ if (Test-Path -Path $nvimDir -PathType Container) {
     Remove-Item -Path $nvimDir -Force
 }
 New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\nvim" -Target $PSScriptRoot\nvim\lazynvim -Force
-
-Get-WinGetPackage xbox | Uninstall-WinGetPackage
-Get-WinGetPackage "feedback hub" | Uninstall-WinGetPackage
-Get-WinGetPackage "phone link" | Uninstall-WinGetPackage
-Get-WinGetPackage "get help" | Uninstall-WinGetPackage
-Get-WinGetPackage maps | Uninstall-WinGetPackage
-
-Get-AppxPackage -Name "Microsoft.Getstarted" | Remove-AppxPackage
-
-# Get-AppxPackage -user | Remove-AppxPackage
 
 # Disable wsl and reenable to ensure latest version is installed; otherwise group policy warnings occur
 # dism.exe /online /disable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
