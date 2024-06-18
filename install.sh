@@ -10,6 +10,7 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 
 sudo locale-gen "en_US.UTF-8"
 
+"$SCRIPT_DIR/rust.sh"
 "$SCRIPT_DIR/fd.sh"
 "$SCRIPT_DIR/fzf.sh"
 "$SCRIPT_DIR/bat.sh"
@@ -21,6 +22,9 @@ sudo locale-gen "en_US.UTF-8"
 "$SCRIPT_DIR/starship.sh"
 "$SCRIPT_DIR/tmux.sh"
 "$SCRIPT_DIR/zsh.sh"
+"$SCRIPT_DIR/gh.sh"
+"$SCRIPT_DIR/dotnet.sh"
+"$SCRIPT_DIR/artifacts-credprovider.sh"
 
 ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
 ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
