@@ -24,4 +24,4 @@ mkdir -p ~/.local/bin
 curl -sfL git.io/antibody | sh -s - -b ~/.local/bin
 
 # Set zsh as current shell
-sudo chsh -s "$(which zsh)"
+sudo chsh -s "$(which zsh)" "$(whoami)"

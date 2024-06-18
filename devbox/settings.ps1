@@ -1,7 +1,10 @@
+$ErrorActionPreference = "Stop"
+
 $IsUserAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 
 if (-not($IsUserAdmin)) {
     Write-Error "You need to run this script as an admin user." -Category AuthenticationError
+    exit 1
 }
 
 # TODO (AS): Set terminal as default terminal   

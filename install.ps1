@@ -1,7 +1,10 @@
+$ErrorActionPreference = "Stop"
+
 $IsUserAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match "S-1-5-32-544")
 
 if (-not($IsUserAdmin)) {
     Write-Error "You need to run this script as an admin user." -Category AuthenticationError
+    exit
 }
 
 $PackagesToKeep = @(
@@ -12,9 +15,13 @@ $PackagesToKeep = @(
     "Microsoft.Paint",
     "Microsoft.Todos",
     "Microsoft.WindowsStore",
-    "Microsoft.WindowsTerminal"
+    "Microsoft.WindowsTerminal",
+    "MSTeams",
+    "Microsoft.Winget.Source",
+    "Microsoft.EpmShellExtension",
+    "Microsoft.OutlookForWindows"
 )
-Get-AppxPackage -AllUsers `
+Get-AppxPackage `
     | where {!$_.NonRemovable} `
     | where {$_.Name -notmatch ($PackagesToKeep -join "|")} `
     | where {!$_.IsFramework} `
@@ -36,7 +43,9 @@ winget install --id GoLang.Go --accept-source-agreements --disable-interactivity
 winget install --id vim.vim --accept-source-agreements --disable-interactivity -h
 winget install azcopy --accept-source-agreements --disable-interactivity -h
 winget install python3 --accept-source-agreements --disable-interactivity -h
+winget install "Outlook for Windows" --accept-source-agreements --disable-interactivity -h
 winget install --id Microsoft.WindowsTerminal --accept-source-agreements --disable-interactivity -h
+winget install --id Microsoft.Teams --accept-source-agreements --disable-interactivity -h
 
 # Terminal settings
 $settingsPath = "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
@@ -55,10 +64,14 @@ foreach ($dir in @($powershellDir, $pwshDir)) {
     if (-Not(Test-Path -Path $dir -PathType Container)) {
         New-Item -ItemType Directory -Path $dir
     }
+
+    if ((Test-Path -Path $dir\profile.ps1 -PathType Leaf)) {
+        Remove-Item -Path $dir\profile.ps1
+    }
 }
 
-New-Item -ItemType SymbolicLink -Path $powershellDir\profile.ps1 -Target $PSScriptRoot\powershell\profile.ps1 -Force
-New-Item -ItemType SymbolicLink -Path $pwshDir\profile.ps1 -Target $PSScriptRoot\powershell\pwsh-profile.ps1 -Force
+Copy-Item -Destination $powershellDir\profile.ps1 -Path $PSScriptRoot\powershell\profile.ps1 -Force
+Copy-Item -Destination $pwshDir\profile.ps1 -Path $PSScriptRoot\powershell\pwsh-profile.ps1 -Force
 
 # Symlink icons for terminal
 New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\Pictures\icons" -Target $PSScriptRoot\powershell\icons -Force
@@ -67,7 +80,7 @@ New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\Pictures\ico
 New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\.gitconfig" -Target $PSScriptRoot\git\gitconfig.win.work -Force
 
 $configDir = "$env:HOMEDRIVE\$env:HOMEPATH\.config"
-if (Test-Path -Path $configDir -PathType Container) {
+if (-Not(Test-Path -Path $configDir -PathType Container)) {
     New-Item -ItemType Directory -Path $configDir
 }
 New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\.config\starship.toml" -Target $PSScriptRoot\zsh\starship.windows.toml -Force
@@ -93,6 +106,15 @@ New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Loca
 &"$PSScriptRoot\devbox\features.ps1"
 
 # TODO Pin desired apps and move to front
+# Terminal
+
+# TODO Pin nfv repo to explorer
+# Terminal, MSTeams, Outlook for windows, visual studio 2022, vscode, onenote, 
+
+# Unpin all other apps (ms store)
+
+# TODO Generate sln via slngen and build
+# Terminal
 
 # TODO install wsl
 
