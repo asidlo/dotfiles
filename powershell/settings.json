@@ -1,9 +1,11 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": [
+    "actions": 
+    [
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
             },
@@ -14,14 +16,16 @@
             "keys": "ctrl+v"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}"
             },
             "keys": "ctrl+alt+e"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}"
             },
@@ -32,7 +36,8 @@
             "keys": "ctrl+shift+f"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "auto",
                 "splitMode": "duplicate"
@@ -40,21 +45,24 @@
             "keys": "alt+shift+d"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "copy",
                 "singleLine": false
             },
             "keys": "ctrl+c"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
             },
             "keys": "ctrl+alt+p"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "commandPalette"
             },
             "keys": "ctrl+shift+p"
@@ -68,21 +76,24 @@
             "keys": "ctrl+shift+6"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
             },
             "keys": "ctrl+alt+b"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
             },
             "keys": "ctrl+alt+d"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "Notes",
                 "suppressApplicationTitle": true,
@@ -91,21 +102,24 @@
             "keys": "ctrl+alt+n"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
             },
             "keys": "ctrl+alt+a"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
             },
             "keys": "ctrl+alt+t"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "newTab",
                 "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
             },
@@ -117,22 +131,27 @@
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "largePasteWarning": false,
     "multiLinePasteWarning": false,
-    "newTabMenu": [
+    "newTabMenu": 
+    [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles": {
-        "defaults": {
+    "profiles": 
+    {
+        "defaults": 
+        {
             "colorScheme": "Tokyonight",
-            "font": {
+            "font": 
+            {
                 "face": "MesloLGM Nerd Font",
                 "size": 11.0
             },
             "padding": "0,0,-4,0",
             "suppressApplicationTitle": true
         },
-        "list": [
+        "list": 
+        [
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
@@ -148,20 +167,6 @@
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
                 "name": "Command Prompt"
-            },
-            {
-                "bellStyle": "none",
-                "commandline": "wsl.exe ~ -d Ubuntu",
-                "font": {
-                    "face": "MesloLGM Nerd Font"
-                },
-                "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
-                "hidden": false,
-                "name": "Ubuntu",
-                "padding": "0,0,-4,0",
-                "scrollbarState": "hidden",
-                "source": "Windows.Terminal.Wsl",
-                "suppressApplicationTitle": true
             },
             {
                 "colorScheme": "Tokyonight",
@@ -247,14 +252,21 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "guid": "{16208362-94fc-5b1f-a491-5b2624d5ab56}",
+                "guid": "{51855cb2-8cce-5362-8f54-464b92b32386}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc"
+            },
+            {
+                "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
                 "hidden": true,
-                "name": "Visual Studio Debug Console",
-                "source": "VSDebugConsole"
+                "name": "Ubuntu",
+                "source": "Windows.Terminal.Wsl"
             }
         ]
     },
-    "schemes": [
+    "schemes": 
+    [
         {
             "background": "#0C0C0C",
             "black": "#0C0C0C",

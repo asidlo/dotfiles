@@ -92,6 +92,10 @@ New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Loca
 &"$PSScriptRoot\devbox\settings.ps1"
 &"$PSScriptRoot\devbox\features.ps1"
 
+# TODO Pin desired apps and move to front
+
+# TODO install wsl
+
 # TODO (AS): Restart devbox
 
 # Install wsl
