@@ -11,6 +11,7 @@
 [fetch]
 	prune = true
 	pruneTags = true
+	showForcedUpdates = true
 [commit]
 	verbose = true
 [merge]

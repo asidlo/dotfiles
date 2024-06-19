@@ -45,6 +45,7 @@ winget install python3 --accept-source-agreements --disable-interactivity -h
 winget install "Outlook for Windows" --accept-source-agreements --disable-interactivity -h
 winget install --id Microsoft.WindowsTerminal --accept-source-agreements --disable-interactivity -h
 winget install --id Microsoft.Teams --accept-source-agreements --disable-interactivity -h
+winget install --id Microsoft.AzureCLI --accept-source-agreements --disable-interactivity -h
 winget install --id LLVM.LLVM --accept-source-agreements --disable-interactivity -h
 
 if (-Not(Test-Path -Path "C:\Program Files\LLVM\bin")) {
@@ -64,6 +65,7 @@ $settingsPath = "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\Packages\Microsoft.W
 New-Item -ItemType SymbolicLink -Path $settingsPath -Target $PSScriptRoot\powershell\settings.json -Force
 
 Install-Module -Name PSDesiredStateConfiguration -Force
+Install-Module -Name Az -Force
 # TODO (AS): run Optimize-WindowsDefnender
 
 # Install Ev2
