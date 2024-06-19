@@ -25,6 +25,7 @@ sudo locale-gen "en_US.UTF-8"
 "$SCRIPT_DIR/gh.sh"
 "$SCRIPT_DIR/dotnet.sh"
 "$SCRIPT_DIR/artifacts-credprovider.sh"
+"$SCRIPT_DIR/az.sh"
 
 ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
 ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
