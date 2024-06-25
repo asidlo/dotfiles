@@ -47,6 +47,8 @@ winget install --id Microsoft.WindowsTerminal --accept-source-agreements --disab
 winget install --id Microsoft.Teams --accept-source-agreements --disable-interactivity -h
 winget install --id Microsoft.AzureCLI --accept-source-agreements --disable-interactivity -h
 winget install --id LLVM.LLVM --accept-source-agreements --disable-interactivity -h
+# winget install --id Microsoft.VisualStudio.2022.BuildTools --accept-source-agreements --disable-interactivity -h
+winget install --id Rustlang.Rustup --accept-source-agreements --disable-interactivity -h
 
 if (-Not(Test-Path -Path "C:\Program Files\LLVM\bin")) {
     $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
