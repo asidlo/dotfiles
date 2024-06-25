@@ -41,6 +41,7 @@ return {
         "cbfmt",
         "lemminx",
         "beautysh",
+        "powershell-editor-services"
       })
     end,
   },
