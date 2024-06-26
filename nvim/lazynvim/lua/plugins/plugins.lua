@@ -32,4 +32,29 @@ return {
       "nvim-telescope/telescope-fzf-native.nvim",
     },
   },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        -- https://github.com/neovim/nvim-lspconfig/issues/2810
+        powershell_es = {
+          init_options = { enableProfileLoading = false },
+          settings = {
+            powershell = {
+              codeFormatting = {
+                openBraceOnSameLine = false,
+                whitespaceInsideBrace = true,
+              },
+            },
+          },
+        },
+      },
+    },
+    -- setup = {
+    --   powershell_es = function (_, opts)
+    --     vim.tbl_extend('force', opts, init_options = { enableProfileLoading = false })
+    --
+    --   end
+    -- }
+  },
 }
