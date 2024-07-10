@@ -1,93 +1,92 @@
 [user]
-	name = Andrew Sidlo
-	email = andrewsidlo@microsoft.com
+  name = Andrew Sidlo
+  email = andrewsidlo@microsoft.com
 [core]
-	excludesfile = ~/.gitignore
-	editor = code --wait
+  excludesfile = ~/.gitignore
+  editor = code --wait
 [log]
-	date = iso
+  date = iso
 [fetch]
-	prune = true
-	pruneTags = true
+  prune = true
+  pruneTags = true
 [commit]
-	verbose = true
+  verbose = true
 [merge]
-	ff = only
-    tool = vscode
+  tool = vscode
 [mergetool "vscode"]
-    cmd = code --wait $MERGED
+  cmd = code --wait $MERGED
 [pull]
-	rebase = true
+  rebase = true
 [diff]
-	tool = vscode
-	ignoreSubmodules = dirty
+  tool = vscode
+  ignoreSubmodules = dirty
 [difftool "vscode"]
-    cmd = code --wait --diff $LOCAL $REMOTE
+  cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
-	a = add
-	au = add -u # Update all tracked files
-	aa = add -A # Add all files to staging
+  a = add
+  au = add -u # Update all tracked files
+  aa = add -A # Add all files to staging
 
-	b = branch
-	bc = rev-parse --abbrev-ref HEAD
-	ba = branch -a
+  b = branch
+  bc = rev-parse --abbrev-ref HEAD
+  ba = branch -a
 
-	co = checkout
-	cob = checkout -b
+  co = checkout
+  cob = checkout -b
 
-	c = commit
-	ca = commit --amend
-	can = commit --amend --no-edit
-	cmsg = commit -m
+  c = commit
+  ca = commit --amend
+  can = commit --amend --no-edit
+  cmsg = commit -m
 
-	d = diff
-	dh = diff HEAD
+  d = diff
+  dh = diff HEAD
 
-	# l = log
-	# o = oneline
-	# d = date [r = relative, s = short]
-	# a = author
-	l = log
-	lo = log --oneline
-	loa = log --oneline --decorate --pretty='%C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-	lod = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
-	lodr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
-	lods = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
-	load = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-	loadr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
-	loads = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
+  # l = log
+  # o = oneline
+  # d = date [r = relative, s = short]
+  # a = author
+  l = log
+  lo = log --oneline
+  loa = log --oneline --decorate --pretty='%C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+  lod = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
+  lodr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
+  lods = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
+  load = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+  loadr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
+  loads = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
 
-	# g = graph
-	lg = log --graph
-	lgo = log --graph --oneline
-	lgod = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)'
-	lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=short
-	lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=relative
-	lgoad = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
-	lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
-	lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
+  # g = graph
+  lg = log --graph
+  lgo = log --graph --oneline
+  lgod = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)'
+  lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=short
+  lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=relative
+  lgoad = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
+  lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
+  lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
-	ls = ls-files
-	lss = ! git status --porcelain=v2 | awk '{print $9}'
-	lsa = diff --name-only --staged
-	lsm = ls-files --modified
-	lsu = ls-files --others --exclude-standard
-	lsd = ls-files --deleted
-	lsc = diff --name-only --diff-filter=U
+  ls = ls-files
+  lss = ! git status --porcelain=v2 | awk '{print $9}'
+  lsa = diff --name-only --staged
+  lsm = ls-files --modified
+  lsu = ls-files --others --exclude-standard
+  lsd = ls-files --deleted
+  lsc = diff --name-only --diff-filter=U
 
-	s = status
-	ss = status -s
+  s = status
+  ss = status -s
 
-	conflicts = diff --check
+  conflicts = diff --check
 
-	# standup - last 1 week written by me
-	sup = ! git log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author $(git config user.email)
+  # standup - last 1 week written by me
+  sup = ! git log --oneline --decorate --pretty='* %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative --since='1 week ago' --author $(git config user.email)
 
-	# Get all aliases defined in gitconfig
-	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+  # Get all aliases defined in gitconfig
+  alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+  helper = 
+  helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+  helper = 
+  helper = !/usr/bin/gh auth git-credential

@@ -14,8 +14,6 @@
   showForcedUpdates = true
 [commit]
   verbose = true
-[merge]
-  ff = only
 [pull]
   rebase = true
 [diff]
