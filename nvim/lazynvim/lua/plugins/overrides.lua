@@ -1,10 +1,4 @@
-return {
-  {
-    "echasnovski/mini.animate",
-    opts = function(_, opts)
-      opts.cursor = { enable = false }
-    end,
-  },
+local spec = {
   {
     "mfussenegger/nvim-lint",
     opts = {
@@ -41,8 +35,69 @@ return {
         "cbfmt",
         "lemminx",
         "beautysh",
-        "powershell-editor-services"
+        "powershell-editor-services",
       })
     end,
   },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        omnisharp = {
+          settings = {
+            FormattingOptions = {
+              EnableEditorConfigSupport = true,
+              OrganizeImports = true,
+            },
+            MsBuild = {
+              LoadProjectsOnDemand = true,
+            },
+            RoslnRoslynExtensionsOptions = {
+              -- Enables support for roslyn analyzers, code fixes and rulesets.
+              EnableAnalyzersSupport = true,
+              EnableImportCompletion = true,
+              AnalyzeOpenDocumentsOnly = true,
+            },
+          },
+        },
+        -- https://github.com/neovim/nvim-lspconfig/issues/2810
+        powershell_es = {
+          init_options = { enableProfileLoading = false },
+          settings = {
+            powershell = {
+              codeFormatting = {
+                openBraceOnSameLine = false,
+                whitespaceInsideBrace = true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 }
+
+local disable_cursor_animate = {
+  "echasnovski/mini.animate",
+  opts = function(_, opts)
+    opts.cursor = { enable = false }
+  end,
+}
+
+local disable_edgy_animate = {
+  "folke/edgy.nvim",
+  opts = {
+    animate = {
+      enabled = false
+    }
+  }
+}
+
+if not vim.loop.os_uname().sysname == "Windows_NT" then
+  -- animate plugin is already disabled in windows in lazy.lua
+  table.insert(spec, disable_cursor_animate)
+else
+  table.insert(spec, disable_edgy_animate)
+end
+
+return spec

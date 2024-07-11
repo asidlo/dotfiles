@@ -32,7 +32,6 @@ local spec = {
   { import = "lazyvim.plugins.extras.ui.alpha" },
   -- reeable when it has support for using api to resize window via hydra or normal mappings
   { import = "lazyvim.plugins.extras.ui.edgy" },
-  { import = "lazyvim.plugins.extras.ui.mini-animate" },
   { import = "lazyvim.plugins.extras.editor.leap" },
   { import = "lazyvim.plugins.extras.editor.navic" },
   { import = "lazyvim.plugins.extras.editor.aerial" },
@@ -48,6 +47,7 @@ local spec = {
 -- TODO (AS): Remove once git issue downloading python dap is resolved
 if not vim.loop.os_uname().sysname == "Windows_NT" then
   table.insert(spec, { import = "lazyvim.plugins.extras.lang.python" })
+  table.insert(spec, { import = "lazyvim.plugins.extras.ui.mini-animate" })
 end
 
 
