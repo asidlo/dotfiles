@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get current script location
-DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
+DOTFILES_DIR=$(dirname "$(dirname "$(realpath "${BASH_SOURCE:-$0}")")")
 DOTNET_VERSION="${DOTNET_VERSION:-8.0}"
 
 mkdir -p ~/.omnisharp
