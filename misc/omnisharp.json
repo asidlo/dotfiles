@@ -1,9 +1,14 @@
 // https://www.strathweb.com/2020/02/hidden-features-of-omnisharp-and-c-extension-for-vs-code/
 {
+    "msbuild": {
+        "loadProjectsOnDemand": true
+    },
     "RoslynExtensionsOptions": {
+        "documentAnalysisTimeoutMs": 10000,
         "enableDecompilationSupport": true,
         "enableImportCompletion": true,
-        "enableAnalyzersSupport": true,
+        "enableAnalyzersSupport": false,
+        "diagnosticWorkersThreadCount": 8
         // "inlayHintsOptions": {
         //     "enableForParameters": false,
         //     "forLiteralParameters": true,

@@ -201,7 +201,7 @@ endtry
 
 " }}}
 "==============================================================================
-let mapleader = ','
+let mapleader = '\<Space>'
 
 "Yank till end of line
 nnoremap Y y$

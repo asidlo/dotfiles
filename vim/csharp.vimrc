@@ -1,15 +1,20 @@
 let g:vim_dir = expand('~/vimfiles')
 " let g:vim_dir = expand('~/.vim')
 
-if empty(glob(g:vim_dir . '/autoload/plug.vim'))
-	let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-	let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -OutFile "' . expand(g:vim_dir . '/autoload/plug.vim') . '"'
-	silent execute '!powershell -command New-Item -ItemType Directory -Path "' . expand(g:vim_dir . '/autoload') . '"'
-	silent execute '!powershell -command ' . g:vim_plug_powershell_download_cmd
-	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+if empty(glob(expand(g:vim_dir . '/autoload/plug.vim')))
+    silent execute '!curl -fLo ' . g:vim_dir . '/autoload/plug.vim --create-dirs '
+        \ . '"https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"'
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+" if empty(glob(g:vim_dir . '/autoload/plug.vim'))
+" 	let g:vim_plug_uri = 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+" 	let g:vim_plug_powershell_download_cmd = 'Invoke-WebRequest -Uri "' . g:vim_plug_uri . '" -OutFile "' . expand(g:vim_dir . '/autoload/plug.vim') . '"'
+" 	silent execute '!powershell -NoProfile -command New-Item -ItemType Directory -Path "' . expand(g:vim_dir . '/autoload') . '"'
+" 	silent execute '!powershell -NoProfile -command ' . g:vim_plug_powershell_download_cmd
+" 	autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+" endif
 
-call plug#begin(glob(g:vim_dir . '/plugged')
+call plug#begin(expand(g:vim_dir . '/plugged'))
     Plug 'sheerun/vim-polyglot'
     Plug 'dracula/vim', { 'as': 'dracula' }
 
@@ -83,7 +88,8 @@ set wildignore=*.o,*~,*.pyc,*.class
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 
 set undofile
-set undodir=glob(g:vim_dir . '/undo')
+let g:undo_dir = expand(g:vim_dir . '/undo')
+set undodir=g:undo_dir
 
 set termguicolors
 set t_Co=256
@@ -120,6 +126,11 @@ let g:netrw_winsize = 25
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 
+" This will set a blinking vertical bar cursor in insert mode and revert to
+" the standard block cursor in normal mode1.
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
+
 let g:python3_host_prog = expand('~\AppData\Local\Microsoft\WindowsApps\python.exe')
 
 if executable('rg')
@@ -138,6 +149,8 @@ let g:ale_linters = { 'cs': ['OmniSharp'] }
 let g:sharpenup_map_prefix = '<leader>'
 let g:sharpenup_statusline_opts = { 'Text': '%s (%p/%P)' }
 let g:sharpenup_statusline_opts.Highlight = 0
+
+let g:OmniSharp_autoselect_existing_sln = 1
 
 augroup _omnisharp_settings
     autocmd!
