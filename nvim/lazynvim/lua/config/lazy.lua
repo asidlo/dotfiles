@@ -8,7 +8,7 @@ end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
 local spec = {
-  { "LazyVim/LazyVim",                                     import = "lazyvim.plugins" },
+  { "LazyVim/LazyVim", import = "lazyvim.plugins" },
   { import = "lazyvim.plugins.extras.lang.docker" },
   { import = "lazyvim.plugins.extras.lang.rust" },
   { import = "lazyvim.plugins.extras.lang.go" },
@@ -29,12 +29,10 @@ local spec = {
   { import = "lazyvim.plugins.extras.coding.yanky" },
   { import = "lazyvim.plugins.extras.coding.mini-surround" },
   { import = "lazyvim.plugins.extras.dap.core" },
-  { import = "lazyvim.plugins.extras.ui.alpha" },
   -- reeable when it has support for using api to resize window via hydra or normal mappings
   { import = "lazyvim.plugins.extras.ui.edgy" },
   { import = "lazyvim.plugins.extras.editor.leap" },
-  { import = "lazyvim.plugins.extras.editor.navic" },
-  { import = "lazyvim.plugins.extras.editor.aerial" },
+  { import = "lazyvim.plugins.extras.editor.outline" },
   { import = "lazyvim.plugins.extras.editor.dial" },
   { import = "lazyvim.plugins.extras.editor.inc-rename" },
   { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
@@ -49,7 +47,6 @@ if not vim.loop.os_uname().sysname == "Windows_NT" then
   table.insert(spec, { import = "lazyvim.plugins.extras.lang.python" })
   table.insert(spec, { import = "lazyvim.plugins.extras.ui.mini-animate" })
 end
-
 
 require("lazy").setup({
   spec = spec,
