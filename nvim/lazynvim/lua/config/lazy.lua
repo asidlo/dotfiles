@@ -21,7 +21,6 @@ local spec = {
   { import = "lazyvim.plugins.extras.lang.typescript" },
   { import = "lazyvim.plugins.extras.lang.java" },
   { import = "lazyvim.plugins.extras.lang.omnisharp" },
-  { import = "lazyvim.plugins.extras.lang.omnisharp" },
   { import = "lazyvim.plugins.extras.lang.sql" },
   { import = "lazyvim.plugins.extras.lang.git" },
   { import = "lazyvim.plugins.extras.coding.copilot" },

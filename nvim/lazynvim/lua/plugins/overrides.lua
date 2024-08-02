@@ -88,9 +88,20 @@ local disable_edgy_animate = {
   "folke/edgy.nvim",
   opts = {
     animate = {
-      enabled = false
-    }
-  }
+      enabled = false,
+    },
+  },
+}
+
+local disable_omnisharp = {
+  "neovim/nvim-lspconfig",
+  opts = {
+    servers = {
+      omnisharp = {
+        enabled = false,
+      },
+    },
+  },
 }
 
 if not vim.loop.os_uname().sysname == "Windows_NT" then
@@ -98,6 +109,7 @@ if not vim.loop.os_uname().sysname == "Windows_NT" then
   table.insert(spec, disable_cursor_animate)
 else
   table.insert(spec, disable_edgy_animate)
+  table.insert(spec, disable_omnisharp)
 end
 
 return spec

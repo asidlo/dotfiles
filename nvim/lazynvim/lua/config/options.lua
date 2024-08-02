@@ -22,6 +22,6 @@ if vim.loop.os_uname().sysname == "Windows_NT" then
       let &shellredir = '2>&1 | %%{ "$_" } | Out-File %s; exit $LastExitCode'
       let &shellpipe  = '2>&1 | %%{ "$_" } | tee %s; exit $LastExitCode'
       set shellquote= shellxquote=
-      ]])
+    ]])
   end
 end
