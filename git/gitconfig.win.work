@@ -5,12 +5,12 @@
   excludesfile = ~/.gitignore
   editor = nvim
   fsmonitor = true
-  autocrlf = false
+  autocrlf = true
 [log]
   date = iso
 [fetch]
   prune = true
-  pruneTags = true
+  # pruneTags = true
   showForcedUpdates = true
 [commit]
   verbose = true

@@ -33,6 +33,7 @@ choco install nerd-fonts-meslo -y
 winget install --id Docker.DockerDesktop --accept-source-agreements --disable-interactivity -h
 winget install --id Starship.Starship --accept-source-agreements --disable-interactivity -h
 winget install --id sharkdp.fd --accept-source-agreements --disable-interactivity -h
+winget install --id sharkdp.bat --accept-source-agreements --disable-interactivity -h
 winget install --id BurntSushi.ripgrep.MSVC --accept-source-agreements --disable-interactivity -h
 winget install --id chrisant996.Clink --accept-source-agreements --disable-interactivity -h
 winget install --id junegunn.fzf --accept-source-agreements --disable-interactivity -h
