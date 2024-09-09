@@ -8,7 +8,12 @@ trap 'echo "Error on line $LINENO in $0: Command \"$BASH_COMMAND\" failed"; exit
 DOTFILES_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
 SCRIPT_DIR="$DOTFILES_DIR/scripts"
 
-sudo locale-gen "en_US.UTF-8"
+source /etc/os-release
+
+# Only update locale if os is ubuntu or debian
+if [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
+  sudo locale-gen "en_US.UTF-8"
+fi
 
 "$SCRIPT_DIR/rust.sh"
 "$SCRIPT_DIR/fd.sh"
@@ -17,7 +22,7 @@ sudo locale-gen "en_US.UTF-8"
 "$SCRIPT_DIR/rg.sh"
 "$SCRIPT_DIR/lazygit.sh"
 "$SCRIPT_DIR/nvim.sh" -d ~/.local/bin
-"$SCRIPT_DIR/go.sh" # TODO (AS): modify to get latest version of go
+"$SCRIPT_DIR/go.sh"
 "$SCRIPT_DIR/npm.sh"
 "$SCRIPT_DIR/starship.sh"
 "$SCRIPT_DIR/tmux.sh"
