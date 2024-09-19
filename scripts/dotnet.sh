@@ -16,6 +16,7 @@ source /etc/os-release
 case "$ID" in
 "mariner")
 	sudo tdnf install -y dotnet-sdk-"$DOTNET_VERSION"
+	sudo tdnf install -y dotnet-runtime-"$DOTNET_VERSION"
 	;;
 "ubuntu" | "debian")
 	# Download Microsoft signing key and repository
@@ -30,6 +31,7 @@ case "$ID" in
 	# Update packages and install
 	sudo apt update
 	sudo apt-get install -y dotnet-sdk-"$DOTNET_VERSION"
+	sudo apt-get install -y dotnet-runtime-"$DOTNET_VERSION"
 	;;
 *)
 	echo "Unsupported OS: $ID"
