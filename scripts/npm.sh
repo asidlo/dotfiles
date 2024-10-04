@@ -2,8 +2,17 @@
 
 # Install nvm for npm and nodejs
 curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-export NVM_DIR="/usr/local/share/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+	export NVM_DIR="$HOME/.nvm"
+elif [ -s "/usr/local/share/nvm/nvm.sh" ]; then
+	export NVM_DIR="/usr/local/share/nvm"
+else
+	echo "nvm not found in either $HOME/.nvm or /usr/local/share/nvm"
+	exit 1
+fi
+
+. "$NVM_DIR/nvm.sh"
 
 source /etc/os-release
 
