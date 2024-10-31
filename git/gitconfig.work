@@ -27,6 +27,8 @@
   bc = rev-parse --abbrev-ref HEAD
   ba = branch -a
 
+  bl = blame -w -C -C -C
+
   co = checkout
   cob = checkout -b
 
@@ -62,13 +64,19 @@
   lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
   lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
+  # Use xargs to process each via: git lsm | xargs -i git reset {}
   ls = ls-files
-    lss = ! git status --porcelain=v2 | awk '{print $9}'
-    lsa = diff --name-only --staged
-  lsm = ls-files --modified
-  lsu = ls-files --others --exclude-standard
-  lsd = ls-files --deleted
-  lsc = diff --name-only --diff-filter=U
+  lss = ! git status --porcelain=v2 | awk '{print $9}'
+  lsa = diff --name-only --diff-filter=a
+  lsA = diff --name-only --diff-filter=A
+  lsm = diff --name-only --diff-filter=m
+  lsM = diff --name-only --diff-filter=M
+  lsr = diff --name-only --diff-filter=r
+  lsR = diff --name-only --diff-filter=R
+  lsd = diff --name-only --diff-filter=d
+  lsD = diff --name-only --diff-filter=D
+  lst = diff --name-only --diff-filter=t
+  lsT = diff --name-only --diff-filter=T
 
   s = status
   ss = status -s
@@ -91,18 +99,11 @@
   useHttpPath = true
 [credential "https://dev.azure.com"]
    useHttpPath = true
-[safe]
-  directory = /azure/appgw
-  directory = /azure/appgw/src/datapath/nginx
-  directory = /azure/appgw/src/datapath/mods/modsecurity
-  directory = /azure/appgw/src/datapath/mods/ngx-devel-kit
-  directory = /azure/appgw/src/datapath/mods/lua-nginx-module
-  directory = /azure/appgw/src/datapath/mods/echo-nginx-module
-  directory = /azure/appgw/src/Tenant/ConnDraining
-  directory = /azure/appgw/src/datapath/azwaf
-  directory = /azure/appgw/src/datapath/mods/nginx-module-vts
-  directory = /azure/appgw/src/Tools/FloodBuddy/WbClient/WAFBench
-  directory = /azure/appgw/src/datapath/luajit2
-  directory = /azure/appgw/.devcontainer
 [init]
   defaultBranch = main
+[rerere]
+	enable = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
