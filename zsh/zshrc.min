@@ -70,6 +70,9 @@ antibody bundle zsh-users/zsh-autosuggestions
 antibody bundle "greymd/docker-zsh-completion"
 # antibody bundle ohmyzsh/ohmyzsh path:plugins/docker
 
+# Needs to run after zsh-auto-suggestions is sourced
+bindkey '^ ' autosuggest-accept
+
 # PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
 # PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
 # PROMPT+=' in %{$fg[blue]%}%~%u%{$reset_color%}'                      # in DIRECTORY
