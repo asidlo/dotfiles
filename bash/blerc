@@ -1,0 +1,2 @@
+bleopt editor=nvim
+ble-bind -m auto_complete -f C-@ auto_complete/insert
