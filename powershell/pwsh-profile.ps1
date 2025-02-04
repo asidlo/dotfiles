@@ -12,10 +12,15 @@ foreach ($module in $modules) {
         Install-Module -Force -Name $module -Scope CurrentUser
     }
     if ($module -eq "PSReadLine") {
-        Import-Module -Name $module -MinimumVersion 2.1.0 -ErrorAction SilentlyContinue -ErrorVariable ReadlineImportError
-        if ($ReadlineImportError -ne $nul) {
-            Install-Module -Name $module -MinimumVersion 2.1.0 -Force
-            Import-Module -Name $module -MinimumVersion 2.1.0 -Force -NoClobber
+        try {
+            Import-Module -Name $module -MinimumVersion 2.1.0 -Force -ProgressAction SilentlyContinue -DisableNameChecking -WarningAction SilentlyContinue -ErrorAction SilentlyContinue -ErrorVariable ReadlineImportError
+            if ($ReadlineImportError -ne $nul) {
+                Install-Module -Name $module -MinimumVersion 2.1.0 -Force
+                Import-Module -Name $module -MinimumVersion 2.1.0 -Force -NoClobber
+            }
+        }
+        catch [System.IO.FileLoadException] {
+            Write-Debug "Module $($module) already loaded"
         }
     }
     else {
@@ -74,6 +79,10 @@ Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 # https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
 # https://github.com/PowerShell/PSReadLine/blob/master/PSReadLine/SamplePSReadLineProfile.ps1#L13-L21
 # Set-PSReadLineKeyHandler -Chord "Ctrl+f" -Function AcceptSuggestion
+Set-PSReadLineKeyHandler -Chord "Ctrl+Spacebar" -ScriptBlock {
+    [Microsoft.Powershell.PSConsoleReadline]::AcceptSuggestion()
+    [Microsoft.Powershell.PSConsoleReadline]::EndOfLine()
+}
 Set-PSReadLineKeyHandler -Chord "Ctrl+f" -ScriptBlock {
     [Microsoft.Powershell.PSConsoleReadline]::AcceptSuggestion()
     [Microsoft.Powershell.PSConsoleReadline]::EndOfLine()
@@ -172,17 +181,14 @@ function Stop-JavaProcesses {
     jps -l | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru } 
 }
 
-Function New-SymLink ($Source, $Target)
-{
+Function New-SymLink ($Source, $Target) {
     $Source = (Get-Item $Source).FullName
     $Target = $Target.replace("~", $env:HOMEDRIVE + $env:HOMEPATH)
 
-    if (test-path -pathtype container $source)
-    {
+    if (test-path -pathtype container $source) {
         $command = "cmd /c mklink /d"
     }
-    else
-    {
+    else {
         $command = "cmd /c mklink"
     }
 
