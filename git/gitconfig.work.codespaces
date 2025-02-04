@@ -66,13 +66,19 @@
   lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
   lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
+  # Use xargs to process each via: git lsm | xargs -i git reset {}
   ls = ls-files
   lss = ! git status --porcelain=v2 | awk '{print $9}'
-  lsa = diff --name-only --staged
-  lsm = ls-files --modified
-  lsu = ls-files --others --exclude-standard
-  lsd = ls-files --deleted
-  lsc = diff --name-only --diff-filter=U
+  lsa = diff --name-only --diff-filter=a
+  lsA = diff --name-only --diff-filter=A
+  lsm = diff --name-only --diff-filter=m
+  lsM = diff --name-only --diff-filter=M
+  lsr = diff --name-only --diff-filter=r
+  lsR = diff --name-only --diff-filter=R
+  lsd = diff --name-only --diff-filter=d
+  lsD = diff --name-only --diff-filter=D
+  lst = diff --name-only --diff-filter=t
+  lsT = diff --name-only --diff-filter=T
 
   s = status
   ss = status -s
@@ -90,3 +96,11 @@
 [credential "https://gist.github.com"]
   helper = 
   helper = !/usr/bin/gh auth git-credential
+[init]
+  defaultBranch = main
+[rerere]
+  enable = true
+[column]
+  ui = auto
+[branch]
+  sort = -committerdate

@@ -42,9 +42,8 @@ local spec = {
 }
 
 -- TODO (AS): Remove once git issue downloading python dap is resolved
-if not vim.loop.os_uname().sysname == "Windows_NT" then
+if vim.loop.os_uname().sysname ~= "Windows_NT" then
   table.insert(spec, { import = "lazyvim.plugins.extras.lang.python" })
-  table.insert(spec, { import = "lazyvim.plugins.extras.ui.mini-animate" })
 end
 
 require("lazy").setup({

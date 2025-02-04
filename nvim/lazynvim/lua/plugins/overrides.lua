@@ -1,4 +1,5 @@
 local spec = {
+  { "folke/edgy.nvim", opts = { animate = { enabled = false } } },
   {
     "mfussenegger/nvim-lint",
     opts = {
@@ -77,22 +78,6 @@ local spec = {
   },
 }
 
-local disable_cursor_animate = {
-  "echasnovski/mini.animate",
-  opts = function(_, opts)
-    opts.cursor = { enable = false }
-  end,
-}
-
-local disable_edgy_animate = {
-  "folke/edgy.nvim",
-  opts = {
-    animate = {
-      enabled = false,
-    },
-  },
-}
-
 local disable_omnisharp = {
   "neovim/nvim-lspconfig",
   opts = {
@@ -104,11 +89,7 @@ local disable_omnisharp = {
   },
 }
 
-if not vim.loop.os_uname().sysname == "Windows_NT" then
-  -- animate plugin is already disabled in windows in lazy.lua
-  table.insert(spec, disable_cursor_animate)
-else
-  table.insert(spec, disable_edgy_animate)
+if vim.loop.os_uname().sysname == "Windows_NT" then
   table.insert(spec, disable_omnisharp)
 end
 

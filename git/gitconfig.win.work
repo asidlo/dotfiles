@@ -65,11 +65,16 @@
 
   ls = ls-files
   lss = ! git status --porcelain=v2 | awk '{print $9}'
-  lsa = diff --name-only --staged
-  lsm = ls-files --modified
-  lsu = ls-files --others --exclude-standard
-  lsd = ls-files --deleted
-  lsc = diff --name-only --diff-filter=U
+  lsa = diff --name-only --diff-filter=a
+  lsa = diff --name-only --diff-filter=a
+  lsm = diff --name-only --diff-filter=m
+  lsm = diff --name-only --diff-filter=m
+  lsr = diff --name-only --diff-filter=r
+  lsr = diff --name-only --diff-filter=r
+  lsd = diff --name-only --diff-filter=d
+  lsd = diff --name-only --diff-filter=d
+  lst = diff --name-only --diff-filter=t
+  lst = diff --name-only --diff-filter=t
 
   s = status
   ss = status -s
@@ -101,12 +106,14 @@
 [credential "https://gist.github.com"]
   helper = 
   helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+[init]
+  defaultBranch = main
+[rerere]
+  enable = true
 [column]
   ui = auto
 [branch]
   sort = -committerdate
-[rerere]
-  enable = true
 [maintenance]
   repo = C:/src/Networking-nfv
 [credential "azrepos:org/identitydivision"]
