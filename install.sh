@@ -20,7 +20,6 @@ fi
 "$SCRIPT_DIR/bat.sh"
 "$SCRIPT_DIR/rg.sh"
 "$SCRIPT_DIR/starship.sh"
-"$SCRIPT_DIR/tmux.sh"
 "$SCRIPT_DIR/zsh.sh"
 "$SCRIPT_DIR/gh.sh"
 "$SCRIPT_DIR/artifacts-credprovider.sh"
@@ -31,7 +30,6 @@ ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
 ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
 ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
 ln -sfv "$DOTFILES_DIR/bash/bashrc" ~/.bashrc
-ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
 
 mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
@@ -43,6 +41,8 @@ if [ -n "$CODESPACES" ]; then
   "$SCRIPT_DIR/go.sh"
   "$SCRIPT_DIR/npm.sh"
   "$SCRIPT_DIR/dotnet.sh"
+  "$SCRIPT_DIR/tmux.sh"
 
+  ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
   mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
 fi
