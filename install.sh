@@ -34,7 +34,7 @@ ln -sfv "$DOTFILES_DIR/bash/bashrc" ~/.bashrc
 mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
 # If not running in codespaces do full install
-if [ -n "$CODESPACES" ]; then
+if [ -z "$CODESPACES" ]; then
   "$SCRIPT_DIR/rust.sh"
   "$SCRIPT_DIR/lazygit.sh"
   "$SCRIPT_DIR/nvim.sh" -d ~/.local/bin
