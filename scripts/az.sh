@@ -2,6 +2,10 @@
 
 source /etc/os-release
 
+if command -v az &>/dev/null; then
+  exit 0
+fi
+
 # https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script
 case "$ID" in
 "mariner")

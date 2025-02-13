@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if command -v nvm >/dev/null 2>&1; then
+  exit 0
+fi
+
 # Install nvm for npm and nodejs
 curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 

@@ -2,6 +2,10 @@
 
 source /etc/os-release
 
+if command -v pwsh &>/dev/null; then
+  exit 0
+fi
+
 # Install powershell
 case "$ID" in
 ubuntu)
