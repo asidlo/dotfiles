@@ -7,28 +7,34 @@ $modules = @(
     # "Az"
 )
 
-foreach ($module in $modules) {
-    if (-Not(Get-Module -ListAvailable -Name $module)) {
+foreach ($module in $modules)
+{
+    if (-Not(Get-Module -ListAvailable -Name $module))
+    {
         Install-Module -Force -Name $module -Scope CurrentUser
     }
-    if ($module -eq "PSReadLine") {
-        try {
+    if ($module -eq "PSReadLine")
+    {
+        try
+        {
             Import-Module -Name $module -MinimumVersion 2.1.0 -Force -ProgressAction SilentlyContinue -DisableNameChecking -WarningAction SilentlyContinue -ErrorAction SilentlyContinue -ErrorVariable ReadlineImportError
-            if ($ReadlineImportError -ne $nul) {
+            if ($ReadlineImportError -ne $nul)
+            {
                 Install-Module -Name $module -MinimumVersion 2.1.0 -Force
                 Import-Module -Name $module -MinimumVersion 2.1.0 -Force -NoClobber
             }
-        }
-        catch [System.IO.FileLoadException] {
+        } catch [System.IO.FileLoadException]
+        {
             Write-Debug "Module $($module) already loaded"
         }
-    }
-    else {
+    } else
+    {
         Import-Module -Name $module
     }
 }
 
-function IsVirtualTerminalProcessingEnabled {
+function IsVirtualTerminalProcessingEnabled
+{
     $MethodDefinitions = @'
 [DllImport("kernel32.dll", SetLastError = true)]
 public static extern IntPtr GetStdHandle(int nStdHandle);
@@ -39,14 +45,16 @@ public static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode)
     $hConsoleHandle = $Kernel32::GetStdHandle(-11) # STD_OUTPUT_HANDLE
     $mode = 0
     $Kernel32::GetConsoleMode($hConsoleHandle, [ref]$mode) >$null
-    if ($mode -band 0x0004) {
+    if ($mode -band 0x0004)
+    {
         # 0x0004 ENABLE_VIRTUAL_TERMINAL_PROCESSING
         return $true
     }
     return $false
 }
 
-function CanUsePredictionSource {
+function CanUsePredictionSource
+{
     return (! [System.Console]::IsOutputRedirected) -and (IsVirtualTerminalProcessingEnabled)
 }
 
@@ -64,7 +72,8 @@ Set-PSReadLineOption -HistorySaveStyle SaveIncrementally
 Set-PSReadLineOption -MaximumHistoryCount 4000
 
 # https://github.com/PowerShell/PSReadLine/issues/2046
-if (CanUsePredictionSource) {
+if (CanUsePredictionSource)
+{
     Set-PSReadLineOption -PredictionSource History
 }
 
@@ -140,55 +149,65 @@ $GetChildItemColorTable['Default'] = "White"
 $GetChildItemColorExtensions.CompressedList += @(".tgz")
 $GetChildItemColorExtensions.ImageList = @(".png", ".jpg", ".jfif")
 
-ForEach ($Exe in $GetChildItemColorExtensions.ExecutableList) {
+ForEach ($Exe in $GetChildItemColorExtensions.ExecutableList)
+{
     $GetChildItemColorTable[$Exe] = "Green"
 }
 
-ForEach ($Exe in $GetChildItemColorExtensions.ImageList) {
+ForEach ($Exe in $GetChildItemColorExtensions.ImageList)
+{
     $GetChildItemColorTable[$Exe] = "Magenta"
 }
 
-ForEach ($Exe in $GetChildItemColorExtensions.CompressedList) {
+ForEach ($Exe in $GetChildItemColorExtensions.CompressedList)
+{
     $GetChildItemColorTable[$Exe] = "Red"
 }
 
-ForEach ($Exe in $GetChildItemColorExtensions.DllPdbList) {
+ForEach ($Exe in $GetChildItemColorExtensions.DllPdbList)
+{
     $GetChildItemColorTable[$Exe] = "Red"
 }
 
 #--------------------------------------------------------------
 # Functions
 #--------------------------------------------------------------
-function Set-LocationEnhanced {
-    if ($args[0] -eq '-') {
+function Set-LocationEnhanced
+{
+    if ($args[0] -eq '-')
+    {
         $DIR = $OLDPWD;
-    }
-    else {
+    } else
+    {
         $DIR = $args[0];
     }
     $tmp = Get-Location;
 
-    if ($DIR) {
+    if ($DIR)
+    {
         Set-Location $DIR;
-    }
-    else {
+    } else
+    {
         Set-Location (Resolve-Path ~)
     }
     Set-Variable -Name OLDPWD -Value $tmp -Scope global;
 }
 
-function Stop-JavaProcesses {
+function Stop-JavaProcesses
+{
     jps -l | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru } 
 }
 
-Function New-SymLink ($Source, $Target) {
+Function New-SymLink ($Source, $Target)
+{
     $Source = (Get-Item $Source).FullName
     $Target = $Target.replace("~", $env:HOMEDRIVE + $env:HOMEPATH)
 
-    if (test-path -pathtype container $source) {
+    if (test-path -pathtype container $source)
+    {
         $command = "cmd /c mklink /d"
-    }
-    else {
+    } else
+    {
         $command = "cmd /c mklink"
     }
 
@@ -216,11 +235,13 @@ Set-Alias -Name ln -Value New-Symlink
 #--------------------------------------------------------------
 # Prompt
 #--------------------------------------------------------------
-if (Get-Command "starship" -ErrorAction SilentlyContinue) { 
+if (Get-Command "starship" -ErrorAction SilentlyContinue)
+{ 
     Invoke-Expression (&starship init powershell)
 }
 
-if (Get-Command "$env:HOMEPATH\.azure-kubectl\kubectl.exe" -ErrorAction SilentlyContinue) {
+if (Get-Command "$env:HOMEPATH\.azure-kubectl\kubectl.exe" -ErrorAction SilentlyContinue)
+{
     &"$env:HOMEPATH\.azure-kubectl\kubectl.exe" completion powershell | Out-String | Invoke-Expression
 }
 

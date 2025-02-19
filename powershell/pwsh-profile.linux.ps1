@@ -1,22 +1,48 @@
 $modules = @(
     "PSReadLine",
     "posh-git",
-    "Get-ChildItemColor",
+    "Get-ChildItemColor"
     "PSFzf"
+    # "Az"
 )
 
-foreach ($module in $modules) {
-    if (-Not(Get-Module -ListAvailable -Name $module)) {
+function Add-ToPath()
+{
+    param (
+        [string]$PathToAdd
+    )
+
+    $currentPath = [System.Environment]::GetEnvironmentVariable("PATH", [System.EnvironmentVariableTarget]::Process)
+    if ($currentPath -notcontains $PathToAdd)
+    {
+        [System.Environment]::SetEnvironmentVariable("PATH", "${currentPath}:${PathToAdd}", [System.EnvironmentVariableTarget]::Process)
+    }
+}
+
+Add-ToPath "$env:HOME/.local/bin"
+
+foreach ($module in $modules)
+{
+    if (-Not(Get-Module -ListAvailable -Name $module))
+    {
         Install-Module -Force -Name $module -Scope CurrentUser
     }
-    if ($module -eq "PSReadLine") {
-        Import-Module -Name $module -MinimumVersion 2.1.0 -ErrorAction SilentlyContinue -ErrorVariable ReadlineImportError
-        if ($ReadlineImportError -ne $nul) {
-            Install-Module -Name $module -MinimumVersion 2.1.0 -Force
-            Import-Module -Name $module -MinimumVersion 2.1.0 -Force -NoClobber
+    if ($module -eq "PSReadLine")
+    {
+        try
+        {
+            Import-Module -Name $module -MinimumVersion 2.1.0 -Force -ProgressAction SilentlyContinue -DisableNameChecking -WarningAction SilentlyContinue -ErrorAction SilentlyContinue -ErrorVariable ReadlineImportError
+            if ($ReadlineImportError -ne $nul)
+            {
+                Install-Module -Name $module -MinimumVersion 2.1.0 -Force
+                Import-Module -Name $module -MinimumVersion 2.1.0 -Force -NoClobber
+            }
+        } catch [System.IO.FileLoadException]
+        {
+            Write-Debug "Module $($module) already loaded"
         }
-    }
-    else {
+    } else
+    {
         Import-Module -Name $module
     }
 }
@@ -45,6 +71,10 @@ Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 # https://devblogs.microsoft.com/powershell/announcing-psreadline-2-1-with-predictive-intellisense/
 # https://github.com/PowerShell/PSReadLine/blob/master/PSReadLine/SamplePSReadLineProfile.ps1#L13-L21
 # Set-PSReadLineKeyHandler -Chord "Ctrl+f" -Function AcceptSuggestion
+Set-PSReadLineKeyHandler -Chord "Ctrl+Spacebar" -ScriptBlock {
+    [Microsoft.Powershell.PSConsoleReadline]::AcceptSuggestion()
+    [Microsoft.Powershell.PSConsoleReadline]::EndOfLine()
+}
 Set-PSReadLineKeyHandler -Chord "Ctrl+f" -ScriptBlock {
     [Microsoft.Powershell.PSConsoleReadline]::AcceptSuggestion()
     [Microsoft.Powershell.PSConsoleReadline]::EndOfLine()
@@ -102,45 +132,69 @@ $GetChildItemColorTable['Default'] = "White"
 $GetChildItemColorExtensions.CompressedList += @(".tgz")
 $GetChildItemColorExtensions.ImageList = @(".png", ".jpg", ".jfif")
 
-ForEach ($Exe in $GetChildItemColorExtensions.ExecutableList) {
+ForEach ($Exe in $GetChildItemColorExtensions.ExecutableList)
+{
     $GetChildItemColorTable[$Exe] = "Green"
 }
 
-ForEach ($Exe in $GetChildItemColorExtensions.ImageList) {
+ForEach ($Exe in $GetChildItemColorExtensions.ImageList)
+{
     $GetChildItemColorTable[$Exe] = "Magenta"
 }
 
-ForEach ($Exe in $GetChildItemColorExtensions.CompressedList) {
+ForEach ($Exe in $GetChildItemColorExtensions.CompressedList)
+{
     $GetChildItemColorTable[$Exe] = "Red"
 }
 
-ForEach ($Exe in $GetChildItemColorExtensions.DllPdbList) {
+ForEach ($Exe in $GetChildItemColorExtensions.DllPdbList)
+{
     $GetChildItemColorTable[$Exe] = "Red"
 }
 
 #--------------------------------------------------------------
 # Functions
 #--------------------------------------------------------------
-function Set-LocationEnhanced {
-    if ($args[0] -eq '-') {
+function Set-LocationEnhanced
+{
+    if ($args[0] -eq '-')
+    {
         $DIR = $OLDPWD;
-    }
-    else {
+    } else
+    {
         $DIR = $args[0];
     }
     $tmp = Get-Location;
 
-    if ($DIR) {
+    if ($DIR)
+    {
         Set-Location $DIR;
-    }
-    else {
+    } else
+    {
         Set-Location (Resolve-Path ~)
     }
     Set-Variable -Name OLDPWD -Value $tmp -Scope global;
 }
 
-function Stop-JavaProcesses {
+function Stop-JavaProcesses
+{
     jps -l | ForEach-Object { $p, $desc = $_ -split ' ', 2; Write-Host "`n$p - $desc"; Stop-Process -id $p -confirm -passthru } 
+}
+
+function New-SymLink ($Source, $Target)
+{
+    $Source = (Get-Item $Source).FullName
+    $Target = $Target.replace("~", $env:HOMEDRIVE + $env:HOMEPATH)
+
+    if (test-path -pathtype container $source)
+    {
+        $command = "cmd /c mklink /d"
+    } else
+    {
+        $command = "cmd /c mklink"
+    }
+
+    Invoke-Expression "$command $Target $Source"
 }
 
 # Dotnet cli completion
@@ -163,11 +217,13 @@ Set-Alias -Name k -Value kubectl
 #--------------------------------------------------------------
 # Prompt
 #--------------------------------------------------------------
-if (Get-Command "starship" -ErrorAction SilentlyContinue) { 
+if (Get-Command "starship" -ErrorAction SilentlyContinue)
+{ 
     Invoke-Expression (&starship init powershell)
 }
 
-if (Get-Command "$env:HOMEPATH\.azure-kubectl\kubectl.exe" -ErrorAction SilentlyContinue) {
+if (Get-Command "$env:HOMEPATH\.azure-kubectl\kubectl.exe" -ErrorAction SilentlyContinue)
+{
     &"$env:HOMEPATH\.azure-kubectl\kubectl.exe" completion powershell | Out-String | Invoke-Expression
 }
 
