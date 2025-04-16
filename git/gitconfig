@@ -11,8 +11,6 @@
   pruneTags = true
 [commit]
   verbose = true
-[pull]
-  rebase = true
 [diff]
   tool = vimdiff
   ignoreSubmodules = dirty
@@ -88,6 +86,7 @@
 
   # Get all aliases defined in gitconfig
   alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+
 [init]
   defaultBranch = main
 [rerere]

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-source /etc/os-release
-
 if command -v pwsh &>/dev/null; then
   exit 0
 fi
+
+source /etc/os-release
 
 # Install powershell
 case "$ID" in

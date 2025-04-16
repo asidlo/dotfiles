@@ -15,8 +15,6 @@
   tool = vscode
 [mergetool "vscode"]
   cmd = code --wait $MERGED
-[pull]
-  rebase = true
 [diff]
   tool = vscode
   ignoreSubmodules = dirty
@@ -30,6 +28,8 @@
   b = branch
   bc = rev-parse --abbrev-ref HEAD
   ba = branch -a
+
+  bl = blame -w -C -C -C
 
   co = checkout
   cob = checkout -b
@@ -90,6 +90,7 @@
 
   # Get all aliases defined in gitconfig
   alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
+
 [credential "https://github.com"]
   helper = 
   helper = !/usr/bin/gh auth git-credential

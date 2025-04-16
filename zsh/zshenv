@@ -60,9 +60,9 @@ export PATH=$PATH:$GOPATH/bin
 [[ -v GRADLE_HOME ]] && export PATH=$PATH:$GRADLE_HOME/bin
 
 # export DOTNET_ROOT=/usr/local/share/dotnet
-export DOTNET_ROOT=~/.dotnet
-export PATH=$PATH:$DOTNET_ROOT
-export PATH=$PATH:$DOTNET_ROOT/tools
+# export DOTNET_ROOT=~/.dotnet
+# export PATH=$PATH:$DOTNET_ROOT
+# export PATH=$PATH:$DOTNET_ROOT/tools
 
 BOB_BIN=~/.local/share/bob/nvim-bin
 if [ -d "$BOB_BIN" ]; then

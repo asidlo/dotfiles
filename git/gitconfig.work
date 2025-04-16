@@ -11,8 +11,6 @@
   pruneTags = true
 [commit]
   verbose = true
-[pull]
-  rebase = true
 [diff]
   tool = vimdiff
   ignoreSubmodules = dirty
