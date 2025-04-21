@@ -6,6 +6,8 @@
   editor = code --wait
 [log]
   date = iso
+[pull]
+  rebase = false
 [fetch]
   prune = true
   pruneTags = true

@@ -6,6 +6,8 @@
   editor = nvim
 [log]
   date = iso
+[pull]
+  rebase = false
 [fetch]
   prune = true
   pruneTags = true
