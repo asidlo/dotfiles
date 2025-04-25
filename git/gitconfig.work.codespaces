@@ -93,12 +93,6 @@
   # Get all aliases defined in gitconfig
   alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
-[credential "https://github.com"]
-  helper = 
-  helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-  helper = 
-  helper = !/usr/bin/gh auth git-credential
 [init]
   defaultBranch = main
 [rerere]
@@ -107,3 +101,13 @@
   ui = auto
 [branch]
   sort = -committerdate
+
+[credential]
+  helper = 
+  helper = /usr/local/bin/external-git ado-helper
+[credential "https://github.com"]
+  helper = 
+  helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+  helper = 
+  helper = !/usr/bin/gh auth git-credential
