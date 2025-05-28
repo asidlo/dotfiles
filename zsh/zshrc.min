@@ -190,7 +190,10 @@ typeset -U path
 
 # Setting for the new UTF-8 terminal support in Lion
 # https://github.com/ohmyzsh/ohmyzsh/issues/5157
-LANG=en_US.utf-8
-LC_ALL=en_US.utf-8
-LC_CTYPE=en_US.UTF-8
-# export TERM=xterm-256color
+# LANG=en_US.utf-8
+# LC_ALL=en_US.utf-8
+# LC_CTYPE=en_US.UTF-8
+
+# On mariner for some reason I only saw en_US.utf8 when listing via locale -a, en_US.utf-8 was not listed
+LC_ALL=en_US.utf8
+LC_CTYPE=en_US.utf8
