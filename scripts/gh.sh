@@ -31,7 +31,7 @@ debian | ubuntu)
     sudo apt update &&
     sudo apt install gh -y
   ;;
-mariner)
+mariner | azurelinux)
   sudo tdnf install gh -y
   ;;
 centos | fedora | rhel)

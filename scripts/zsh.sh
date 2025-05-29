@@ -10,7 +10,7 @@ if ! command -v zsh &>/dev/null; then
   fedora)
     sudo dnf install -y zsh
     ;;
-  mariner)
+  mariner | azurelinux)
     sudo tdnf install -y zsh
     ;;
   *)

@@ -8,7 +8,7 @@ fi
 
 # https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=script
 case "$ID" in
-"mariner")
+"mariner" | "azurelinux")
   sudo tdnf install -y ca-certificates
   sudo tdnf install -y azure-cli
   ;;

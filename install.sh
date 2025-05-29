@@ -15,6 +15,7 @@ if [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
   sudo locale-gen "en_US.UTF-8"
 fi
 
+"$SCRIPT_DIR/dependencies.sh"
 "$SCRIPT_DIR/fd.sh"
 "$SCRIPT_DIR/fzf.sh"
 "$SCRIPT_DIR/bat.sh"

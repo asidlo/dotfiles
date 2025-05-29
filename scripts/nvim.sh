@@ -91,15 +91,15 @@ ubuntu)
 		install_nvim_appimage
 	fi
 	;;
-mariner)
+mariner | azurelinux)
 	sudo tdnf update -y
 	sudo tdnf install build-essential tmux wget curl zip unzip python3 python3-pip python3-venv -y
-  curl -L https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz -o /tmp/nvim-linux-x86_64.tar.gz
-  tar -xzvf /tmp/nvim-linux-x86_64.tar.gz -C /tmp
-  mkdir -p ~/.local/{src,bin}
-  mv /tmp/nvim-linux-x86_64 ~/.local/src/nvim
-  ln -svf ~/.local/src/nvim/bin/nvim ~/.local/bin/nvim
-  rm -f /tmp/nvim-linux-x86_64.tar.gz
+	curl -L https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz -o /tmp/nvim-linux-x86_64.tar.gz
+	tar -xzvf /tmp/nvim-linux-x86_64.tar.gz -C /tmp
+	mkdir -p ~/.local/{src,bin}
+	mv /tmp/nvim-linux-x86_64 ~/.local/src/nvim
+	ln -svf ~/.local/src/nvim/bin/nvim ~/.local/bin/nvim
+	rm -f /tmp/nvim-linux-x86_64.tar.gz
 	;;
 *)
 	echo "Unsupported distribution: $ID"
