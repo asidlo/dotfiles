@@ -34,8 +34,8 @@ ln -sfv "$DOTFILES_DIR/bash/bashrc" ~/.bashrc
 
 mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
-# If not running in codespaces do full install
-if [ -z "$CODESPACES" ]; then
+# If not running in codespaces or devcontainer, do full install
+if [ -z "$CODESPACES" ] && [ -z "$DEVCONTAINER" ] && [ -z "$DEV_CONTAINER" ] && [ ! -d "/.devcontainer" ] && [ ! -d "/workspaces" ]; then
   "$SCRIPT_DIR/rust.sh"
   "$SCRIPT_DIR/lazygit.sh"
   "$SCRIPT_DIR/nvim.sh" -d ~/.local/bin
@@ -46,4 +46,6 @@ if [ -z "$CODESPACES" ]; then
 
   ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
   mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
+
+  ln -sfv "$DOTFILES_DIR/git/gitconfig.work.wavespaces" ~/.gitconfig
 fi
