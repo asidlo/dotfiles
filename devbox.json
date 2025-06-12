@@ -1,0 +1,36 @@
+{
+    "$schema": "https://aka.ms/devbox/schemas/2023-05-01/devbox.json",
+    "image": {
+        "os": "windows11"
+    },
+    "setupTasks": [
+        {
+            "description": "Install Chocolatey and required packages",
+            "command": "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')); choco install nerd-fonts-meslo -y"
+        },
+        {
+            "description": "Install packages via winget",
+            "command": "winget install --id Docker.DockerDesktop --accept-source-agreements --disable-interactivity -h; winget install --id Starship.Starship --accept-source-agreements --disable-interactivity -h; winget install --id sharkdp.fd --accept-source-agreements --disable-interactivity -h; winget install --id sharkdp.bat --accept-source-agreements --disable-interactivity -h; winget install --id BurntSushi.ripgrep.MSVC --accept-source-agreements --disable-interactivity -h; winget install --id chrisant996.Clink --accept-source-agreements --disable-interactivity -h; winget install --id junegunn.fzf --accept-source-agreements --disable-interactivity -h; winget install --id Neovim.Neovim --accept-source-agreements --disable-interactivity -h; winget install --id JesseDuffield.lazygit --accept-source-agreements --disable-interactivity -h; winget install --id GoLang.Go --accept-source-agreements --disable-interactivity -h; winget install --id vim.vim --accept-source-agreements --disable-interactivity -h; winget install azcopy --accept-source-agreements --disable-interactivity -h; winget install python3 --accept-source-agreements --disable-interactivity -h; winget install \"Outlook for Windows\" --accept-source-agreements --disable-interactivity -h; winget install --id Microsoft.WindowsTerminal --accept-source-agreements --disable-interactivity -h; winget install --id Microsoft.Teams --accept-source-agreements --disable-interactivity -h; winget install --id Microsoft.AzureCLI --accept-source-agreements --disable-interactivity -h; winget install --id LLVM.LLVM --accept-source-agreements --disable-interactivity -h; winget install --id Rustlang.Rustup --accept-source-agreements --disable-interactivity -h; winget install --id OpenJS.NodeJS.LTS --accept-source-agreements --disable-interactivity -h"
+        },
+        {
+            "description": "Run custom install script for configuration and symlinks",
+            "command": "powershell -ExecutionPolicy Bypass -File install.ps1"
+        },
+        {
+            "description": "Install PowerShell modules",
+            "command": "Install-Module -Name PSDesiredStateConfiguration -Force; Install-Module -Name Az -Force"
+        },
+        {
+            "description": "Enable Windows features for containers, Hyper-V, WSL, etc.",
+            "command": "dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart; dism.exe /online /enable-feature /featurename:Containers /all /norestart; dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart; dism.exe /online /enable-feature /featurename:Microsoft-Hyper-V-All /all /norestart"
+        },
+        {
+            "description": "Apply Windows system and UI settings",
+            "command": "Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System -Name EnableLUA -Value 1; Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System -Name PromptOnSecureDesktop -Value 0; Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System -Name ConsentPromptBehaviorAdmin -Value 0; Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\AppModelUnlock -Name AllowDevelopmentWithoutDevLicense -Value 1; Set-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced -Name ShowTaskViewButton -Value 0 -Type Dword -Force; if (Test-Path -Path $env:APPDATA\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned\\TaskBar -PathType Container) { Remove-Item -Recurse -Force -Path $env:APPDATA\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned\\TaskBar }; if (Test-Path -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Taskband -PathType Container) { Remove-Item -Recurse -Force -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Taskband }; Get-Process -Name Explorer | Stop-Process -Force; $shortcuts = Get-ChildItem -Path $env:PUBLIC\\Desktop; foreach ($shortcut in $shortcuts) { Remove-Item -Path $shortcut }; $oneDriveDesktopPath = \"$env:USERPROFILE\\OneDrive - Microsoft\\Desktop\"; if (Test-Path -Path $oneDriveDesktopPath -PathType Container) { $shortcuts = Get-ChildItem -Recurse -Path $oneDriveDesktopPath; foreach ($shortcut in $shortcuts) { Remove-Item -Recurse -Force -Path $shortcut } }; Set-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced -Name TaskbarAl -Value 0 -Type Dword -Force; Set-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name AppsUseLightTheme -Value 0 -Type Dword -Force; Set-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name SystemUsesLightTheme -Value 0 -Type Dword -Force; Set-ItemProperty -Path \"HKCU:\\Control Panel\\Colors\" -Name Background -Value '0 0 0' -Force; Set-ItemProperty -Path \"HKCU:\\Control Panel\\Desktop\" -Name Wallpaper -Value '' -Force; Set-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Search -Name SearchBoxTaskbarMode -Value 0 -Type Dword -Force; Set-ItemProperty -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced -Name TaskbarMn -Value 0 -Force; Set-ItemProperty -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced -Name TaskbarDa -Value 0 -Force; Set-ItemProperty -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced -Name Start_Layout -Value 1 -Force; Set-ItemProperty -Path HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced -Name MultiTaskingAltTabFilter -Value 3 -Force"
+        },
+        {
+            "description": "Install WSL with Ubuntu",
+            "command": "wsl --install -d Ubuntu"
+        }
+    ]
+}
