@@ -69,7 +69,7 @@ function dotnet {
   if [ -f /usr/local/bin/run-dotnet.sh ]; then
     /usr/local/bin/run-dotnet.sh "$@"
   else
-    dotnet "$@"
+    command dotnet "$@"
   fi
 }
 
