@@ -23,8 +23,8 @@ local spec = {
   { import = "lazyvim.plugins.extras.lang.omnisharp" },
   { import = "lazyvim.plugins.extras.lang.sql" },
   { import = "lazyvim.plugins.extras.lang.git" },
-  { import = "lazyvim.plugins.extras.coding.copilot" },
-  { import = "lazyvim.plugins.extras.coding.copilot-chat" },
+  { import = "lazyvim.plugins.extras.ai.copilot" },
+  { import = "lazyvim.plugins.extras.ai.copilot-chat" },
   { import = "lazyvim.plugins.extras.coding.yanky" },
   { import = "lazyvim.plugins.extras.coding.mini-surround" },
   { import = "lazyvim.plugins.extras.dap.core" },
@@ -38,13 +38,15 @@ local spec = {
   { import = "lazyvim.plugins.extras.util.project" },
   { import = "lazyvim.plugins.extras.test.core" },
   { import = "lazyvim.plugins.extras.linting.eslint" },
-  { import = "plugins" },
 }
 
 -- TODO (AS): Remove once git issue downloading python dap is resolved
 if vim.loop.os_uname().sysname ~= "Windows_NT" then
   table.insert(spec, { import = "lazyvim.plugins.extras.lang.python" })
 end
+
+-- Add my plugins last
+table.insert(spec,{ import = "plugins" })
 
 require("lazy").setup({
   spec = spec,
