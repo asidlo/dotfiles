@@ -9,10 +9,10 @@ source /etc/os-release
 # Install ripgrep
 # https://github.com/BurntSushi/ripgrep
 case "$ID" in
-"mariner")
+"mariner" | "azurelinux")
   SCRIPT_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
   "$SCRIPT_DIR/rust.sh"
-  cargo install ripgrep --version "$RG_VERSION"
+  ~/.cargo/bin/cargo install ripgrep --version "$RG_VERSION"
   ;;
 "ubuntu" | "debian")
   # Latest version of rg deb (>14.0.0) includes a -1 at the end of the version for some reason.

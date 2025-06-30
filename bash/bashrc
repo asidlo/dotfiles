@@ -113,3 +113,4 @@ export FZF_DEFAULT_OPTS='
 
 # Add this line at the end of .bashrc:
 [[ ! ${BLE_VERSION-} ]] || ble-attach
+. "$HOME/.cargo/env"

@@ -69,7 +69,7 @@ function dotnet {
   if [ -f /usr/local/bin/run-dotnet.sh ]; then
     /usr/local/bin/run-dotnet.sh "$@"
   else
-    dotnet "$@"
+    command dotnet "$@"
   fi
 }
 
@@ -99,3 +99,4 @@ if [ -d "$HOME/.sdkman" ]; then
   export SDKMAN_DIR="$HOME/.sdkman"
   [ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ] && source "$SDKMAN_DIR/bin/sdkman-init.sh" || true
 fi
+. "$HOME/.cargo/env"

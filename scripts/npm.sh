@@ -29,7 +29,7 @@ ubuntu | debian)
     nvm install --lts
   fi
   ;;
-mariner)
+mariner | azurelinux)
   sudo tdnf install -y nodejs
   ;;
 *)
