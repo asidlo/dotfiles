@@ -30,7 +30,7 @@ ubuntu)
         rm packages-microsoft-prod.deb
     fi
     sudo apt-get update
-    latest_sdk=$(apt-cache search '^dotnet-sdk-[0-9]+$' | awk '{print $1}' | grep -Eo 'dotnet-sdk-[0-9]+' | sort -V | tail -n1)
+    latest_sdk=$(apt-cache search dotnet-sdk- | awk '{print $1}' | grep -E '^dotnet-sdk-[0-9]+\.[0-9]+$' | sort -V | tail -n1)
     if [ -n "$latest_sdk" ]; then
         sudo apt-get install -y "$latest_sdk"
     else
