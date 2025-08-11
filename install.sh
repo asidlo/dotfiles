@@ -27,7 +27,7 @@ fi
 "$SCRIPT_DIR/az.sh"
 
 ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
-ln -svf "$DOTFILES_DIR/git/lazygit.config" ~/.config/lazygit/config.yml
+mkdir -p ~/.config/lazygit && ln -svf "$DOTFILES_DIR/git/lazygit.config" ~/.config/lazygit/config.yml
 ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
 ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
 ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
