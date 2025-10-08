@@ -51,6 +51,7 @@ winget install --id LLVM.LLVM --accept-source-agreements --disable-interactivity
 # winget install --id Microsoft.VisualStudio.2022.BuildTools --accept-source-agreements --disable-interactivity -h
 winget install --id Rustlang.Rustup --accept-source-agreements --disable-interactivity -h
 winget install --id OpenJS.NodeJS.LTS --accept-source-agreements --disable-interactivity -h
+winget install --scope machine Microsoft.PowerToys -s winget
 
 if (-Not(Test-Path -Path "C:\Program Files\LLVM\bin")) {
     $oldpath = (Get-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
