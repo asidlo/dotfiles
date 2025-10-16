@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: windows-features
+description: Enable required Windows developer features (WSL, Hyper-V, Containers).
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

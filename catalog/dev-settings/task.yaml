@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: dev-settings
+description: Apply comprehensive Windows developer workstation settings (theme, taskbar, explorer, privacy, clocks).
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

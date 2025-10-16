@@ -1,0 +1,255 @@
+$schema: "1.0"
+name: "dotfiles-devbox-user"
+description: "Applies developer environment settings and installs packages"
+
+tasks:
+  # Enable required Windows features early (WSL, Containers, Hyper-V) before tooling installs
+  - name: powershell
+    description: Enable platform features (WSL, Containers, Hyper-V)
+    parameters:
+      command: |
+        dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+        dism.exe /online /enable-feature /featurename:Containers /all /norestart
+        dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+        dism.exe /online /enable-feature /featurename:Microsoft-Hyper-V-All /all /norestart
+
+  # WSL minimal install (Ubuntu) if not already present
+  - name: powershell
+    description: Install WSL Ubuntu distro (minimal)
+    parameters:
+      command: |
+        $ErrorActionPreference = 'Stop'
+        $distro = 'Ubuntu'
+        $installed = & wsl.exe --list --quiet 2>$null | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+        if ($installed -notcontains $distro) {
+          Write-Host "[wsl] Installing $distro (may require reboot)"
+          wsl.exe --install -d $distro
+        } else { Write-Host "[wsl] $distro already installed" }
+
+  # Winget installs (idempotent). Each separated for clearer failure isolation.
+  - name: winget
+    description: Install Docker Desktop
+    parameters:
+      package: Docker.DockerDesktop
+  - name: winget
+    description: Install Starship prompt
+    parameters:
+      package: Starship.Starship
+  - name: winget
+    description: Install fd
+    parameters:
+      package: sharkdp.fd
+  - name: winget
+    description: Install bat
+    parameters:
+      package: sharkdp.bat
+  - name: winget
+    description: Install ripgrep
+    parameters:
+      package: BurntSushi.ripgrep.MSVC
+  - name: winget
+    description: Install Clink
+    parameters:
+      package: chrisant996.Clink
+  - name: winget
+    description: Install fzf
+    parameters:
+      package: junegunn.fzf
+  - name: winget
+    description: Install Neovim
+    parameters:
+      package: Neovim.Neovim
+  - name: winget
+    description: Install lazygit
+    parameters:
+      package: JesseDuffield.lazygit
+  - name: winget
+    description: Install Go
+    parameters:
+      package: GoLang.Go
+  - name: winget
+    description: Install Vim
+    parameters:
+      package: Vim.Vim
+  - name: winget
+    description: Install AzCopy
+    parameters:
+      package: azcopy
+  - name: winget
+    description: Install Python
+    parameters:
+      package: Python.Python.3
+  - name: winget
+    description: Install Outlook for Windows
+    parameters:
+      package: "Outlook for Windows"
+  - name: winget
+    description: Install Windows Terminal
+    parameters:
+      package: Microsoft.WindowsTerminal
+  - name: winget
+    description: Install Microsoft Teams
+    parameters:
+      package: Microsoft.Teams
+  - name: winget
+    description: Install Azure CLI
+    parameters:
+      package: Microsoft.AzureCLI
+  - name: winget
+    description: Install LLVM toolchain
+    parameters:
+      package: LLVM.LLVM
+  - name: winget
+    description: Install Rustup
+    parameters:
+      package: Rustlang.Rustup
+  - name: winget
+    description: Install Node.js LTS
+    parameters:
+      package: OpenJS.NodeJS.LTS
+  - name: winget
+    description: Install PowerToys (machine scope)
+    parameters:
+      package: Microsoft.PowerToys
+
+  # Chocolatey specific package (nerd fonts) using inline bootstrap if needed.
+  - name: powershell
+    description: Install Nerd Fonts Meslo via Chocolatey if not present
+    parameters:
+      command: |
+        $ErrorActionPreference = 'Stop'
+        if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+          Set-ExecutionPolicy Bypass -Scope Process -Force; \
+          Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        }
+        choco install nerd-fonts-meslo -y
+
+  # Settings Part 1: Security / Developer Mode / Admin prompts
+  - name: powershell
+    description: Configure UAC & enable developer mode
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        $IsUserAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match 'S-1-5-32-544')
+        if (-not $IsUserAdmin) { Write-Error 'Run as admin.' -Category AuthenticationError; exit 1 }
+        Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 1
+        Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name PromptOnSecureDesktop -Value 0
+        Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
+        Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -Name AllowDevelopmentWithoutDevLicense -Value 1
+
+  # Settings Part 2: Taskbar & Desktop cleanup
+  - name: powershell
+    description: Remove Task View, pinned items, desktop shortcuts
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name ShowTaskViewButton -Value 0 -Type Dword -Force
+        $taskbarAppPath = "$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar"
+        if (Test-Path $taskbarAppPath) { Remove-Item -Recurse -Force $taskbarAppPath }
+        $taskbandRegEntry = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband'
+        if (Test-Path $taskbandRegEntry) { Remove-Item -Recurse -Force $taskbandRegEntry }
+        $publicDesktop = "$env:PUBLIC\Desktop"; if (Test-Path $publicDesktop) { Get-ChildItem -Path $publicDesktop -Filter *.lnk | Remove-Item -Force }
+        $oneDriveDesktopPath = "$env:USERPROFILE\OneDrive - Microsoft\Desktop"; if (Test-Path $oneDriveDesktopPath) { Get-ChildItem -Path $oneDriveDesktopPath -Filter *.lnk | Remove-Item -Force }
+
+  # Settings Part 3: Theme & Appearance
+  - name: powershell
+    description: Apply dark theme, background, taskbar alignment
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name TaskbarAl -Value 0 -Type Dword -Force
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme -Value 0 -Type Dword -Force
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value 0 -Type Dword -Force
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Colors' -Name Background -Value '0 0 0' -Force
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name Wallpaper -Value '' -Force
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name WallpaperStyle -Value 0 -Force
+        Set-ItemProperty -Path 'HKCU:\Control Panel\Desktop' -Name TileWallpaper -Value 0 -Force
+        RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters ,1 ,True
+
+  # Settings Part 4: Taskbar elements (search, chat, widgets)
+  - name: powershell
+    description: Hide search, chat, widgets and set start layout
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search -Name SearchBoxTaskbarMode -Value 0 -Type Dword -Force
+        Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name TaskbarMn -Value 0 -Force
+        try { New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft' -Name 'Dsh' -Force | Out-Null; Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Dsh' -Name 'AllowNewsAndInterests' -Value 0 -Force } catch { Write-Warning 'Widgets policy not applied.' }
+        try { Get-AppxPackage -Name 'MicrosoftWindows.Client.WebExperience' | Remove-AppxPackage -ErrorAction SilentlyContinue } catch { Write-Warning 'Widgets Appx removal failed.' }
+        Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name Start_Layout -Value 1 -Force
+
+  # Settings Part 5: Terminal, Explorer view modes
+  - name: powershell
+    description: Set Windows Terminal default & normalize explorer folder views
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        try { $terminalAppPath = 'C:\Program Files\WindowsApps\Microsoft.WindowsTerminal_8wekyb3d8bbwe\WindowsTerminal.exe'; if (Test-Path $terminalAppPath) { $regPath = 'HKCU:\Console\%%Startup'; if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }; Set-ItemProperty -Path $regPath -Name DelegationConsole -Value 'WindowsTerminal' } } catch { Write-Warning 'WT default failed.' }
+        $FT = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes'
+        Get-ChildItem $FT -Recurse | Where-Object Property -Contains 'LogicalViewMode' | ForEach-Object { $folderType = $_.PSChildName; $shellPath = "HKLM:\SOFTWARE\Microsoft\Windows\Shell\Bags\AllFolders\Shell\$folderType"; if (-not (Test-Path $shellPath)) { New-Item $shellPath -Force | Out-Null }; Set-ItemProperty -Path $shellPath -Name Mode -Value 3 -Force; Set-ItemProperty -Path $shellPath -Name LogicalViewMode -Value 1 -Force }
+        $bagPaths = 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\BagMRU','HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags'
+        foreach ($path in $bagPaths) { if (Test-Path $path) { Remove-Item -Recurse -Force $path } }
+
+  # Settings Part 6: Multitasking, file visibility
+  - name: powershell
+    description: Configure Alt+Tab behavior, file extensions & hidden files
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name MultiTaskingAltTabFilter -Value 3 -Force
+        Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name CloudClipboard -Value 0 -Force
+        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name HideFileExt -Value 0
+        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
+
+  # Settings Part 7: Start Menu & Privacy
+  - name: powershell
+    description: Blank start menu & disable suggestions/feedback
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        try {
+          $startMenuPath = "$env:APPDATA\Microsoft\Windows\StartMenu\Programs"
+          if (Test-Path $startMenuPath) { Get-ChildItem -Path $startMenuPath -Recurse -Include *.lnk | Remove-Item -Force }
+          $startMenuLayout = "$env:USERPROFILE\blankStart.xml"
+          if (-not (Test-Path $startMenuLayout)) { Export-StartLayout -Path $startMenuLayout }
+          Import-StartLayout -LayoutPath $startMenuLayout -MountPath $env:SystemDrive\
+        } catch { Write-Warning 'Could not blank Start Menu.' }
+        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Search' -Name 'CortanaConsent' -Value 0 -Force
+        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager' -Name 'SubscribedContent-338388Enabled' -Value 0 -Force
+        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager' -Name 'SubscribedContent-310093Enabled' -Value 0 -Force
+        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager' -Name 'SubscribedContent-338389Enabled' -Value 0 -Force
+        $siufPath = 'HKCU:\Software\Microsoft\Siuf\Rules'; if (-not (Test-Path $siufPath)) { New-Item -Path $siufPath -Force | Out-Null }; Set-ItemProperty -Path $siufPath -Name 'NumberOfSIUFInPeriod' -Value 0 -Force; Set-ItemProperty -Path $siufPath -Name 'PeriodInNanoSeconds' -Value 0 -Force
+
+  # Settings Part 8: Clipboard history & additional clocks
+  - name: powershell
+    description: Enable clipboard history and configure UTC/Mumbai clocks
+    parameters:
+      command: |
+        $ErrorActionPreference='Stop'
+        Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Clipboard' -Name EnableClipboardHistory -Value 1 -Force
+        $intlPath = 'HKCU:\Control Panel\International\User Profile'
+        $tzPath = 'HKCU:\Control Panel\International\User Profile\TimeZones'
+        if (-not (Test-Path $tzPath)) { New-Item -Path $tzPath -Force | Out-Null }
+        Set-ItemProperty -Path $intlPath -Name 'AddClock1' -Value 1 -Force
+        Set-ItemProperty -Path $intlPath -Name 'AddClock1DisplayName' -Value 'UTC' -Force
+        Set-ItemProperty -Path $intlPath -Name 'AddClock1TimeZoneKeyName' -Value 'UTC' -Force
+        Set-ItemProperty -Path $intlPath -Name 'AddClock2' -Value 1 -Force
+        Set-ItemProperty -Path $intlPath -Name 'AddClock2DisplayName' -Value 'Mumbai' -Force
+        Set-ItemProperty -Path $intlPath -Name 'AddClock2TimeZoneKeyName' -Value 'India Standard Time' -Force
+        Write-Host 'Additional clocks for UTC and Mumbai configured.'
+
+  # Settings Part 9: Restart Explorer to apply settings
+  - name: powershell
+    description: Restart explorer to apply changes
+    parameters:
+      command: |
+        $ErrorActionPreference='SilentlyContinue'
+        try { Get-Process -Name Explorer | Stop-Process -Force } catch { Write-Warning 'Explorer restart failed.' }
+
+  # Install required PowerShell modules for scripting
+  - name: powershell
+    description: Install PowerShell modules Az
+    parameters:
+      command: |
+        $ErrorActionPreference = 'Stop'
+        Install-Module -Name Az -Force -Scope CurrentUser

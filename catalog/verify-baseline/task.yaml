@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: verify-baseline
+description: Verify core tools and links are present; emit summary.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

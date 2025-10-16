@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: dotfiles-links
+description: Create symbolic links for gitconfig, starship, clink, nvim, terminal settings & icons.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: choco-fonts
+description: Install Meslo Nerd Font via Chocolatey if absent.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

@@ -1,0 +1,126 @@
+$schema: "1.0"
+name: "team-devbox-image"
+version: "0.1.0"
+image: microsoftvisualstudio_visualstudioplustools_vs-2022-ent-general-win11-m365-gen2
+# Above image is an example base image identifier; replace with the one used in your Dev Box pool.
+description: "Team baseline: platform features, core tooling, full workstation settings, dotfiles linking."
+maintainers:
+  - name: "Dev Enablement"
+    email: "dev-enablement@example.com"
+tags:
+  - devbox
+  - windows
+  - baseline
+  - dotfiles
+
+# This file is intended for TEAM customizations. Place in repo and reference in a Dev Box Pool configuration.
+# Use cases:
+# - Standardize environment across all devs in a pool.
+# - Allow optimization into a custom image (flatten tasks) after validation.
+# - Reduce per-user customization time (runs once per dev box creation).
+
+# TASK STRATEGY
+# 1. Enable OS features early.
+# 2. Install tooling via winget.
+# 3. Apply settings via catalog task (settings-full) OR inline fallback.
+# 4. Link dotfiles.
+# 5. Install modules.
+# 6. Path adjustments.
+
+# If you attach a catalog containing settings-full (see catalog-example/settings-full), uncomment that task line.
+
+tasks:
+  - name: powershell
+    description: Enable required Windows features (WSL, Hyper-V, Containers)
+    parameters:
+      command: |
+        dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+        dism.exe /online /enable-feature /featurename:Containers /all /norestart
+        dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+        dism.exe /online /enable-feature /featurename:Microsoft-Hyper-V-All /all /norestart
+
+  # Core tooling (subset; expand as needed)
+  - name: winget
+    description: Install Docker Desktop
+    parameters:
+      package: Docker.DockerDesktop
+  - name: winget
+    description: Install Neovim
+    parameters:
+      package: Neovim.Neovim
+  - name: winget
+    description: Install Azure CLI
+    parameters:
+      package: Microsoft.AzureCLI
+  - name: winget
+    description: Install Node.js LTS
+    parameters:
+      package: OpenJS.NodeJS.LTS
+  - name: winget
+    description: Install PowerToys
+    parameters:
+      package: Microsoft.PowerToys
+  - name: powershell
+    description: Install Nerd Fonts Meslo via Chocolatey if needed
+    parameters:
+      command: |
+        if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+          Write-Host "[choco] Installing Chocolatey..."
+          Set-ExecutionPolicy Bypass -Scope Process -Force; \
+          Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        } else { Write-Host "[choco] Already present" }
+        if (-not (choco list --local-only | Select-String -Pattern '^nerd-fonts-meslo ')) {
+          Write-Host "[choco] Installing nerd-fonts-meslo"
+          choco install nerd-fonts-meslo -y
+        } else { Write-Host "[choco] nerd-fonts-meslo already installed" }
+
+  # Settings via catalog task (preferred)
+  # - name: settings-full
+  #   description: Apply comprehensive Windows configuration
+  #   parameters: {}
+
+  # Inline fallback minimal settings if catalog isn't attached
+  - name: powershell
+    description: Minimal workstation appearance tweaks (fallback)
+    parameters:
+      command: |
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme -Value 0 -Type Dword -Force
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -Value 0 -Type Dword -Force
+        Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name TaskbarAl -Value 0 -Type Dword -Force
+
+  # Dotfiles linking (expects repo cloned into workspace root)
+  - name: powershell
+    description: Link dotfiles (gitconfig, starship, clink, nvim)
+    parameters:
+      command: |
+        $root = "$env:DEVBOX_WORKSPACE_ROOT\dotfiles"; if (-not $root) { $root = "$env:USERPROFILE\source\repos\dotfiles" }
+        function SafeLink($t,$l){ if (Test-Path $l){ Remove-Item -Force -Recurse $l }; New-Item -ItemType SymbolicLink -Path $l -Target $t -Force | Out-Null }
+        SafeLink "$root/git/gitconfig.win.work" "$env:USERPROFILE\.gitconfig"
+        $cfg = "$env:USERPROFILE\.config"; if (-not (Test-Path $cfg)) { New-Item -ItemType Directory -Path $cfg | Out-Null }
+        SafeLink "$root/zsh/starship.windows.toml" "$cfg\starship.toml"
+        SafeLink "$root/clink" "$env:USERPROFILE\AppData\Local\clink"
+        SafeLink "$root/nvim/lazynvim" "$env:USERPROFILE\AppData\Local\nvim"
+
+  - name: powershell
+    description: Install PowerShell module Az
+    parameters:
+      command: |
+        if (-not (Get-Module -ListAvailable Az)) {
+          Write-Host "[Az] Installing Az module..."
+          Install-Module -Name Az -Force -Scope CurrentUser
+        } else { Write-Host "[Az] Module Az already available" }
+
+  - name: powershell
+    description: Append LLVM to PATH if installed
+    parameters:
+      command: |
+        $llvm = 'C:\\Program Files\\LLVM\\bin'
+        if (Test-Path $llvm) {
+          $cur = [Environment]::GetEnvironmentVariable('Path','Machine')
+          if ($cur -notlike '*LLVM\\bin*') {
+            $new = $cur + ';' + $llvm
+            Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $new
+          }
+        }
+        # Sentinel file to indicate image customization completed (helps future conditional logic)
+        New-Item -ItemType File -Path "$env:ProgramData\devbox-image-sentinel" -Force | Out-Null

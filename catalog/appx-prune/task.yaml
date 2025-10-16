@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: appx-prune
+description: Remove non-essential Appx packages while keeping a curated allowlist.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: powershell-profiles
+description: Deploy WindowsPowerShell and PowerShell profile scripts (OneDrive) from repo.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

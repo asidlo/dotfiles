@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: path-llvm
+description: Append LLVM bin directory to system PATH if absent.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

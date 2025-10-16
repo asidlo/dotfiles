@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: modules-install
+description: Install required PowerShell modules (Az, PSDesiredStateConfiguration) idempotently.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

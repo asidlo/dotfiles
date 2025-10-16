@@ -1,0 +1,10 @@
+$schema: "1.0"
+name: winget-core
+description: Install core developer tools via winget.
+parameters:
+  packages:
+    type: string
+    description: Optional space-delimited override list of packages.
+    required: false
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1
