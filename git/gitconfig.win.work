@@ -3,7 +3,7 @@
   email = andrewsidlo@microsoft.com
 [core]
   excludesfile = ~/.gitignore
-  editor = nvim
+  editor = code --wait
   fsmonitor = true
   autocrlf = true
 [log]
@@ -14,11 +14,15 @@
   showForcedUpdates = true
 [commit]
   verbose = true
+[merge]
+  tool = vscode
+[mergetool "vscode"]
+  cmd = code --wait $MERGED
 [diff]
-  tool = vimdiff
+  tool = vscode
   ignoreSubmodules = dirty
-[difftool]
-  prompt = 0
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
   a = add
   au = add -u # Update all tracked files
@@ -66,14 +70,10 @@
   ls = ls-files
   lss = ! git status --porcelain=v2 | awk '{print $9}'
   lsa = diff --name-only --diff-filter=a
-  lsa = diff --name-only --diff-filter=a
   lsm = diff --name-only --diff-filter=m
-  lsm = diff --name-only --diff-filter=m
-  lsr = diff --name-only --diff-filter=r
+  lsu = diff --name-only --diff-filter=u
   lsr = diff --name-only --diff-filter=r
   lsd = diff --name-only --diff-filter=d
-  lsd = diff --name-only --diff-filter=d
-  lst = diff --name-only --diff-filter=t
   lst = diff --name-only --diff-filter=t
 
   s = status
