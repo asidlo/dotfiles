@@ -1,6 +1,6 @@
 [user]
-  name = Andrew Sidlo
-  email = andrewsidlo@microsoft.com
+	name = Andrew Sidlo
+	email = andrewsidlo@microsoft.com
 [core]
   excludesfile = ~/.gitignore
   editor = code --wait
