@@ -99,6 +99,5 @@ if [ -d "$HOME/.sdkman" ]; then
   export SDKMAN_DIR="$HOME/.sdkman"
   [ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ] && source "$SDKMAN_DIR/bin/sdkman-init.sh" || true
 fi
-. "$HOME/.cargo/env"
 
 [ -d "$HOME/.aspire/bin" ] && export PATH="$HOME/.aspire/bin:$PATH"
