@@ -1,6 +1,8 @@
 [user]
 	name = Andrew Sidlo
 	email = andrewsidlo@microsoft.com
+	# signingkey = /home/andrewsidlo/.ssh/yubikey_signing.pub
+	# signingkey = E00EFB4AA3C9E570
 [core]
   excludesfile = ~/.gitignore
   editor = code --wait
@@ -13,6 +15,7 @@
   pruneTags = true
 [commit]
   verbose = true
+	# gpgsign = true
 [merge]
   tool = vscode
 [mergetool "vscode"]
@@ -50,23 +53,23 @@
   # a = author
   l = log
   lo = log --oneline
-  loa = log --oneline --decorate --pretty='%C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-  lod = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
-  lodr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
-  lods = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
-  load = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
-  loadr = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
-  loads = log --oneline --decorate --pretty='%C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
+  loa = log --oneline --decorate --pretty='[%G?] %C(auto)%h%Creset %C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+  lod = log --oneline --decorate --pretty='[%G?] %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s'
+  lodr = log --oneline --decorate --pretty='[%G?] %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=relative
+  lods = log --oneline --decorate --pretty='[%G?] %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s' --date=short
+  load = log --oneline --decorate --pretty='[%G?] %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset'
+  loadr = log --oneline --decorate --pretty='[%G?] %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=relative
+  loads = log --oneline --decorate --pretty='[%G?] %C(auto)%h%Creset %Cgreen(%ad)%C(auto)%d%Creset %s %C(bold blue)<%an>%Creset' --date=short
 
   # g = graph
   lg = log --graph
   lgo = log --graph --oneline
-  lgod = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)'
-  lgods = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=short
-  lgodr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=relative
-  lgoad = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
-  lgoads = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
-  lgoadr = log --graph --pretty='%C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
+  lgod = log --graph --pretty='[%G?] %C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)'
+  lgods = log --graph --pretty='[%G?] %C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=short
+  lgodr = log --graph --pretty='[%G?] %C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)' --date=relative
+  lgoad = log --graph --pretty='[%G?] %C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'
+  lgoads = log --graph --pretty='[%G?] %C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short
+  lgoadr = log --graph --pretty='[%G?] %C(auto)%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=relative
 
   # Use xargs to process each via: git lsm | xargs -i git reset {}
   ls = ls-files
@@ -107,5 +110,25 @@
 	helper = /usr/local/bin/git-credential-manager
 	credentialStore = cache
 	cacheOptions = --timeout 43200
+	helper = manager
+	azreposCredentialType = oauth
+	msauthFlow = system
 [credential "https://dev.azure.com"]
 	useHttpPath = true
+[safe]
+	directory = /workspace/appgw/src/datapath/nginx
+	directory = /workspace/appgw/src/datapath/mods/modsecurity
+	directory = /workspace/appgw/src/datapath/mods/ngx-devel-kit
+	directory = /workspace/appgw/src/datapath/mods/echo-nginx-module
+	directory = /workspace/appgw/src/Tenant/ConnDraining
+	directory = /workspace/appgw/src/datapath/azwaf
+	directory = /workspace/appgw/src/datapath/mods/nginx-module-vts
+	directory = /workspace/appgw/src/Tools/FloodBuddy/WbClient/WAFBench
+	directory = /workspace/appgw/src/datapath/luajit2
+	directory = /workspace/appgw/src/datapath/appgw-async-engine
+# [tag]
+# 	gpgsign = true
+# [gpg]
+# 	format = ssh
+#[gpg "ssh"]
+#	allowedSignersFile = /home/andrewsidlo/.ssh/allowed_signers
