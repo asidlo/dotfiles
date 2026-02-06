@@ -1,0 +1,9 @@
+Host github-yubi-auth
+    HostName github.com
+    User git
+    IdentityFile ~/.config/git/keys/yubikey-auth.pub
+
+Host github-msft-yubi-auth
+    HostName github.com
+    User git
+    IdentityFile ~/.config/git/keys/yubikey-msft-auth.pub

@@ -114,3 +114,8 @@ export FZF_DEFAULT_OPTS='
 # Add this line at the end of .bashrc:
 [[ ! ${BLE_VERSION-} ]] || ble-attach
 . "$HOME/.cargo/env"
+
+# SSH Agent forwarding workaround for VS Code
+if [ -z "$SSH_AUTH_SOCK" ] && [ -S "/tmp/ssh-agent-$USER/agent.sock" ]; then
+    export SSH_AUTH_SOCK="/tmp/ssh-agent-$USER/agent.sock"
+fi

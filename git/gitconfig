@@ -1,6 +1,7 @@
 [user]
   name = asidlo
   email = sidlo.andrew@gmail.com
+	signingkey = ~/.ssh/id_ed25519_sk_sign.pub
 [core]
   excludesfile = ~/.gitignore
   editor = nvim
@@ -11,6 +12,7 @@
   pruneTags = true
 [commit]
   verbose = true
+	gpgsign = true
 [diff]
   tool = vimdiff
   ignoreSubmodules = dirty
@@ -95,3 +97,5 @@
 	ui = auto
 [branch]
 	sort = -committerdate
+[gpg]
+	format = ssh
