@@ -1,0 +1,92 @@
+# Optimized Starship config for large Windows repos
+# Reduces prompt lag by disabling slow modules and reducing timeouts
+
+# Reduce command timeout from 500ms to 100ms
+command_timeout = 100
+
+# Reduce scan timeout for file detection
+scan_timeout = 5
+
+# Minimal format - remove git_branch since git is slow on this repo
+# You can re-enable it if you want branch info at cost of ~150ms
+format = """
+$directory\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Disable git_status - this is the MAIN source of lag in large repos
+# It runs 'git status' on every prompt which is slow
+[git_status]
+disabled = true
+
+# Disable git_branch too - git operations are slow (~150ms) on this repo
+# Uncomment below if you want branch info and can tolerate the lag
+[git_branch]
+disabled = true
+# format = "[$symbol$branch]($style) "
+# symbol = ""
+# style = "purple"
+# truncation_length = 30
+
+# Keep git_state for rebase/merge awareness
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+
+# Simplify directory display
+# use_logical_path = true avoids calling git to resolve repo root
+[directory]
+truncation_length = 4
+truncate_to_repo = false
+use_logical_path = true
+style = "cyan bold"
+# Disable reading read-only status which can be slow
+read_only = ""
+
+# Show command duration only if > 2 seconds
+[cmd_duration]
+min_time = 2000
+format = "took [$duration]($style) "
+style = "yellow"
+
+# Simple prompt character
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+
+# Disable all language detection modules (they scan for files)
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[java]
+disabled = true
+
+[dotnet]
+disabled = true
+
+[package]
+disabled = true
+
+[docker_context]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[azure]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
