@@ -6,6 +6,10 @@
   editor = code --wait
   fsmonitor = true
   autocrlf = true
+	preloadindex = true
+	fscache = true
+	untrackedcache = true
+	compression = 1
 [log]
   date = iso
 [fetch]
@@ -21,6 +25,9 @@
 [diff]
   tool = vscode
   ignoreSubmodules = dirty
+	renamelimit = 5000
+[difftool]
+  prompt = 0
 [difftool "vscode"]
   cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
@@ -116,6 +123,19 @@
   sort = -committerdate
 [maintenance]
   repo = C:/src/Networking-nfv
+	auto = false
+	strategy = incremental
 [credential "azrepos:org/identitydivision"]
 	azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
 	username = andrewsidlo@microsoft.com
+[feature]
+	manyfiles = true
+[status]
+	aheadbehind = false
+[gc]
+	writecommitgraph = true
+[pack]
+	threads = 0
+	windowmemory = 256m
+[checkout]
+	workers = 0
