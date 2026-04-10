@@ -105,6 +105,10 @@
   helper =
   helper = !f() { if [ -f '/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe' ]; then '/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe' \"$@\"; else '/mnt/c/Program Files/Git/clangarm64/bin/git-credential-manager.exe' \"$@\"; fi }; f
   useHttpPath = true
+[credential "https://msazure.visualstudio.com"]
+  helper =
+  helper = !f() { if [ -f '/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe' ]; then '/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe' \"$@\"; else '/mnt/c/Program Files/Git/clangarm64/bin/git-credential-manager.exe' \"$@\"; fi }; f
+  useHttpPath = true
 [init]
   defaultBranch = main
 [rerere]
