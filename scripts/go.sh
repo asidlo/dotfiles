@@ -1,7 +1,12 @@
 #!/bin/bash
 
 GO_VERSION=$(curl https://go.dev/VERSION?m=text | head -n1)
-DOWNLOAD_URL="https://dl.google.com/go/$GO_VERSION.linux-amd64.tar.gz"
+case "$(uname -m)" in
+  x86_64) GO_ARCH="amd64" ;;
+  aarch64) GO_ARCH="arm64" ;;
+  *) echo "Unsupported architecture: $(uname -m)"; exit 1 ;;
+esac
+DOWNLOAD_URL="https://dl.google.com/go/$GO_VERSION.linux-$GO_ARCH.tar.gz"
 
 if command -v go &> /dev/null; then
   # Check if current versio n is the same as latest

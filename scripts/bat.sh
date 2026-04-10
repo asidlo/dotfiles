@@ -13,7 +13,8 @@ case "$ID" in
   ~/.cargo/bin/cargo install bat --version "$BAT_VERSION"
   ;;
 "ubuntu" | "debian")
-  curl -L https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$BAT_VERSION"_amd64.deb -o /tmp/bat.deb
+  ARCH=$(dpkg --print-architecture)
+  curl -L https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$BAT_VERSION"_"$ARCH".deb -o /tmp/bat.deb
   sudo apt-get install /tmp/bat.deb
   rm /tmp/bat.deb
   ;;

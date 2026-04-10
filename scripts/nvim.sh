@@ -35,10 +35,16 @@ install_bob() {
 	latest_tag=$(curl -s https://api.github.com/repos/MordechaiHadad/bob/releases/latest | sed -Ene '/^ *"tag_name": *"(v.+)",$/s//\1/p')
 	echo "Using version $latest_tag"
 
-	curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-x86_64.zip"
+	case "$(uname -m)" in
+		x86_64) BOB_ARCH="x86_64" ;;
+		aarch64) BOB_ARCH="arm" ;;
+		*) echo "Unsupported architecture for bob: $(uname -m)"; exit 1 ;;
+	esac
+
+	curl -L -o /tmp/bob.zip "https://github.com/MordechaiHadad/bob/releases/download/$latest_tag/bob-linux-$BOB_ARCH.zip"
 	unzip /tmp/bob.zip -d /tmp/bob
-	chmod +x /tmp/bob/bob-linux-x86_64/bob
-	mv /tmp/bob/bob-linux-x86_64/bob "$INSTALL_DIR"
+	chmod +x "/tmp/bob/bob-linux-$BOB_ARCH/bob"
+	mv "/tmp/bob/bob-linux-$BOB_ARCH/bob" "$INSTALL_DIR"
 	rm -f /tmp/bob.zip && rm -rf /tmp/bob
 
 	# Install nightly neovim
@@ -94,12 +100,17 @@ ubuntu)
 mariner | azurelinux)
 	sudo tdnf update -y
 	sudo tdnf install build-essential tmux wget curl zip unzip python3 python3-pip python3-venv -y
-	curl -L https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz -o /tmp/nvim-linux-x86_64.tar.gz
-	tar -xzvf /tmp/nvim-linux-x86_64.tar.gz -C /tmp
+	case "$(uname -m)" in
+		x86_64) NVIM_ARCH="x86_64" ;;
+		aarch64) NVIM_ARCH="arm64" ;;
+		*) echo "Unsupported architecture for neovim: $(uname -m)"; exit 1 ;;
+	esac
+	curl -L "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$NVIM_ARCH.tar.gz" -o "/tmp/nvim-linux-$NVIM_ARCH.tar.gz"
+	tar -xzvf "/tmp/nvim-linux-$NVIM_ARCH.tar.gz" -C /tmp
 	mkdir -p ~/.local/{src,bin}
-	mv /tmp/nvim-linux-x86_64 ~/.local/src/nvim
+	mv "/tmp/nvim-linux-$NVIM_ARCH" ~/.local/src/nvim
 	ln -svf ~/.local/src/nvim/bin/nvim ~/.local/bin/nvim
-	rm -f /tmp/nvim-linux-x86_64.tar.gz
+	rm -f "/tmp/nvim-linux-$NVIM_ARCH.tar.gz"
 	;;
 *)
 	echo "Unsupported distribution: $ID"
