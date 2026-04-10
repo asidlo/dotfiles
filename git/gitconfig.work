@@ -3,7 +3,7 @@
   email = andrewsidlo@microsoft.com
 [core]
   excludesfile = ~/.gitignore
-  editor = nvim
+  editor = code --wait
 [log]
   date = iso
 [pull]
@@ -13,11 +13,15 @@
   pruneTags = true
 [commit]
   verbose = true
+[merge]
+  tool = vscode
+[mergetool "vscode"]
+  cmd = code --wait $MERGED
 [diff]
-  tool = vimdiff
+  tool = vscode
   ignoreSubmodules = dirty
-[difftool]
-  prompt = 0
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
   a = add
   au = add -u # Update all tracked files
