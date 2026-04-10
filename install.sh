@@ -25,9 +25,18 @@ fi
 "$SCRIPT_DIR/gh.sh"
 "$SCRIPT_DIR/artifacts-credprovider.sh"
 "$SCRIPT_DIR/az.sh"
+"$SCRIPT_DIR/copilot.sh"
+"$SCRIPT_DIR/agency.sh"
 
-ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
-ln -sfv "$DOTFILES_DIR/git/config" ~/.ssh/config
+# Select gitconfig based on environment
+if [ -n "$CODESPACES" ] || [ -n "$DEVCONTAINER" ] || [ -n "$DEV_CONTAINER" ] || [ -d "/.devcontainer" ] || [ -d "/workspaces" ]; then
+  ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
+elif grep -qi 'microsoft\|wsl' /proc/version 2>/dev/null; then
+  ln -sfv "$DOTFILES_DIR/git/gitconfig.work" ~/.gitconfig
+else
+  ln -sfv "$DOTFILES_DIR/git/gitconfig.work.wavespaces" ~/.gitconfig
+fi
+mkdir -p ~/.ssh && ln -sfv "$DOTFILES_DIR/git/config" ~/.ssh/config
 mkdir -p ~/.config/git && ln -sfv "$DOTFILES_DIR/git/keys" ~/.config/git/keys
 mkdir -p ~/.config/lazygit && ln -svf "$DOTFILES_DIR/git/lazygit.config" ~/.config/lazygit/config.yml
 ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
@@ -49,6 +58,4 @@ if [ -z "$CODESPACES" ] && [ -z "$DEVCONTAINER" ] && [ -z "$DEV_CONTAINER" ] && 
 
   ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
   mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
-
-  ln -sfv "$DOTFILES_DIR/git/gitconfig.work.wavespaces" ~/.gitconfig
 fi
