@@ -42,3 +42,20 @@ ubuntu)
     curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel LTS --install-dir "$DOTNET_INSTALL_DIR"
     ;;
 esac
+
+# Install asidlo/devcontainer-credprovider (user install, recommended for WSL/local dev)
+if command -v gh >/dev/null 2>&1; then
+    echo "Installing asidlo/devcontainer-credprovider..."
+    tmp_dir=$(mktemp -d)
+    if gh release download -R asidlo/devcontainer-credprovider -p "*.tar.gz" -D "$tmp_dir" &&
+        mkdir -p "$tmp_dir/cred-provider" &&
+        tar xzf "$tmp_dir"/devcontainer-credprovider.tar.gz -C "$tmp_dir/cred-provider" &&
+        "$tmp_dir/cred-provider/install.sh" --user; then
+        echo "devcontainer-credprovider installed successfully."
+    else
+        echo "Failed to install devcontainer-credprovider." >&2
+    fi
+    rm -rf "$tmp_dir"
+else
+    echo "GitHub CLI (gh) not found. Skipping devcontainer-credprovider install."
+fi
