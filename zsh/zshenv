@@ -17,12 +17,16 @@ case $OS in
   alias ls='ls --color=auto'
   export GOROOT=/usr/local/go
   if [[ "$OS" =~ "WSL" ]]; then
-    MSEDGE_PATH=/mnt/c/Program\ Files\ \(x86\)/Microsoft/Edge/Application/msedge.exe
-    if [ -f "$MSEDGE_PATH" ]; then
-      if [ ! -L ~/.local/bin/msedge.exe ]; then
-        ln -sf "$MSEDGE_PATH" ~/.local/bin/msedge.exe
+    if command -v wslview >/dev/null 2>&1; then
+      export BROWSER=wslview
+    else
+      MSEDGE_PATH=/mnt/c/Program\ Files\ \(x86\)/Microsoft/Edge/Application/msedge.exe
+      if [ -f "$MSEDGE_PATH" ]; then
+        if [ ! -L ~/.local/bin/msedge.exe ]; then
+          ln -sf "$MSEDGE_PATH" ~/.local/bin/msedge.exe
+        fi
+        export BROWSER=msedge.exe
       fi
-      export BROWSER=msedge.exe
     fi
     WIN32YANK_PATH=/mnt/c/tools/neovim/nvim-win64/bin/win32yank.exe
     if [ -f "$WIN32YANK_PATH" ]; then
