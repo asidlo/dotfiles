@@ -55,4 +55,7 @@ if is_wsl; then
 	install_wslview
 fi
 
-curl -sSfL https://aka.ms/InstallTool.sh | sh -s agency && exec $SHELL -l
+# Do NOT `exec $SHELL` here: install.sh runs this as a child step, and exec-ing
+# an interactive login shell would take over the terminal and block install.sh
+# before it links the dotfiles. Restart your shell after install.sh completes.
+curl -sSfL https://aka.ms/InstallTool.sh | sh -s agency

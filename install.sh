@@ -15,25 +15,22 @@ if [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
   sudo locale-gen "en_US.UTF-8"
 fi
 
-"$SCRIPT_DIR/dependencies.sh"
-"$SCRIPT_DIR/fd.sh"
-"$SCRIPT_DIR/fzf.sh"
-"$SCRIPT_DIR/bat.sh"
-"$SCRIPT_DIR/rg.sh"
-"$SCRIPT_DIR/zoxide.sh"
-"$SCRIPT_DIR/direnv.sh"
-"$SCRIPT_DIR/eza.sh"
-"$SCRIPT_DIR/btop.sh"
-"$SCRIPT_DIR/starship.sh"
-"$SCRIPT_DIR/zsh.sh"
-"$SCRIPT_DIR/gh.sh"
-"$SCRIPT_DIR/artifacts-credprovider.sh"
-"$SCRIPT_DIR/az.sh"
-"$SCRIPT_DIR/copilot.sh"
-"$SCRIPT_DIR/agency.sh"
+# Detect minimal/container environments (codespaces, devcontainers) once so the
+# gitconfig choice and the "full install" gate below stay in sync.
+if [ -n "$CODESPACES" ] || [ -n "$DEVCONTAINER" ] || [ -n "$DEV_CONTAINER" ] || [ -d "/.devcontainer" ] || [ -d "/workspaces" ]; then
+  MINIMAL_ENV=1
+else
+  MINIMAL_ENV=0
+fi
+
+# ---------------------------------------------------------------------------
+# Symlinks first. Configs are the core of the dotfiles, so link them before the
+# best-effort, network/sudo-heavy tool installs below. That way a tool script
+# that fails, blocks, or replaces the shell can never leave configs unlinked.
+# ---------------------------------------------------------------------------
 
 # Select gitconfig based on environment
-if [ -n "$CODESPACES" ] || [ -n "$DEVCONTAINER" ] || [ -n "$DEV_CONTAINER" ] || [ -d "/.devcontainer" ] || [ -d "/workspaces" ]; then
+if [ "$MINIMAL_ENV" -eq 1 ]; then
   ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
 elif grep -qi 'microsoft\|wsl' /proc/version 2>/dev/null; then
   ln -sfv "$DOTFILES_DIR/git/gitconfig.work" ~/.gitconfig
@@ -57,8 +54,34 @@ done
 
 mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
+# Full-environment-only configs (paired with the tools installed below).
+if [ "$MINIMAL_ENV" -eq 0 ]; then
+  ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
+  mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
+fi
+
+# ---------------------------------------------------------------------------
+# Tool installs (best-effort; may require network or sudo).
+# ---------------------------------------------------------------------------
+"$SCRIPT_DIR/dependencies.sh"
+"$SCRIPT_DIR/fd.sh"
+"$SCRIPT_DIR/fzf.sh"
+"$SCRIPT_DIR/bat.sh"
+"$SCRIPT_DIR/rg.sh"
+"$SCRIPT_DIR/zoxide.sh"
+"$SCRIPT_DIR/direnv.sh"
+"$SCRIPT_DIR/eza.sh"
+"$SCRIPT_DIR/btop.sh"
+"$SCRIPT_DIR/starship.sh"
+"$SCRIPT_DIR/zsh.sh"
+"$SCRIPT_DIR/gh.sh"
+"$SCRIPT_DIR/artifacts-credprovider.sh"
+"$SCRIPT_DIR/az.sh"
+"$SCRIPT_DIR/copilot.sh"
+"$SCRIPT_DIR/agency.sh"
+
 # If not running in codespaces or devcontainer, do full install
-if [ -z "$CODESPACES" ] && [ -z "$DEVCONTAINER" ] && [ -z "$DEV_CONTAINER" ] && [ ! -d "/.devcontainer" ] && [ ! -d "/workspaces" ]; then
+if [ "$MINIMAL_ENV" -eq 0 ]; then
   "$SCRIPT_DIR/rust.sh"
   "$SCRIPT_DIR/lazygit.sh"
   "$SCRIPT_DIR/nvim.sh" -d ~/.local/bin
@@ -66,7 +89,4 @@ if [ -z "$CODESPACES" ] && [ -z "$DEVCONTAINER" ] && [ -z "$DEV_CONTAINER" ] && 
   "$SCRIPT_DIR/npm.sh"
   "$SCRIPT_DIR/dotnet.sh"
   "$SCRIPT_DIR/tmux.sh"
-
-  ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
-  mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
 fi
