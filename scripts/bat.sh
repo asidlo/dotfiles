@@ -15,7 +15,7 @@ case "$ID" in
 "ubuntu" | "debian")
   ARCH=$(dpkg --print-architecture)
   curl -L https://github.com/sharkdp/bat/releases/download/v"$BAT_VERSION"/bat_"$BAT_VERSION"_"$ARCH".deb -o /tmp/bat.deb
-  sudo apt-get install /tmp/bat.deb
+  sudo apt-get install -y /tmp/bat.deb
   rm /tmp/bat.deb
   ;;
 *)

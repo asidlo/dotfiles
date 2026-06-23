@@ -15,7 +15,7 @@ case "$ID" in
 "ubuntu" | "debian")
   ARCH=$(dpkg --print-architecture)
   curl -L https://github.com/sharkdp/fd/releases/download/v"$FD_VERSION"/fd_"$FD_VERSION"_"$ARCH".deb -o /tmp/fd.deb
-  sudo apt-get install /tmp/fd.deb
+  sudo apt-get install -y /tmp/fd.deb
   rm /tmp/fd.deb
   ;;
 *)
