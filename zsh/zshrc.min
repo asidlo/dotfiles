@@ -73,6 +73,20 @@ antibody bundle "greymd/docker-zsh-completion"
 # Needs to run after zsh-auto-suggestions is sourced
 bindkey '^ ' autosuggest-accept
 
+# Windows Terminal / xterm keybindings (zsh has no readline, so bind explicitly)
+bindkey "^[[1;5C" forward-word          # Ctrl+Right -> next word
+bindkey "^[[1;5D" backward-word         # Ctrl+Left  -> previous word
+bindkey "^[[H"    beginning-of-line     # Home
+bindkey "^[[F"    end-of-line           # End
+bindkey "^[[3~"   delete-char           # Delete
+bindkey "^[[3;5~" kill-word             # Ctrl+Delete -> delete word forward
+# Ctrl+Backspace sends ^H in WSL terminals (Windows Terminal / VS Code), where plain
+# Backspace sends ^?. Only remap there; elsewhere ^H keeps its default
+# (backward-delete-char) so terminals that send ^H for Backspace aren't broken.
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  bindkey "^H"    backward-kill-word     # Ctrl+Backspace -> delete word back
+fi
+
 # PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
 # PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
 # PROMPT+=' in %{$fg[blue]%}%~%u%{$reset_color%}'                      # in DIRECTORY
@@ -126,13 +140,17 @@ if (( $+commands[tree] )); then
 	alias tree='tree -C'
 fi
 
-if (( $+commands[clip.exe] )); then
+# Clipboard: prefer the portable pbcopy/pbpaste shims (bin/), then fall back.
+if (( $+commands[pbcopy] )); then
+    alias copy=pbcopy
+elif (( $+commands[clip.exe] )); then
     alias copy=clip.exe
 elif (( $+commands[lemonade] )); then
     alias copy='lemonade copy'
 elif (( $+commands[xclip] )); then
     alias copy='xclip -selection -c'
 fi
+(( $+commands[pbpaste] )) && alias paste=pbpaste
 
 # When installing from cargo, even on linux, those naming restrictions dont apply
 if (( $+commands[fdfind] )); then
@@ -210,6 +228,17 @@ if [[ ":${PATH}:" != *":/home/asidlo/.config/agency/CurrentVersion:"* ]]; then
     export PATH="/home/asidlo/.config/agency/CurrentVersion:${PATH}"
 fi
 # END Agency MANAGED BLOCK
+
+# Integrations: zoxide (smarter cd) + direnv (per-directory env)
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
+(( $+commands[direnv] )) && eval "$(direnv hook zsh)"
+
+# Modern ls via eza when available
+if (( $+commands[eza] )); then
+    alias ls='eza --icons'
+    alias ll='eza -la --icons --git'
+    alias lt='eza --tree'
+fi
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

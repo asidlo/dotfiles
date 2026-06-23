@@ -20,6 +20,10 @@ fi
 "$SCRIPT_DIR/fzf.sh"
 "$SCRIPT_DIR/bat.sh"
 "$SCRIPT_DIR/rg.sh"
+"$SCRIPT_DIR/zoxide.sh"
+"$SCRIPT_DIR/direnv.sh"
+"$SCRIPT_DIR/eza.sh"
+"$SCRIPT_DIR/btop.sh"
 "$SCRIPT_DIR/starship.sh"
 "$SCRIPT_DIR/zsh.sh"
 "$SCRIPT_DIR/gh.sh"
@@ -43,6 +47,13 @@ ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
 ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
 ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
 ln -sfv "$DOTFILES_DIR/bash/bashrc" ~/.bashrc
+
+# Portable CLI shims (clipboard + open) -> ~/.local/bin (already on PATH).
+# Self-sufficient on WSL, Wayland, X11, or remote SSH (OSC52) without comfort-shell.
+mkdir -p ~/.local/bin
+for shim in pbcopy pbpaste open; do
+  ln -sfv "$DOTFILES_DIR/bin/$shim" ~/.local/bin/"$shim"
+done
 
 mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 

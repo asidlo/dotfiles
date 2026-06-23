@@ -120,6 +120,20 @@ if [ -z "$SSH_AUTH_SOCK" ] && [ -S "/tmp/ssh-agent-$USER/agent.sock" ]; then
     export SSH_AUTH_SOCK="/tmp/ssh-agent-$USER/agent.sock"
 fi
 
+# Ensure user-local bin (pbcopy/pbpaste/open shims, zoxide, direnv) is on PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+# Integrations: zoxide (smarter cd) + direnv (per-directory env)
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
+command -v direnv >/dev/null 2>&1 && eval "$(direnv hook bash)"
+
+# Modern ls via eza when available
+if command -v eza >/dev/null 2>&1; then
+    alias ls='eza --icons'
+    alias ll='eza -la --icons --git'
+    alias lt='eza --tree'
+fi
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

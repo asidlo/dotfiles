@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Portable clipboard copy: stdin -> system clipboard.
+# Backends, in order: WSL (clip.exe), Wayland (wl-copy), X11 (xclip/xsel),
+# then an OSC52 escape sequence as a remote/SSH fallback.
+
+_is_wsl() { grep -qi microsoft /proc/version 2>/dev/null || [ -n "${WSL_DISTRO_NAME:-}" ]; }
+
+if _is_wsl && command -v clip.exe >/dev/null 2>&1; then
+  exec clip.exe
+elif [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null 2>&1; then
+  exec wl-copy
+elif [ -n "${DISPLAY:-}" ] && command -v xclip >/dev/null 2>&1; then
+  exec xclip -selection clipboard
+elif [ -n "${DISPLAY:-}" ] && command -v xsel >/dev/null 2>&1; then
+  exec xsel --clipboard --input
+else
+  # OSC52: lets copy work over SSH/tmux in terminals that support it.
+  _data=$(base64 | tr -d '\n')
+  printf '\033]52;c;%s\a' "$_data" >/dev/tty 2>/dev/null \
+    || { echo "pbcopy: no clipboard backend available" >&2; exit 1; }
+fi
