@@ -47,9 +47,18 @@ install_bob() {
 	mv "/tmp/bob/bob-linux-$BOB_ARCH/bob" "$INSTALL_DIR"
 	rm -f /tmp/bob.zip && rm -rf /tmp/bob
 
-	# Install nightly neovim
+	# bob interactively prompts to add its nvim shim dir to $PATH (reading the
+	# TTY, so `echo y |` can't answer it). We symlink nvim into $INSTALL_DIR
+	# ourselves (below), so disable bob's PATH management to keep `bob use`
+	# non-interactive for headless installs.
+	mkdir -p ~/.config/bob
+	if [ ! -e ~/.config/bob/config.toml ] && [ ! -e ~/.config/bob/config.json ]; then
+		printf 'add_neovim_binary_to_path = false\n' >~/.config/bob/config.toml
+	fi
+
+	# Install stable neovim
 	mkdir -p ~/.local/share
-	echo "y" | "$INSTALL_DIR/bob" use stable
+	"$INSTALL_DIR/bob" use stable
 
 	# Add current neovim version to PATH
 	ln -svf ~/.local/share/bob/nvim-bin/nvim "$INSTALL_DIR/nvim"
