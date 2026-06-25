@@ -123,7 +123,15 @@ _dotnet_zsh_complete()
 }
 compctl -K _dotnet_zsh_complete dotnet
 
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
+# fzf integration. Prefer a locally-built fzf (~/.local/src/fzf) over an older system fzf
+# by prepending it to PATH, but only if that build actually supports `fzf --zsh` (fzf >= 0.48).
+# `typeset -U path` later dedupes, keeping this front entry so the modern binary wins.
+if "$HOME/.local/src/fzf/bin/fzf" --zsh >/dev/null 2>&1; then
+	export PATH="$HOME/.local/src/fzf/bin:$PATH"
+fi
+# Filter only fzf's benign "can't change option: zle" warning (emitted by its vendored
+# option-restore when zle-wrapping plugins are active); genuine errors still pass through.
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh 2> >(grep -v 'can.t change option: zle' >&2)
 
 if (( $+commands[nvim] )); then
 	export VISUAL=nvim
