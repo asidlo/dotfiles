@@ -34,6 +34,10 @@ if [ "$MINIMAL_ENV" -eq 1 ]; then
   ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
 elif grep -qi 'microsoft\|wsl' /proc/version 2>/dev/null; then
   ln -sfv "$DOTFILES_DIR/git/gitconfig.work" ~/.gitconfig
+  # gitconfig.work's credential helper points here; the shim resolves the
+  # arch-correct Git for Windows credential manager (clangarm64 vs mingw64).
+  mkdir -p ~/.local/bin
+  ln -sfv "$DOTFILES_DIR/bin/git-credential-manager-wsl" ~/.local/bin/git-credential-manager-wsl
 else
   ln -sfv "$DOTFILES_DIR/git/gitconfig.work.wavespaces" ~/.gitconfig
 fi

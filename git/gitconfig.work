@@ -104,11 +104,13 @@
   useHttpPath = true
 [credential "https://dev.azure.com"]
   helper =
-  helper = !\"/mnt/c/Program Files/Git/clangarm64/bin/git-credential-manager.exe\"
+  # Arch-aware wrapper: picks clangarm64 (arm64) or mingw64 (x64) at runtime.
+  helper = !\"$HOME/.local/bin/git-credential-manager-wsl\"
   useHttpPath = true
 [credential "https://msazure.visualstudio.com"]
   helper =
-  helper = !\"/mnt/c/Program Files/Git/clangarm64/bin/git-credential-manager.exe\"
+  # Arch-aware wrapper: picks clangarm64 (arm64) or mingw64 (x64) at runtime.
+  helper = !\"$HOME/.local/bin/git-credential-manager-wsl\"
   useHttpPath = true
 [init]
   defaultBranch = main
