@@ -49,6 +49,21 @@ if not io.popenrw then
 end
 
 --------------------------------------------------------------------------------
+-- Match fzf colors to the terminal.
+--
+-- Set here via os.setenv (which runs on every session) instead of relying on
+-- clink_start.cmd, whose env changes don't always propagate reliably. Using -1
+-- for fg/bg/gutter keeps fzf transparent to the terminal theme, with a few
+-- muted (non-bright) ANSI accents so the UI blends in. Respect any value the
+-- user already exported.
+if os.setenv and not os.getenv('FZF_DEFAULT_OPTS') then
+    os.setenv('FZF_DEFAULT_OPTS',
+        '--color=fg:-1,bg:-1,fg+:-1,bg+:-1,gutter:-1,hl:4,hl+:6,'..
+        'info:8,prompt:4,pointer:5,marker:2,spinner:8,header:8 '..
+        '--height 50% --reverse --multi --inline-info')
+end
+
+--------------------------------------------------------------------------------
 -- Settings available via 'clink set'.
 
 settings.add('fzf.height', '40%', 'Height to use for the --height flag')

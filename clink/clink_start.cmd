@@ -15,3 +15,6 @@ doskey k=kubectl $*
 
 set FZF_DEFAULT_COMMAND=fd --type f --type l %FD_OPTS%
 set FZF_CTRL_T_COMMAND=%FZF_DEFAULT_COMMAND%
+
+:: NOTE: FZF_DEFAULT_OPTS (fzf colors/layout) is set in fzf.lua via os.setenv,
+:: because env changes from this script don't always propagate reliably.
