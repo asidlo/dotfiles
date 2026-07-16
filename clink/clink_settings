@@ -2,6 +2,10 @@
 # type: boolean
 autosuggest.enable = True
 
+# name: Controls how suggestions are chosen
+# type: string
+autosuggest.strategy = match_prev_cmd history completion
+
 # name: Selects default key bindings
 # type: enum
 # options: bash,windows
@@ -113,6 +117,10 @@ color.selected_completion = black on white
 # name: Selection color
 # type: color
 color.selection = default
+
+# name: The color for the auto-suggestion text (readline shadow)
+# type: color
+color.suggestion = sgr 38;5;242
 
 # name: Color for dim text in the suggestion list header
 # type: color
