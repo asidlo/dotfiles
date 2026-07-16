@@ -106,10 +106,20 @@ if (-Not(Test-Path -Path $configDir -PathType Container)) {
 New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\.config\starship.toml" -Target $PSScriptRoot\zsh\starship.windows.toml -Force
 
 $clinkSettingsDir = "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\clink"
-if (Test-Path -Path $clinkSettingsDir -PathType Container) {
-    Remove-Item -Path $clinkSettingsDir -Force
+$clinkItem = Get-Item -Path $clinkSettingsDir -Force -ErrorAction SilentlyContinue
+if ($null -ne $clinkItem) {
+    if ($clinkItem.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+        # Already a symlink/junction: delete only the reparse point.
+        # (PowerShell 5.1's `Remove-Item -Recurse` follows a directory symlink and
+        #  deletes the TARGET's contents -- here Q:\src\dotfiles\clink -- so never use it.)
+        $clinkItem.Delete()
+    }
+    else {
+        # Real directory: remove it and its contents so the symlink can take its place.
+        Remove-Item -Path $clinkSettingsDir -Recurse -Force
+    }
 }
-New-Item -ItemType SymbolicLink -Path "$env:HOMEDRIVE\$env:HOMEPATH\AppData\Local\clink" -Target $PSScriptRoot\clink -Force
+New-Item -ItemType SymbolicLink -Path $clinkSettingsDir -Target $PSScriptRoot\clink -Force
 
 
 # TODO (AS): Set neovim config to use clang on windows

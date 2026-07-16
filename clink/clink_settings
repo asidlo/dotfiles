@@ -7,10 +7,6 @@ autosuggest.enable = True
 # options: bash,windows
 clink.default_bindings = windows
 
-# name: Use GUI popup windows
-# type: boolean
-clink.gui_popups = True
-
 # name: Controls what startup logo to show
 # type: enum
 # options: none,full,short
@@ -86,6 +82,10 @@ color.git.star = green
 # type: color
 color.hidden = red
 
+# name: History expansion color
+# type: color
+color.histexpand = sgr 97;48;5;55
+
 # name: Horizontal scroll marker color
 # type: color
 color.horizscroll = black
@@ -114,9 +114,21 @@ color.selected_completion = black on white
 # type: color
 color.selection = default
 
-# name: Color for suggestion text
+# name: Color for dim text in the suggestion list header
 # type: color
-color.suggestion = light black
+color.suggestionlist_dim = sgr 38;5;242
+
+# name: Color for highlight in the suggestion list
+# type: color
+color.suggestionlist_highlight = sgr 38;5;87
+
+# name: Color for markup in the suggestion list
+# type: color
+color.suggestionlist_markup = sgr 38;2;253;174;31
+
+# name: Color for the current selected suggestion
+# type: color
+color.suggestionlist_selected = sgr 48;5;238
 
 # name: Unexpected argument color
 # type: color
@@ -134,6 +146,15 @@ history.ignore_space = True
 # type: integer
 history.max_lines = 10000
 
+# name: Share history between instances
+# type: boolean
+history.shared = True
+
+# name: History item timestamps
+# type: enum
+# options: off,save,show
+history.time_stamp = show
+
 # name: Expand envvars when completing
 # type: boolean
 match.expand_envvars = True
@@ -145,4 +166,10 @@ match.substring = True
 # name: Support Windows' Ctrl-Alt substitute for AltGr
 # type: boolean
 terminal.use_altgr_substitute = True
+
+
+
+# name: Use GUI popup windows
+# type: boolean
+clink.gui_popups = True
 
