@@ -1,8 +1,8 @@
 @echo off
 :: doskey ls=exa $*
 :: doskey ll=exa -l $*
-doskey ls=dir /W $*
-doskey ll=dir $*
+doskey ls=ls --color $*
+doskey ll=ls -a -l --color $*
 doskey rm=del $*
 doskey cp=copy $*
 doskey cat=bat --style plain --color never $*

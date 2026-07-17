@@ -21,15 +21,17 @@ $PackagesToKeep = @(
     "Microsoft.EpmShellExtension",
     "Microsoft.OutlookForWindows"
 )
-Get-AppxPackage `
-| Where-Object { !$_.NonRemovable } `
-| Where-Object { $_.Name -notmatch ($PackagesToKeep -join "|") } `
-| Where-Object { !$_.IsFramework } `
-| Remove-AppxPackage
+#Get-AppxPackage `
+#| Where-Object { !$_.NonRemovable } `
+#| Where-Object { $_.Name -notmatch ($PackagesToKeep -join "|") } `
+#| Where-Object { !$_.IsFramework } `
+#| Remove-AppxPackage
 
 # Install packages
 # TODO (AS): Make generic to pass list of packages similar to choco setup
+winget install --id Chocolatey.Chocolatey --accept-source-agreements --disable-interactivity -h
 choco install nerd-fonts-meslo -y
+winget install --id eza-community.eza --accept-source-agreements --disable-interactivity -h
 winget install --id Docker.DockerDesktop --accept-source-agreements --disable-interactivity -h
 winget install --id Starship.Starship --accept-source-agreements --disable-interactivity -h
 winget install --id sharkdp.fd --accept-source-agreements --disable-interactivity -h
@@ -63,7 +65,7 @@ if (-Not(Test-Path -Path "C:\Program Files\LLVM\bin")) {
     -Value $newpath
 
     # Refresh path
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 }
 
 # Terminal settings

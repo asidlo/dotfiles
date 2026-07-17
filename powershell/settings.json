@@ -9,73 +9,7 @@
                 "action": "newTab",
                 "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
             },
-            "id": "User.newTab.7276C408",
-            "keys": "ctrl+alt+c"
-        },
-        {
-            "command": "paste",
-            "id": "User.paste",
-            "keys": "ctrl+v"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}"
-            },
-            "id": "User.newTab.1D3178C3",
-            "keys": "ctrl+alt+v"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}"
-            },
-            "id": "User.newTab.2D9C0A78",
-            "keys": "ctrl+alt+e"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
-            },
-            "id": "User.newTab.E9A063CC",
-            "keys": "ctrl+alt+z"
-        },
-        {
-            "command": "find",
-            "id": "User.find",
-            "keys": "ctrl+shift+f"
-        },
-        {
-            "command": 
-            {
-                "action": "splitPane",
-                "split": "auto",
-                "splitMode": "duplicate"
-            },
-            "id": "User.splitPane.A6751878",
-            "keys": "alt+shift+d"
-        },
-        {
-            "command": 
-            {
-                "action": "copy",
-                "singleLine": false
-            },
-            "id": "User.copy.644BA8F2",
-            "keys": "ctrl+c"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
-            },
-            "id": "User.newTab.79F17A5D",
-            "keys": "ctrl+alt+p"
+            "id": "User.newTab.7276C408"
         },
         {
             "command": 
@@ -85,51 +19,19 @@
                 "suppressApplicationTitle": true,
                 "tabTitle": "Notes"
             },
-            "id": "User.newTab.F7FDC847",
-            "keys": "ctrl+alt+n"
+            "id": "User.newTab.F7FDC847"
+        },
+        {
+            "command": "paste",
+            "id": "User.paste"
         },
         {
             "command": 
             {
                 "action": "newTab",
-                "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
+                "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
             },
-            "id": "User.newTab.65CC5CD1",
-            "keys": "ctrl+alt+a"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
-            },
-            "id": "User.newTab.1A274731",
-            "keys": "ctrl+alt+l"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
-            },
-            "keys": "ctrl+alt+t"
-        },
-        {
-            "command": "unbound",
-            "keys": "alt+enter"
-        },
-        {
-            "command": "unbound",
-            "keys": "ctrl+shift+6"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
-            },
-            "id": "User.newTab.769989AD",
-            "keys": "ctrl+alt+b"
+            "id": "User.newTab.79F17A5D"
         },
         {
             "command": 
@@ -137,15 +39,153 @@
                 "action": "newTab",
                 "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
             },
-            "id": "User.newTab.5390FEBF",
-            "keys": "ctrl+alt+d"
+            "id": "User.newTab.5390FEBF"
+        },
+        {
+            "command": "find",
+            "id": "User.find"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}"
+            },
+            "id": "User.newTab.1D3178C3"
+        },
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "id": "User.splitPane.A6751878"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
+            },
+            "id": "User.newTab.E9A063CC"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
+            },
+            "id": "User.newTab.65CC5CD1"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}"
+            },
+            "id": "User.newTab.2D9C0A78"
+        },
+        {
+            "command": 
+            {
+                "action": "copy",
+                "singleLine": false
+            },
+            "id": "User.copy.644BA8F2"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
+            },
+            "id": "User.newTab.1A274731"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
+            },
+            "id": "User.newTab.769989AD"
         }
     ],
     "copyFormatting": "none",
     "copyOnSelect": false,
-    "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-    "largePasteWarning": false,
-    "multiLinePasteWarning": false,
+    "defaultProfile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+    "disabledProfileSources": [],
+    "keybindings": 
+    [
+        {
+            "id": "User.newTab.2D9C0A78",
+            "keys": "ctrl+alt+e"
+        },
+        {
+            "id": "User.newTab.7276C408",
+            "keys": "ctrl+alt+c"
+        },
+        {
+            "id": "User.find",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "User.paste",
+            "keys": "ctrl+v"
+        },
+        {
+            "id": "User.splitPane.A6751878",
+            "keys": "alt+shift+d"
+        },
+        {
+            "id": "User.newTab.1D3178C3",
+            "keys": "ctrl+alt+v"
+        },
+        {
+            "id": "User.newTab.E9A063CC",
+            "keys": "ctrl+alt+z"
+        },
+        {
+            "id": "User.copy.644BA8F2",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": "User.newTab.79F17A5D",
+            "keys": "ctrl+alt+p"
+        },
+        {
+            "id": "User.newTab.F7FDC847",
+            "keys": "ctrl+alt+n"
+        },
+        {
+            "id": "User.newTab.65CC5CD1",
+            "keys": "ctrl+alt+a"
+        },
+        {
+            "id": "User.newTab.1A274731",
+            "keys": "ctrl+alt+l"
+        },
+        {
+            "id": "User.newTab.1A274731",
+            "keys": "ctrl+alt+t"
+        },
+        {
+            "id": null,
+            "keys": "alt+enter"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+6"
+        },
+        {
+            "id": "User.newTab.769989AD",
+            "keys": "ctrl+alt+b"
+        },
+        {
+            "id": "User.newTab.5390FEBF",
+            "keys": "ctrl+alt+d"
+        }
+    ],
     "newTabMenu": 
     [
         {
@@ -156,11 +196,11 @@
     {
         "defaults": 
         {
-            "colorScheme": "Tokyonight",
+            "colorScheme": "Comfort Shell Dark",
             "font": 
             {
-                "face": "MesloLGM Nerd Font",
-                "size": 11
+                "face": "Cascadia Mono NF",
+                "size": 12
             },
             "padding": "0,0,-4,0",
             "suppressApplicationTitle": true
@@ -181,80 +221,14 @@
             {
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
-                "name": "Command Prompt"
-            },
-            {
-                "colorScheme": "Tokyonight",
-                "commandline": "C:/Program Files/Git/bin/bash.exe",
-                "guid": "{05f867ca-3efc-499c-81d1-fc719183133f}",
-                "icon": "C:/Program Files/Git/mingw64/share/git/git-for-windows.ico",
-                "name": "Git Bash",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "commandline": "pwsh -noe -c \"$vsPath = &(Join-Path 'C:\\Program Files (x86)' '\\Microsoft Visual Studio\\Installer\\vswhere.exe') -property installationpath -latest; Import-Module (Join-Path $vsPath 'Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll'); Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation\"",
-                "guid": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}",
-                "hidden": false,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\vs2022.png",
-                "name": "VS2022 Powershell",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "commandline": "pwsh -noe -c \"$vsPath = &(Join-Path 'C:\\Program Files (x86)' '\\Microsoft Visual Studio\\Installer\\vswhere.exe') -property installationpath -latest; Import-Module (Join-Path $vsPath 'Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll'); Enter-VsDevShell -VsInstallPath $vsPath -SkipAutomaticLocation; .\\AddModules.ps1\"",
-                "guid": "{4e7d899e-d8b9-4ecf-8cab-db18a823de15}",
-                "hidden": false,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\vs2022.png",
-                "name": "Networking-nfv",
-                "startingDirectory": "C:\\src\\Networking-nfv"
-            },
-            {
-                "commandline": "powershell -noe -c \"cd C:\\src\\Ev2\\Ev2_PowerShell; .\\AzureServiceDeployClient.ps1 \"",
-                "guid": "{6b11e9fe-2925-442b-b59c-fa126b108d2b}",
-                "hidden": false,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\vs2019.png",
-                "name": "Ev2"
-            },
-            {
-                "commandline": "%windir%\\System32\\cmd.exe \"/K\" %USERPROFILE%\\AppData\\Local\\Anaconda3\\Scripts\\activate.bat %USERPROFILE%\\AppData\\Local\\Anaconda3",
-                "guid": "{dbd445d1-20b5-4bb5-9e21-aeff97668825}",
-                "hidden": true,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\anaconda-navigator.ico",
-                "name": "Anaconda Cmd",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "commandline": "pwsh -ExecutionPolicy ByPass -NoExit -Command \"& $env:USERPROFILE\\AppData\\Local\\Anaconda3\\shell\\condabin\\conda-hook.ps1 ; conda activate $env:USERPROFILE\\AppData\\Local\\Anaconda3 \"",
-                "guid": "{0cab0032-cf39-4f85-9c7a-949829e8c648}",
-                "hidden": false,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\anaconda-navigator.ico",
-                "name": "Anaconda Powershell",
-                "startingDirectory": "%USERPROFILE%"
+                "name": "Command Prompt",
+                "startingDirectory": "D:\\src"
             },
             {
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
                 "hidden": false,
                 "name": "Azure Cloud Shell",
                 "source": "Windows.Terminal.Azure"
-            },
-            {
-                "commandline": "wsl.exe -- ~/.local/bin/nvim -S ~/.local/share/nvim/sessions/notes.vim",
-                "guid": "{c3c75353-8d69-41da-9e31-fbec8c54766e}",
-                "hidden": false,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\notepad.png",
-                "name": "Notes",
-                "padding": "0,0,-4,0",
-                "scrollbarState": "hidden",
-                "startingDirectory": "%USERPROFILE%"
-            },
-            {
-                "commandline": "wsl.exe -- ssh labuser@ica25229v4.westus3.cloudapp.azure.com -p 1112",
-                "guid": "{3a5426af-6e6c-4fba-9889-862ad5a38699}",
-                "hidden": false,
-                "icon": "%USERPROFILE%\\Pictures\\icons\\tux.png",
-                "name": "LKD VM",
-                "padding": "0,0,-4,0",
-                "scrollbarState": "hidden",
-                "startingDirectory": "%USERPROFILE%"
             },
             {
                 "commandline": "wsl.exe -- az vm start --resource-group azure-jump-box --name ajb-vm-20220518 --subscription b85d32d2-bdbe-4bff-808a-c04ebde9c08b && ssh asidlo@ajb.eastus.cloudapp.azure.com -i ~/.ssh/id_rsa",
@@ -267,16 +241,16 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "guid": "{2c4de342-38b7-51cf-b940-2309a097f518}",
+                "guid": "{31ca83ee-2276-590a-982b-4ad3fb9eec0b}",
                 "hidden": false,
-                "name": "Ubuntu",
-                "source": "Windows.Terminal.Wsl"
+                "name": "Comfort Shell - Ubuntu",
+                "source": "ComfortShell"
             },
             {
-                "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
+                "guid": "{2d60b5d3-2f5b-564b-b4cd-659ef6a39bc0}",
                 "hidden": false,
-                "name": "Git Bash",
-                "source": "Git"
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
             }
         ]
     },
@@ -422,5 +396,7 @@
         }
     ],
     "theme": "dark",
-    "themes": []
+    "themes": [],
+    "warning.largePaste": false,
+    "warning.multiLinePaste": "never"
 }
