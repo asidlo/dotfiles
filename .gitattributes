@@ -1,0 +1,13 @@
+# Shell scripts must use LF so they execute correctly under WSL/Linux.
+# install.ps1 (Phase 5) runs install.sh directly from the Windows mount, so the
+# on-disk copy has to be LF, not CRLF, or bash chokes on the carriage returns.
+*.sh text eol=lf
+*.bash text eol=lf
+bash/bashrc text eol=lf
+zsh/zshrc* text eol=lf
+zsh/zshenv text eol=lf
+
+# Vendored third-party assets (microsoft/WindowsDeveloperConfig) are kept
+# byte-for-byte to preserve signed scripts and to simplify re-syncing upstream.
+# This later rule wins for files under vendor/, overriding the *.sh rule above.
+vendor/** -text

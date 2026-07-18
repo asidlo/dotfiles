@@ -3,7 +3,7 @@
 > Implementation plan for reworking the Windows setup so that
 > [microsoft/WindowsDeveloperConfig](https://github.com/microsoft/WindowsDeveloperConfig) (WDC) is the **base
 > installer** (full setup), with this repo's personal settings layered on top, and `wsl-comfort\install.ps1`
-> invoked automatically. `install.sh` (the Linux/WSL side) is still run **manually** inside WSL.
+> invoked automatically. Phase 5 then **automatically runs `install.sh` inside WSL**, so one elevated run does the whole cross-platform setup.
 
 ## Problem & goal
 
@@ -13,8 +13,8 @@
   `wsl-comfort` orchestrator that sets up a WSL comfort shell and the `"Comfort Shell Dark"` Terminal scheme this repo's
   `powershell/settings.json` already references but never defines.
 
-**Goal:** make WDC the base, layer only the personal delta on top, invoke `wsl-comfort`, and keep the WSL-side
-`install.sh` as a documented manual step.
+**Goal:** make WDC the base, layer only the personal delta on top, invoke `wsl-comfort`, and finish by
+automatically running the WSL-side `install.sh` inside the distro (one command, no manual step).
 
 ## Approach
 
@@ -56,6 +56,7 @@ param(
     [switch]$SkipWdc,
     [switch]$SkipWslComfort,
     [switch]$SkipPersonal,
+    [switch]$SkipWsl,           # skip auto-running install.sh inside WSL
     [switch]$IncludeAppxPrune   # appx-prune is aggressive; opt-in (matches the commented-out local behavior)
 )
 ```
@@ -67,7 +68,7 @@ param(
 | 2 — WDC full setup | `winget configure -f <vendored dev-config.winget> --accept-configuration-agreements --disable-interactivity` unless `-SkipWdc`. | May reboot on a **fresh** box (WDC's own RunOnce resumes `winget configure`). On this machine (WSL already installed) it won't. |
 | 3 — wsl-comfort | `& <vendored wsl-comfort\install.ps1> -NonInteractive -Distro $Distro` unless `-SkipWslComfort`. | Never writes `settings.json` content (Fragment API + mtime-touch) → the symlinked `settings.json` is safe. Supplies `"Comfort Shell Dark"`. |
 | 4 — Personal layer | Run existing idempotent `catalog/*` scripts unless `-SkipPersonal`. | See list below. `wsl-bootstrap` is **excluded** (WDC + wsl-comfort now own WSL). |
-| 5 — Manual step | Print: inside WSL run `wsl-setup.sh` / `install.sh`. | `install.ps1` never invokes the Linux installer. |
+| 5 — WSL `install.sh` | After WSL + `$Distro` exist, run this repo's `install.sh` **directly** inside the distro, using the same in-WSL exec mechanism `wsl-comfort` uses (`wsl.exe -d $Distro -- bash -lc`), unless `-SkipWsl`. **Not** via `wsl-setup.sh` (reported non-working). | Resolve repo path via `wslpath`; run `install.sh` from the repo so it self-locates (relies on LF endings from the new `.gitattributes`); guard on distro presence (skip + message if not ready, e.g. mid-reboot). |
 
 **Phase 4 catalog order:** `winget-core` → `choco-fonts` → `modules-install` → `path-llvm` → `windows-features` →
 `appx-prune` (only if `-IncludeAppxPrune`) → `dev-settings` → `powershell-profiles` → `dotfiles-links` →
@@ -75,14 +76,18 @@ param(
 
 **Re-runnability / reboot:** keep every phase idempotent so the whole script is safe to re-run. On a fresh machine,
 after any WDC reboot simply re-run `install.ps1` (Phase 2 becomes a DSC no-op, Phase 3 sees WSL present, Phase 4 tasks
-are idempotent). Optionally detect a pending reboot in Phase 2 and stop with a "reboot, then re-run me" message.
+and Phase 5's `install.sh` are idempotent). Optionally detect a pending reboot in Phase 2 and stop with a "reboot, then
+re-run me" message.
 
 ## Concrete change list
 
 1. **NEW** `vendor\WindowsDeveloperConfig\**` — copy `windows-dev-config\dev-config.winget` (+ its `README.md`) and the
    whole `wsl-comfort\` folder; add WDC's `LICENSE` and a `PROVENANCE.md` (source URL + SHA + re-sync steps).
 2. **REWRITE** `install.ps1` — the phased orchestrator above; keep the admin guard; add `-Distro` / `-Skip*` /
-   `-IncludeAppxPrune` params. Preserve the current LLVM-PATH, symlink, and profile behavior by delegating to `catalog/*`.
+   `-SkipWsl` / `-IncludeAppxPrune` params. Preserve the current LLVM-PATH, symlink, and profile behavior by delegating
+   to `catalog/*`. Phase 5 runs `install.sh` **directly** in the distro using the same in-WSL exec mechanism `wsl-comfort`
+   uses (`wsl.exe -d $Distro -- bash -lc`), after resolving the repo path with `wslpath`. It does **not** use
+   `wsl-setup.sh` (the user reports it never worked).
 3. **EDIT** `catalog\winget-core\script.ps1` — remove WDC-covered ids (`python3`, `Microsoft.WindowsTerminal`,
    `Microsoft.PowerToys`, `OpenJS.NodeJS.LTS`) and **add `eza-community.eza` + `ajeetdsouza.zoxide`** (required by
    `clink\zshify.lua`). Keep Docker, Starship, fd, bat, ripgrep, Clink, fzf, Neovim, lazygit, Go, vim, azcopy,
@@ -93,8 +98,10 @@ are idempotent). Optionally detect a pending reboot in Phase 2 and stop with a "
    stale `catalog-tasks/` path (it's `catalog/`); add the missing `dev-settings` / `wsl-bootstrap` rows; note WDC is the base.
 6. **KEEP** `choco-fonts`, `modules-install`, `path-llvm`, `windows-features` (Containers + Hyper-V), `dev-settings`,
    `powershell-profiles`, `dotfiles-links`, `verify-baseline` — the personal delta.
-7. **KEEP unchanged & manual:** `install.sh`, `wsl-setup.sh` (Linux/WSL side); `wsl-bootstrap` catalog task stays in the
-   repo for standalone Dev Box use but is no longer called by `install.ps1`.
+7. **KEEP `install.sh` unchanged (now auto-invoked):** Phase 5 runs it automatically instead of by hand.
+   `wsl-setup.sh` is **not** used (reported non-working) — left in the repo but out of the flow (fix or remove later).
+   `wsl-bootstrap` catalog task stays for standalone Dev Box use but is not called by `install.ps1`
+   (WDC + wsl-comfort + Phase 5 cover WSL now).
 
 ## Decisions to confirm (with recommended defaults)
 
@@ -105,6 +112,15 @@ are idempotent). Optionally detect a pending reboot in Phase 2 and stop with a "
   `powershell\settings.json` `schemes[]` so the terminal renders correctly even before `wsl-comfort` has run.
 - **Vendored folder location**: plan uses `vendor\WindowsDeveloperConfig\`. Adjustable (e.g., root-level
   `windows-dev-config\` + `wsl-comfort\`) if preferred.
+- **In-WSL run is unattended**: Phase 5 runs `install.sh` via `wsl.exe … bash` (no TTY). Confirm `install.sh` finishes
+  without interactive prompts, and that a freshly WDC-installed Ubuntu (installed `--no-launch`) has a usable default
+  user — if none exists yet, run the step as `-u root` or trigger first-run init first.
+
+- **`install.sh` needs LF endings & the repo path**: it runs from the repo over the Windows mount (`wslpath`) and
+  self-locates via `realpath`, so it needs LF endings (enforced by the new `.gitattributes`; may need a one-time
+  `git add --renormalize .`) and symlinks shell configs to the `/mnt/...` repo path.
+- **Dropped `wsl-setup.sh` side-effects**: it used to link `/etc/wsl.conf` (from `wsl/wsl.conf`) and win32yank — no
+  longer automatic; fold into Phase 5 (needs `sudo`) only if you still want them. Flagged.
 
 ## Validation
 
@@ -113,10 +129,13 @@ are idempotent). Optionally detect a pending reboot in Phase 2 and stop with a "
 - Config: `winget configure validate -f <vendored dev-config.winget>` (dry validation) if the winget version supports it.
 - Runtime: run `catalog\verify-baseline\script.ps1`. Full end-to-end (elevated `winget configure` + `wsl-comfort` +
   reboot behavior) is validated by the user on the actual box.
+- WSL step: dry-check path resolution + non-TTY invocation (`wsl -d Ubuntu -- wslpath -a <repo>` and
+  `wsl -d Ubuntu -- bash -lc 'echo ok'`); the full `install.sh` run is validated by the user on the box.
 
 ## Out of scope
 
-- No changes to the WSL-side installers (`install.sh`, `scripts/*.sh`, `wsl-setup.sh`).
+- No **content** changes to `install.sh` / `scripts/*.sh` — Phase 5 now invokes `install.sh` automatically, but its logic
+  is untouched. `wsl-setup.sh` is left as-is but unused.
 - Not modifying WDC's vendored `dev-config.winget` / `wsl-comfort` content (vendored verbatim; re-sync via `PROVENANCE.md`).
 
 ## Todos
@@ -124,9 +143,9 @@ are idempotent). Optionally detect a pending reboot in Phase 2 and stop with a "
 Tracked in SQL (`todos` / `todo_deps`). Summary:
 
 1. `vendor-wdc` — Vendoring WDC assets + LICENSE + PROVENANCE into `vendor\WindowsDeveloperConfig\`.
-2. `rewrite-install-ps1` — Rewriting `install.ps1` as the phased idempotent orchestrator (depends on `vendor-wdc`).
+2. `rewrite-install-ps1` — Rewriting `install.ps1` as the phased idempotent orchestrator, incl. Phase 5 that runs `install.sh` **directly** in WSL via the wsl-comfort exec mechanism, not `wsl-setup.sh` (depends on `vendor-wdc`).
 3. `trim-winget-core` — Trimming WDC-covered ids and adding `eza` + `zoxide`.
-4. `add-gitattributes` — Adding `.gitattributes` (`*.sh text eol=lf`) for vendored bash.
+4. `add-gitattributes` — Adding `.gitattributes` (`*.sh text eol=lf`) so vendored bash **and** `install.sh` run correctly in WSL (may need one-time `git add --renormalize .`).
 5. `update-readme` — Rewriting `README.md` for the new two-step flow + path fixes.
 6. `confirm-decisions` — Confirming UAC keep/drop and optional `settings.json` scheme add (depends on `rewrite-install-ps1`).
-7. `validate` — Syntax-check + `winget configure validate` + `verify-baseline` (depends on `rewrite-install-ps1`, `trim-winget-core`).
+7. `validate` — Syntax-check + `winget configure validate` + `verify-baseline` + WSL `wslpath`/non-TTY dry-check (depends on `rewrite-install-ps1`, `trim-winget-core`).
