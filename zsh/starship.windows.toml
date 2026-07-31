@@ -19,6 +19,10 @@ symbol = " "
 [directory]
 read_only = " "
 style = "bold cyan"
+# Style: show only the current folder name (zsh-like), not the full
+# repo-rooted path. truncate_to_repo=false + truncation_length=1.
+truncate_to_repo = false
+truncation_length = 1
 
 [docker_context]
 symbol = " "

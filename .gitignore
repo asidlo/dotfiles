@@ -6,3 +6,5 @@
 clink/clink_history*
 clink/clink_error*
 clink/clink.log
+clink/.history
+clink/*.dmp
