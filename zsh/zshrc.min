@@ -243,9 +243,9 @@ fi
 
 # Modern ls via eza when available
 if (( $+commands[eza] )); then
-    alias ls='eza --icons'
-    alias ll='eza -la --icons --git'
-    alias lt='eza --tree'
+    alias ls='eza --icons auto'
+    alias ll='eza -la --icons auto --git'
+    alias lt='eza --tree --icons auto'
 fi
 
 # Add agency / copilot alias
