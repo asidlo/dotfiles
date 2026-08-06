@@ -105,6 +105,5 @@ if [ -d "$HOME/.sdkman" ]; then
 fi
 
 [ -d "$HOME/.aspire/bin" ] && export PATH="$HOME/.aspire/bin:$PATH"
-. "$HOME/.cargo/env"
-. "/home/asidlo/.local/share/bob/env/env.sh"
-. "/home/asidlo/.local/share/bob/env/env.sh"
+[ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
+[ -f "$HOME/.local/share/bob/env/env.sh" ] && source "$HOME/.local/share/bob/env/env.sh"
