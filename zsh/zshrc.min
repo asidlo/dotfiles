@@ -254,6 +254,7 @@ alias acp='agency cp -- --yolo --agent anvil:anvil'
 # BEGIN Agency MANAGED BLOCK
 if [[ ":${PATH}:" != *":$HOME/.config/agency/CurrentVersion:"* ]]; then
 	export PATH="$HOME/.config/agency/CurrentVersion:${PATH}"
+	unset DISPLAY WAYLAND_DISPLAY
 fi
 # END Agency MANAGED BLOCK
 

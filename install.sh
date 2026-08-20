@@ -83,6 +83,7 @@ fi
 "$SCRIPT_DIR/az.sh"
 "$SCRIPT_DIR/copilot.sh"
 "$SCRIPT_DIR/agency.sh"
+"$SCRIPT_DIR/npm.sh"
 
 # If not running in codespaces or devcontainer, do full install
 if [ "$MINIMAL_ENV" -eq 0 ]; then
