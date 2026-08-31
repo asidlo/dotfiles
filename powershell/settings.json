@@ -7,14 +7,6 @@
             "command": 
             {
                 "action": "newTab",
-                "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
-            },
-            "id": "User.newTab.7276C408"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
                 "profile": "Notes",
                 "suppressApplicationTitle": true,
                 "tabTitle": "Notes"
@@ -22,8 +14,12 @@
             "id": "User.newTab.F7FDC847"
         },
         {
-            "command": "paste",
-            "id": "User.paste"
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
+            },
+            "id": "User.newTab.7276C408"
         },
         {
             "command": 
@@ -34,12 +30,17 @@
             "id": "User.newTab.79F17A5D"
         },
         {
+            "command": "paste",
+            "id": "User.paste"
+        },
+        {
             "command": 
             {
-                "action": "newTab",
-                "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
             },
-            "id": "User.newTab.5390FEBF"
+            "id": "User.splitPane.A6751878"
         },
         {
             "command": "find",
@@ -56,19 +57,10 @@
         {
             "command": 
             {
-                "action": "splitPane",
-                "split": "auto",
-                "splitMode": "duplicate"
-            },
-            "id": "User.splitPane.A6751878"
-        },
-        {
-            "command": 
-            {
                 "action": "newTab",
-                "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
+                "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
             },
-            "id": "User.newTab.E9A063CC"
+            "id": "User.newTab.5390FEBF"
         },
         {
             "command": 
@@ -77,6 +69,14 @@
                 "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
             },
             "id": "User.newTab.65CC5CD1"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
+            },
+            "id": "User.newTab.E9A063CC"
         },
         {
             "command": 
@@ -98,7 +98,7 @@
             "command": 
             {
                 "action": "newTab",
-                "profile": "{2c4de342-38b7-51cf-b940-2309a097f518}"
+                "profile": "Ubuntu"
             },
             "id": "User.newTab.1A274731"
         },
@@ -109,21 +109,41 @@
                 "profile": "{05f867ca-3efc-499c-81d1-fc719183133f}"
             },
             "id": "User.newTab.769989AD"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b\r"
+            },
+            "id": "User.sendInput.8F63D3A9"
         }
     ],
     "copyFormatting": "none",
     "copyOnSelect": false,
-    "defaultProfile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+    "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "disabledProfileSources": [],
     "keybindings": 
     [
         {
-            "id": "User.newTab.2D9C0A78",
-            "keys": "ctrl+alt+e"
+            "id": "User.newTab.1D3178C3",
+            "keys": "ctrl+alt+v"
+        },
+        {
+            "id": "User.splitPane.A6751878",
+            "keys": "alt+shift+d"
+        },
+        {
+            "id": "User.sendInput.8F63D3A9",
+            "keys": "shift+enter"
         },
         {
             "id": "User.newTab.7276C408",
             "keys": "ctrl+alt+c"
+        },
+        {
+            "id": "User.newTab.2D9C0A78",
+            "keys": "ctrl+alt+e"
         },
         {
             "id": "User.find",
@@ -132,14 +152,6 @@
         {
             "id": "User.paste",
             "keys": "ctrl+v"
-        },
-        {
-            "id": "User.splitPane.A6751878",
-            "keys": "alt+shift+d"
-        },
-        {
-            "id": "User.newTab.1D3178C3",
-            "keys": "ctrl+alt+v"
         },
         {
             "id": "User.newTab.E9A063CC",
@@ -222,7 +234,7 @@
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
                 "name": "Command Prompt",
-                "startingDirectory": "D:\\src"
+                "startingDirectory": "%DEVDRIVE_SRC%"
             },
             {
                 "guid": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}",
@@ -241,16 +253,16 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "guid": "{31ca83ee-2276-590a-982b-4ad3fb9eec0b}",
+                "guid": "{a9c27c43-681e-501a-a1ba-160ed41bd310}",
                 "hidden": false,
-                "name": "Comfort Shell - Ubuntu",
-                "source": "ComfortShell"
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
             },
             {
-                "guid": "{2d60b5d3-2f5b-564b-b4cd-659ef6a39bc0}",
+                "guid": "{87dfad09-4474-56ac-a134-63cc8455bfae}",
                 "hidden": false,
-                "name": "Ubuntu",
-                "source": "Microsoft.WSL"
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },

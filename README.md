@@ -54,6 +54,7 @@ back in — every phase is idempotent, so re-running is safe.
 | `-LogPath <path>` | `<ArtifactRoot>\logs` | Transcript + JSON ledger destination. |
 | `-MoveWslToDevDrive` | `$true` | Move the distro's `ext4.vhdx` off `C:`. Use `-MoveWslToDevDrive:$false` to opt out. |
 | `-CleanStaleRootDotfiles` | `$true` | Remove dotfile symlinks a previous root-run left under `/root`. |
+| `-WslTempPasswordlessSudo` | `$true` | Grant `-WslUser` NOPASSWD sudo for the duration of Phase 6, then revoke it. See [Phase 6 and sudo](#phase-6-and-sudo). |
 | `-ContinueOnError` | `$true` | Collect failures and report at the end instead of aborting on the first one. |
 | `-RestartExplorer` | off | Let `dev-settings` restart Explorer (off by default so it can't kill Explorer mid-install). |
 | `-NonInteractive` | off | Never prompt; skip anything that would need input. |
@@ -123,6 +124,12 @@ The `devdrive-env` task keeps large build artifacts off `C:` by pointing the too
 | vcpkg | `VCPKG_DEFAULT_BINARY_CACHE`, `VCPKG_DOWNLOADS` |
 | JVM | `GRADLE_USER_HOME`, `MAVEN_OPTS` |
 | Docker | `DOCKER_CONFIG`, `BUILDX_CONFIG`, plus `dataFolder` in Docker Desktop's `settings-store.json` |
+| Locations | `DEVDRIVE_SRC` (= `-SrcRoot`), `DEVDRIVE_ARTIFACTS` (= `-ArtifactRoot`) |
+
+`DEVDRIVE_SRC` exists so nothing has to hard-code a drive letter. Windows Terminal expands environment variables in
+`startingDirectory`, so `powershell\settings.json` uses `%DEVDRIVE_SRC%` and the profiles follow the Dev Drive wherever
+it lands (and fall back to the shell's own default directory if the variable is not set yet). Machine-scoped variables
+only reach **new** processes, so restart Windows Terminal — or sign out — after a first run.
 
 `…\.npm-global`, `…\cargo\bin` and `…\go\bin` are prepended to PATH. `TEMP`/`TMP` are deliberately **not** redirected.
 The WSL distro's `ext4.vhdx` is moved to `<ArtifactRoot>\wsl\<Distro>\` by Phase 5.
@@ -215,6 +222,25 @@ run linked every dotfile into `/root`. Phase 5 fixes that:
 
 Phase 6 then runs `install.sh` as `wsl -d <Distro> -u <WslUser>`.
 
+### Phase 6 and sudo
+
+`Invoke-Step` captures `install.sh`'s output through a PowerShell pipeline, so the distro is handed **no controlling
+pty**. `/dev/tty` still exists as a device node inside WSL, so a naive `[ -e /dev/tty ]` check passes and `sudo -v`
+prompts on a terminal nobody can answer — Phase 6 then dies on sudo's five-minute `passwd_timeout`. And because sudo's
+default `timestamp_type=tty` degrades to `ppid` without a tty, even an answered prompt would not carry into the
+per-tool scripts `install.sh` spawns; each would prompt again.
+
+So Phase 6 brackets the run instead:
+
+1. `scripts\wsl-sudoers-temp.sh grant <user>` writes `/etc/sudoers.d/99-dotfiles-install` (`0440 root:root`), validated
+   with `visudo -cf` **before** it is installed and verified with `runuser … sudo -n true` afterwards.
+2. `install.sh` runs. Its `sudo -n true` fast path succeeds, so nothing ever prompts.
+3. `scripts\wsl-sudoers-temp.sh revoke` removes it from a `finally` block. A leftover from a killed run is also revoked
+   before each grant, and the revoke runs even when `-WslTempPasswordlessSudo:$false`.
+
+Use `-WslTempPasswordlessSudo:$false` to opt out; `install.sh` will then require an interactive shell, and now fails in
+under a second with instructions instead of hanging for five minutes.
+
 ## Idempotency & re-runs
 
 - Every `install.ps1` phase is safe to re-run; re-run the whole script after any WDC reboot.
@@ -239,6 +265,9 @@ Phase 6 then runs `install.sh` as `wsl -d <Distro> -u <WslUser>`.
 | Dotfiles landed in `/root` | An older run had no non-root user. Re-run `install.ps1`; Phase 5 creates the user and cleans the stale `/root` links. |
 | VHDX move failed | Free space on the target drive, or `-MoveWslToDevDrive:$false` to leave it on `C:`. |
 | `install.sh` errors on `\r` | Ensure `*.sh` files are `LF` (enforced by `.gitattributes`; run `git add --renormalize .` if needed). |
+| `wsl-install-sh` failed after ~5 minutes on sudo | Fixed: Phase 6 now grants temporary passwordless sudo, see [Phase 6 and sudo](#phase-6-and-sudo). If `wsl-sudo-revoke` reported a warning, remove `/etc/sudoers.d/99-dotfiles-install` by hand. |
+| Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Restart Windows Terminal — fragment profiles are only scanned at process start. Stale entries pinned to old GUIDs in `powershell\settings.json` also hide them; delete the offending `profiles.list` entry and let the generator re-create it. |
+| Terminal opens in the wrong drive | `%DEVDRIVE_SRC%` isn't set in that process. Re-run `devdrive-env`, then restart Windows Terminal (machine variables only reach new processes). |
 | Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |
 | Font not in terminal | Log off / rebuild font cache; verify Meslo under `%WINDIR%\Fonts`. |
 | Symlink errors | Ensure the repo path is accessible; check permissions and OneDrive sync state. |

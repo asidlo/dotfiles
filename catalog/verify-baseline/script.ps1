@@ -1,5 +1,6 @@
 param(
   [string]$ArtifactRoot = 'Q:\.tools',
+  [string]$SrcRoot = 'Q:\src',
   [string]$VsInstallPath = 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise',
   [string]$NfvRepoPath = 'Q:\src\Networking-nfv',
   [string]$Distro = 'Ubuntu',
@@ -32,6 +33,13 @@ function Test-ArtifactMachineEnv {
     if (-not $value.StartsWith($ArtifactRoot, [System.StringComparison]::OrdinalIgnoreCase)) { return $false }
   }
   return $true
+}
+
+function Test-DevDriveSrcEnv {
+  # Windows Terminal profiles use %DEVDRIVE_SRC% as their startingDirectory, so
+  # this missing is what makes Command Prompt open somewhere unexpected.
+  $value = [Environment]::GetEnvironmentVariable('DEVDRIVE_SRC', 'Machine')
+  return ($value -and ($value.TrimEnd('\') -ieq $SrcRoot.TrimEnd('\')))
 }
 
 function Get-WslDistroInfo {
@@ -114,6 +122,7 @@ $checks = @(
   @{ Name='copilot CLI'; Test={ Get-Command copilot -ErrorAction SilentlyContinue } },
   @{ Name='anvil plugin'; Test={ if (Get-Command copilot -ErrorAction SilentlyContinue) { & copilot plugin list 2>&1 | Select-String 'anvil' -Quiet } else { $false } } },
   @{ Name='Dev-drive env vars'; Test={ Test-ArtifactMachineEnv } },
+  @{ Name='Dev-drive src var'; Test={ Test-DevDriveSrcEnv } },
   @{ Name='WSL default user non-root'; Test={ Test-WslDefaultUserNonRoot } },
   @{ Name='WSL VHDX off C:'; Test={ Test-WslVhdxOffC } }
 )

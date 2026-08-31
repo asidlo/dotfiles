@@ -31,6 +31,13 @@ mkdir -p "$STATE_DIR" "$STEP_LOG_DIR"
 # stderr redirected into it the "[sudo] password for ..." prompt never reaches
 # the screen and sudo just sits there until it times out. The prompt is also
 # pinned to /dev/tty so a future reordering cannot silently reintroduce that.
+#
+# `-e /dev/tty` is NOT sufficient to decide we can prompt: /dev/tty is always
+# present as a device node inside WSL, even when the process has no controlling
+# terminal. Opening it is the real test. Requiring a controlling terminal also
+# keeps the warm-up meaningful -- sudo's default timestamp_type=tty degrades to
+# `ppid` without one, so the credential would not survive into the per-tool
+# scripts run_step spawns and each of them would prompt again.
 # ---------------------------------------------------------------------------
 if [ "$(id -u)" -eq 0 ]; then
   echo "sudo: running as root, not required"
@@ -39,15 +46,38 @@ elif ! command -v sudo >/dev/null 2>&1; then
   exit 1
 elif sudo -n true 2>/dev/null; then
   echo "sudo: already authorised (passwordless or cached)"
-elif [ -t 0 ] && [ -e /dev/tty ]; then
-  echo "sudo: authenticating once so the installs below don't prompt repeatedly"
-  if ! sudo -v </dev/tty >/dev/tty 2>&1; then
-    echo "ERROR: sudo authentication failed." >&2
+elif [ -t 0 ] && (exec 3<>/dev/tty) 2>/dev/null; then
+  # Announce on the terminal itself, not stdout: install.ps1 captures stdout
+  # through a pipeline, where this notice can sit buffered while sudo waits.
+  echo "sudo: authenticating once so the installs below don't prompt repeatedly" >/dev/tty || true
+
+  # Bound the wait. sudo's own passwd_timeout is five minutes, long enough that
+  # an unnoticed prompt looks like a hung install rather than a failed one.
+  sudo_auth=(sudo -v)
+  if command -v timeout >/dev/null 2>&1; then
+    sudo_auth=(timeout 120 sudo -v)
+  fi
+
+  # `|| rc=$?` rather than `if ! ...`: it keeps the real exit code (124 means
+  # timeout gave up) and stops `set -e` from killing the script first.
+  rc=0
+  SUDO_PROMPT='[sudo] password for %p (dotfiles install.sh): ' \
+    "${sudo_auth[@]}" </dev/tty >/dev/tty 2>&1 || rc=$?
+  if [ "$rc" -ne 0 ]; then
+    if [ "$rc" -eq 124 ]; then
+      echo "ERROR: sudo password prompt went unanswered for 120s." >&2
+    else
+      echo "ERROR: sudo authentication failed." >&2
+    fi
     exit 1
   fi
 else
   cat >&2 <<EOF
 ERROR: sudo needs a password, but this run has no terminal to prompt on.
+
+       install.ps1 normally handles this for you: Phase 6 installs a temporary
+       /etc/sudoers.d/99-dotfiles-install and removes it again afterwards. If
+       you are here, that step was skipped or failed.
 
        Re-run install.sh from an interactive shell:
            wsl -d <distro> -u $(whoami)

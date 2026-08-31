@@ -1,7 +1,16 @@
-param([string]$ArtifactRoot = 'Q:\.tools')
+param(
+  [string]$ArtifactRoot = 'Q:\.tools',
+  [string]$SrcRoot = 'Q:\src'
+)
 $ErrorActionPreference = 'Stop'
 
 $variables = @(
+  # Consumed by Windows Terminal profiles (powershell\settings.json) as
+  # %DEVDRIVE_SRC%, so the profiles follow the Dev Drive instead of hard-coding
+  # a drive letter. Windows Terminal expands environment variables in
+  # startingDirectory and falls back to the shell's own default when unset.
+  @{ Name = 'DEVDRIVE_SRC'; Value = $SrcRoot; Directory = $SrcRoot },
+  @{ Name = 'DEVDRIVE_ARTIFACTS'; Value = $ArtifactRoot; Directory = $ArtifactRoot },
   @{ Name = 'NUGET_PACKAGES'; Value = Join-Path $ArtifactRoot '.nuget\packages'; Directory = Join-Path $ArtifactRoot '.nuget\packages' },
   @{ Name = 'NUGET_HTTP_CACHE_PATH'; Value = Join-Path $ArtifactRoot '.nuget\v3-cache'; Directory = Join-Path $ArtifactRoot '.nuget\v3-cache' },
   @{ Name = 'NUGET_PLUGINS_CACHE_PATH'; Value = Join-Path $ArtifactRoot '.nuget\plugins-cache'; Directory = Join-Path $ArtifactRoot '.nuget\plugins-cache' },
@@ -114,3 +123,6 @@ try {
 }
 
 Write-Host "[devdrive] $set variable(s) set, $ok already correct"
+if ($set -gt 0) {
+  Write-Host '[devdrive] machine variables apply to new processes only; restart Windows Terminal (or sign out) before %DEVDRIVE_SRC% resolves in its profiles.'
+}

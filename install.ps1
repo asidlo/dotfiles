@@ -70,6 +70,19 @@
   Remove the dotfile symlinks a previous root-run of install.sh left under
   /root. Only symlinks resolving into this repo are removed. Default: $true.
 
+.PARAMETER WslTempPasswordlessSudo
+  Write /etc/sudoers.d/99-dotfiles-install granting -WslUser NOPASSWD sudo for
+  the duration of Phase 6, then remove it. Default: $true.
+
+  Phase 6 runs install.sh through Invoke-Step, which captures its output, so the
+  distro gets no controlling pty. Without this, `sudo -v` prompts on a terminal
+  nobody can answer and Phase 6 dies on sudo's five-minute passwd_timeout; and
+  because sudo's timestamp_type=tty degrades to `ppid` with no tty, an answered
+  prompt would not carry into the per-tool scripts install.sh spawns anyway.
+
+  Disable with -WslTempPasswordlessSudo:$false and run install.sh yourself from
+  an interactive shell, or grant the user passwordless sudo permanently.
+
 .PARAMETER ContinueOnError
   Collect failures and report them at the end rather than aborting on the first
   one. Default: $true. The process still exits non-zero when anything failed.
@@ -132,6 +145,7 @@ param(
     [string]$LogPath = (Join-Path $ArtifactRoot 'logs'),
     [bool]$MoveWslToDevDrive = $true,
     [bool]$CleanStaleRootDotfiles = $true,
+    [bool]$WslTempPasswordlessSudo = $true,
     [bool]$ContinueOnError = $true,
     [switch]$RestartExplorer,
     [switch]$NonInteractive,
@@ -324,6 +338,40 @@ function Get-WslDistroRegistration([string]$Name) {
         ForEach-Object { Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue } |
         Where-Object { $_.DistributionName -eq $Name } |
         Select-Object -First 1
+}
+
+<#
+  Grants or revokes the temporary passwordless-sudo drop-in Phase 6 runs behind.
+
+  Invoke-Step captures install.sh's output through a PowerShell pipeline, which
+  leaves the distro with no controlling pty: `sudo -v` prompts on a terminal
+  nobody can answer and dies on sudo's five-minute passwd_timeout. And with no
+  tty, sudo's timestamp_type=tty degrades to `ppid`, so an answered prompt would
+  not even carry into the per-tool scripts install.sh spawns.
+
+  -Mode revoke is best-effort and never throws: it runs before every grant (to
+  clear a drop-in a killed run left behind) and in Phase 6's finally block.
+#>
+function Set-WslTempSudo {
+    param(
+        [Parameter(Mandatory)][ValidateSet('grant', 'revoke')][string]$Mode,
+        [switch]$Quiet
+    )
+
+    $helperWin = Join-Path $repoRoot 'scripts\wsl-sudoers-temp.sh'
+    if (-not (Test-Path -LiteralPath $helperWin)) { throw "Missing helper: $helperWin" }
+    $helper = ConvertTo-WslPath $helperWin
+    if (-not $helper) { throw "Could not resolve '$helperWin' inside '$Distro'." }
+
+    $sudoArgs = @($Mode)
+    if ($Mode -eq 'grant') { $sudoArgs += $WslUser }
+
+    $output = @(& wsl.exe -d $Distro -u root -- bash "$helper" @sudoArgs 2>&1)
+    $code = $LASTEXITCODE
+    $global:LASTEXITCODE = 0
+
+    if (-not $Quiet) { $output | Where-Object { "$_".Trim() } | ForEach-Object { Write-Host "$_" } }
+    return $code
 }
 
 function Write-RunSummary {
@@ -528,7 +576,7 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
         $verifySkips = @()
         if ($SkipVisualStudio) { $verifySkips += 'VS 2022 Enterprise', 'NFV.vsconfig present' }
         if ($SkipNfvClone) { $verifySkips += 'Networking-nfv repo', 'NFV.vsconfig present' }
-        if ($SkipDevDriveEnv) { $verifySkips += 'Dev-drive env vars' }
+        if ($SkipDevDriveEnv) { $verifySkips += 'Dev-drive env vars', 'Dev-drive src var' }
         if ($SkipWsl) { $verifySkips += 'WSL default user non-root', 'WSL VHDX off C:' }
         if (-not $MoveWslToDevDrive) { $verifySkips += 'WSL VHDX off C:' }
         $verifySkips = @($verifySkips | Select-Object -Unique)
@@ -544,8 +592,8 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
                 Hint = 'Re-run: catalog\modules-install\script.ps1'
             }
             @{ Task = 'devdrive-env'; Skip = $SkipDevDriveEnv
-                Args = @{ ArtifactRoot = $ArtifactRoot }
-                Hint = "Re-run: catalog\devdrive-env\script.ps1 -ArtifactRoot '$ArtifactRoot'"
+                Args = @{ ArtifactRoot = $ArtifactRoot; SrcRoot = $SrcRoot }
+                Hint = "Re-run: catalog\devdrive-env\script.ps1 -ArtifactRoot '$ArtifactRoot' -SrcRoot '$SrcRoot'"
             }
             @{ Task = 'nfv-clone'; Skip = $SkipNfvClone
                 Args = @{ RepoUrl = $NfvRepoUrl; RepoPath = $NfvRepoPath }
@@ -577,7 +625,7 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
                 Hint = 'Re-run: catalog\dotfiles-links\script.ps1'
             }
             @{ Task = 'verify-baseline'; ExitCodeIsContract = $true
-                Args = @{ ArtifactRoot = $ArtifactRoot; VsInstallPath = $VsInstallPath; NfvRepoPath = $NfvRepoPath; Distro = $Distro; SkipChecks = $verifySkips }
+                Args = @{ ArtifactRoot = $ArtifactRoot; SrcRoot = $SrcRoot; VsInstallPath = $VsInstallPath; NfvRepoPath = $NfvRepoPath; Distro = $Distro; SkipChecks = $verifySkips }
                 Hint = 'Missing items above were not installed; check the earlier task failures'
             }
         )
@@ -752,26 +800,69 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
     } else {
         Write-Phase '6' "WSL install.sh (inside '$Distro' as '$WslUser')"
 
-        Invoke-Step -Phase '6' -Task 'wsl-install-sh' -ExitCodeIsContract `
-            -Hint "Run it yourself: wsl -d $Distro -u $WslUser --cd '<repo>' -- bash -lc 'bash ./install.sh'" -Action {
+        $script:WslSudoGranted = $false
+        try {
+            if ($WslTempPasswordlessSudo) {
+                Invoke-Step -Phase '6' -Task 'wsl-sudo-temp' `
+                    -Hint "Grant it by hand: wsl -d $Distro -u root -- bash scripts/wsl-sudoers-temp.sh grant $WslUser" -Action {
+                    # Clear a drop-in an earlier, killed run may have left behind
+                    # before writing a fresh one.
+                    Set-WslTempSudo -Mode revoke -Quiet | Out-Null
 
-            $probe = (& wsl.exe -d $Distro -u $WslUser -- echo __WSL_OK__ 2>$null)
-            if ($LASTEXITCODE -ne 0 -or ("$probe" -notmatch '__WSL_OK__')) {
-                $global:LASTEXITCODE = 0
-                throw "Distro '$Distro' cannot run as '$WslUser'. If a reboot is pending or the distro is still initialising, re-run install.ps1."
+                    # Mark *before* the attempt: a partial grant (file written,
+                    # verification failed) still has to be revoked afterwards.
+                    $script:WslSudoGranted = $true
+                    $code = Set-WslTempSudo -Mode grant
+                    if ($code -ne 0) { throw "Could not grant temporary passwordless sudo (exit $code)." }
+                }
+            } else {
+                # Disabled, but still clear anything an earlier run left behind --
+                # and treat a failed clear as a real problem, since silently
+                # leaving passwordless sudo in place is the worst outcome here.
+                Invoke-Step -Phase '6' -Task 'wsl-sudo-temp' `
+                    -Hint "Remove it by hand: wsl -d $Distro -u root -- rm -f /etc/sudoers.d/99-dotfiles-install" -Action {
+                    Write-Host '[wsl] temporary passwordless sudo disabled; install.sh will prompt for a password'
+                    $code = Set-WslTempSudo -Mode revoke
+                    if ($code -ne 0) { throw "Could not remove /etc/sudoers.d/99-dotfiles-install (exit $code)." }
+                }
             }
-            $global:LASTEXITCODE = 0
 
-            # Resolve this repo's path as WSL sees it for the working directory.
-            # `wsl --cd` takes it from a *native* argv, so the path is never
-            # interpolated into a shell string -- immune to spaces, quotes and
-            # shell injection (unlike `bash -lc "cd '<path>' && ..."`).
-            $repoWsl = ConvertTo-WslPath $repoRoot
-            $cdTarget = if ([string]::IsNullOrWhiteSpace($repoWsl)) { $repoRoot } else { $repoWsl }
-            if ($repoWsl) { Write-Host "[wsl] repo path in WSL: $repoWsl" }
-            Write-Host '[wsl] running install.sh (it may prompt for your WSL sudo password)...'
+            Invoke-Step -Phase '6' -Task 'wsl-install-sh' -ExitCodeIsContract `
+                -Hint "Run it yourself: wsl -d $Distro -u $WslUser --cd '<repo>' -- bash -lc 'bash ./install.sh'" -Action {
 
-            & wsl.exe -d $Distro -u $WslUser --cd $cdTarget -- bash -lc 'bash ./install.sh'
+                $probe = (& wsl.exe -d $Distro -u $WslUser -- echo __WSL_OK__ 2>$null)
+                if ($LASTEXITCODE -ne 0 -or ("$probe" -notmatch '__WSL_OK__')) {
+                    $global:LASTEXITCODE = 0
+                    throw "Distro '$Distro' cannot run as '$WslUser'. If a reboot is pending or the distro is still initialising, re-run install.ps1."
+                }
+                $global:LASTEXITCODE = 0
+
+                # Resolve this repo's path as WSL sees it for the working directory.
+                # `wsl --cd` takes it from a *native* argv, so the path is never
+                # interpolated into a shell string -- immune to spaces, quotes and
+                # shell injection (unlike `bash -lc "cd '<path>' && ..."`).
+                $repoWsl = ConvertTo-WslPath $repoRoot
+                $cdTarget = if ([string]::IsNullOrWhiteSpace($repoWsl)) { $repoRoot } else { $repoWsl }
+                if ($repoWsl) { Write-Host "[wsl] repo path in WSL: $repoWsl" }
+                Write-Host '[wsl] running install.sh...'
+
+                & wsl.exe -d $Distro -u $WslUser --cd $cdTarget -- bash -lc 'bash ./install.sh'
+            }
+        } finally {
+            if ($script:WslSudoGranted) {
+                Invoke-Step -Phase '6' -Task 'wsl-sudo-revoke' `
+                    -Hint "Remove it by hand: wsl -d $Distro -u root -- rm -f /etc/sudoers.d/99-dotfiles-install" -Action {
+                    $code = Set-WslTempSudo -Mode revoke
+                    if ($code -eq 0) {
+                        $script:WslSudoGranted = $false
+                    } else {
+                        # Never throw from a finally block -- it would replace the
+                        # failure that got us here. Write-Error lands this in the
+                        # ledger as a Warning without unwinding anything.
+                        Write-Error "Could not remove /etc/sudoers.d/99-dotfiles-install (exit $code). Remove it by hand."
+                    }
+                }
+            }
         }
     }
 
