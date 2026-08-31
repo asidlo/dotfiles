@@ -30,7 +30,7 @@ ubuntu | debian)
   fi
   ;;
 mariner | azurelinux)
-  sudo tdnf install -y nodejs
+  sudo tdnf install -y nodejs npm
   ;;
 *)
   echo "Unsupported OS: $ID"
