@@ -11,8 +11,8 @@ repo's personal settings layered on top and the WSL side wired up automatically.
 From an **elevated** PowerShell (Run as administrator) on Windows:
 
 ```powershell
-git clone https://github.com/asidlo/dotfiles D:\src\dotfiles
-cd D:\src\dotfiles
+git clone https://github.com/asidlo/dotfiles Q:\src\dotfiles
+cd Q:\src\dotfiles
 .\install.ps1
 ```
 
@@ -20,8 +20,9 @@ That single command runs everything, end to end:
 
 1. Microsoft's WindowsDeveloperConfig base setup (apps, dark/distraction-free desktop, WSL + Ubuntu).
 2. The WSL "Comfort Shell" (`wsl-comfort`), including the `"Comfort Shell Dark"` Windows Terminal scheme.
-3. This repo's personal layer (extra winget packages, fonts, registry tweaks, symlinks, profiles).
-4. This repo's WSL-side `install.sh`, run **inside** the distro automatically.
+3. This repo's personal layer (winget packages, fonts, Dev Drive redirection, VS 2022, registry tweaks, symlinks).
+4. WSL provisioning: create a **non-root** user and (by default) move the distro's VHDX onto the Dev Drive.
+5. This repo's WSL-side `install.sh`, run **inside** the distro as that user, automatically.
 
 On a fresh machine the WDC step may reboot (it resumes itself). If it does, just re-run `.\install.ps1` after logging
 back in — every phase is idempotent, so re-running is safe.
@@ -30,23 +31,34 @@ back in — every phase is idempotent, so re-running is safe.
 
 | Phase | Action |
 |------:|--------|
-| 0 | Preflight: require admin, assert `winget`, enable `winget configure`. |
+| 0 | Preflight: require admin, assert `winget`, enable `winget configure`, start the transcript. |
 | 1 | Resolve the vendored WindowsDeveloperConfig assets under `vendor\WindowsDeveloperConfig\`. |
 | 2 | WDC base setup: `winget configure` the vendored `dev-config.winget`. |
 | 3 | `wsl-comfort`: WSL + distro + Comfort Shell + Terminal scheme. |
 | 4 | Personal layer: the `catalog\*` tasks below (the delta on top of WDC). |
-| 5 | Run this repo's `install.sh` inside WSL (`wsl -d <Distro> -- bash -lc 'cd <repo> && bash ./install.sh'`). |
+| 5 | WSL provisioning: create the non-root user, clean stale `/root` dotfiles, move the VHDX to the Dev Drive. |
+| 6 | Run this repo's `install.sh` inside WSL as that user. |
 
-### Flags
+### Parameters
 
-| Flag | Effect |
-|------|--------|
-| `-Distro <name>` | WSL distro to target for Phases 3 and 5 (default `Ubuntu`). |
-| `-SkipWdc` | Skip Phase 2 (WindowsDeveloperConfig base setup). |
-| `-SkipWslComfort` | Skip Phase 3 (wsl-comfort). |
-| `-SkipPersonal` | Skip Phase 4 (the personal catalog layer). |
-| `-SkipWsl` | Skip Phase 5 (don't auto-run `install.sh` in WSL). |
-| `-IncludeAppxPrune` | Also run the aggressive `appx-prune` task in Phase 4 (opt-in). |
+| Parameter | Default | Effect |
+|-----------|---------|--------|
+| `-Distro <name>` | `Ubuntu` | WSL distro to target for Phases 3, 5 and 6. |
+| `-WslUser <name>` | `$env:USERNAME` (lowercased) | Non-root WSL user to create and run `install.sh` as. |
+| `-WslPassword <SecureString>` | prompted | Password for that user. Piped to `chpasswd` over **stdin** — never on a command line, never in the transcript. |
+| `-ArtifactRoot <path>` | `Q:\.tools` | Dev Drive root for package caches, toolchains, the WSL VHDX and logs. |
+| `-SrcRoot <path>` | `Q:\src` | Where repos are cloned. |
+| `-NfvRepoUrl <url>` | `…/One/_git/Networking-nfv` | ADO remote for the Networking-nfv clone. |
+| `-NfvRepoPath <path>` | `<SrcRoot>\Networking-nfv` | Clone destination; also where `NFV.vsconfig` is read from. |
+| `-VsInstallPath <path>` | `…\Microsoft Visual Studio\2022\Enterprise` | VS 2022 install location (installed **side-by-side**; VS 2026 is never touched). |
+| `-LogPath <path>` | `<ArtifactRoot>\logs` | Transcript + JSON ledger destination. |
+| `-MoveWslToDevDrive` | `$true` | Move the distro's `ext4.vhdx` off `C:`. Use `-MoveWslToDevDrive:$false` to opt out. |
+| `-CleanStaleRootDotfiles` | `$true` | Remove dotfile symlinks a previous root-run left under `/root`. |
+| `-ContinueOnError` | `$true` | Collect failures and report at the end instead of aborting on the first one. |
+| `-RestartExplorer` | off | Let `dev-settings` restart Explorer (off by default so it can't kill Explorer mid-install). |
+| `-NonInteractive` | off | Never prompt; skip anything that would need input. |
+| `-SkipWdc` / `-SkipWslComfort` / `-SkipPersonal` / `-SkipWsl` | off | Skip Phase 2 / 3 / 4 / 5+6. |
+| `-SkipDevDriveEnv` / `-SkipNfvClone` / `-SkipVisualStudio` | off | Skip individual Phase 4 tasks. |
 
 ```powershell
 # Windows only; run install.sh yourself later inside WSL:
@@ -54,14 +66,66 @@ back in — every phase is idempotent, so re-running is safe.
 
 # Re-apply just the personal layer:
 .\install.ps1 -SkipWdc -SkipWslComfort -SkipWsl
+
+# Point the whole thing at a different Dev Drive:
+.\install.ps1 -ArtifactRoot 'E:\.tools' -SrcRoot 'E:\src'
+
+# Unattended (no prompts, no VHDX move):
+.\install.ps1 -NonInteractive -MoveWslToDevDrive:$false
 ```
 
-If Phase 5 is skipped (or WSL wasn't ready), run the WSL side by hand from inside the distro:
+If Phases 5/6 are skipped (or WSL wasn't ready), run the WSL side by hand from inside the distro:
 
 ```bash
-cd /mnt/d/src/dotfiles   # or wherever the repo lives
+cd /mnt/q/src/dotfiles   # or wherever the repo lives
 bash ./install.sh
 ```
+
+## Logs & failure reporting
+
+`install.ps1` never reports success while silently installing nothing. Every phase and every catalog task is wrapped in
+a ledger that captures **terminating errors, anything written to the error stream, and non-zero exit codes**, then
+prints a summary table at the end:
+
+```
+=== Run summary ===
+Phase Task                     Status      Exit Duration  Message
+----- ------------------------ -------- ------- --------- -------
+4     winget-core              Ok             0 00:04:12
+4     nfv-clone                Failed         1 00:00:08  authentication failed
+...
+  12 ok, 1 warning(s), 1 failed, 0 skipped
+```
+
+Failures are reprinted underneath with the captured output and a remediation hint, and the process **exits non-zero**
+so a wrapper or CI job can detect it.
+
+| Artifact | Location |
+|----------|----------|
+| Windows transcript | `<ArtifactRoot>\logs\install-<yyyyMMdd-HHmmss>.log` |
+| Machine-readable ledger | `<ArtifactRoot>\logs\install-<yyyyMMdd-HHmmss>.json` |
+| WSL log | `~/.local/state/dotfiles/install-<stamp>.log` (inside the distro) |
+
+Both Windows paths are printed at the start *and* the end of the run.
+
+## Dev Drive layout
+
+The `devdrive-env` task keeps large build artifacts off `C:` by pointing the toolchains at `-ArtifactRoot`
+(default `Q:\.tools`) via **machine-scoped** environment variables:
+
+| Toolchain | Variables |
+|-----------|-----------|
+| NuGet / .NET | `NUGET_PACKAGES`, `NUGET_HTTP_CACHE_PATH`, `NUGET_PLUGINS_CACHE_PATH`, `DOTNET_CLI_HOME` |
+| npm / pnpm / yarn | `npm_config_cache`, `npm_config_prefix`, `PNPM_HOME`, `PNPM_STORE_DIR`, `YARN_CACHE_FOLDER` |
+| Go | `GOPATH`, `GOMODCACHE`, `GOCACHE` |
+| Rust | `CARGO_HOME`, `RUSTUP_HOME` |
+| Python | `PIP_CACHE_DIR`, `UV_CACHE_DIR` |
+| vcpkg | `VCPKG_DEFAULT_BINARY_CACHE`, `VCPKG_DOWNLOADS` |
+| JVM | `GRADLE_USER_HOME`, `MAVEN_OPTS` |
+| Docker | `DOCKER_CONFIG`, `BUILDX_CONFIG`, plus `dataFolder` in Docker Desktop's `settings-store.json` |
+
+`…\.npm-global`, `…\cargo\bin` and `…\go\bin` are prepended to PATH. `TEMP`/`TMP` are deliberately **not** redirected.
+The WSL distro's `ext4.vhdx` is moved to `<ArtifactRoot>\wsl\<Distro>\` by Phase 5.
 
 ## Vendored WindowsDeveloperConfig
 
@@ -77,21 +141,30 @@ catalog tasks.
 
 | Task | Purpose | Run by `install.ps1`? |
 |------|---------|-----------------------|
-| `winget-core` | Install personal winget tooling **not** covered by WDC (Docker, Starship, eza, zoxide, fd, bat, ripgrep, Clink, fzf, Neovim, lazygit, Go, vim, azcopy, Teams, Azure CLI, LLVM, Rustup). | ✅ |
+| `winget-core` | Install personal winget tooling **not** covered by WDC (Docker, Starship, eza, zoxide, fd, bat, ripgrep, Clink, fzf, Neovim, lazygit, Go, vim, AzCopy, Teams, Azure CLI, LLVM, Rustup). | ✅ |
 | `choco-fonts` | Install Meslo Nerd Font via Chocolatey (idempotent). | ✅ |
 | `modules-install` | Install `Az` & `PSDesiredStateConfiguration` PowerShell modules. | ✅ |
+| `devdrive-env` | Point NuGet/npm/Go/Rust/Python/vcpkg/JVM/Docker caches at the Dev Drive (machine scope). | ✅ |
+| `nfv-clone` | Clone `Networking-nfv` from ADO into `-NfvRepoPath` (no-op if already present). | ✅ |
+| `visualstudio` | Install VS 2022 Enterprise **side-by-side** with VS 2026, then apply `NFV.vsconfig`. | ✅ |
 | `path-llvm` | Append `C:\Program Files\LLVM\bin` to PATH if present. | ✅ |
 | `windows-features` | Enable VirtualMachinePlatform, Containers, WSL, Hyper-V. | ✅ |
-| `appx-prune` | Remove non-essential AppX packages (curated keep-list). | Only with `-IncludeAppxPrune` |
+| `agency` | Install the `agency` CLI via `aka.ms/InstallTool.ps1` and rehydrate PATH. | ✅ |
+| `copilot-plugins` | Ensure the GitHub Copilot CLI is present and install the `anvil` plugin. | ✅ |
+| `wsl-bootstrap` | WSL distro install/config + `etc\wsl.conf` + `win32yank`. | ✅ |
 | `dev-settings` | Registry/UX tweaks: UAC, dark theme, taskbar/Start cleanup, clocks, explorer, privacy. | ✅ |
-| `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ✅ |
 | `dotfiles-links` | Symlink gitconfig, starship, clink, nvim, Terminal settings, icons. | ✅ |
-| `verify-baseline` | Post-check that core tools and links are present. | ✅ |
-| `wsl-bootstrap` | Standalone WSL distro install/config for Dev Box. Superseded on a full run by WDC + `wsl-comfort` + Phase 5, so **not** invoked by `install.ps1`. | ❌ |
+| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars and the WSL user are present. | ✅ |
+| `appx-prune` | Remove non-essential AppX packages (curated keep-list). | ❌ too destructive; run by hand |
+| `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ❌ profiles already sync from OneDrive |
+
+> `anvil` is installed with `copilot plugin install burkeholland/anvil`. That form emits a *"direct plugin installs are
+> deprecated"* warning, but no marketplace currently publishes anvil, so there is no `anvil@marketplace` to switch to.
+> The warning is allow-listed so it never shows up as a failure.
 
 ### Customizing winget packages
 
-`winget-core` accepts a space-delimited override: `-packages "Neovim.Neovim Microsoft.AzureCLI"`. Omit it to use the
+`winget-core` takes a real string **array**: `-Packages 'Neovim.Neovim','Microsoft.AzureCLI'`. Omit it to use the
 curated list. Packages already installed by WDC (Python, Node.js, Windows Terminal, PowerToys, Git, VS Code, PowerShell,
 uv, …) are intentionally left out of `winget-core`.
 
@@ -106,8 +179,10 @@ tasks:
     parameters:
       packages: "Neovim.Neovim Microsoft.AzureCLI"
   - name: choco-fonts
+  - name: devdrive-env
+    parameters:
+      artifactRoot: "Q:\\.tools"
   - name: dev-settings
-  - name: powershell-profiles
   - name: dotfiles-links
   - name: modules-install
   - name: path-llvm
@@ -116,19 +191,39 @@ tasks:
 
 ## WSL side (`install.sh`)
 
-`install.sh` (auto-run by Phase 5, or runnable by hand inside WSL) symlinks shell configs and best-effort installs CLI
+`install.sh` (auto-run by Phase 6, or runnable by hand inside WSL) symlinks shell configs and best-effort installs CLI
 tooling (fd, fzf, bat, ripgrep, zoxide, direnv, eza, btop, starship, zsh, gh, az, and — outside codespaces/devcontainers
-— rust, lazygit, nvim, go, npm, dotnet, tmux). It self-locates via `realpath`, so running it from the repo (including the
-`/mnt/...` Windows mount) works. `.gitattributes` keeps repo `*.sh` files `LF` so they run correctly under WSL.
+— rust, lazygit, nvim, go, npm, dotnet, tmux, agency, copilot + anvil). It self-locates via `realpath`, so running it
+from the repo (including the `/mnt/...` Windows mount) works. `.gitattributes` keeps repo `*.sh` files `LF` so they run
+correctly under WSL.
 
-It may prompt for your WSL `sudo` password (e.g. `locale-gen`); run it in an interactive terminal.
+Like the Windows side, it records every tool install in a ledger and prints a summary at the end rather than aborting on
+the first failure; only symlink creation stays fail-fast. It may prompt for your WSL `sudo` password (e.g. `locale-gen`);
+run it in an interactive terminal.
+
+### Non-root WSL user
+
+`wsl-comfort` suppresses the Ubuntu OOBE, so a fresh distro has **no user other than `root`** — which is why an earlier
+run linked every dotfile into `/root`. Phase 5 fixes that:
+
+1. `scripts\wsl-provision-user.sh` creates `-WslUser` with a zsh shell, adds it to `sudo`/`wheel`/`adm`, sets the
+   password from **stdin** (never from a command line), and writes `[user] default=` into `/etc/wsl.conf`.
+2. `scripts\wsl-clean-root-dotfiles.sh` removes the stale `/root` symlinks — but **only** entries that are symlinks
+   resolving back into this repo. Real files and legitimately-installed trees (`/root/.nvm`, `.cargo`, `.rustup`,
+   `.tmux/plugins`, …) are left alone.
+3. The distro's `ext4.vhdx` is moved to `<ArtifactRoot>\wsl\<Distro>\` (skipped, not failed, if the drive can't hold it).
+
+Phase 6 then runs `install.sh` as `wsl -d <Distro> -u <WslUser>`.
 
 ## Idempotency & re-runs
 
 - Every `install.ps1` phase is safe to re-run; re-run the whole script after any WDC reboot.
 - Chocolatey bootstrap only runs if `choco` is missing; fonts/modules check before installing.
 - LLVM PATH edit only happens if not already present.
-- `verify-baseline` exits non-zero if any required item is missing (useful in CI/image validation).
+- `devdrive-env` skips any variable already pointing at the right place.
+- `nfv-clone`, `visualstudio`, `agency` and `copilot-plugins` all no-op when the target is already there.
+- `verify-baseline` exits non-zero if any required item is missing (useful in CI/image validation), and `install.ps1`
+  propagates that as a failed step.
 
 ## Troubleshooting
 
@@ -136,8 +231,14 @@ It may prompt for your WSL `sudo` password (e.g. `locale-gen`); run it in an int
 |---------|------------|
 | `winget configure` not available | Update **App Installer** from the Microsoft Store; Phase 0 also runs `winget configure --enable`. |
 | WDC step rebooted | Log back in and re-run `.\install.ps1`. |
-| Phase 5 skipped ("distro not ready") | Ensure the distro exists (`wsl -l -v`), then re-run `.\install.ps1` or run `install.sh` by hand inside WSL. |
+| A step failed | Read the summary table at the end of the run; each failure lists captured output and a remediation hint. Full detail is in `<ArtifactRoot>\logs\install-<stamp>.log`. |
+| `nfv-clone` failed on auth | Sign in to Git Credential Manager, then `git clone <NfvRepoUrl> <NfvRepoPath>` by hand, or re-run `install.ps1`. |
+| `visualstudio` skipped the `--config` step | `NFV.vsconfig` wasn't found — fix `nfv-clone` first, then re-run. |
+| VS 2026 changed unexpectedly | It shouldn't: the task scopes vswhere to `[17.0,18.0)` and only ever modifies the 2022 install path. |
+| Phase 5/6 skipped ("distro not ready") | Ensure the distro exists (`wsl -l -v`), then re-run `.\install.ps1` or run `install.sh` by hand inside WSL. |
+| Dotfiles landed in `/root` | An older run had no non-root user. Re-run `install.ps1`; Phase 5 creates the user and cleans the stale `/root` links. |
+| VHDX move failed | Free space on the target drive, or `-MoveWslToDevDrive:$false` to leave it on `C:`. |
 | `install.sh` errors on `\r` | Ensure `*.sh` files are `LF` (enforced by `.gitattributes`; run `git add --renormalize .` if needed). |
-| Missing tool after `winget-core` | Confirm the winget ID; re-run with an explicit `-packages` override. |
+| Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |
 | Font not in terminal | Log off / rebuild font cache; verify Meslo under `%WINDIR%\Fonts`. |
 | Symlink errors | Ensure the repo path is accessible; check permissions and OneDrive sync state. |

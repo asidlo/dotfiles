@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o pipefail
+
 is_wsl() {
 	if [ -n "$WSL_DISTRO_NAME" ]; then
 		return 0
@@ -13,6 +15,55 @@ is_wsl() {
 	return 1
 }
 
+install_wslview_from_upstream_apt() {
+	local codename
+
+	codename="${VERSION_CODENAME:-${UBUNTU_CODENAME:-}}"
+	if [ -z "$codename" ]; then
+		echo "Cannot determine distro codename for upstream wslu apt repo." >&2
+		return 1
+	fi
+
+	echo "Trying upstream wslu apt repository for $codename..."
+	sudo apt-get install -y gnupg2 apt-transport-https wget ca-certificates || return 1
+	sudo mkdir -p /etc/apt/keyrings
+	wget -O - https://pkg.wslutiliti.es/public.key | sudo gpg --batch --yes -o /etc/apt/keyrings/wslu-archive-keyring.gpg --dearmor || return 1
+	echo "deb [signed-by=/etc/apt/keyrings/wslu-archive-keyring.gpg] https://pkg.wslutiliti.es/debian $codename main" | sudo tee /etc/apt/sources.list.d/wslu.list >/dev/null
+
+	if sudo apt-get update && sudo apt-get install -y wslu; then
+		return 0
+	fi
+
+	sudo rm -f /etc/apt/sources.list.d/wslu.list
+	sudo apt-get update || true
+	return 1
+}
+
+install_wslview_from_github_release() {
+	local cache_dir
+	local deb_url
+	local deb_file
+
+	echo "Trying wslu .deb from GitHub releases..."
+	cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/dotfiles/wslu"
+	mkdir -p "$cache_dir"
+
+	deb_url=$(curl -fsSL https://api.github.com/repos/wslutilities/wslu/releases?per_page=30 |
+		grep -E '"browser_download_url": ".*\.deb"' |
+		head -n 1 |
+		sed -E 's/.*"([^"]+)".*/\1/')
+
+	if [ -z "$deb_url" ]; then
+		echo "No .deb asset found in recent wslutilities/wslu GitHub releases." >&2
+		return 1
+	fi
+
+	deb_file="$cache_dir/$(basename "$deb_url")"
+	curl -fsSL -o "$deb_file" "$deb_url" || return 1
+	sudo dpkg -i "$deb_file" || sudo apt-get -f install -y
+	command -v wslview >/dev/null 2>&1
+}
+
 install_wslview() {
 	if command -v wslview >/dev/null 2>&1; then
 		echo "wslview is already installed."
@@ -21,7 +72,8 @@ install_wslview() {
 
 	if [ ! -r /etc/os-release ]; then
 		echo "Cannot determine distro: /etc/os-release not found." >&2
-		return 1
+		echo "Could not install wslu/wslview; continuing without it." >&2
+		return 0
 	fi
 
 	# shellcheck disable=SC1091
@@ -30,30 +82,97 @@ install_wslview() {
 	echo "Installing wslu (provides wslview)..."
 	case "$ID" in
 	ubuntu | debian | linuxmint | pop)
-		sudo apt-get update && sudo apt-get install -y wslu
+		if sudo apt-get update && sudo apt-get install -y wslu; then
+			return 0
+		fi
+		if install_wslview_from_upstream_apt; then
+			return 0
+		fi
+		if install_wslview_from_github_release; then
+			return 0
+		fi
 		;;
 	fedora | rhel | centos)
-		sudo dnf install -y wslu
+		sudo dnf install -y wslu && return 0
 		;;
 	opensuse* | sles)
-		sudo zypper install -y wslu
+		sudo zypper install -y wslu && return 0
 		;;
 	arch | manjaro | endeavouros)
-		sudo pacman -S --noconfirm wslu
+		sudo pacman -S --noconfirm wslu && return 0
 		;;
 	alpine)
-		sudo apk add wslu
+		sudo apk add wslu && return 0
 		;;
 	*)
-		echo "Unsupported distro '$ID'; please install wslu manually." >&2
-		return 1
+		echo "Unsupported distro '$ID'; please install wslu manually if you need wslview." >&2
+		return 0
 		;;
 	esac
+
+	# wslview is a nicety; this repo's bin/open shim already provides `open`.
+	echo "Could not install wslu/wslview; continuing without it." >&2
+	return 0
+}
+
+ensure_libicu() {
+	local icu_package
+
+	if ldconfig -p 2>/dev/null | grep -q libicuuc; then
+		return 0
+	fi
+
+	if [ ! -r /etc/os-release ]; then
+		echo "Cannot determine distro: /etc/os-release not found." >&2
+		export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+		return 0
+	fi
+
+	# shellcheck disable=SC1091
+	. /etc/os-release
+
+	# The agency bootstrap runs a self-contained .NET binary that needs ICU.
+	echo "Installing ICU runtime for the agency installer..."
+	case "$ID" in
+	ubuntu | debian | linuxmint | pop)
+		sudo apt-get update
+		if ! sudo apt-get install -y libicu-dev; then
+			icu_package=$(apt-cache search --names-only '^libicu[0-9]+$' | sort -V | tail -n 1 | cut -d' ' -f1)
+			if [ -n "$icu_package" ]; then
+				sudo apt-get install -y "$icu_package" || true
+			fi
+		fi
+		;;
+	fedora | rhel | centos)
+		sudo dnf install -y libicu || true
+		;;
+	opensuse* | sles)
+		sudo zypper install -y libicu || true
+		;;
+	arch | manjaro | endeavouros)
+		sudo pacman -S --noconfirm icu || true
+		;;
+	alpine)
+		sudo apk add icu-libs || true
+		;;
+	*)
+		echo "Unsupported distro '$ID'; cannot install ICU automatically." >&2
+		;;
+	esac
+
+	if ldconfig -p 2>/dev/null | grep -q libicuuc; then
+		return 0
+	fi
+
+	echo "Warning: ICU runtime is not available; running agency installer with DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1." >&2
+	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 }
 
 if is_wsl; then
 	install_wslview
 fi
+
+ensure_libicu
 
 # Do NOT `exec $SHELL` here: install.sh runs this as a child step, and exec-ing
 # an interactive login shell would take over the terminal and block install.sh

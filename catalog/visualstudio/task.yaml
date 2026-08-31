@@ -1,0 +1,14 @@
+$schema: "1.0"
+name: visualstudio
+description: Install Visual Studio 2022 Enterprise and import the NFV .vsconfig.
+parameters:
+  VsInstallPath:
+    type: string
+    description: Fallback Visual Studio 2022 Enterprise install path.
+    required: false
+  VsConfigPath:
+    type: string
+    description: NFV Visual Studio configuration path.
+    required: false
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

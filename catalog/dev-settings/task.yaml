@@ -1,6 +1,10 @@
 $schema: "1.0"
 name: dev-settings
 description: Apply comprehensive Windows developer workstation settings (theme, taskbar, explorer, privacy, clocks).
-parameters: {}
+parameters:
+  RestartExplorer:
+    type: boolean
+    description: Restart Explorer after applying settings. Defaults to false.
+    required: false
 command: |
   powershell -ExecutionPolicy Bypass -File script.ps1

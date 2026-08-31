@@ -1,7 +1,7 @@
-param()
+param([switch]$RestartExplorer)
 $ErrorActionPreference = 'Stop'
 $IsUserAdmin = [bool](([System.Security.Principal.WindowsIdentity]::GetCurrent()).groups -match 'S-1-5-32-544')
-if (-not $IsUserAdmin) { Write-Error 'Run as admin.' -Category AuthenticationError; exit 1 }
+if (-not $IsUserAdmin) { throw 'Run as admin.' }
 
 # UAC & Developer Mode
 Set-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 1
@@ -29,7 +29,7 @@ RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters ,1 ,True
 # Taskbar elements
 Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search -Name SearchBoxTaskbarMode -Value 0 -Type Dword -Force
 Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name TaskbarMn -Value 0 -Force
-try { New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft' -Name 'Dsh' -Force | Out-Null; Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Dsh' -Name 'AllowNewsAndInterests' -Value 0 -Force } catch { Write-Warning 'Widgets policy not applied.' }
+try { New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft' -Name 'Dsh' -Force | Out-Null; Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Dsh' -Name 'AllowNewsAndInterests' -Value 0 -Force } catch { Write-Host "[dev-settings] skipped: Widgets policy not applied ($($_.Exception.Message))" }
 try { Get-AppxPackage -Name 'MicrosoftWindows.Client.WebExperience' | Remove-AppxPackage -ErrorAction SilentlyContinue } catch { Write-Warning 'Widgets Appx removal failed.' }
 Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name Start_Layout -Value 1 -Force
 
@@ -47,7 +47,11 @@ Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name Hidden -Value 1
 
 # Start menu & privacy
-try { $startMenuPath = "$env:APPDATA\Microsoft\Windows\StartMenu\Programs"; if (Test-Path $startMenuPath) { Get-ChildItem -Path $startMenuPath -Recurse -Include *.lnk | Remove-Item -Force }; $startMenuLayout = "$env:USERPROFILE\blankStart.xml"; if (-not (Test-Path $startMenuLayout)) { Export-StartLayout -Path $startMenuLayout }; Import-StartLayout -LayoutPath $startMenuLayout -MountPath $env:SystemDrive\ } catch { Write-Warning 'Could not blank Start Menu.' }
+$exportStartLayout = Get-Command Export-StartLayout -ErrorAction SilentlyContinue
+$importStartLayout = Get-Command Import-StartLayout -ErrorAction SilentlyContinue
+if ($exportStartLayout -and $importStartLayout) {
+  try { $startMenuPath = "$env:APPDATA\Microsoft\Windows\StartMenu\Programs"; if (Test-Path $startMenuPath) { Get-ChildItem -Path $startMenuPath -Recurse -Include *.lnk | Remove-Item -Force }; $startMenuLayout = "$env:USERPROFILE\blankStart.xml"; if (-not (Test-Path $startMenuLayout)) { Export-StartLayout -Path $startMenuLayout }; Import-StartLayout -LayoutPath $startMenuLayout -MountPath $env:SystemDrive\ } catch { Write-Host "[dev-settings] skipped: Could not blank Start Menu ($($_.Exception.Message))" }
+} else { Write-Host '[dev-settings] skipped: Start layout cmdlets are unavailable on this Windows version.' }
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Search' -Name 'CortanaConsent' -Value 0 -Force
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager' -Name 'SubscribedContent-338388Enabled' -Value 0 -Force
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager' -Name 'SubscribedContent-310093Enabled' -Value 0 -Force
@@ -67,4 +71,6 @@ Set-ItemProperty -Path $intlPath -Name 'AddClock2TimeZoneKeyName' -Value 'India 
 Write-Host 'Additional clocks configured.'
 
 # Explorer restart
-try { Get-Process -Name Explorer | Stop-Process -Force } catch { Write-Warning 'Explorer restart failed.' }
+if ($RestartExplorer) {
+  try { Get-Process -Name Explorer | ForEach-Object { Stop-Process -Id $_.Id -Force } } catch { Write-Warning 'Explorer restart failed.' }
+} else { Write-Host '[dev-settings] skipped: Explorer restart. Some settings apply after the next Explorer restart or sign-in.' }
