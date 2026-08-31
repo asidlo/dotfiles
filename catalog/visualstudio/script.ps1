@@ -60,17 +60,28 @@ if (-not (Test-Path $setup)) {
 
 Write-Host "[vs] applying config $VsConfigPath to $resolvedPath"
 # setup.exe modify --config is additive only; it adds missing components and never removes components.
+#
+# Every value is quoted explicitly: Start-Process -ArgumentList joins the array
+# with plain spaces and performs no quoting of its own, so an unquoted
+# "C:\Program Files\Microsoft Visual Studio\2022\Enterprise" reaches setup.exe as
+# --installPath C:\Program, which it rejects with exit code 1.
 $setupArgs = @(
   'modify',
-  '--installPath', $resolvedPath,
-  '--config', $VsConfigPath,
+  '--installPath', ('"{0}"' -f $resolvedPath),
+  '--config', ('"{0}"' -f $VsConfigPath),
   '--passive',
   '--norestart',
   '--nocache'
 )
 $process = Start-Process -FilePath $setup -ArgumentList $setupArgs -Wait -PassThru
 if ($successCodes -notcontains $process.ExitCode) {
-  throw "[vs] setup.exe modify failed with exit code $($process.ExitCode)"
+  $installerLog = Get-ChildItem $env:TEMP -Filter 'dd_installer_*.log' -ErrorAction SilentlyContinue |
+    Sort-Object LastWriteTime | Select-Object -Last 1
+  $logHint = if ($installerLog) { " See $($installerLog.FullName) for details." } else { '' }
+  throw "[vs] setup.exe modify failed with exit code $($process.ExitCode).$logHint"
 }
 
 Write-Host "[vs] config applied; setup.exe exit code $($process.ExitCode)"
+if (@(1641, 3010) -contains $process.ExitCode) {
+  Write-Host '[vs] a reboot is required to finalise the workload changes (the instance reports isComplete=0 until then)'
+}

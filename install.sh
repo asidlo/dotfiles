@@ -17,6 +17,48 @@ else
 fi
 
 mkdir -p "$STATE_DIR" "$STEP_LOG_DIR"
+
+# ---------------------------------------------------------------------------
+# sudo: authorise once, up front -- and BEFORE stdout/stderr are piped to tee.
+#
+# Nearly every tool script below calls sudo. With no cached credential and no
+# TTY to prompt on (an unattended run, CI, or `wsl.exe -- bash install.sh`), the
+# first one blocks forever on a password prompt nobody can answer -- a hang that
+# is far worse than a failure. Resolve it here: fail fast with instructions, and
+# otherwise keep the timestamp warm so nothing re-prompts mid-run.
+#
+# This block must stay above the `exec > >(tee ...)` line. tee buffers, so with
+# stderr redirected into it the "[sudo] password for ..." prompt never reaches
+# the screen and sudo just sits there until it times out. The prompt is also
+# pinned to /dev/tty so a future reordering cannot silently reintroduce that.
+# ---------------------------------------------------------------------------
+if [ "$(id -u)" -eq 0 ]; then
+  echo "sudo: running as root, not required"
+elif ! command -v sudo >/dev/null 2>&1; then
+  echo "ERROR: not running as root and sudo is not installed." >&2
+  exit 1
+elif sudo -n true 2>/dev/null; then
+  echo "sudo: already authorised (passwordless or cached)"
+elif [ -t 0 ] && [ -e /dev/tty ]; then
+  echo "sudo: authenticating once so the installs below don't prompt repeatedly"
+  if ! sudo -v </dev/tty >/dev/tty 2>&1; then
+    echo "ERROR: sudo authentication failed." >&2
+    exit 1
+  fi
+else
+  cat >&2 <<EOF
+ERROR: sudo needs a password, but this run has no terminal to prompt on.
+
+       Re-run install.sh from an interactive shell:
+           wsl -d <distro> -u $(whoami)
+           cd $DOTFILES_DIR && bash ./install.sh
+
+       ...or grant passwordless sudo first:
+           echo "$(whoami) ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$(whoami)
+EOF
+  exit 1
+fi
+
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "Logging install output to $LOG_FILE"
 
@@ -108,42 +150,6 @@ print_summary() {
 }
 
 source /etc/os-release
-
-# ---------------------------------------------------------------------------
-# sudo: authorise once, up front.
-#
-# Nearly every tool script below calls sudo. With no cached credential and no
-# TTY to prompt on (an unattended run, CI, or `wsl.exe -- bash install.sh`), the
-# first one blocks forever on a password prompt nobody can answer -- a hang that
-# is far worse than a failure. Resolve it here: fail fast with instructions, and
-# otherwise keep the timestamp warm so nothing re-prompts mid-run.
-# ---------------------------------------------------------------------------
-if [ "$(id -u)" -eq 0 ]; then
-  echo "sudo: running as root, not required"
-elif ! command -v sudo >/dev/null 2>&1; then
-  echo "ERROR: not running as root and sudo is not installed." >&2
-  exit 1
-elif sudo -n true 2>/dev/null; then
-  echo "sudo: already authorised (passwordless or cached)"
-elif [ -t 0 ]; then
-  echo "sudo: authenticating once so the installs below don't prompt repeatedly"
-  if ! sudo -v; then
-    echo "ERROR: sudo authentication failed." >&2
-    exit 1
-  fi
-else
-  cat >&2 <<EOF
-ERROR: sudo needs a password, but this run has no terminal to prompt on.
-
-       Re-run install.sh from an interactive shell:
-           wsl -d <distro> -u $(whoami)
-           cd $DOTFILES_DIR && bash ./install.sh
-
-       ...or grant passwordless sudo first:
-           echo "$(whoami) ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$(whoami)
-EOF
-  exit 1
-fi
 
 if [ "$(id -u)" -ne 0 ]; then
   # sudo forgets after ~15 minutes; some steps (dotnet, rust, nvim) run longer.

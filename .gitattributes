@@ -7,6 +7,11 @@ bash/bashrc text eol=lf
 zsh/zshrc* text eol=lf
 zsh/zshenv text eol=lf
 
+# Config files that get copied into a Linux filesystem. /etc/wsl.conf is parsed
+# by WSL itself, and a trailing \r ends up as part of the value (e.g.
+# appendWindowsPath=false\r), so this must be checked out as LF on Windows too.
+etc/** text eol=lf
+
 # Vendored third-party assets (microsoft/WindowsDeveloperConfig) are kept
 # byte-for-byte to preserve signed scripts and to simplify re-syncing upstream.
 # This later rule wins for files under vendor/, overriding the *.sh rule above.

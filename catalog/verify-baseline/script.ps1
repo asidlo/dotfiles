@@ -16,7 +16,9 @@ $env:Path = (@($machinePath, $userPath) | Where-Object { $_ }) -join ';'
 function Test-VS2022Enterprise {
   $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
   if (Test-Path $vswhere) {
-    $paths = @(& $vswhere -products * -version '[17.0,18.0)' -property installationPath 2>$null | Where-Object { $_ })
+    # -all matters here: after `setup.exe modify` returns 3010 the instance is
+    # flagged incomplete/reboot-required, and plain vswhere hides it entirely.
+    $paths = @(& $vswhere -products * -version '[17.0,18.0)' -prerelease -all -property installationPath 2>$null | Where-Object { $_ })
     if ($paths | Where-Object { Test-Path (Join-Path $_ 'Common7\IDE\devenv.exe') }) { return $true }
   }
   return (Test-Path (Join-Path $VsInstallPath 'Common7\IDE\devenv.exe'))
@@ -33,17 +35,59 @@ function Test-ArtifactMachineEnv {
 }
 
 function Get-WslDistroInfo {
-  Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss' -ErrorAction SilentlyContinue |
-    ForEach-Object { Get-ItemProperty $_.PSPath } |
-    Where-Object { $_.DistributionName -eq $Distro } |
-    Select-Object -First 1
+  # Collect fully before selecting: `Select-Object -First 1` tears the pipeline
+  # down with a StopUpstreamCommandsException, which surfaces in transcripts as
+  # "The pipeline has been stopped" and leaves $LASTEXITCODE unreliable.
+  $all = @(
+    Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss' -ErrorAction SilentlyContinue |
+      ForEach-Object { Get-ItemProperty $_.PSPath } |
+      Where-Object { $_.DistributionName -eq $Distro }
+  )
+  if ($all.Count -eq 0) { return $null }
+  return $all[0]
 }
 
 function Test-WslDefaultUserNonRoot {
   if (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) { return $false }
   if (-not (Get-WslDistroInfo)) { return $false }
-  $whoami = (& wsl.exe -d $Distro -- whoami 2>$null | Select-Object -First 1)
-  return (($LASTEXITCODE -eq 0) -and $whoami -and ($whoami.Trim() -ne 'root'))
+  # Capture the whole output and the exit code before filtering, so the pipeline
+  # is never stopped underneath wsl.exe -- that made this check flaky.
+  $output = @(& wsl.exe -d $Distro -- whoami 2>$null)
+  $code = $LASTEXITCODE
+  if ($code -ne 0) { return $false }
+  $whoami = @($output | Where-Object { $_ -and $_.Trim() })[0]
+  return ($whoami -and ($whoami.Trim() -ne 'root'))
+}
+
+function Test-NodeInstalled {
+  if (Get-Command node -ErrorAction SilentlyContinue) { return $true }
+  # nvm4w (installed by the WDC base setup) exposes node through a junction whose
+  # directory is added to the *user* PATH, and the junction only appears once a
+  # version has been activated. Fall back to the location it points at.
+  $candidates = @(
+    [Environment]::GetEnvironmentVariable('NVM_SYMLINK', 'Machine'),
+    [Environment]::GetEnvironmentVariable('NVM_SYMLINK', 'User'),
+    'C:\nvm4w\nodejs',
+    "$env:ProgramFiles\nodejs"
+  )
+  foreach ($c in $candidates) {
+    if ($c -and (Test-Path (Join-Path $c 'node.exe'))) { return $true }
+  }
+  return $false
+}
+
+function Test-PowerToysInstalled {
+  # PowerToys defaults to a per-user install; only the (rarer) machine-wide
+  # installer lands under Program Files.
+  $candidates = @(
+    "$env:LOCALAPPDATA\PowerToys\PowerToys.exe",
+    "$env:ProgramFiles\PowerToys\PowerToys.exe",
+    "${env:ProgramFiles(x86)}\PowerToys\PowerToys.exe"
+  )
+  foreach ($c in $candidates) {
+    if ($c -and (Test-Path $c)) { return $true }
+  }
+  return $false
 }
 
 function Test-WslVhdxOffC {
@@ -56,10 +100,10 @@ $checks = @(
   @{ Name='Docker'; Test={ Get-Command docker -ErrorAction SilentlyContinue } },
   @{ Name='Neovim'; Test={ Get-Command nvim -ErrorAction SilentlyContinue } },
   @{ Name='Az CLI'; Test={ Get-Command az -ErrorAction SilentlyContinue } },
-  @{ Name='Node'; Test={ Get-Command node -ErrorAction SilentlyContinue } },
+  @{ Name='Node'; Test={ Test-NodeInstalled } },
   @{ Name='Go'; Test={ Get-Command go -ErrorAction SilentlyContinue } },
   @{ Name='Rustup'; Test={ Get-Command rustup -ErrorAction SilentlyContinue } },
-  @{ Name='PowerToys'; Test={ Test-Path 'C:\Program Files\PowerToys\PowerToys.exe' } },
+  @{ Name='PowerToys'; Test={ Test-PowerToysInstalled } },
   @{ Name='Meslo Nerd Font'; Test={ (Get-ChildItem "$env:WINDIR\Fonts" -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'Meslo' }) } },
   @{ Name='Gitconfig link'; Test={ Test-Path "$env:HOMEDRIVE$env:HOMEPATH\.gitconfig" } },
   @{ Name='Starship config'; Test={ Test-Path "$env:HOMEDRIVE$env:HOMEPATH\.config\starship.toml" } },

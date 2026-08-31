@@ -567,7 +567,7 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             @{ Task = 'copilot-plugins'; Args = @{}
                 Hint = 'May need `copilot login` first'
             }
-            @{ Task = 'wsl-bootstrap'; Args = @{ Distro = $Distro }
+            @{ Task = 'wsl-bootstrap'; Args = @{ Distro = $Distro; WslUser = $WslUser }
                 Hint = 'Needs the WSL optional features enabled (reboot pending?)'
             }
             @{ Task = 'dev-settings'; Args = @{ RestartExplorer = [bool]$RestartExplorer }

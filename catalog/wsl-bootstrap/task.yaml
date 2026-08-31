@@ -6,5 +6,9 @@ parameters:
     type: string
     description: Distro name to install (as recognized by wsl --list --online). Defaults to Ubuntu.
     required: false
+  WslUser:
+    type: string
+    description: Distro user that should own user-scoped artifacts (win32yank shim). Defaults to the distro's default user.
+    required: false
 command: |
-  powershell -ExecutionPolicy Bypass -File script.ps1 -Distro ${{ parameters.Distro }}
+  powershell -ExecutionPolicy Bypass -File script.ps1 -Distro ${{ parameters.Distro }} -WslUser ${{ parameters.WslUser }}

@@ -1,5 +1,9 @@
 param(
-  [string]$Distro = 'Ubuntu'
+  [string]$Distro = 'Ubuntu',
+  # Distro user that should own user-scoped artifacts (win32yank shim). Empty
+  # means "whatever the distro's default user is", which on a fresh machine is
+  # still root because Phase 5 has not created the user yet.
+  [string]$WslUser = ''
 )
 $ErrorActionPreference = 'Stop'
 
@@ -50,37 +54,34 @@ if (-not (Test-Path $wslConfSource)) { throw "[wsl] Missing repo wsl.conf: $wslC
 
 Write-Host "[wsl] Attempting to push wsl.conf into $Distro"
 $wslConfLinux = ConvertTo-WslPath -WindowsPath $wslConfSource
-$mergeScript = @'
-set -e
-src="$1"
-sudo mkdir -p /etc
-if sudo test -f /etc/wsl.conf && sudo grep -qi '^\[user\]' /etc/wsl.conf; then
-  sudo awk '
-    BEGIN { skip=0 }
-    tolower($0) ~ /^\[user\][[:space:]]*$/ { skip=1; next }
-    /^\[/ { skip=0 }
-    !skip { print }
-  ' "$src" | sudo tee /etc/wsl.conf.dotfiles.base >/dev/null
-  sudo awk '
-    BEGIN { keep=0 }
-    tolower($0) ~ /^\[user\][[:space:]]*$/ { keep=1 }
-    /^\[/ && tolower($0) !~ /^\[user\][[:space:]]*$/ && keep { exit }
-    keep { print }
-  ' /etc/wsl.conf | sudo tee /etc/wsl.conf.dotfiles.user >/dev/null
-  sudo sh -c 'cat /etc/wsl.conf.dotfiles.base > /etc/wsl.conf; printf "\n" >> /etc/wsl.conf; cat /etc/wsl.conf.dotfiles.user >> /etc/wsl.conf; rm -f /etc/wsl.conf.dotfiles.base /etc/wsl.conf.dotfiles.user'
-else
-  sudo cp "$src" /etc/wsl.conf
-fi
-'@
-wsl.exe -d $Distro -- bash -c $mergeScript -- $wslConfLinux
+
+# The merge lives in scripts/wsl-merge-conf.sh rather than an inline `bash -c`
+# here-string: PowerShell here-strings are CRLF, and a single \r turns `set -e`
+# into "set: - : invalid option" and breaks every if/fi. Invoking a real .sh by
+# path (LF-pinned via .gitattributes) removes that whole class of failure.
+# Running it with -u root also avoids a sudo password prompt that an unattended
+# run has no way to answer -- previously this timed out after five minutes.
+$mergeScriptWin = Join-Path $repoRoot 'scripts\wsl-merge-conf.sh'
+if (-not (Test-Path $mergeScriptWin)) { throw "[wsl] Missing merge helper: $mergeScriptWin" }
+$mergeScriptLinux = ConvertTo-WslPath -WindowsPath $mergeScriptWin
+
+wsl.exe -d $Distro -u root -- bash $mergeScriptLinux $wslConfLinux /etc/wsl.conf
 if ($LASTEXITCODE -ne 0) { throw "[wsl] Failed to update /etc/wsl.conf in $Distro (exit $LASTEXITCODE)" }
 
 # Win32yank convenience link when running inside WSL (useful for Neovim clipboard on Windows)
 $win32yank = 'C:\tools\neovim\bin\win32yank.exe'
 if ((Test-Path $win32yank) -and ($installed -contains $Distro)) {
-  Write-Host "[wsl] Creating win32yank symlink inside distro"
   $win32yankLinux = ConvertTo-WslPath -WindowsPath $win32yank
-  wsl.exe -d $Distro -- bash -c 'mkdir -p ~/.local/bin && ln -sf "$1" ~/.local/bin/win32yank.exe' -- $win32yankLinux
+  # Target the real user when we know it, so the shim does not land in /root on
+  # a first run (Phase 5 creates the user only after this task has completed).
+  $userArgs = @()
+  if ($WslUser) {
+    & wsl.exe -d $Distro -u root -- id -u $WslUser 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) { $userArgs = @('-u', $WslUser) }
+  }
+  $target = if ($userArgs) { $WslUser } else { 'default user' }
+  Write-Host "[wsl] Creating win32yank symlink inside distro for $target"
+  wsl.exe -d $Distro @userArgs -- bash -c 'mkdir -p ~/.local/bin && ln -sf "$1" ~/.local/bin/win32yank.exe' -- $win32yankLinux
   if ($LASTEXITCODE -ne 0) { throw "[wsl] Failed to create win32yank symlink in $Distro (exit $LASTEXITCODE)" }
 }
 
