@@ -210,6 +210,23 @@ Like the Windows side, it records every tool install in a ledger and prints a su
 the first failure; only symlink creation stays fail-fast. It may prompt for your WSL `sudo` password (e.g. `locale-gen`);
 run it in an interactive terminal.
 
+### Windows interop shims
+
+`etc/wsl.conf` sets `appendWindowsPath=false` so the ~15 Windows directories stay out of `$PATH` inside WSL. The side
+effect is that Windows executables stop resolving by name, which silently breaks anything that looks them up with
+`command -v` — the Agency installer shells out to `cmd.exe` and fails sign-in with *"Error obtaining access token …
+Authentication failed"*, `bin/pbcopy` degrades to its OSC52 fallback, and `bin/open`'s `cmd.exe /c start` fallback dies.
+
+`scripts/wsl-interop-shims.sh` (the first step `install.sh` runs) symlinks `cmd.exe`, `clip.exe`, `wsl.exe`,
+`powershell.exe` and `explorer.exe` into `~/.local/bin`. That keeps the clean `$PATH`, needs no `sudo`, and leaves
+interop itself untouched — the symlinks still execute through `binfmt_misc`. Run it by hand any time:
+
+```bash
+bash scripts/wsl-interop-shims.sh
+```
+
+It is idempotent and refuses to overwrite a non-symlink of the same name.
+
 ### Non-root WSL user
 
 `wsl-comfort` suppresses the Ubuntu OOBE, so a fresh distro has **no user other than `root`** — which is why an earlier
@@ -271,6 +288,8 @@ under a second with instructions instead of hanging for five minutes.
 | Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Terminal remembers every generated profile in `state.json` and force-hides the ones that are no longer in `settings.json`, so deleting a `profiles.list` entry by hand hides that profile *permanently*. Close **every** Terminal window, run `catalog\terminal-profiles\script.ps1`, then start Terminal again (fragments are only scanned at process start). |
 | Terminal wrote new `profiles.list` entries into `powershell\settings.json` | Expected. Terminal persists its own stub for each generated profile, and their GUIDs are machine-specific (the WSL one is derived from the local distro ID). Commit or ignore them, but don't prune them — see the row above. |
 | Terminal opens in the wrong drive | `%DEVDRIVE_SRC%` isn't set in that process. Re-run `devdrive-env`, then restart Windows Terminal (machine variables only reach new processes). |
+| `agency` reports "Error obtaining access token" / "Authentication failed" | The Agency installer runs `cmd.exe`, which `appendWindowsPath=false` removes from `$PATH`. Run `bash scripts/wsl-interop-shims.sh`, then `bash scripts/agency.sh` — see [Windows interop shims](#windows-interop-shims). `install.sh` now does both automatically. |
+| `pbcopy` doesn't reach the Windows clipboard, or `open` fails in WSL | Same cause as the row above: `clip.exe` / `cmd.exe` aren't on `$PATH`. Run `bash scripts/wsl-interop-shims.sh` and open a new shell. |
 | Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |
 | Font not in terminal | Log off / rebuild font cache; verify Meslo under `%WINDIR%\Fonts`. |
 | Symlink errors | Ensure the repo path is accessible; check permissions and OneDrive sync state. |

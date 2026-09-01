@@ -248,6 +248,10 @@ fi
 # ---------------------------------------------------------------------------
 # Tool installs (best-effort; may require network or sudo).
 # ---------------------------------------------------------------------------
+# First: re-expose cmd.exe/clip.exe/etc, which etc/wsl.conf's
+# appendWindowsPath=false removes from $PATH. agency.sh below shells out to
+# cmd.exe and fails its sign-in without them.
+run_step "$SCRIPT_DIR/wsl-interop-shims.sh"
 run_step "$SCRIPT_DIR/dependencies.sh"
 run_step "$SCRIPT_DIR/fd.sh"
 run_step "$SCRIPT_DIR/fzf.sh"

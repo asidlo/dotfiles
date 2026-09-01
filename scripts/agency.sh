@@ -2,6 +2,8 @@
 
 set -o pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+
 is_wsl() {
 	if [ -n "$WSL_DISTRO_NAME" ]; then
 		return 0
@@ -168,8 +170,29 @@ ensure_libicu() {
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 }
 
+# The agency bootstrap is a .NET tool that resolves its Windows-side install
+# path by running `cmd.exe`. etc/wsl.conf sets appendWindowsPath=false, so
+# cmd.exe is off $PATH and the installer dies with Win32Exception(2) ->
+# "Error obtaining access token" -> "Authentication failed, please try again."
+ensure_interop_shims() {
+	if command -v cmd.exe >/dev/null 2>&1; then
+		return 0
+	fi
+
+	if [ -r "$SCRIPT_DIR/wsl-interop-shims.sh" ]; then
+		echo "cmd.exe is not on PATH; restoring Windows interop shims..."
+		bash "$SCRIPT_DIR/wsl-interop-shims.sh" || true
+		export PATH="$HOME/.local/bin:$PATH"
+	fi
+
+	if ! command -v cmd.exe >/dev/null 2>&1; then
+		echo "Warning: cmd.exe is still not on PATH; the agency sign-in will fail." >&2
+	fi
+}
+
 if is_wsl; then
 	install_wslview
+	ensure_interop_shims
 fi
 
 ensure_libicu
@@ -177,4 +200,38 @@ ensure_libicu
 # Do NOT `exec $SHELL` here: install.sh runs this as a child step, and exec-ing
 # an interactive login shell would take over the terminal and block install.sh
 # before it links the dotfiles. Restart your shell after install.sh completes.
-curl -sSfL https://aka.ms/InstallTool.sh | sh -s agency
+#
+# The installer exits 0 even when sign-in fails, so the exit code alone would
+# report a broken install as success. Scan the output for the failure instead.
+agency_log=$(mktemp)
+trap 'rm -f "$agency_log"' EXIT
+
+curl -sSfL https://aka.ms/InstallTool.sh | sh -s agency 2>&1 | tee "$agency_log"
+# Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0 is
+# curl, 1 is the installer. Checking only the installer would let a failed
+# download pass, because `sh` exits 0 when it reads an empty script on stdin.
+agency_status=("${PIPESTATUS[@]}")
+curl_rc=${agency_status[0]}
+agency_rc=${agency_status[1]}
+
+if [ "$curl_rc" -ne 0 ]; then
+	echo "ERROR: could not download the agency installer (curl exit $curl_rc)." >&2
+	exit "$curl_rc"
+fi
+
+if [ "$agency_rc" -ne 0 ]; then
+	echo "ERROR: the agency installer exited $agency_rc." >&2
+	exit "$agency_rc"
+fi
+
+if grep -qE 'Error obtaining access token|Authentication failed' "$agency_log"; then
+	echo >&2
+	echo "ERROR: agency installed but could not sign in." >&2
+	if is_wsl && ! command -v cmd.exe >/dev/null 2>&1; then
+		echo "  Cause: cmd.exe is not on PATH (etc/wsl.conf sets appendWindowsPath=false)." >&2
+		echo "  Fix:   bash $SCRIPT_DIR/wsl-interop-shims.sh && bash $SCRIPT_DIR/agency.sh" >&2
+	else
+		echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
+	fi
+	exit 1
+fi
