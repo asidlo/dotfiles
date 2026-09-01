@@ -624,6 +624,9 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             @{ Task = 'dotfiles-links'; Args = @{}
                 Hint = 'Re-run: catalog\dotfiles-links\script.ps1'
             }
+            @{ Task = 'terminal-profiles'; Args = @{}
+                Hint = 'Close every Windows Terminal window first, then re-run: catalog\terminal-profiles\script.ps1'
+            }
             @{ Task = 'verify-baseline'; ExitCodeIsContract = $true
                 Args = @{ ArtifactRoot = $ArtifactRoot; SrcRoot = $SrcRoot; VsInstallPath = $VsInstallPath; NfvRepoPath = $NfvRepoPath; Distro = $Distro; SkipChecks = $verifySkips }
                 Hint = 'Missing items above were not installed; check the earlier task failures'

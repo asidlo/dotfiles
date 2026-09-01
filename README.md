@@ -161,7 +161,8 @@ catalog tasks.
 | `wsl-bootstrap` | WSL distro install/config + `etc\wsl.conf` + `win32yank`. | ✅ |
 | `dev-settings` | Registry/UX tweaks: UAC, dark theme, taskbar/Start cleanup, clocks, explorer, privacy. | ✅ |
 | `dotfiles-links` | Symlink gitconfig, starship, clink, nvim, Terminal settings, icons. | ✅ |
-| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars and the WSL user are present. | ✅ |
+| `terminal-profiles` | Clear Windows Terminal's `generatedProfiles` so its fragment/dynamic profiles (Ubuntu, Comfort Shell, Copilot, VS prompts) stop being auto-hidden. | ✅ |
+| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user and the Terminal fragment profiles are present. | ✅ |
 | `appx-prune` | Remove non-essential AppX packages (curated keep-list). | ❌ too destructive; run by hand |
 | `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ❌ profiles already sync from OneDrive |
 
@@ -191,6 +192,7 @@ tasks:
       artifactRoot: "Q:\\.tools"
   - name: dev-settings
   - name: dotfiles-links
+  - name: terminal-profiles
   - name: modules-install
   - name: path-llvm
   - name: verify-baseline
@@ -266,7 +268,8 @@ under a second with instructions instead of hanging for five minutes.
 | VHDX move failed | Free space on the target drive, or `-MoveWslToDevDrive:$false` to leave it on `C:`. |
 | `install.sh` errors on `\r` | Ensure `*.sh` files are `LF` (enforced by `.gitattributes`; run `git add --renormalize .` if needed). |
 | `wsl-install-sh` failed after ~5 minutes on sudo | Fixed: Phase 6 now grants temporary passwordless sudo, see [Phase 6 and sudo](#phase-6-and-sudo). If `wsl-sudo-revoke` reported a warning, remove `/etc/sudoers.d/99-dotfiles-install` by hand. |
-| Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Restart Windows Terminal — fragment profiles are only scanned at process start. Stale entries pinned to old GUIDs in `powershell\settings.json` also hide them; delete the offending `profiles.list` entry and let the generator re-create it. |
+| Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Terminal remembers every generated profile in `state.json` and force-hides the ones that are no longer in `settings.json`, so deleting a `profiles.list` entry by hand hides that profile *permanently*. Close **every** Terminal window, run `catalog\terminal-profiles\script.ps1`, then start Terminal again (fragments are only scanned at process start). |
+| Terminal wrote new `profiles.list` entries into `powershell\settings.json` | Expected. Terminal persists its own stub for each generated profile, and their GUIDs are machine-specific (the WSL one is derived from the local distro ID). Commit or ignore them, but don't prune them — see the row above. |
 | Terminal opens in the wrong drive | `%DEVDRIVE_SRC%` isn't set in that process. Re-run `devdrive-env`, then restart Windows Terminal (machine variables only reach new processes). |
 | Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |
 | Font not in terminal | Log off / rebuild font cache; verify Meslo under `%WINDIR%\Fonts`. |

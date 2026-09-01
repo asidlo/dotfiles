@@ -104,6 +104,53 @@ function Test-WslVhdxOffC {
   return ($info.BasePath -notmatch '^(\\\\\?\\)?C:')
 }
 
+function Test-TerminalFragmentProfiles {
+  # Windows Terminal force-hides any generated profile it still remembers in
+  # state.json but can no longer find in settings.json. Because dotfiles-links
+  # replaces settings.json with this repo's copy, that is what silently drops
+  # Ubuntu and Comfort Shell from the new-tab dropdown.
+  $localAppData = "$env:HOMEDRIVE$env:HOMEPATH\AppData\Local"
+
+  $fragments = @{}
+  $roots = @(
+    "$localAppData\Microsoft\Windows Terminal\Fragments",
+    "$env:ProgramData\Microsoft\Windows Terminal\Fragments"
+  ) | Where-Object { Test-Path -LiteralPath $_ }
+  foreach ($root in $roots) {
+    foreach ($file in Get-ChildItem -LiteralPath $root -Recurse -File -Filter '*.json' -ErrorAction SilentlyContinue) {
+      try { $json = Get-Content -Raw -LiteralPath $file.FullName | ConvertFrom-Json } catch { continue }
+      foreach ($entry in @($json.profiles)) {
+        # "updates" entries patch another profile and have no GUID of their own.
+        if (-not $entry.guid -or $entry.updates) { continue }
+        $fragments[([string]$entry.guid).ToLowerInvariant()] = $true
+      }
+    }
+  }
+  if ($fragments.Count -eq 0) { return $true }
+
+  # Stable, Preview and unpackaged installs each keep their own pair of files.
+  $terminalDirs = @(
+    "$localAppData\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState",
+    "$localAppData\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState",
+    "$localAppData\Microsoft\Windows Terminal"
+  )
+  foreach ($dir in $terminalDirs) {
+    $stateFile = Join-Path $dir 'state.json'
+    $settingsFile = Join-Path $dir 'settings.json'
+    if (-not (Test-Path -LiteralPath $stateFile) -or -not (Test-Path -LiteralPath $settingsFile)) { continue }
+    try {
+      $remembered = @((Get-Content -Raw -LiteralPath $stateFile | ConvertFrom-Json).generatedProfiles |
+          ForEach-Object { ([string]$_).ToLowerInvariant() })
+      $listed = @((Get-Content -Raw -LiteralPath $settingsFile | ConvertFrom-Json).profiles.list |
+          ForEach-Object { ([string]$_.guid).ToLowerInvariant() })
+    } catch { return $false }
+    foreach ($guid in $remembered) {
+      if ($fragments.ContainsKey($guid) -and ($listed -notcontains $guid)) { return $false }
+    }
+  }
+  return $true
+}
+
 $checks = @(
   @{ Name='Docker'; Test={ Get-Command docker -ErrorAction SilentlyContinue } },
   @{ Name='Neovim'; Test={ Get-Command nvim -ErrorAction SilentlyContinue } },
@@ -124,7 +171,8 @@ $checks = @(
   @{ Name='Dev-drive env vars'; Test={ Test-ArtifactMachineEnv } },
   @{ Name='Dev-drive src var'; Test={ Test-DevDriveSrcEnv } },
   @{ Name='WSL default user non-root'; Test={ Test-WslDefaultUserNonRoot } },
-  @{ Name='WSL VHDX off C:'; Test={ Test-WslVhdxOffC } }
+  @{ Name='WSL VHDX off C:'; Test={ Test-WslVhdxOffC } },
+  @{ Name='Terminal fragment profiles'; Test={ Test-TerminalFragmentProfiles } }
 )
 $results = foreach ($c in $checks) {
   if ($SkipChecks -contains $c.Name) {
