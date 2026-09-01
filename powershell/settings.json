@@ -7,6 +7,14 @@
             "command": 
             {
                 "action": "newTab",
+                "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
+            },
+            "id": "User.newTab.7276C408"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
                 "profile": "Notes",
                 "suppressApplicationTitle": true,
                 "tabTitle": "Notes"
@@ -14,12 +22,8 @@
             "id": "User.newTab.F7FDC847"
         },
         {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}"
-            },
-            "id": "User.newTab.7276C408"
+            "command": "paste",
+            "id": "User.paste"
         },
         {
             "command": 
@@ -30,17 +34,12 @@
             "id": "User.newTab.79F17A5D"
         },
         {
-            "command": "paste",
-            "id": "User.paste"
-        },
-        {
             "command": 
             {
-                "action": "splitPane",
-                "split": "auto",
-                "splitMode": "duplicate"
+                "action": "newTab",
+                "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
             },
-            "id": "User.splitPane.A6751878"
+            "id": "User.newTab.5390FEBF"
         },
         {
             "command": "find",
@@ -57,18 +56,11 @@
         {
             "command": 
             {
-                "action": "newTab",
-                "profile": "{78b73317-748b-5da1-a0e7-7a24d03cfbf2}"
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
             },
-            "id": "User.newTab.5390FEBF"
-        },
-        {
-            "command": 
-            {
-                "action": "newTab",
-                "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
-            },
-            "id": "User.newTab.65CC5CD1"
+            "id": "User.splitPane.A6751878"
         },
         {
             "command": 
@@ -77,6 +69,14 @@
                 "profile": "{b453ae62-4e3d-5e58-b989-0a998ec441b8}"
             },
             "id": "User.newTab.E9A063CC"
+        },
+        {
+            "command": 
+            {
+                "action": "newTab",
+                "profile": "{0cab0032-cf39-4f85-9c7a-949829e8c648}"
+            },
+            "id": "User.newTab.65CC5CD1"
         },
         {
             "command": 
@@ -126,24 +126,24 @@
     "keybindings": 
     [
         {
-            "id": "User.newTab.1D3178C3",
-            "keys": "ctrl+alt+v"
+            "id": "User.sendInput.8F63D3A9",
+            "keys": "shift+enter"
         },
         {
             "id": "User.splitPane.A6751878",
             "keys": "alt+shift+d"
         },
         {
-            "id": "User.sendInput.8F63D3A9",
-            "keys": "shift+enter"
-        },
-        {
-            "id": "User.newTab.7276C408",
-            "keys": "ctrl+alt+c"
+            "id": "User.newTab.1D3178C3",
+            "keys": "ctrl+alt+v"
         },
         {
             "id": "User.newTab.2D9C0A78",
             "keys": "ctrl+alt+e"
+        },
+        {
+            "id": "User.newTab.7276C408",
+            "keys": "ctrl+alt+c"
         },
         {
             "id": "User.find",
@@ -265,6 +265,36 @@
                 "hidden": false,
                 "name": "Developer PowerShell for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{d8a704cb-89cd-5132-b113-53721a45c603}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 18",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{4d06c03d-6aee-56eb-bbf1-f6e97fe896e1}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 18",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{b9471bcd-1d41-0698-65e5-57b480a18442}",
+                "hidden": false,
+                "name": "Comfort Shell - Ubuntu",
+                "source": "ComfortShell"
+            },
+            {
+                "guid": "{b1a4d2c8-6f3e-4a7b-9e2d-1c8f5a3b7d91}",
+                "hidden": false,
+                "name": "GitHub Copilot",
+                "source": "DevConfig"
+            },
+            {
+                "guid": "{e6cf4447-c94c-543d-bfea-ad50aac286df}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
             }
         ]
     },
