@@ -134,6 +134,29 @@ only reach **new** processes, so restart Windows Terminal — or sign out — af
 `…\.npm-global`, `…\cargo\bin` and `…\go\bin` are prepended to PATH. `TEMP`/`TMP` are deliberately **not** redirected.
 The WSL distro's `ext4.vhdx` is moved to `<ArtifactRoot>\wsl\<Distro>\` by Phase 5.
 
+### The `Networking-nfv` Terminal profile
+
+`powershell\settings.json` ships a static **Networking-nfv** profile that opens an elevated VS 2022 developer shell in
+`%DEVDRIVE_SRC%\Networking-nfv` with the repo's dev modules already loaded. `Command Prompt` is the default profile.
+
+The profile itself carries no paths and no logic — it shells out to
+[`powershell\nfv-devshell.ps1`](powershell/nfv-devshell.ps1), which resolves everything at launch. Four things about it
+are deliberate:
+
+- **Windows PowerShell 5.1, not `pwsh`.** NFV's `onebox.psm1` and `NFVUT.psm1` call `Get-WmiObject`, which was removed
+  in PowerShell 6.
+- **`AddModules.ps1` is dot-sourced, never run with `-File`.** It defines shell functions (`root`, `src`), sets
+  `REPOROOT`/`OUTPUTROOT` and imports a dozen modules into its *caller's* scope; under `-File` all of it would be
+  discarded with the script scope, leaving a prompt with nothing loaded.
+- **`vswhere` is pinned to `[17.0,18.0)`.** A bare `-latest` would pick the side-by-side VS 18 install instead.
+- **Elevation goes through `sudo`, not `"elevate": true`.** Terminal's own `elevate` cannot put an elevated tab in an
+  unelevated window, so it always spawns a *separate* window. `sudo` in inline mode keeps it as a tab — hence the
+  `sudo-inline` task. The profile does **not** pass `--inline`, because sudo exits with an error when a mode is
+  requested that the machine setting disallows; omitting it degrades to a new window instead of failing outright.
+
+Terminal expands `%VARS%` in `startingDirectory` but **not** in `commandline`, which is why the profile's command line
+re-derives `DEVDRIVE_SRC` in PowerShell rather than relying on Terminal to expand it.
+
 ## Vendored WindowsDeveloperConfig
 
 `vendor\WindowsDeveloperConfig\` contains the WDC assets used as the base (the `dev-config.winget` DSC document and the
@@ -160,9 +183,10 @@ catalog tasks.
 | `copilot-plugins` | Ensure the GitHub Copilot CLI is present and install the `anvil` plugin. | ✅ |
 | `wsl-bootstrap` | WSL distro install/config + `etc\wsl.conf` + `win32yank`. | ✅ |
 | `dev-settings` | Registry/UX tweaks: UAC, dark theme, taskbar/Start cleanup, clocks, explorer, privacy. | ✅ |
+| `sudo-inline` | Put Sudo for Windows into **inline** mode so the elevated `Networking-nfv` profile stays a tab instead of taking over a new window. | ✅ |
 | `dotfiles-links` | Symlink gitconfig, starship, clink, nvim, Terminal settings, icons. | ✅ |
 | `terminal-profiles` | Clear Windows Terminal's `generatedProfiles` so its fragment/dynamic profiles (Ubuntu, Comfort Shell, Copilot, VS prompts) stop being auto-hidden. | ✅ |
-| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user and the Terminal fragment profiles are present. | ✅ |
+| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user, the Terminal fragment profiles, the NFV profile and sudo's mode are present. | ✅ |
 | `appx-prune` | Remove non-essential AppX packages (curated keep-list). | ❌ too destructive; run by hand |
 | `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ❌ profiles already sync from OneDrive |
 
@@ -191,6 +215,7 @@ tasks:
     parameters:
       artifactRoot: "Q:\\.tools"
   - name: dev-settings
+  - name: sudo-inline
   - name: dotfiles-links
   - name: terminal-profiles
   - name: modules-install
@@ -295,6 +320,9 @@ under a second with instructions instead of hanging for five minutes.
 | Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Terminal remembers every generated profile in `state.json` and force-hides the ones that are no longer in `settings.json`, so deleting a `profiles.list` entry by hand hides that profile *permanently*. Close **every** Terminal window, run `catalog\terminal-profiles\script.ps1`, then start Terminal again (fragments are only scanned at process start). |
 | Terminal wrote new `profiles.list` entries into `powershell\settings.json` | Expected. Terminal persists its own stub for each generated profile, and their GUIDs are machine-specific (the WSL one is derived from the local distro ID). Commit or ignore them, but don't prune them — see the row above. |
 | Terminal opens in the wrong drive | `%DEVDRIVE_SRC%` isn't set in that process. Re-run `devdrive-env`, then restart Windows Terminal (machine variables only reach new processes). |
+| `Networking-nfv` opens in a **separate window** instead of a tab | Sudo isn't in inline mode on that machine. Run `catalog\sudo-inline\script.ps1` from an elevated shell (`sudo config` reports the current mode). |
+| `Networking-nfv` warns "repo not found" or "Visual Studio not found" | The launcher degrades instead of dying, so the tab stays usable. Run `catalog\nfv-clone\script.ps1` or `catalog\visualstudio\script.ps1`, then open a new tab. |
+| `Networking-nfv` prompts for UAC every time | Expected — `sudo` elevates per launch. Use the `Developer PowerShell for VS 2022` profile when you don't need admin. |
 | `agency` reports "Error obtaining access token" / "Authentication failed" | The Agency installer runs `cmd.exe`, which `appendWindowsPath=false` removes from `$PATH`. Run `bash scripts/wsl-interop-shims.sh`, then `bash scripts/agency.sh` — see [Windows interop shims](#windows-interop-shims). `install.sh` now does both automatically. |
 | `pbcopy` doesn't reach the Windows clipboard, or `open` fails in WSL | Same cause as the row above: `clip.exe` / `cmd.exe` aren't on `$PATH`. Run `bash scripts/wsl-interop-shims.sh` and open a new shell. |
 | Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |

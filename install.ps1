@@ -744,6 +744,9 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             @{ Task = 'dev-settings'; Args = @{ RestartExplorer = [bool]$RestartExplorer }
                 Hint = 'Some settings only apply after an Explorer restart or sign-in'
             }
+            @{ Task = 'sudo-inline'; Args = @{}
+                Hint = 'Re-run elevated: catalog\sudo-inline\script.ps1 (needs Sudo for Windows)'
+            }
             @{ Task = 'dotfiles-links'; Args = @{}
                 Hint = 'Re-run: catalog\dotfiles-links\script.ps1'
             }

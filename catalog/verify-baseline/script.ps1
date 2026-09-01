@@ -151,6 +151,36 @@ function Test-TerminalFragmentProfiles {
   return $true
 }
 
+function Test-NfvTerminalProfile {
+  # The profile is a static entry in this repo's settings.json, which
+  # dotfiles-links symlinks into Terminal's LocalState -- so a missing entry
+  # means the link is gone, not that Terminal hid it.
+  $launcher = Join-Path $PSScriptRoot '..\..\powershell\nfv-devshell.ps1'
+  if (-not (Test-Path -LiteralPath $launcher)) { return $false }
+
+  $localAppData = "$env:HOMEDRIVE$env:HOMEPATH\AppData\Local"
+  $settingsFiles = @(
+    "$localAppData\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
+    "$localAppData\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json",
+    "$localAppData\Microsoft\Windows Terminal\settings.json"
+  ) | Where-Object { Test-Path -LiteralPath $_ }
+  if ($settingsFiles.Count -eq 0) { return $false }
+
+  foreach ($file in $settingsFiles) {
+    try { $json = Get-Content -Raw -LiteralPath $file | ConvertFrom-Json } catch { continue }
+    if (@($json.profiles.list | Where-Object { $_.name -eq 'Networking-nfv' }).Count -gt 0) { return $true }
+  }
+  return $false
+}
+
+function Test-SudoInlineMode {
+  # Not fatal to the NFV profile -- sudo just falls back to a new window -- but
+  # it is the difference between an elevated tab and an elevated window.
+  $sudo = Get-Command sudo.exe -ErrorAction SilentlyContinue
+  if (-not $sudo) { return $false }
+  return ((& $sudo.Source config 2>&1 | Out-String) -match 'Inline')
+}
+
 $checks = @(
   @{ Name='Docker'; Test={ Get-Command docker -ErrorAction SilentlyContinue } },
   @{ Name='Neovim'; Test={ Get-Command nvim -ErrorAction SilentlyContinue } },
@@ -172,7 +202,9 @@ $checks = @(
   @{ Name='Dev-drive src var'; Test={ Test-DevDriveSrcEnv } },
   @{ Name='WSL default user non-root'; Test={ Test-WslDefaultUserNonRoot } },
   @{ Name='WSL VHDX off C:'; Test={ Test-WslVhdxOffC } },
-  @{ Name='Terminal fragment profiles'; Test={ Test-TerminalFragmentProfiles } }
+  @{ Name='Terminal fragment profiles'; Test={ Test-TerminalFragmentProfiles } },
+  @{ Name='NFV terminal profile'; Test={ Test-NfvTerminalProfile } },
+  @{ Name='Sudo inline mode'; Test={ Test-SudoInlineMode } }
 )
 $results = foreach ($c in $checks) {
   if ($SkipChecks -contains $c.Name) {
