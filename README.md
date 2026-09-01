@@ -54,7 +54,7 @@ back in — every phase is idempotent, so re-running is safe.
 | `-LogPath <path>` | `<ArtifactRoot>\logs` | Transcript + JSON ledger destination. |
 | `-MoveWslToDevDrive` | `$true` | Move the distro's `ext4.vhdx` off `C:`. Use `-MoveWslToDevDrive:$false` to opt out. |
 | `-CleanStaleRootDotfiles` | `$true` | Remove dotfile symlinks a previous root-run left under `/root`. |
-| `-WslTempPasswordlessSudo` | `$true` | Grant `-WslUser` NOPASSWD sudo for the duration of Phase 6, then revoke it. See [Phase 6 and sudo](#phase-6-and-sudo). |
+| `-WslTempPasswordlessSudo` | `$true` | Grant `-WslUser` NOPASSWD sudo for the duration of the WSL phases (3 onward), then revoke it. See [WSL and sudo](#wsl-and-sudo). |
 | `-ContinueOnError` | `$true` | Collect failures and report at the end instead of aborting on the first one. |
 | `-RestartExplorer` | off | Let `dev-settings` restart Explorer (off by default so it can't kill Explorer mid-install). |
 | `-NonInteractive` | off | Never prompt; skip anything that would need input. |
@@ -241,21 +241,27 @@ run linked every dotfile into `/root`. Phase 5 fixes that:
 
 Phase 6 then runs `install.sh` as `wsl -d <Distro> -u <WslUser>`.
 
-### Phase 6 and sudo
+### WSL and sudo
 
-`Invoke-Step` captures `install.sh`'s output through a PowerShell pipeline, so the distro is handed **no controlling
-pty**. `/dev/tty` still exists as a device node inside WSL, so a naive `[ -e /dev/tty ]` check passes and `sudo -v`
-prompts on a terminal nobody can answer — Phase 6 then dies on sudo's five-minute `passwd_timeout`. And because sudo's
-default `timestamp_type=tty` degrades to `ppid` without a tty, even an answered prompt would not carry into the
-per-tool scripts `install.sh` spawns; each would prompt again.
+`Invoke-Step` captures WSL output through a PowerShell pipeline, so the distro is handed **no controlling pty**.
+`/dev/tty` still exists as a device node inside WSL, so a naive `[ -e /dev/tty ]` check passes and `sudo -v` prompts on
+a terminal nobody can answer — the step then dies on sudo's five-minute `passwd_timeout`. And because sudo's default
+`timestamp_type=tty` degrades to `ppid` without a tty, even an answered prompt would not carry into the per-tool
+scripts `install.sh` spawns; each would prompt again.
 
-So Phase 6 brackets the run instead:
+So the run is bracketed instead:
 
 1. `scripts\wsl-sudoers-temp.sh grant <user>` writes `/etc/sudoers.d/99-dotfiles-install` (`0440 root:root`), validated
    with `visudo -cf` **before** it is installed and verified with `runuser … sudo -n true` afterwards.
-2. `install.sh` runs. Its `sudo -n true` fast path succeeds, so nothing ever prompts.
+2. Every WSL step runs. Their `sudo -n true` fast path succeeds, so nothing ever prompts.
 3. `scripts\wsl-sudoers-temp.sh revoke` removes it from a `finally` block. A leftover from a killed run is also revoked
    before each grant, and the revoke runs even when `-WslTempPasswordlessSudo:$false`.
+
+The grant is taken **before Phase 3**, not at Phase 6. `wsl-comfort` (Phase 3) authenticates sudo three separate times
+of its own — twice in `comfort-shell-bootstrap.sh` and once in the Homebrew installer it spawns — so granting at Phase 6
+left those prompting. On a first run the distro or `-WslUser` may not exist that early; the grant then records `Skipped`
+and Phase 6 takes it instead. Revocation is idempotent and runs from the script's **top-level** `finally`, so the
+drop-in is removed even if a later phase throws.
 
 Use `-WslTempPasswordlessSudo:$false` to opt out; `install.sh` will then require an interactive shell, and now fails in
 under a second with instructions instead of hanging for five minutes.
@@ -284,7 +290,8 @@ under a second with instructions instead of hanging for five minutes.
 | Dotfiles landed in `/root` | An older run had no non-root user. Re-run `install.ps1`; Phase 5 creates the user and cleans the stale `/root` links. |
 | VHDX move failed | Free space on the target drive, or `-MoveWslToDevDrive:$false` to leave it on `C:`. |
 | `install.sh` errors on `\r` | Ensure `*.sh` files are `LF` (enforced by `.gitattributes`; run `git add --renormalize .` if needed). |
-| `wsl-install-sh` failed after ~5 minutes on sudo | Fixed: Phase 6 now grants temporary passwordless sudo, see [Phase 6 and sudo](#phase-6-and-sudo). If `wsl-sudo-revoke` reported a warning, remove `/etc/sudoers.d/99-dotfiles-install` by hand. |
+| `wsl-install-sh` failed after ~5 minutes on sudo | Fixed: the run now grants temporary passwordless sudo, see [WSL and sudo](#wsl-and-sudo). If `wsl-sudo-revoke` reported a warning, remove `/etc/sudoers.d/99-dotfiles-install` by hand. |
+| Prompted for your WSL sudo password during `wsl-comfort` | Fixed: the grant moved from Phase 6 to before Phase 3. If `wsl-sudo-temp` shows `Skipped`, the distro or user did not exist yet — expected on a first run. |
 | Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Terminal remembers every generated profile in `state.json` and force-hides the ones that are no longer in `settings.json`, so deleting a `profiles.list` entry by hand hides that profile *permanently*. Close **every** Terminal window, run `catalog\terminal-profiles\script.ps1`, then start Terminal again (fragments are only scanned at process start). |
 | Terminal wrote new `profiles.list` entries into `powershell\settings.json` | Expected. Terminal persists its own stub for each generated profile, and their GUIDs are machine-specific (the WSL one is derived from the local distro ID). Commit or ignore them, but don't prune them — see the row above. |
 | Terminal opens in the wrong drive | `%DEVDRIVE_SRC%` isn't set in that process. Re-run `devdrive-env`, then restart Windows Terminal (machine variables only reach new processes). |

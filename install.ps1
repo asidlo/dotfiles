@@ -374,6 +374,108 @@ function Set-WslTempSudo {
     return $code
 }
 
+<#
+.SYNOPSIS
+  True when $Distro exists and can run a command as root.
+#>
+function Test-WslDistroReady {
+    if (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) { return $false }
+    $probe = (& wsl.exe -d $Distro -u root -- echo __WSL_OK__ 2>$null)
+    $ok = ($LASTEXITCODE -eq 0 -and "$probe" -match '__WSL_OK__')
+    $global:LASTEXITCODE = 0
+    return $ok
+}
+
+<#
+.SYNOPSIS
+  Installs the temporary passwordless-sudo drop-in. Idempotent per run.
+
+  Called once before Phase 3 and again at Phase 6. Phase 3's wsl-comfort
+  authenticates sudo three separate times of its own (comfort-shell-bootstrap.sh
+  warms the timestamp up, the Homebrew install it shells out to warms it again,
+  and apt needs it), so granting this only at Phase 6 -- as it used to -- left
+  the user answering the same prompt several times per run.
+
+  -Optional makes the early attempt skip quietly rather than fail: on a fresh
+  machine Phase 3 is what creates the distro, so neither it nor $WslUser
+  necessarily exists yet. Phase 6 then grants it instead.
+#>
+function Grant-WslTempSudo {
+    param(
+        [Parameter(Mandatory)][string]$Phase,
+        [switch]$Optional
+    )
+
+    if ($script:WslSudoGranted) { return }
+
+    if ($Optional) {
+        if (-not (Test-WslDistroReady)) {
+            Add-Result -Phase $Phase -Task 'wsl-sudo-temp' -Status 'Skipped' `
+                -Message "distro '$Distro' not ready yet; Phase 6 grants it instead"
+            return
+        }
+        $null = (& wsl.exe -d $Distro -u root -- id -u $WslUser 2>$null)
+        $userReady = ($LASTEXITCODE -eq 0)
+        $global:LASTEXITCODE = 0
+        if (-not $userReady) {
+            Add-Result -Phase $Phase -Task 'wsl-sudo-temp' -Status 'Skipped' `
+                -Message "user '$WslUser' does not exist yet; Phase 6 grants it instead"
+            return
+        }
+    }
+
+    Invoke-Step -Phase $Phase -Task 'wsl-sudo-temp' `
+        -Hint "Grant it by hand: wsl -d $Distro -u root -- bash scripts/wsl-sudoers-temp.sh grant $WslUser" -Action {
+        # Clear a drop-in an earlier, killed run may have left behind before
+        # writing a fresh one.
+        Set-WslTempSudo -Mode revoke -Quiet | Out-Null
+
+        # Mark *before* the attempt: a partial grant (file written, verification
+        # failed) still has to be revoked afterwards.
+        $script:WslSudoGranted = $true
+        $code = Set-WslTempSudo -Mode grant
+        if ($code -ne 0) { throw "Could not grant temporary passwordless sudo (exit $code)." }
+    }
+}
+
+<#
+.SYNOPSIS
+  Removes the drop-in if this run installed one. Safe to call twice.
+
+  The grant now spans Phases 3-6, so this also runs from the top-level finally:
+  that is the only place guaranteed to execute when a phase between them throws.
+#>
+function Revoke-WslTempSudo {
+    param([Parameter(Mandatory)][string]$Phase)
+
+    if (-not $script:WslSudoGranted) { return }
+
+    # This runs from a finally block, so it must never propagate a terminating
+    # error -- that would replace the failure that got us here. Invoke-Step
+    # rethrows failed steps when -ContinueOnError:$false, and Set-WslTempSudo
+    # itself throws on a missing helper or an unresolvable WSL path, so the
+    # whole call is bracketed rather than trusted to stay non-terminating.
+    try {
+        Invoke-Step -Phase $Phase -Task 'wsl-sudo-revoke' `
+            -Hint "Remove it by hand: wsl -d $Distro -u root -- rm -f /etc/sudoers.d/99-dotfiles-install" -Action {
+            $code = Set-WslTempSudo -Mode revoke
+            if ($code -ne 0) {
+                # Throw so the step lands as Failed, not Warning: leaving
+                # NOPASSWD sudo behind must set a non-zero exit code rather
+                # than let the run report success.
+                throw "Could not remove /etc/sudoers.d/99-dotfiles-install (exit $code). Remove it by hand."
+            }
+            $script:WslSudoGranted = $false
+        }
+    } catch {
+        # Already recorded as Failed by Invoke-Step; swallow so the finally
+        # unwinds cleanly. WslSudoGranted stays true so a later revoke retries.
+        Write-Host "    ! revoke did not complete: $($_.Exception.Message)" -ForegroundColor Red
+    }
+
+    if ($script:WslSudoGranted) { $script:ExitCode = 1 }
+}
+
 function Write-RunSummary {
     Write-Host ''
     Write-Host '=== Run summary ===' -ForegroundColor Cyan
@@ -541,6 +643,27 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             winget configure --file $wdcConfig --accept-configuration-agreements --disable-interactivity
         }
         Update-SessionPath
+    }
+
+    # --- Temporary passwordless sudo (spans Phases 3-6) --------------------
+    # Granted here, ahead of wsl-comfort, because Phase 3 needs sudo several
+    # times of its own and used to prompt for each one: the grant only happened
+    # at Phase 6. Revocation is in the top-level finally so no failure path
+    # between here and Phase 6 can leak the drop-in.
+    $script:WslSudoGranted = $false
+    if (((-not $SkipWslComfort) -or (-not $SkipWsl)) -and (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
+        if ($WslTempPasswordlessSudo) {
+            Grant-WslTempSudo -Phase '3' -Optional
+        } elseif (Test-WslDistroReady) {
+            # Disabled, but still clear anything an earlier run left behind --
+            # silently leaving passwordless sudo in place is the worst outcome.
+            Invoke-Step -Phase '3' -Task 'wsl-sudo-temp' `
+                -Hint "Remove it by hand: wsl -d $Distro -u root -- rm -f /etc/sudoers.d/99-dotfiles-install" -Action {
+                Write-Host '[wsl] temporary passwordless sudo disabled; sudo will prompt during wsl-comfort and install.sh'
+                $code = Set-WslTempSudo -Mode revoke
+                if ($code -ne 0) { throw "Could not remove /etc/sudoers.d/99-dotfiles-install (exit $code)." }
+            }
+        }
     }
 
     # --- Phase 3: wsl-comfort ----------------------------------------------
@@ -803,21 +926,12 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
     } else {
         Write-Phase '6' "WSL install.sh (inside '$Distro' as '$WslUser')"
 
-        $script:WslSudoGranted = $false
         try {
             if ($WslTempPasswordlessSudo) {
-                Invoke-Step -Phase '6' -Task 'wsl-sudo-temp' `
-                    -Hint "Grant it by hand: wsl -d $Distro -u root -- bash scripts/wsl-sudoers-temp.sh grant $WslUser" -Action {
-                    # Clear a drop-in an earlier, killed run may have left behind
-                    # before writing a fresh one.
-                    Set-WslTempSudo -Mode revoke -Quiet | Out-Null
-
-                    # Mark *before* the attempt: a partial grant (file written,
-                    # verification failed) still has to be revoked afterwards.
-                    $script:WslSudoGranted = $true
-                    $code = Set-WslTempSudo -Mode grant
-                    if ($code -ne 0) { throw "Could not grant temporary passwordless sudo (exit $code)." }
-                }
+                # Usually already granted before Phase 3, in which case this is a
+                # no-op. It still matters on a fresh machine, where Phase 3 is
+                # what created the distro and the early attempt skipped.
+                Grant-WslTempSudo -Phase '6'
             } else {
                 # Disabled, but still clear anything an earlier run left behind --
                 # and treat a failed clear as a real problem, since silently
@@ -852,20 +966,7 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
                 & wsl.exe -d $Distro -u $WslUser --cd $cdTarget -- bash -lc 'bash ./install.sh'
             }
         } finally {
-            if ($script:WslSudoGranted) {
-                Invoke-Step -Phase '6' -Task 'wsl-sudo-revoke' `
-                    -Hint "Remove it by hand: wsl -d $Distro -u root -- rm -f /etc/sudoers.d/99-dotfiles-install" -Action {
-                    $code = Set-WslTempSudo -Mode revoke
-                    if ($code -eq 0) {
-                        $script:WslSudoGranted = $false
-                    } else {
-                        # Never throw from a finally block -- it would replace the
-                        # failure that got us here. Write-Error lands this in the
-                        # ledger as a Warning without unwinding anything.
-                        Write-Error "Could not remove /etc/sudoers.d/99-dotfiles-install (exit $code). Remove it by hand."
-                    }
-                }
-            }
+            Revoke-WslTempSudo -Phase '6'
         }
     }
 
@@ -876,6 +977,11 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
     Add-Result -Phase '-' -Task 'install.ps1' -Status 'Failed' -Message $_.Exception.Message `
         -Detail @("$($_.ScriptStackTrace)" -split "`n")
 } finally {
+    # Last line of defence: the drop-in now spans Phases 3-6, so a throw in any
+    # of them would otherwise skip Phase 6's own revoke and leak passwordless
+    # sudo. No-op when Phase 6 already cleaned up.
+    Revoke-WslTempSudo -Phase '6'
+
     Write-RunSummary
     Save-Ledger
 
