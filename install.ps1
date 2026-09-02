@@ -11,7 +11,7 @@
     Phase 3  wsl-comfort .......... WSL + "Comfort Shell" + Terminal scheme
     Phase 4  Personal layer ....... this repo's catalog/* tasks (the delta)
     Phase 5  WSL provisioning ..... non-root default user, dev-drive move, /root cleanup
-    Phase 6  WSL install.sh ....... run this repo's install.sh inside the distro as that user
+    Phase 6  WSL install.sh ....... clone this repo *into* the distro, then run its install.sh
 
   Microsoft's WindowsDeveloperConfig (vendored under vendor\WindowsDeveloperConfig)
   is the base "full setup"; this repo layers only the personal delta on top. Every
@@ -38,6 +38,24 @@
   Password for -WslUser, as a SecureString. Prompted for during Phase 0 when
   omitted and the session is interactive. It is piped to `chpasswd` over stdin
   and never appears in argv, the transcript, or the ledger.
+
+.PARAMETER WslDotfilesDir
+  Where Phase 6 clones this repo inside the distro, relative to -WslUser's home
+  unless given as an absolute path. Default: '.local/src/dotfiles'.
+
+  Phase 6 used to run install.sh directly off the Windows checkout, so every
+  symlink it created pointed back across the 9p/drvfs boundary at /mnt. Those
+  links resolve, but they are slow (a `eza -la --git` listing costs ~17s on
+  drvfs against ~90ms on ext4), they break whenever the Dev Drive is not
+  mounted, and drvfs reports every file as mode 0777 regardless of the git
+  index. A native clone removes the boundary.
+
+.PARAMETER WslDotfilesRepoUrl
+  Remote Phase 6 clones -WslDotfilesDir from.
+  Default: 'https://github.com/asidlo/dotfiles'.
+
+  Only pushed commits reach the distro. Push first if you want Phase 6 to pick
+  up work you just did on the Windows side.
 
 .PARAMETER ArtifactRoot
   Dev Drive root for build/package artifacts and run logs. Every dev-drive
@@ -137,6 +155,8 @@ param(
     [string]$Distro = 'Ubuntu',
     [string]$WslUser = $(if ($env:USERNAME) { $env:USERNAME.ToLower() -replace '[^a-z0-9_-]', '' } else { 'dev' }),
     [securestring]$WslPassword,
+    [string]$WslDotfilesDir = '.local/src/dotfiles',
+    [string]$WslDotfilesRepoUrl = 'https://github.com/asidlo/dotfiles',
     [string]$ArtifactRoot = 'Q:\.tools',
     [string]$SrcRoot = 'Q:\src',
     [string]$NfvRepoUrl = 'https://msazure.visualstudio.com/One/_git/Networking-nfv',
@@ -855,7 +875,14 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
                     $clean = ConvertTo-WslPath $cleanWin
                     $repoWsl = ConvertTo-WslPath $repoRoot
                     if (-not $clean -or -not $repoWsl) { throw 'Could not resolve the cleanup script inside the distro.' }
-                    & wsl.exe -d $Distro -u root -- bash "$clean" "$repoWsl" /root
+
+                    # Both places install.sh can have been run from: the Windows
+                    # checkout under /mnt, and root's own clone if a root run ever
+                    # used the Phase 6 layout. A link from either one is stale.
+                    $rootClone = if ($WslDotfilesDir -match '^/') { $WslDotfilesDir } else { "/root/$WslDotfilesDir" }
+                    $prefixes = @($repoWsl, $rootClone) -join ':'
+
+                    & wsl.exe -d $Distro -u root -- bash "$clean" "$prefixes" /root
                     if ($LASTEXITCODE -ne 0) { throw "wsl-clean-root-dotfiles.sh exited with $LASTEXITCODE." }
                 }
             } else {
@@ -922,9 +949,11 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
     # --- Phase 6: WSL install.sh -------------------------------------------
     if ($SkipWsl) {
         Write-Phase '6' 'WSL install.sh [SKIPPED -SkipWsl]'
+        Add-Result -Phase '6' -Task 'wsl-clone-dotfiles' -Status 'Skipped' -Message '-SkipWsl'
         Add-Result -Phase '6' -Task 'wsl-install-sh' -Status 'Skipped' -Message '-SkipWsl'
     } elseif (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
         Write-Phase '6' 'WSL install.sh'
+        Add-Result -Phase '6' -Task 'wsl-clone-dotfiles' -Status 'Skipped' -Message 'wsl.exe not found'
         Add-Result -Phase '6' -Task 'wsl-install-sh' -Status 'Skipped' -Message 'wsl.exe not found'
     } else {
         Write-Phase '6' "WSL install.sh (inside '$Distro' as '$WslUser')"
@@ -947,8 +976,14 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
                 }
             }
 
-            Invoke-Step -Phase '6' -Task 'wsl-install-sh' -ExitCodeIsContract `
-                -Hint "Run it yourself: wsl -d $Distro -u $WslUser --cd '<repo>' -- bash -lc 'bash ./install.sh'" -Action {
+            # -- 6a. give the distro its own checkout ------------------------
+            # Running install.sh off the Windows mount pointed every symlink it
+            # created back across drvfs: slow, and gone whenever the Dev Drive
+            # is not attached. Clone into the distro and install from there.
+            $script:WslDotfilesPath = $null
+
+            Invoke-Step -Phase '6' -Task 'wsl-clone-dotfiles' `
+                -Hint "Clone it yourself: wsl -d $Distro -u $WslUser -- git clone $WslDotfilesRepoUrl ~/$WslDotfilesDir" -Action {
 
                 $probe = (& wsl.exe -d $Distro -u $WslUser -- echo __WSL_OK__ 2>$null)
                 if ($LASTEXITCODE -ne 0 -or ("$probe" -notmatch '__WSL_OK__')) {
@@ -957,16 +992,42 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
                 }
                 $global:LASTEXITCODE = 0
 
-                # Resolve this repo's path as WSL sees it for the working directory.
-                # `wsl --cd` takes it from a *native* argv, so the path is never
-                # interpolated into a shell string -- immune to spaces, quotes and
-                # shell injection (unlike `bash -lc "cd '<path>' && ..."`).
-                $repoWsl = ConvertTo-WslPath $repoRoot
-                $cdTarget = if ([string]::IsNullOrWhiteSpace($repoWsl)) { $repoRoot } else { $repoWsl }
-                if ($repoWsl) { Write-Host "[wsl] repo path in WSL: $repoWsl" }
-                Write-Host '[wsl] running install.sh...'
+                $cloneWin = Join-Path $repoRoot 'scripts\wsl-clone-dotfiles.sh'
+                if (-not (Test-Path -LiteralPath $cloneWin)) { throw "Missing helper: $cloneWin" }
+                $clone = ConvertTo-WslPath $cloneWin
+                if (-not $clone) { throw "Could not resolve '$cloneWin' inside '$Distro'." }
 
-                & wsl.exe -d $Distro -u $WslUser --cd $cdTarget -- bash -lc 'bash ./install.sh'
+                # Capture rather than stream: the script's last line reports the
+                # absolute checkout path, which 6b needs for `wsl --cd`. Deriving
+                # it here instead would mean duplicating the $HOME resolution the
+                # script already does.
+                $cloneOut = @(& wsl.exe -d $Distro -u $WslUser -- bash "$clone" "$WslDotfilesDir" "$WslDotfilesRepoUrl" 2>&1)
+                $code = $LASTEXITCODE
+                $global:LASTEXITCODE = 0
+
+                $cloneOut | ForEach-Object { "$_" }
+                if ($code -ne 0) { throw "wsl-clone-dotfiles.sh exited with $code." }
+
+                $marker = $cloneOut | Where-Object { "$_" -match '^dotfiles-path=' } | Select-Object -Last 1
+                if (-not $marker) { throw 'wsl-clone-dotfiles.sh did not report a checkout path.' }
+                $script:WslDotfilesPath = ("$marker" -replace '^dotfiles-path=', '').Trim()
+            }
+
+            # -- 6b. run install.sh from that checkout -----------------------
+            if (-not $script:WslDotfilesPath) {
+                Add-Result -Phase '6' -Task 'wsl-install-sh' -Status 'Skipped' `
+                    -Message 'no checkout inside the distro (clone step failed)' `
+                    -Hint "Fix the clone first, then: wsl -d $Distro -u $WslUser --cd '~/$WslDotfilesDir' -- bash -lc 'bash ./install.sh'"
+            } else {
+                Invoke-Step -Phase '6' -Task 'wsl-install-sh' -ExitCodeIsContract `
+                    -Hint "Run it yourself: wsl -d $Distro -u $WslUser --cd '$script:WslDotfilesPath' -- bash -lc 'bash ./install.sh'" -Action {
+
+                    # `wsl --cd` takes the path from a *native* argv, so it is
+                    # never interpolated into a shell string -- immune to spaces,
+                    # quotes and shell injection (unlike `bash -lc "cd '<path>'"`).
+                    Write-Host "[wsl] running install.sh from $script:WslDotfilesPath"
+                    & wsl.exe -d $Distro -u $WslUser --cd $script:WslDotfilesPath -- bash -lc 'bash ./install.sh'
+                }
             }
         } finally {
             Revoke-WslTempSudo -Phase '6'

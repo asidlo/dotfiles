@@ -53,9 +53,22 @@ elif [ -t 0 ] && (exec 3<>/dev/tty) 2>/dev/null; then
 
   # Bound the wait. sudo's own passwd_timeout is five minutes, long enough that
   # an unnoticed prompt looks like a hung install rather than a failed one.
+  #
+  # --foreground is load-bearing, not decoration. Without it `timeout` calls
+  # setpgid(0,0) and runs sudo in a NEW process group, which is by definition
+  # not the terminal's foreground group. sudo then reads /dev/tty, the kernel
+  # raises SIGTTIN, and sudo is *stopped* -- the prompt is printed (writes are
+  # allowed) but no password is ever collected, so the install appears to hang
+  # forever. Measured: `timeout` alone put the child in pgid 1117 against the
+  # shell's 320; `timeout --foreground` kept it in 320.
+  #
+  # Probe --foreground rather than assuming it: BusyBox timeout has no such
+  # flag, and passing it there would turn a working prompt into a hard failure.
+  # Falling back to a bare `sudo -v` merely gives up the bound, which is the
+  # lesser evil -- sudo still enforces its own passwd_timeout.
   sudo_auth=(sudo -v)
-  if command -v timeout >/dev/null 2>&1; then
-    sudo_auth=(timeout 120 sudo -v)
+  if command -v timeout >/dev/null 2>&1 && timeout --foreground 5 true >/dev/null 2>&1; then
+    sudo_auth=(timeout --foreground 120 sudo -v)
   fi
 
   # `|| rc=$?` rather than `if ! ...`: it keeps the real exit code (124 means
@@ -208,41 +221,50 @@ fi
 # Symlinks first. Configs are the core of the dotfiles, so link them before the
 # best-effort, network/sudo-heavy tool installs below. That way a tool script
 # that fails, blocks, or replaces the shell can never leave configs unlinked.
+#
+# Every link uses `ln -sfn`, never plain `ln -sf`. Without -n (--no-dereference)
+# a destination that is already a symlink *to a directory* is followed, so ln
+# creates the new link INSIDE the old target and leaves the original pointing
+# where it always did. Re-running this script then silently kept ~/.config/nvim
+# and ~/.config/git/keys aimed at the previous checkout while depositing stray
+# nvim/lazynvim/lazynvim and git/keys/keys links in the repo. With -n the
+# symlink itself is replaced, and a *real* directory in the way fails loudly
+# instead of being quietly descended into.
 # ---------------------------------------------------------------------------
 
 # Select gitconfig based on environment
 if [ "$MINIMAL_ENV" -eq 1 ]; then
-  ln -sfv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
+  ln -sfnv "$DOTFILES_DIR/git/gitconfig.work.codespaces" ~/.gitconfig
 elif grep -qi 'microsoft\|wsl' /proc/version 2>/dev/null; then
-  ln -sfv "$DOTFILES_DIR/git/gitconfig.work" ~/.gitconfig
+  ln -sfnv "$DOTFILES_DIR/git/gitconfig.work" ~/.gitconfig
   # gitconfig.work's credential helper points here; the shim resolves the
   # arch-correct Git for Windows credential manager (clangarm64 vs mingw64).
   mkdir -p ~/.local/bin
-  ln -sfv "$DOTFILES_DIR/bin/git-credential-manager-wsl" ~/.local/bin/git-credential-manager-wsl
+  ln -sfnv "$DOTFILES_DIR/bin/git-credential-manager-wsl" ~/.local/bin/git-credential-manager-wsl
 else
-  ln -sfv "$DOTFILES_DIR/git/gitconfig.work.wavespaces" ~/.gitconfig
+  ln -sfnv "$DOTFILES_DIR/git/gitconfig.work.wavespaces" ~/.gitconfig
 fi
-mkdir -p ~/.ssh && ln -sfv "$DOTFILES_DIR/git/config" ~/.ssh/config
-mkdir -p ~/.config/git && ln -sfv "$DOTFILES_DIR/git/keys" ~/.config/git/keys
-mkdir -p ~/.config/lazygit && ln -svf "$DOTFILES_DIR/git/lazygit.config" ~/.config/lazygit/config.yml
-ln -sfv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
-ln -sfv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
-ln -sfv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
-ln -sfv "$DOTFILES_DIR/bash/bashrc" ~/.bashrc
+mkdir -p ~/.ssh && ln -sfnv "$DOTFILES_DIR/git/config" ~/.ssh/config
+mkdir -p ~/.config/git && ln -sfnv "$DOTFILES_DIR/git/keys" ~/.config/git/keys
+mkdir -p ~/.config/lazygit && ln -sfnv "$DOTFILES_DIR/git/lazygit.config" ~/.config/lazygit/config.yml
+ln -sfnv "$DOTFILES_DIR/vim/minimal.vim" ~/.vimrc
+ln -sfnv "$DOTFILES_DIR/zsh/zshrc.min" ~/.zshrc
+ln -sfnv "$DOTFILES_DIR/zsh/zshenv" ~/.zshenv
+ln -sfnv "$DOTFILES_DIR/bash/bashrc" ~/.bashrc
 
 # Portable CLI shims (clipboard + open) -> ~/.local/bin (already on PATH).
 # Self-sufficient on WSL, Wayland, X11, or remote SSH (OSC52) without comfort-shell.
 mkdir -p ~/.local/bin
 for shim in pbcopy pbpaste open; do
-  ln -sfv "$DOTFILES_DIR/bin/$shim" ~/.local/bin/"$shim"
+  ln -sfnv "$DOTFILES_DIR/bin/$shim" ~/.local/bin/"$shim"
 done
 
-mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
+mkdir -p ~/.config && ln -sfnv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
 # Full-environment-only configs (paired with the tools installed below).
 if [ "$MINIMAL_ENV" -eq 0 ]; then
-  ln -sfv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
-  mkdir -p ~/.config && ln -sfv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
+  ln -sfnv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf
+  mkdir -p ~/.config && ln -sfnv "$DOTFILES_DIR/nvim/lazynvim" ~/.config/nvim
 fi
 
 # ---------------------------------------------------------------------------
