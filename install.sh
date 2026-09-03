@@ -270,7 +270,7 @@ fi
 # ---------------------------------------------------------------------------
 # Tool installs (best-effort; may require network or sudo).
 # ---------------------------------------------------------------------------
-# First: re-expose cmd.exe/clip.exe/etc, which etc/wsl.conf's
+# First: re-expose cmd.exe/clip.exe/etc and the Windows VS Code launcher, which etc/wsl.conf's
 # appendWindowsPath=false removes from $PATH. agency.sh below shells out to
 # cmd.exe and fails its sign-in without them.
 run_step "$SCRIPT_DIR/wsl-interop-shims.sh"

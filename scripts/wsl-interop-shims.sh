@@ -95,6 +95,32 @@ for entry in "${SHIMS[@]}"; do
 	linked=$((linked + 1))
 done
 
+# VS Code's WSL launcher lives outside %WINDIR%, so discover either the
+# system-wide install or the current Windows user's install separately.
+drive_root=${WINDIR%/Windows}
+code_target=""
+for candidate in \
+	"$drive_root/Program Files/Microsoft VS Code/bin/code" \
+	"$drive_root/Program Files (x86)/Microsoft VS Code/bin/code" \
+	"$drive_root"/Users/*/AppData/Local/Programs/Microsoft\ VS\ Code/bin/code; do
+	if [ -x "$candidate" ]; then
+		code_target="$candidate"
+		break
+	fi
+done
+
+if [ -z "$code_target" ]; then
+	echo "  skip    code (Windows VS Code installation not found)"
+	skipped=$((skipped + 1))
+elif [ -e "$BIN_DIR/code" ] && [ ! -L "$BIN_DIR/code" ]; then
+	echo "  skip    code (a non-symlink already exists at $BIN_DIR/code)"
+	skipped=$((skipped + 1))
+else
+	ln -sfn "$code_target" "$BIN_DIR/code"
+	echo "  link    code -> $code_target"
+	linked=$((linked + 1))
+fi
+
 echo "Interop shims: $linked linked, $skipped skipped (in $BIN_DIR)."
 
 case ":$PATH:" in
