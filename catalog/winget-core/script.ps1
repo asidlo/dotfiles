@@ -6,6 +6,7 @@ $ErrorActionPreference = 'Stop'
 # [string[]] avoids PowerShell's script-scope type constraint from coercing the
 # default array into one space-joined package id.
 $wingetPackages = @(
+  'Git.Git',
   'Docker.DockerDesktop',
   'Starship.Starship',
   'eza-community.eza',
