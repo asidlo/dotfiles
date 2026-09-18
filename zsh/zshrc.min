@@ -231,12 +231,6 @@ if [ -d "$FNM_PATH" ]; then
   eval "`fnm env`"
 fi
 
-# BEGIN Agency MANAGED BLOCK
-if [[ ":${PATH}:" != *":/home/asidlo/.config/agency/CurrentVersion:"* ]]; then
-    export PATH="/home/asidlo/.config/agency/CurrentVersion:${PATH}"
-fi
-# END Agency MANAGED BLOCK
-
 # Integrations: zoxide (smarter cd) + direnv (per-directory env)
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 (( $+commands[direnv] )) && eval "$(direnv hook zsh)"
