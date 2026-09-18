@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Portable "open": hand a file or URL to the OS handler.
+# WSL: wslview (preferred) or cmd.exe start. Otherwise: the system xdg-open.
+
+if [ "$#" -lt 1 ]; then
+  echo "Usage: open <file-or-url>" >&2
+  exit 1
+fi
+
+_is_wsl() { grep -qi microsoft /proc/version 2>/dev/null || [ -n "${WSL_DISTRO_NAME:-}" ]; }
+
+target="$1"
+
+if _is_wsl; then
+  if command -v wslview >/dev/null 2>&1; then
+    exec wslview "$target"
+  fi
+  # Convert real paths to a Windows path; pass URLs through untouched.
+  if [ -e "$target" ]; then
+    target="$(wslpath -w "$target")"
+  fi
+  exec cmd.exe /c start "" "$target"
+fi
+
+# Non-WSL: defer to the real xdg-open by absolute path so we never recurse
+# into a same-named shim that happens to be earlier on $PATH.
+for _xdg in /usr/bin/xdg-open /bin/xdg-open /usr/local/bin/xdg-open; do
+  if [ -x "$_xdg" ]; then
+    exec "$_xdg" "$target"
+  fi
+done
+
+echo "open: no handler found (install xdg-utils or run inside WSL)" >&2
+exit 1

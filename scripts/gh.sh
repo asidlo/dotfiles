@@ -7,17 +7,23 @@ function install_golang() {
 
   cd /tmp || return
 
+  case "$(uname -m)" in
+    x86_64) GO_ARCH="amd64" ;;
+    aarch64) GO_ARCH="arm64" ;;
+    *) echo "Unsupported architecture: $(uname -m)"; exit 1 ;;
+  esac
+
   # Get the latest version of golang release
   latest_version=$(curl -s -L https://golang.org/dl/?mode=json | grep -oP '"version": "\K[^"]+' | head -n 1)
 
   # Download the latest version of golang
-  curl -L -o "$latest_version.linux-amd64.tar.gz" "https://golang.org/dl/$latest_version.linux-amd64.tar.gz"
+  curl -L -o "$latest_version.linux-$GO_ARCH.tar.gz" "https://golang.org/dl/$latest_version.linux-$GO_ARCH.tar.gz"
 
   # Check if go is installed, if not install
-  rm -rf /usr/local/go && tar -C /usr/local -xzf "$latest_version.linux-amd64.tar.gz"
+  rm -rf /usr/local/go && tar -C /usr/local -xzf "$latest_version.linux-$GO_ARCH.tar.gz"
 
   # Clean up
-  rm -rf /tmp/"$latest_version.linux-amd64.tar.gz"
+  rm -rf /tmp/"$latest_version.linux-$GO_ARCH.tar.gz"
 }
 
 source /etc/os-release

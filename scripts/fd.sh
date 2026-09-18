@@ -13,8 +13,9 @@ case "$ID" in
   ~/.cargo/bin/cargo install fd-find --version "$FD_VERSION"
   ;;
 "ubuntu" | "debian")
-  curl -L https://github.com/sharkdp/fd/releases/download/v"$FD_VERSION"/fd_"$FD_VERSION"_amd64.deb -o /tmp/fd.deb
-  sudo apt-get install /tmp/fd.deb
+  ARCH=$(dpkg --print-architecture)
+  curl -L https://github.com/sharkdp/fd/releases/download/v"$FD_VERSION"/fd_"$FD_VERSION"_"$ARCH".deb -o /tmp/fd.deb
+  sudo apt-get install -y /tmp/fd.deb
   rm /tmp/fd.deb
   ;;
 *)

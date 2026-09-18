@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Portable clipboard paste: system clipboard -> stdout.
+# Backends, in order: WSL (PowerShell Get-Clipboard), Wayland (wl-paste),
+# X11 (xclip/xsel).
+
+_is_wsl() { grep -qi microsoft /proc/version 2>/dev/null || [ -n "${WSL_DISTRO_NAME:-}" ]; }
+
+if _is_wsl && command -v powershell.exe >/dev/null 2>&1; then
+  # Normalize CRLF -> LF (strip only the trailing CR per line; keep embedded CRs).
+  powershell.exe -NoProfile -Command Get-Clipboard | sed 's/\r$//'
+elif [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-paste >/dev/null 2>&1; then
+  exec wl-paste --no-newline
+elif [ -n "${DISPLAY:-}" ] && command -v xclip >/dev/null 2>&1; then
+  exec xclip -selection clipboard -o
+elif [ -n "${DISPLAY:-}" ] && command -v xsel >/dev/null 2>&1; then
+  exec xsel --clipboard --output
+else
+  echo "pbpaste: no clipboard backend available (WSL/Wayland/X11)" >&2
+  exit 1
+fi

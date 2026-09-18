@@ -1,0 +1,14 @@
+$schema: "1.0"
+name: nfv-clone
+description: Clone the Networking-nfv Azure DevOps repository if missing.
+parameters:
+  RepoUrl:
+    type: string
+    description: Azure DevOps repository URL.
+    required: false
+  RepoPath:
+    type: string
+    description: Local checkout path.
+    required: false
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

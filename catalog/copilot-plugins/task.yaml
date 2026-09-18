@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: copilot-plugins
+description: Install GitHub Copilot CLI and the anvil plugin.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

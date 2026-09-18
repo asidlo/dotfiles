@@ -1,0 +1,10 @@
+$schema: "1.0"
+name: devdrive-env
+description: Redirect package-manager caches and tool stores to the Dev Drive.
+parameters:
+  ArtifactRoot:
+    type: string
+    description: Dev Drive artifact root.
+    required: false
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

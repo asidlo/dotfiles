@@ -6,6 +6,7 @@
 [core]
   excludesfile = ~/.gitignore
   editor = code --wait
+  autocrlf = input
 [log]
   date = iso
 [pull]

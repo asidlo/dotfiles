@@ -3,7 +3,8 @@
   email = andrewsidlo@microsoft.com
 [core]
   excludesfile = ~/.gitignore
-  editor = nvim
+  editor = code --wait
+  autocrlf = input
 [log]
   date = iso
 [pull]
@@ -13,11 +14,15 @@
   pruneTags = true
 [commit]
   verbose = true
+[merge]
+  tool = vscode
+[mergetool "vscode"]
+  cmd = code --wait $MERGED
 [diff]
-  tool = vimdiff
+  tool = vscode
   ignoreSubmodules = dirty
-[difftool]
-  prompt = 0
+[difftool "vscode"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
   a = add
   au = add -u # Update all tracked files
@@ -95,10 +100,18 @@
   # st  = status -sb -unormal
 # https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git#git-credential-manager-setup
 [credential]
-  helper = /mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe
+  helper = !gh auth git-credential
   useHttpPath = true
 [credential "https://dev.azure.com"]
-   useHttpPath = true
+  helper =
+  # Arch-aware wrapper: picks clangarm64 (arm64) or mingw64 (x64) at runtime.
+  helper = !\"$HOME/.local/bin/git-credential-manager-wsl\"
+  useHttpPath = true
+[credential "https://msazure.visualstudio.com"]
+  helper =
+  # Arch-aware wrapper: picks clangarm64 (arm64) or mingw64 (x64) at runtime.
+  helper = !\"$HOME/.local/bin/git-credential-manager-wsl\"
+  useHttpPath = true
 [init]
   defaultBranch = main
 [rerere]

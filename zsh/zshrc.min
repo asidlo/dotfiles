@@ -73,6 +73,20 @@ antibody bundle "greymd/docker-zsh-completion"
 # Needs to run after zsh-auto-suggestions is sourced
 bindkey '^ ' autosuggest-accept
 
+# Windows Terminal / xterm keybindings (zsh has no readline, so bind explicitly)
+bindkey "^[[1;5C" forward-word          # Ctrl+Right -> next word
+bindkey "^[[1;5D" backward-word         # Ctrl+Left  -> previous word
+bindkey "^[[H"    beginning-of-line     # Home
+bindkey "^[[F"    end-of-line           # End
+bindkey "^[[3~"   delete-char           # Delete
+bindkey "^[[3;5~" kill-word             # Ctrl+Delete -> delete word forward
+# Ctrl+Backspace sends ^H in WSL terminals (Windows Terminal / VS Code), where plain
+# Backspace sends ^?. Only remap there; elsewhere ^H keeps its default
+# (backward-delete-char) so terminals that send ^H for Backspace aren't broken.
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  bindkey "^H"    backward-kill-word     # Ctrl+Backspace -> delete word back
+fi
+
 # PROMPT='%{$fg[cyan]%}%n%{$reset_color%}'                             # USERNAME
 # PROMPT+=' at %{$fg[magenta]%}%m%{$reset_color%}'                     # at HOSTNAME
 # PROMPT+=' in %{$fg[blue]%}%~%u%{$reset_color%}'                      # in DIRECTORY
@@ -109,7 +123,15 @@ _dotnet_zsh_complete()
 }
 compctl -K _dotnet_zsh_complete dotnet
 
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
+# fzf integration. Prefer a locally-built fzf (~/.local/src/fzf) over an older system fzf
+# by prepending it to PATH, but only if that build actually supports `fzf --zsh` (fzf >= 0.48).
+# `typeset -U path` later dedupes, keeping this front entry so the modern binary wins.
+if "$HOME/.local/src/fzf/bin/fzf" --zsh >/dev/null 2>&1; then
+	export PATH="$HOME/.local/src/fzf/bin:$PATH"
+fi
+# Filter only fzf's benign "can't change option: zle" warning (emitted by its vendored
+# option-restore when zle-wrapping plugins are active); genuine errors still pass through.
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh 2> >(grep -v 'can.t change option: zle' >&2)
 
 if (( $+commands[nvim] )); then
 	export VISUAL=nvim
@@ -126,13 +148,17 @@ if (( $+commands[tree] )); then
 	alias tree='tree -C'
 fi
 
-if (( $+commands[clip.exe] )); then
+# Clipboard: prefer the portable pbcopy/pbpaste shims (bin/), then fall back.
+if (( $+commands[pbcopy] )); then
+    alias copy=pbcopy
+elif (( $+commands[clip.exe] )); then
     alias copy=clip.exe
 elif (( $+commands[lemonade] )); then
     alias copy='lemonade copy'
 elif (( $+commands[xclip] )); then
     alias copy='xclip -selection -c'
 fi
+(( $+commands[pbpaste] )) && alias paste=pbpaste
 
 # When installing from cargo, even on linux, those naming restrictions dont apply
 if (( $+commands[fdfind] )); then
@@ -206,7 +232,90 @@ if [ -d "$FNM_PATH" ]; then
 fi
 
 # BEGIN Agency MANAGED BLOCK
-if [[ ":${PATH}:" != *":/home/andrewsidlo/.config/agency/CurrentVersion:"* ]]; then
-    export PATH="/home/andrewsidlo/.config/agency/CurrentVersion:${PATH}"
+if [[ ":${PATH}:" != *":/home/asidlo/.config/agency/CurrentVersion:"* ]]; then
+    export PATH="/home/asidlo/.config/agency/CurrentVersion:${PATH}"
 fi
 # END Agency MANAGED BLOCK
+
+# Integrations: zoxide (smarter cd) + direnv (per-directory env)
+(( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
+(( $+commands[direnv] )) && eval "$(direnv hook zsh)"
+
+# Modern ls via eza when available.
+#
+# `ll` is a function below, not an alias, and this unalias must stay OUTSIDE the
+# if-block. zsh expands aliases while *parsing*, and it parses the whole
+# `if ... fi` compound command before running any of it -- so an unalias inside
+# the block executes far too late. zsh/zshenv sets `alias ll='ls -AlFG'` and
+# .zshenv is sourced first, so without this the definition below is expanded
+# into `ls -AlFG() {`, dies with "defining function based on alias `ls'", and
+# silently leaves the old alias in place.
+unalias ll 2>/dev/null || true
+
+if (( $+commands[eza] )); then
+    alias ls='eza --icons auto'
+    alias lt='eza --tree --icons auto'
+
+    # `eza --git` drives libgit2 across the whole tree. On the 9p/drvfs Windows
+    # mounts WSL exposes under /mnt that costs ~17s for a single listing against
+    # ~90ms without it; on ext4 it is free. So ask for git columns only when the
+    # target actually lives on local storage.
+    #
+    # Returns 0 (use --git) when detection fails, e.g. BSD/macOS stat, which has
+    # no `-f -c` -- that preserves the old unconditional behaviour rather than
+    # silently dropping a column on platforms this heuristic wasn't written for.
+    _eza_local_fs() {
+        local fstype
+        fstype=$(stat -f -c %T -- "$1" 2>/dev/null) || return 0
+        case $fstype in
+            v9fs | 9p | drvfs | cifs | smb2 | nfs | nfs4 | fuseblk) return 1 ;;
+            '') return 0 ;;
+            *) return 0 ;;
+        esac
+    }
+
+
+
+    ll() {
+        local arg
+        local -a targets=()
+        # eza flags can take a separate value word (`--sort name`) and options
+        # may sit on either side of the path, so no positional rule is safe:
+        # `ll /mnt/q --sort name` would pick `name` if such a file existed.
+        # Collect every argument that is not a flag and does exist, then drop
+        # --git if *any* of them lives on a slow filesystem. Erring that way
+        # costs one column; erring the other way costs ~17s per listing.
+        for arg in "$@"; do
+            case $arg in
+                -*) continue ;;
+            esac
+            [ -e "$arg" ] && targets+=("$arg")
+        done
+        (( ${#targets[@]} )) || targets=(.)
+        for arg in "${targets[@]}"; do
+            if ! _eza_local_fs "$arg"; then
+                eza -la --icons auto "$@"
+                return
+            fi
+        done
+        eza -la --icons auto --git "$@"
+    }
+else
+    # No eza: the unalias above dropped `alias ll='ls -AlFG'` from zsh/zshenv,
+    # so restore that behaviour instead of leaving ll undefined.
+    ll() { ls -AlFG "$@"; }
+fi
+
+# Add agency / copilot alias
+alias acp='agency cp -- --yolo --agent anvil:anvil'
+
+# BEGIN Agency MANAGED BLOCK
+if [[ ":${PATH}:" != *":$HOME/.config/agency/CurrentVersion:"* ]]; then
+	export PATH="$HOME/.config/agency/CurrentVersion:${PATH}"
+	unset DISPLAY WAYLAND_DISPLAY
+fi
+# END Agency MANAGED BLOCK
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

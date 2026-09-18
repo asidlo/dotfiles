@@ -1,6 +1,26 @@
 $schema: "1.0"
 name: verify-baseline
 description: Verify core tools and links are present; emit summary.
-parameters: {}
+parameters:
+  ArtifactRoot:
+    type: string
+    description: Root path for dev-drive caches and tool artifacts. Defaults to Q:\.tools.
+    required: false
+  VsInstallPath:
+    type: string
+    description: Visual Studio install path fallback when vswhere is unavailable.
+    required: false
+  NfvRepoPath:
+    type: string
+    description: Path to the Networking-nfv repo.
+    required: false
+  Distro:
+    type: string
+    description: WSL distro name to verify. Defaults to Ubuntu.
+    required: false
+  SkipChecks:
+    type: string
+    description: Check names to report as Skipped instead of missing (for deliberately skipped tasks).
+    required: false
 command: |
   powershell -ExecutionPolicy Bypass -File script.ps1
