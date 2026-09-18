@@ -243,6 +243,10 @@ elif grep -qi 'microsoft\|wsl' /proc/version 2>/dev/null; then
   ln -sfnv "$DOTFILES_DIR/bin/git-credential-manager-wsl" ~/.local/bin/git-credential-manager-wsl
 else
   ln -sfnv "$DOTFILES_DIR/git/gitconfig.work.wavespaces" ~/.gitconfig
+  # gitconfig.work.wavespaces' credential helper points here; the shim lets GCM
+  # run its browser sign-in against the VS Code client instead of device code.
+  mkdir -p ~/.local/bin
+  ln -sfnv "$DOTFILES_DIR/bin/git-credential-manager-remote" ~/.local/bin/git-credential-manager-remote
 fi
 mkdir -p ~/.ssh && ln -sfnv "$DOTFILES_DIR/git/config" ~/.ssh/config
 mkdir -p ~/.config/git && ln -sfnv "$DOTFILES_DIR/git/keys" ~/.config/git/keys

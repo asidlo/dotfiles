@@ -112,9 +112,10 @@
 	azreposCredentialType = oauth
 	msauthFlow = system
 	helper = 
-	helper = /usr/local/bin/ado-auth-helper
-	helper = 
-	helper = /usr/local/bin/git-credential-manager
+	# Wrapper, not GCM directly: headless Linux reports no DISPLAY, so GCM refuses
+	# the system-browser flow and only offers device code. The shim points it at
+	# the VS Code client's browser instead. See bin/git-credential-manager-remote.
+	helper = !\"$HOME/.local/bin/git-credential-manager-remote\"
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 [safe]
@@ -140,3 +141,5 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+[credential "azrepos:org/msazure"]
+	username = andrewsidlo@microsoft.com
