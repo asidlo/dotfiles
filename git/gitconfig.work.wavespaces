@@ -106,13 +106,14 @@
   sort = -committerdate
 
 [credential]
-	helper = 
-	helper = /usr/local/bin/git-credential-manager
 	credentialStore = cache
 	cacheOptions = --timeout 43200
-	helper = manager
 	azreposCredentialType = oauth
 	msauthFlow = system
+	helper = 
+	helper = /usr/local/bin/ado-auth-helper
+	helper = 
+	helper = /usr/local/bin/git-credential-manager
 [credential "https://dev.azure.com"]
 	useHttpPath = true
 [safe]
@@ -132,3 +133,9 @@
 # 	format = ssh
 #[gpg "ssh"]
 #	allowedSignersFile = /home/andrewsidlo/.ssh/allowed_signers
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
