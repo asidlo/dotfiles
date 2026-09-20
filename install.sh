@@ -130,8 +130,16 @@ run_step() {
   echo
   printf '▶ [%s]\n' "$name"
 
+  # </dev/null, always. A step that reads stdin has no one to answer it here,
+  # and the prompt is usually invisible: stdout is piped through tee, so the
+  # question can sit in a buffer while the install looks frozen. scripts/
+  # copilot.sh hit exactly this -- VS Code's `copilot` shim asked "Install
+  # GitHub Copilot CLI? ['y/N']" and the run stalled until someone guessed to
+  # press Enter. At EOF that same prompt fails immediately, which is loud,
+  # recorded in the step log, and recoverable. sudo is unaffected: it was
+  # authorised above and reads from /dev/tty regardless.
   set +e
-  "$@" 2>&1 | tee "$step_log"
+  "$@" </dev/null 2>&1 | tee "$step_log"
   code=${PIPESTATUS[0]}
   set -e
 
@@ -258,8 +266,10 @@ ln -sfnv "$DOTFILES_DIR/bash/bashrc" ~/.bashrc
 
 # Portable CLI shims (clipboard + open) -> ~/.local/bin (already on PATH).
 # Self-sufficient on WSL, Wayland, X11, or remote SSH (OSC52) without comfort-shell.
+# xdg-open is here for the auth flows rather than for us: the NuGet credential
+# providers and GCM both look it up by name, and Azure Linux has no xdg-utils.
 mkdir -p ~/.local/bin
-for shim in pbcopy pbpaste open; do
+for shim in pbcopy pbpaste open xdg-open; do
   ln -sfnv "$DOTFILES_DIR/bin/$shim" ~/.local/bin/"$shim"
 done
 

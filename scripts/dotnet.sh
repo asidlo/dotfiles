@@ -73,10 +73,21 @@ if command -v gh >/dev/null 2>&1 || command -v curl >/dev/null 2>&1; then
 
     install_status=$download_status
     if [ "$download_status" -eq 0 ]; then
+        # SKIP_XDG_OPEN: the installer's step 4 writes its own xdg-open shim to
+        # /usr/local/bin, which a non-root user cannot do. Its `set -e` turns
+        # that "Permission denied" into a hard failure *after* the credential
+        # provider is already installed, so the whole script reported FAILED
+        # over a browser helper it only needs at sign-in time. Link ours into
+        # ~/.local/bin instead -- same job, no sudo, and it reaches the VS Code
+        # client's browser on a display-less remote.
+        mkdir -p "$HOME/.local/bin" &&
+            ln -sfn "$DOTFILES_DIR/bin/xdg-open" "$HOME/.local/bin/xdg-open" ||
+            echo "Warning: could not link xdg-open into ~/.local/bin; browser sign-in may fall back to device code." >&2
+
         if mkdir -p "$tmp_dir/cred-provider" &&
             tar xzf "$archive" -C "$tmp_dir/cred-provider" &&
-            SKIP_ARTIFACTS_CREDPROVIDER=true \
-                "$tmp_dir/cred-provider/install.sh" --user; then
+            SKIP_ARTIFACTS_CREDPROVIDER=true SKIP_XDG_OPEN=true \
+                "$tmp_dir/cred-provider/install.sh" --user </dev/null; then
             echo "devcontainer-credprovider installed successfully."
             install_status=0
         else

@@ -30,5 +30,14 @@ for _xdg in /usr/bin/xdg-open /bin/xdg-open /usr/local/bin/xdg-open; do
   fi
 done
 
+# Nothing system-wide (Azure Linux ships no xdg-utils): fall back to the repo's
+# own shim, which hands the URL to the VS Code client's browser. Reached by
+# path rather than by name, and only off WSL -- the one branch where that shim
+# delegates back here, so the two can never bounce.
+_own_xdg="$(dirname "$(realpath "${BASH_SOURCE:-$0}")")/xdg-open"
+if [ -x "$_own_xdg" ]; then
+  exec "$_own_xdg" "$target"
+fi
+
 echo "open: no handler found (install xdg-utils or run inside WSL)" >&2
 exit 1

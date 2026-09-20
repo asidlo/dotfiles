@@ -235,6 +235,16 @@ Like the Windows side, it records every tool install in a ledger and prints a su
 the first failure; only symlink creation stays fail-fast. It may prompt for your WSL `sudo` password (e.g. `locale-gen`);
 run it in an interactive terminal.
 
+Each step runs with its **stdin closed**. A step that stops to ask a question has nobody to answer it, and because
+stdout is piped through `tee` the prompt can stay buffered while the run just looks frozen — which is what VS Code's
+`copilot` shim did with *"Install GitHub Copilot CLI? ['y/N']"*. With `/dev/null` on stdin the same prompt fails
+immediately, lands in the step log, and the summary points at it.
+
+`install.sh` also links `pbcopy`, `pbpaste`, `open` and `xdg-open` from `bin/` into `~/.local/bin`. `xdg-open` is there
+for the auth flows rather than for you: the NuGet credential providers launch their device-code browser through it and
+GCM searches `$PATH` for it before anything else, yet Azure Linux ships no `xdg-utils`. On a display-less remote the
+shim hands the URL to the VS Code client's browser helper.
+
 ### Windows interop shims
 
 `etc/wsl.conf` sets `appendWindowsPath=false` so the ~15 Windows directories stay out of `$PATH` inside WSL. The side
@@ -325,6 +335,8 @@ under a second with instructions instead of hanging for five minutes.
 | `Networking-nfv` prompts for UAC every time | Expected — `sudo` elevates per launch. Use the `Developer PowerShell for VS 2022` profile when you don't need admin. |
 | `agency` reports "Error obtaining access token" / "Authentication failed" | The Agency installer runs `cmd.exe`, which `appendWindowsPath=false` removes from `$PATH`. Run `bash scripts/wsl-interop-shims.sh`, then `bash scripts/agency.sh` — see [Windows interop shims](#windows-interop-shims). `install.sh` now does both automatically. |
 | `pbcopy` doesn't reach the Windows clipboard, or `open` fails in WSL | Same cause as the row above: `clip.exe` / `cmd.exe` aren't on `$PATH`. Run `bash scripts/wsl-interop-shims.sh` and open a new shell. |
+| `install.sh` hangs on `copilot.sh` until you press Enter | Fixed. VS Code's Copilot Chat extension puts its own `copilot` shim on `$PATH` in integrated terminals; `command -v` found it, so the script skipped the install and the shim then asked *"Install GitHub Copilot CLI? ['y/N']"* on a stdin nobody was reading. `scripts/copilot.sh` now resolves past that shim, and every step runs with stdin closed. |
+| `dotnet.sh` fails with `/usr/local/bin/xdg-open: Permission denied` | Fixed. The devcontainer-credprovider installer writes its own `xdg-open` shim to `/usr/local/bin`, which a non-root user cannot do, and its `set -e` failed the whole step over it. `scripts/dotnet.sh` now links `bin/xdg-open` into `~/.local/bin` and passes `SKIP_XDG_OPEN=true`. |
 | Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |
 | Font not in terminal | Log off / rebuild font cache; verify Meslo under `%WINDIR%\Fonts`. |
 | Symlink errors | Ensure the repo path is accessible; check permissions and OneDrive sync state. |
