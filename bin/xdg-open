@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# xdg-open for images that never ship xdg-utils (Azure Linux / Mariner remotes).
+#
+# Auth flows look this handler up by *name*, not by protocol: Microsoft's
+# artifacts-credprovider shells out to xdg-open for its device-code browser, and
+# GCM's BrowserUtils.TryGetLinuxShellExecuteHandler searches $PATH for xdg-open
+# before anything else. Azure Linux has no xdg-utils package at all, and the
+# devcontainer-credprovider installer's own fallback writes the shim to
+# /usr/local/bin -- which a normal user cannot do, so its `set -e` aborted and
+# took scripts/dotnet.sh down with it. Installing here needs no sudo.
+#
+# On a display-less remote the browser lives on the *client*: VS Code exports
+# BROWSER=<server>/bin/helpers/browser.sh, which forwards --openExternal over
+# the CLI IPC socket. bin/git-credential-manager-remote resolves it the same way
+# and relies on this shim being on $PATH; keep the two in sync.
+
+set -euo pipefail
+
+if [ "$#" -lt 1 ]; then
+  echo "xdg-open: usage: xdg-open <file-or-url>" >&2
+  exit 1
+fi
+
+# Resolve through the ~/.local/bin symlink so the sibling `open` is found in the
+# repo, not in the symlink's directory.
+_bin_dir=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
+
+_is_wsl() { grep -qi microsoft /proc/version 2>/dev/null || [ -n "${WSL_DISTRO_NAME:-}" ]; }
+
+# WSL has a better answer than any Linux handler (wslview / cmd.exe start), and
+# bin/open already implements it. No recursion: open only calls back into
+# xdg-open on its non-WSL path, which this branch has already excluded.
+if _is_wsl && [ -x "$_bin_dir/open" ]; then
+  exec "$_bin_dir/open" "$@"
+fi
+
+# A real xdg-utils install wins if the image grows one. Absolute paths only:
+# this shim is itself on $PATH under the name xdg-open, so resolving by name
+# would exec itself.
+for _xdg in /usr/bin/xdg-open /bin/xdg-open; do
+  if [ -x "$_xdg" ]; then
+    exec "$_xdg" "$@"
+  fi
+done
+
+# Prefer whatever VS Code already exported; fall back to the most recently
+# installed server, newest first, so a stale build is never preferred.
+if [ -z "${BROWSER:-}" ] || [ ! -x "${BROWSER:-}" ]; then
+  _browser=$(ls -1dt \
+    "$HOME"/.vscode-server/cli/servers/*/server/bin/helpers/browser.sh \
+    "$HOME"/.vscode-server/bin/*/bin/helpers/browser.sh \
+    2>/dev/null | head -n 1 || true)
+  if [ -n "$_browser" ] && [ -x "$_browser" ]; then
+    BROWSER="$_browser"
+  fi
+fi
+
+# browser.sh talks to the VS Code client over this socket. Outside a VS Code
+# terminal (a plain ssh login, a git hook) it is unset and the open silently
+# does nothing, so pick the newest live socket instead.
+if [ -z "${VSCODE_IPC_HOOK_CLI:-}" ]; then
+  _sock=$(ls -1t /run/user/"$(id -u)"/vscode-ipc-*.sock 2>/dev/null | head -n 1 || true)
+  if [ -n "$_sock" ] && [ -S "$_sock" ]; then
+    export VSCODE_IPC_HOOK_CLI="$_sock"
+  fi
+fi
+
+if [ -n "${BROWSER:-}" ] && [ -x "${BROWSER:-}" ]; then
+  exec "$BROWSER" "$@"
+fi
+
+echo "xdg-open: no handler found for '$1'." >&2
+echo "xdg-open: install xdg-utils, or run from a VS Code terminal so BROWSER is set." >&2
+exit 1

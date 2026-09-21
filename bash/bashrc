@@ -1,12 +1,18 @@
 # Add this lines at the top of .bashrc:
 [[ $- == *i* ]] && [ -f ~/.local/share/blesh/ble.sh ] && source ~/.local/share/blesh/ble.sh --noattach
 
-bind 'set completion-ignore-case on'
-bind 'set show-all-if-ambiguous on'
-bind 'set menu-complete-display-prefix on'
-bind 'TAB: menu-complete'
+# Readline and tty tweaks are interactive-only. A non-interactive login shell
+# sources this file too (`bash -lc ...`, which is how install.ps1 Phase 6 runs
+# install.sh), and there `bind` prints "line editing not enabled" and `stty`
+# fails with "Inappropriate ioctl for device".
+if [[ $- == *i* ]]; then
+    bind 'set completion-ignore-case on'
+    bind 'set show-all-if-ambiguous on'
+    bind 'set menu-complete-display-prefix on'
+    bind 'TAB: menu-complete'
 
-stty -ixon
+    [ -t 0 ] && stty -ixon
+fi
 
 # get current branch in git repo
 function parse_git_branch() {
@@ -113,7 +119,7 @@ export FZF_DEFAULT_OPTS='
 
 # Add this line at the end of .bashrc:
 [[ ! ${BLE_VERSION-} ]] || ble-attach
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env" || true
 
 # SSH Agent forwarding workaround for VS Code
 if [ -z "$SSH_AUTH_SOCK" ] && [ -S "/tmp/ssh-agent-$USER/agent.sock" ]; then
@@ -127,11 +133,70 @@ export PATH="$HOME/.local/bin:$PATH"
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
 command -v direnv >/dev/null 2>&1 && eval "$(direnv hook bash)"
 
-# Modern ls via eza when available
+# Modern ls via eza when available.
+#
+# `ll` is a function below, not an alias, and this unalias must stay OUTSIDE the
+# if-block. bash and zsh expand aliases while *parsing*, and they parse the whole
+# `if ... fi` compound command before running any of it -- so an unalias inside
+# the block executes far too late. With a live `ll` alias in scope (zsh/zshenv
+# sets one) the definition below is expanded into `ls -AlFG() {` and dies with a
+# syntax error, silently leaving the old alias in place.
+unalias ll 2>/dev/null || true
+
 if command -v eza >/dev/null 2>&1; then
     alias ls='eza --icons'
-    alias ll='eza -la --icons --git'
     alias lt='eza --tree'
+
+    # `eza --git` drives libgit2 across the whole tree. On the 9p/drvfs Windows
+    # mounts WSL exposes under /mnt that costs ~17s for a single listing against
+    # ~90ms without it; on ext4 it is free. So ask for git columns only when the
+    # target actually lives on local storage.
+    #
+    # Returns 0 (use --git) when detection fails, e.g. BSD/macOS stat, which has
+    # no `-f -c` -- that preserves the old unconditional behaviour rather than
+    # silently dropping a column on platforms this heuristic wasn't written for.
+    _eza_local_fs() {
+        local fstype
+        fstype=$(stat -f -c %T -- "$1" 2>/dev/null) || return 0
+        case $fstype in
+            v9fs | 9p | drvfs | cifs | smb2 | nfs | nfs4 | fuseblk) return 1 ;;
+            '') return 0 ;;
+            *) return 0 ;;
+        esac
+    }
+
+
+
+
+
+    ll() {
+        local arg
+        local -a targets=()
+        # eza flags can take a separate value word (`--sort name`) and options
+        # may sit on either side of the path, so no positional rule is safe:
+        # `ll /mnt/q --sort name` would pick `name` if such a file existed.
+        # Collect every argument that is not a flag and does exist, then drop
+        # --git if *any* of them lives on a slow filesystem. Erring that way
+        # costs one column; erring the other way costs ~17s per listing.
+        for arg in "$@"; do
+            case $arg in
+                -*) continue ;;
+            esac
+            [ -e "$arg" ] && targets+=("$arg")
+        done
+        [ ${#targets[@]} -eq 0 ] && targets=(.)
+        for arg in "${targets[@]}"; do
+            if ! _eza_local_fs "$arg"; then
+                eza -la --icons "$@"
+                return
+            fi
+        done
+        eza -la --icons --git "$@"
+    }
+else
+    # No eza: the unalias above dropped the plain `alias ll="ls -l"` set further
+    # up this file, so restore that behaviour instead of leaving ll undefined.
+    ll() { ls -l "$@"; }
 fi
 
 export NVM_DIR="$HOME/.nvm"
@@ -139,7 +204,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # BEGIN Agency MANAGED BLOCK
-if [[ ":${PATH}:" != *":/root/.config/agency/CurrentVersion:"* ]]; then
-    export PATH="/root/.config/agency/CurrentVersion:${PATH}"
+if [[ ":${PATH}:" != *":$HOME/.config/agency/CurrentVersion:"* ]]; then
+    export PATH="$HOME/.config/agency/CurrentVersion:${PATH}"
 fi
 # END Agency MANAGED BLOCK

@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: agency
+description: Install the internal agency tool.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

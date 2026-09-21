@@ -100,7 +100,7 @@
   # st  = status -sb -unormal
 # https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-git#git-credential-manager-setup
 [credential]
-  helper = !/usr/bin/gh auth git-credential
+  helper = !gh auth git-credential
   useHttpPath = true
 [credential "https://dev.azure.com"]
   helper =

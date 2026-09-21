@@ -1,0 +1,6 @@
+$schema: "1.0"
+name: sudo-inline
+description: Put Sudo for Windows into inline mode so elevated profiles stay in the current window.
+parameters: {}
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

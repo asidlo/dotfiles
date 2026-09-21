@@ -2,13 +2,13 @@ $schema: "1.0"
 name: wsl-bootstrap
 description: Install and configure a WSL distro (Ubuntu) with baseline settings and tooling.
 parameters:
-  distro:
+  Distro:
     type: string
     description: Distro name to install (as recognized by wsl --list --online). Defaults to Ubuntu.
     required: false
-  username:
+  WslUser:
     type: string
-    description: Username to create inside the distro (if first-run automation is supported later).
+    description: Distro user that should own user-scoped artifacts (win32yank shim). Defaults to the distro's default user.
     required: false
 command: |
-  powershell -ExecutionPolicy Bypass -File script.ps1 -distro ${{ parameters.distro }} -username ${{ parameters.username }}
+  powershell -ExecutionPolicy Bypass -File script.ps1 -Distro ${{ parameters.Distro }} -WslUser ${{ parameters.WslUser }}
