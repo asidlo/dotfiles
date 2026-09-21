@@ -121,7 +121,9 @@ tooling (fd, fzf, bat, ripgrep, zoxide, direnv, eza, btop, starship, zsh, gh, az
 — rust, lazygit, nvim, go, npm, dotnet, tmux). It self-locates via `realpath`, so running it from the repo (including the
 `/mnt/...` Windows mount) works. `.gitattributes` keeps repo `*.sh` files `LF` so they run correctly under WSL.
 
-It may prompt for your WSL `sudo` password (e.g. `locale-gen`); run it in an interactive terminal.
+It may prompt for your WSL `sudo` password (e.g. `locale-gen`); run it in an interactive terminal. On Ubuntu,
+Debian, Mariner, and Azure Linux, a root invocation installs `sudo` first when it is missing. A non-root user without
+`sudo` must run `scripts/ensure-sudo.sh` as root once, then rerun `install.sh` as the normal user.
 
 ## Idempotency & re-runs
 

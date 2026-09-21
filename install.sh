@@ -10,6 +10,8 @@ SCRIPT_DIR="$DOTFILES_DIR/scripts"
 
 source /etc/os-release
 
+"$SCRIPT_DIR/ensure-sudo.sh"
+
 # Only update locale if os is ubuntu or debian
 if [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
   sudo locale-gen "en_US.UTF-8"
