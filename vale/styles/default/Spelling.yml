@@ -1,7 +1,0 @@
-extends: spelling
-message: "Did you really mean '%s'?"
-level: warning
-ignore:
-  - en.utf-8.add
-filters:
-  - "^[A-Z]"

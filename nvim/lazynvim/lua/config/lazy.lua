@@ -36,8 +36,13 @@ local spec = {
   { import = "lazyvim.plugins.extras.editor.inc-rename" },
   { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
   { import = "lazyvim.plugins.extras.util.project" },
+  -- bashls (which surfaces shellcheck diagnostics itself) plus filetype and
+  -- treesitter support for dotfile formats.
+  { import = "lazyvim.plugins.extras.util.dot" },
   { import = "lazyvim.plugins.extras.test.core" },
   { import = "lazyvim.plugins.extras.linting.eslint" },
+  -- Formats markdown, json, yaml, css, html and friends.
+  { import = "lazyvim.plugins.extras.formatting.prettier" },
 }
 
 -- TODO (AS): Remove once git issue downloading python dap is resolved

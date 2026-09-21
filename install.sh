@@ -90,6 +90,8 @@ if [ "$MINIMAL_ENV" -eq 0 ]; then
   "$SCRIPT_DIR/rust.sh"
   "$SCRIPT_DIR/lazygit.sh"
   "$SCRIPT_DIR/nvim.sh" -d ~/.local/bin
+  "$SCRIPT_DIR/clangd.sh"
+  "$SCRIPT_DIR/nvim-tools.sh"
   "$SCRIPT_DIR/go.sh"
   "$SCRIPT_DIR/npm.sh"
   "$SCRIPT_DIR/dotnet.sh"
