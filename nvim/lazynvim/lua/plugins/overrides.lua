@@ -1,3 +1,8 @@
+-- Upstream clangd and cbfmt publish no Linux arm64 binaries, so mason can never
+-- install them on this architecture ("The current platform is unsupported").
+local uname = vim.loop.os_uname()
+local is_linux_arm64 = uname.sysname == "Linux" and (uname.machine == "aarch64" or uname.machine == "arm64")
+
 local spec = {
   { "folke/edgy.nvim", opts = { animate = { enabled = false } } },
   {
@@ -17,6 +22,8 @@ local spec = {
     "stevearc/conform.nvim",
     opts = {
       formatters_by_ft = {
+        -- On arm64, cbfmt comes from
+        -- `cargo install --git https://github.com/lukas-reineke/cbfmt --locked`
         markdown = { "markdownlint", "cbfmt" },
         bash = { "shfmt" },
         zsh = { "shfmt" },
@@ -33,11 +40,13 @@ local spec = {
         "codespell",
         "vale",
         "bicep-lsp",
-        "cbfmt",
         "lemminx",
         "beautysh",
         "powershell-editor-services",
       })
+      if not is_linux_arm64 then
+        table.insert(opts.ensure_installed, "cbfmt")
+      end
     end,
   },
   {
@@ -88,6 +97,21 @@ local disable_omnisharp = {
     },
   },
 }
+
+-- clangd has no Linux arm64 release; use the system binary from PATH
+-- (`sudo apt install clangd`) rather than letting mason fail on every startup.
+local clangd_from_path = {
+  "neovim/nvim-lspconfig",
+  opts = {
+    servers = {
+      clangd = { mason = false },
+    },
+  },
+}
+
+if is_linux_arm64 then
+  table.insert(spec, clangd_from_path)
+end
 
 if vim.loop.os_uname().sysname == "Windows_NT" then
   table.insert(spec, disable_omnisharp)
