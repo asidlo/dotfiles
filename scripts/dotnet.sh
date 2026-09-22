@@ -92,6 +92,19 @@ if command -v gh >/dev/null 2>&1 || command -v curl >/dev/null 2>&1; then
             SKIP_ARTIFACTS_CREDPROVIDER=true SKIP_XDG_OPEN=true \
                 "$tmp_dir/cred-provider/install.sh" --user </dev/null; then
             echo "devcontainer-credprovider installed successfully."
+            # Invalidate NuGet's plugin cache. NuGet caches each plugin's
+            # operation claims under $XDG_DATA_HOME/NuGet/plugin-cache, keyed by
+            # plugin path. A cache baked before this provider existed -- e.g.
+            # inside a container image that only shipped CredentialProvider.Microsoft
+            # -- makes NuGet trust the stale claims and never launch the provider
+            # we just installed. Restores then fail with 401/NU1301 and no plugin
+            # log at all, which looks exactly like the provider was never installed.
+            # `plugins-cache` is undocumented in `dotnet nuget locals --help`
+            # (which lists only all|http-cache|global-packages|temp) but works;
+            # fall back to removing the directory so this cannot silently no-op.
+            dotnet nuget locals plugins-cache --clear >/dev/null 2>&1 ||
+                rm -rf "${XDG_DATA_HOME:-$HOME/.local/share}/NuGet/plugin-cache" ||
+                echo "Warning: could not clear NuGet plugin cache; run 'dotnet nuget locals all --clear' if restores 401." >&2
             install_status=0
         else
             install_status=$?
