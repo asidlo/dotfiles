@@ -2,7 +2,14 @@
 
 source /etc/os-release
 
-if command -v az &>/dev/null; then
+# `command -v az` is not a usable probe here. Codespaces images ship a shim at
+# /usr/local/share/codespace-shims/az that intercepts ADO token requests and
+# otherwise execs the *real* az resolved from PATH. With no real az underneath
+# it just prints "Azure CLI not found in PATH" and exits 1 -- so the name
+# resolves while the CLI is missing, and this step skipped, reported success and
+# installed nothing. Probe that az actually runs instead of that it merely
+# resolves; the shim delegates once a real CLI is present.
+if az version >/dev/null 2>&1; then
   exit 0
 fi
 
@@ -77,7 +84,7 @@ case "$ID" in
   ;;
 esac
 
-if ! command -v az >/dev/null 2>&1; then
-  echo "azure-cli: install reported success but 'az' is not on PATH" >&2
+if ! az version >/dev/null 2>&1; then
+  echo "azure-cli: install reported success but 'az' still does not run" >&2
   exit 1
 fi

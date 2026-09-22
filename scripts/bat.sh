@@ -49,11 +49,34 @@ fi
 
 source /etc/os-release
 
+# Azure Linux ships no bat package, and `cargo install` is not a usable fallback:
+# building from source needs a working rustc, which segfaults on start-up in
+# emulated environments (rustc's bundled jemalloc assumes userspace pointers are
+# 48-bit clean, and faults on its first allocation when they are not). Download
+# the prebuilt static musl binary instead -- the same approach eza.sh takes.
+# Installed as both names so the zsh alias and the bash call site both resolve.
+install_bat_from_release() {
+  local arch tmp
+  arch=$(uname -m)
+  case "$arch" in
+  x86_64 | aarch64) ;;
+  *)
+    echo "No prebuilt bat binary for architecture '$arch'." >&2
+    return 1
+    ;;
+  esac
+  mkdir -p ~/.local/bin
+  tmp=$(mktemp -d)
+  curl -fsSL "https://github.com/sharkdp/bat/releases/download/v${BAT_VERSION}/bat-v${BAT_VERSION}-${arch}-unknown-linux-musl.tar.gz" -o "$tmp/bat.tar.gz" || { rm -rf "$tmp"; return 1; }
+  tar -xzf "$tmp/bat.tar.gz" -C "$tmp" --strip-components=1 || { rm -rf "$tmp"; return 1; }
+  install -m 0755 "$tmp/bat" ~/.local/bin/bat || { rm -rf "$tmp"; return 1; }
+  ln -sfv ~/.local/bin/bat ~/.local/bin/batcat
+  rm -rf "$tmp"
+}
+
 case "$ID" in
 "mariner" | "azurelinux")
-  SCRIPT_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
-  "$SCRIPT_DIR/rust.sh"
-  ~/.cargo/bin/cargo install bat --version "$BAT_VERSION"
+  install_bat_from_release
   ;;
 "ubuntu" | "debian")
   ARCH=$(dpkg --print-architecture)

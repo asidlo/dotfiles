@@ -6,11 +6,32 @@ fi
 
 source /etc/os-release
 
+# Azure Linux ships no fd package, and `cargo install` is not a usable fallback:
+# building from source needs a working rustc, which segfaults on start-up in
+# emulated environments (rustc's bundled jemalloc assumes userspace pointers are
+# 48-bit clean, and faults on its first allocation when they are not). Download
+# the prebuilt static musl binary instead -- the same approach eza.sh takes.
+install_fd_from_release() {
+  local arch tmp
+  arch=$(uname -m)
+  case "$arch" in
+  x86_64 | aarch64) ;;
+  *)
+    echo "No prebuilt fd binary for architecture '$arch'." >&2
+    return 1
+    ;;
+  esac
+  mkdir -p ~/.local/bin
+  tmp=$(mktemp -d)
+  curl -fsSL "https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-${arch}-unknown-linux-musl.tar.gz" -o "$tmp/fd.tar.gz" || { rm -rf "$tmp"; return 1; }
+  tar -xzf "$tmp/fd.tar.gz" -C "$tmp" --strip-components=1 || { rm -rf "$tmp"; return 1; }
+  install -m 0755 "$tmp/fd" ~/.local/bin/fd || { rm -rf "$tmp"; return 1; }
+  rm -rf "$tmp"
+}
+
 case "$ID" in
 "mariner" | "azurelinux")
-  SCRIPT_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
-  "$SCRIPT_DIR/rust.sh"
-  ~/.cargo/bin/cargo install fd-find --version "$FD_VERSION"
+  install_fd_from_release
   ;;
 "ubuntu" | "debian")
   ARCH=$(dpkg --print-architecture)
