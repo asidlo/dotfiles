@@ -240,8 +240,12 @@ ensure_azure_cli_login() {
 	# Let az warn normally here. It prints the sign-in URL at warning level, and
 	# --only-show-errors would swallow the one line that rescues a run where the
 	# browser fails to open. Only its success JSON is noise worth dropping.
+	#
+	# --allow-no-subscriptions because a corporate account often has none, and
+	# without it az treats an otherwise successful sign-in as a failure. The
+	# installer only wants a token; it never looks at a subscription.
 	echo "Signing in to Azure CLI; a browser window will open..."
-	if az login >/dev/null; then
+	if az login --allow-no-subscriptions >/dev/null; then
 		return 0
 	fi
 
