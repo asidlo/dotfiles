@@ -279,27 +279,48 @@ trap 'rm -f "$agency_log"' EXIT
 report_agency_skipped() {
 	echo >&2
 	echo "WARNING: agency was not installed -- its installer must sign in first." >&2
-	echo "  Cause: no controlling terminal is available for the interactive auth flow." >&2
-	echo "  Fix:   re-run from an interactive shell: bash $SCRIPT_DIR/agency.sh" >&2
+	# auth_args is assigned below but every call site runs after that, so this
+	# reads the value the run actually used. Blaming the terminal unconditionally
+	# was misleading when az was the thing carrying -- and failing -- the sign-in.
+	if [ ${#auth_args[@]} -gt 0 ]; then
+		echo "  Cause: the Azure CLI token did not carry the sign-in, and there is no" >&2
+		echo "         terminal here to complete it interactively instead." >&2
+		echo "  Fix:   az login && bash $SCRIPT_DIR/agency.sh" >&2
+	else
+		echo "  Cause: no controlling terminal is available for the interactive auth flow." >&2
+		echo "  Fix:   re-run from an interactive shell: bash $SCRIPT_DIR/agency.sh" >&2
+	fi
 }
 
-# With no terminal at all nobody can complete the sign-in, so bound the
-# installer: left alone it still starts its web flow and blocks through three
-# five-minute timeouts.
 if has_controlling_terminal; then
 	interactive_auth=1
 else
 	interactive_auth=0
-	echo "No terminal available for the agency sign-in; skipping this step." >&2
 fi
 
 # Falls back to the installer's own default when az cannot carry the sign-in,
-# so a machine without Azure CLI still gets the behaviour it had before.
+# so a machine without Azure CLI still gets the behaviour it had before. This
+# has to follow interactive_auth: ensure_azure_cli_login reads it to decide
+# whether it is allowed to run an interactive `az login`.
 auth_args=()
 if ensure_azure_cli_login; then
 	auth_args=(--auth-method=AzureCli)
 fi
 
+# Only the browser sign-in needs a terminal; --auth-method=AzureCli reuses the
+# token az already holds, so a headless run is fine there. Warn only when
+# nothing can carry the sign-in, and describe what actually happens: the
+# installer still runs, bounded below, and only the failure paths below report
+# the step as skipped. Announcing a skip here was wrong on both counts.
+if [ "$interactive_auth" -eq 0 ] && [ ${#auth_args[@]} -eq 0 ]; then
+	echo "No terminal for the agency sign-in, and no Azure CLI token to use instead." >&2
+	echo "  Running the installer anyway, bounded to 5 minutes; this step reports" >&2
+	echo "  itself as skipped if the sign-in cannot complete." >&2
+fi
+
+# With no terminal at all nobody can complete the sign-in, so bound the
+# installer: left alone it still starts its web flow and blocks through three
+# five-minute timeouts.
 installer_runner=(sh -s agency "${auth_args[@]}")
 if [ "$interactive_auth" -eq 0 ] && command -v timeout >/dev/null 2>&1; then
 	installer_runner=(timeout 300 sh -s agency "${auth_args[@]}")
