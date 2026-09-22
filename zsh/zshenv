@@ -28,6 +28,14 @@ case $OS in
         export BROWSER=msedge.exe
       fi
     fi
+    # Opt-in browser bridge for the AppGw devcontainer, which reads this as
+    # ${localEnv:APPGW_BROWSER} and leaves BROWSER empty when it is unset.
+    # The guard tests the host copy of the shim; the exported value is the
+    # path it is mounted at *inside* the container.
+    if [ -x "$HOME/.local/share/appgw-devbridge/appgw-winbrowser" ]; then
+      export APPGW_BROWSER=/opt/appgw-devbridge/appgw-winbrowser
+    fi
+
     WIN32YANK_PATH=/mnt/c/tools/neovim/nvim-win64/bin/win32yank.exe
     if [ -f "$WIN32YANK_PATH" ]; then
       if [ ! -L ~/.local/bin/win32yank.exe ]; then
