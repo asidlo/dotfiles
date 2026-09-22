@@ -8,3 +8,7 @@ clink/clink_error*
 clink/clink.log
 clink/.history
 clink/*.dmp
+
+# qemu crashes in the devcontainer drop ~270MB cores into $PWD; they once
+# accumulated 1.2GB here before anyone noticed.
+*.core
