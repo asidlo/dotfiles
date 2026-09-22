@@ -320,7 +320,16 @@ run_step "$SCRIPT_DIR/btop.sh"
 run_step "$SCRIPT_DIR/starship.sh"
 run_step "$SCRIPT_DIR/zsh.sh"
 run_step "$SCRIPT_DIR/gh.sh"
-run_step "$SCRIPT_DIR/artifacts-credprovider.sh"
+# Only needed where dotnet.sh (full installs only, below) won't install the
+# silent devcontainer-credprovider. Installing both is actively harmful: NuGet
+# queries Microsoft's interactive provider first, and once its session-token
+# cache under ~/.local/share/MicrosoftCredentialProvider is cold -- e.g. a
+# freshly recreated container -- it answers `dotnet restore --interactive` with
+# a DeviceFlow prompt instead of deferring to the silent provider. dotnet.sh
+# already passes SKIP_ARTIFACTS_CREDPROVIDER=true for the same reason.
+if [ "$MINIMAL_ENV" -ne 0 ]; then
+  run_step "$SCRIPT_DIR/artifacts-credprovider.sh"
+fi
 run_step "$SCRIPT_DIR/az.sh"
 run_step "$SCRIPT_DIR/copilot.sh"
 run_step "$SCRIPT_DIR/agency.sh"
