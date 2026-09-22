@@ -4,14 +4,23 @@ set -o pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 
+# A container running on the WSL2 kernel inherits "microsoft" in /proc/version
+# and /proc/sys/kernel/osrelease, but none of the Windows interop those strings
+# imply: no $WSL_DISTRO_NAME, no /run/WSL, no drvfs mount, no cmd.exe. Testing
+# the kernel alone made devcontainers look like WSL hosts, so this script chased
+# wslu packages and interop shims that cannot exist there. Test for interop
+# itself instead, and treat containers as the plain Linux boxes they are.
 is_wsl() {
-	if [ -n "$WSL_DISTRO_NAME" ]; then
+	if [ -f /.dockerenv ] || [ -f /run/.containerenv ]; then
+		return 1
+	fi
+	if [ -n "$WSL_DISTRO_NAME" ] || [ -n "$WSL_INTEROP" ]; then
 		return 0
 	fi
-	if grep -qiE "(microsoft|wsl)" /proc/version 2>/dev/null; then
+	if [ -d /run/WSL ]; then
 		return 0
 	fi
-	if grep -qiE "(microsoft|wsl)" /proc/sys/kernel/osrelease 2>/dev/null; then
+	if grep -qiE "(microsoft|wsl)" /proc/sys/kernel/osrelease 2>/dev/null && [ -d /mnt/c ]; then
 		return 0
 	fi
 	return 1
@@ -190,6 +199,22 @@ ensure_interop_shims() {
 	fi
 }
 
+# Sign-in is interactive: it needs a Windows browser reached through cmd.exe on
+# WSL, or a controlling terminal to complete a web/device-code flow. With
+# neither, azureauth still starts the web flow and blocks through three
+# five-minute timeouts before giving up -- fifteen minutes of an unattended
+# install spent waiting for a prompt nobody can answer.
+#
+# /dev/tty must be *opened*, not just tested with -e: it exists as a device node
+# even in a container with no controlling terminal (install.sh relies on the
+# same distinction for its sudo warm-up).
+can_authenticate_interactively() {
+	if is_wsl && command -v cmd.exe >/dev/null 2>&1; then
+		return 0
+	fi
+	[ -t 0 ] && (exec 3<>/dev/tty) 2>/dev/null
+}
+
 if is_wsl; then
 	install_wslview
 	ensure_interop_shims
@@ -206,7 +231,28 @@ ensure_libicu
 agency_log=$(mktemp)
 trap 'rm -f "$agency_log"' EXIT
 
-curl -sSfL https://aka.ms/InstallTool.sh | sh -s agency 2>&1 | tee "$agency_log"
+report_agency_skipped() {
+	echo >&2
+	echo "WARNING: agency was not installed -- its installer must sign in first." >&2
+	echo "  Cause: no browser or controlling terminal is available for the interactive auth flow." >&2
+	echo "  Fix:   re-run from an interactive shell: bash $SCRIPT_DIR/agency.sh" >&2
+}
+
+# Decide up front whether anyone can answer an auth prompt. When nobody can,
+# bound the installer so the doomed sign-in costs seconds instead of the three
+# five-minute azureauth timeouts it would otherwise burn.
+installer_runner=(sh -s agency)
+if can_authenticate_interactively; then
+	interactive_auth=1
+else
+	interactive_auth=0
+	echo "No browser or terminal available for the agency sign-in; skipping this step." >&2
+	if command -v timeout >/dev/null 2>&1; then
+		installer_runner=(timeout 300 sh -s agency)
+	fi
+fi
+
+curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
 # Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0 is
 # curl, 1 is the installer. Checking only the installer would let a failed
 # download pass, because `sh` exits 0 when it reads an empty script on stdin.
@@ -220,13 +266,26 @@ if [ "$curl_rc" -ne 0 ]; then
 fi
 
 if [ "$agency_rc" -ne 0 ]; then
+	# 124 is `timeout` giving up on a sign-in we already knew nobody could
+	# complete. Treat it as a skip: an unattended run is not a broken install,
+	# and failing the step here would flag every container run red.
+	if [ "$interactive_auth" -eq 0 ] && [ "$agency_rc" -eq 124 ]; then
+		report_agency_skipped
+		exit 0
+	fi
 	echo "ERROR: the agency installer exited $agency_rc." >&2
 	exit "$agency_rc"
 fi
 
 if grep -qE 'Error obtaining access token|Authentication failed' "$agency_log"; then
+	if [ "$interactive_auth" -eq 0 ]; then
+		report_agency_skipped
+		exit 0
+	fi
 	echo >&2
-	echo "ERROR: agency installed but could not sign in." >&2
+	# Sign-in is not a post-install step: the installer trades the token for a
+	# PAT to fetch the package, so a failed sign-in means nothing was installed.
+	echo "ERROR: agency sign-in failed; the tool was not installed." >&2
 	if is_wsl && ! command -v cmd.exe >/dev/null 2>&1; then
 		echo "  Cause: cmd.exe is not on PATH (etc/wsl.conf sets appendWindowsPath=false)." >&2
 		echo "  Fix:   bash $SCRIPT_DIR/wsl-interop-shims.sh && bash $SCRIPT_DIR/agency.sh" >&2
