@@ -237,8 +237,11 @@ ensure_azure_cli_login() {
 		return 1
 	fi
 
+	# Let az warn normally here. It prints the sign-in URL at warning level, and
+	# --only-show-errors would swallow the one line that rescues a run where the
+	# browser fails to open. Only its success JSON is noise worth dropping.
 	echo "Signing in to Azure CLI; a browser window will open..."
-	if az login --only-show-errors >/dev/null; then
+	if az login >/dev/null; then
 		return 0
 	fi
 
