@@ -199,19 +199,28 @@ ensure_interop_shims() {
 	fi
 }
 
-# Sign-in is interactive: it needs a Windows browser reached through cmd.exe on
-# WSL, or a controlling terminal to complete a web/device-code flow. With
-# neither, azureauth still starts the web flow and blocks through three
-# five-minute timeouts before giving up -- fifteen minutes of an unattended
-# install spent waiting for a prompt nobody can answer.
+# Web sign-in parks a callback listener on our loopback and waits for the
+# browser to redirect back to it. That loop *does* close in a devcontainer: the
+# editor auto-forwards the listener's port, so the Windows browser's redirect to
+# localhost:<port> is tunnelled back in to us.
 #
+# What broke it was the address family, not the container. azureauth binds the
+# callback on [::1] only, while the editor's port forwarder dials 127.0.0.1 --
+# so the redirect arrived and was refused, leaving the browser spinning on a
+# dead callback and three "Failed to connect tunnel to localhost:<port> ...
+# ECONNREFUSED 127.0.0.1:<port>" pairs in the editor's remote log, one per
+# attempt. Dropping IPv6 from the .NET socket stack moves the listener onto
+# 127.0.0.1, where the forwarder can actually reach it. Verified: the listener
+# goes from [::1]:46263 to 127.0.0.1:35597 with this set.
+#
+# Prefer this over device code, which needs no callback but makes every sign-in
+# a manual code-typing exercise.
+export DOTNET_SYSTEM_NET_DISABLEIPV6=1
+
 # /dev/tty must be *opened*, not just tested with -e: it exists as a device node
 # even in a container with no controlling terminal (install.sh relies on the
 # same distinction for its sudo warm-up).
-can_authenticate_interactively() {
-	if is_wsl && command -v cmd.exe >/dev/null 2>&1; then
-		return 0
-	fi
+has_controlling_terminal() {
 	[ -t 0 ] && (exec 3<>/dev/tty) 2>/dev/null
 }
 
@@ -234,19 +243,19 @@ trap 'rm -f "$agency_log"' EXIT
 report_agency_skipped() {
 	echo >&2
 	echo "WARNING: agency was not installed -- its installer must sign in first." >&2
-	echo "  Cause: no browser or controlling terminal is available for the interactive auth flow." >&2
+	echo "  Cause: no controlling terminal is available for the interactive auth flow." >&2
 	echo "  Fix:   re-run from an interactive shell: bash $SCRIPT_DIR/agency.sh" >&2
 }
 
-# Decide up front whether anyone can answer an auth prompt. When nobody can,
-# bound the installer so the doomed sign-in costs seconds instead of the three
-# five-minute azureauth timeouts it would otherwise burn.
+# With no terminal at all nobody can complete the sign-in, so bound the
+# installer: left alone azureauth still starts its web flow and blocks through
+# three five-minute timeouts.
 installer_runner=(sh -s agency)
-if can_authenticate_interactively; then
+if has_controlling_terminal; then
 	interactive_auth=1
 else
 	interactive_auth=0
-	echo "No browser or terminal available for the agency sign-in; skipping this step." >&2
+	echo "No terminal available for the agency sign-in; skipping this step." >&2
 	if command -v timeout >/dev/null 2>&1; then
 		installer_runner=(timeout 300 sh -s agency)
 	fi
