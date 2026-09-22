@@ -1,9 +1,28 @@
 #!/bin/bash
 
-# Script directory
-SCRIPT_DIR=$(dirname "$(realpath "${BASH_SOURCE:-$0}")")
+# stylua ships prebuilt binaries, so never build it from source: `cargo install`
+# needs a working rustc, which segfaults on start-up in emulated environments
+# (its bundled jemalloc assumes userspace pointers are 48-bit clean, and faults
+# on its first allocation when they are not).
+install_stylua_from_release() {
+  local arch tmp
+  arch=$(uname -m)
+  case "$arch" in
+  x86_64 | aarch64) ;;
+  *)
+    echo "No prebuilt stylua binary for architecture '$arch'." >&2
+    return 1
+    ;;
+  esac
+  mkdir -p ~/.local/bin
+  tmp=$(mktemp -d)
+  curl -fsSL "https://github.com/JohnnyMorganz/StyLua/releases/latest/download/stylua-linux-${arch}-musl.zip" -o "$tmp/stylua.zip" || { rm -rf "$tmp"; return 1; }
+  unzip -q -o "$tmp/stylua.zip" -d "$tmp" || { rm -rf "$tmp"; return 1; }
+  install -m 0755 "$tmp/stylua" ~/.local/bin/stylua || { rm -rf "$tmp"; return 1; }
+  rm -rf "$tmp"
+}
 
-"$SCRIPT_DIR/rust.sh" && cargo install stylua
+install_stylua_from_release
 
 source /etc/os-release
 case "$ID" in
