@@ -207,15 +207,50 @@ ensure_interop_shims() {
 # What broke it was the address family, not the container. azureauth binds the
 # callback on [::1] only, while the editor's port forwarder dials 127.0.0.1 --
 # so the redirect arrived and was refused, leaving the browser spinning on a
-# dead callback and three "Failed to connect tunnel to localhost:<port> ...
-# ECONNREFUSED 127.0.0.1:<port>" pairs in the editor's remote log, one per
-# attempt. Dropping IPv6 from the .NET socket stack moves the listener onto
-# 127.0.0.1, where the forwarder can actually reach it. Verified: the listener
-# goes from [::1]:46263 to 127.0.0.1:35597 with this set.
+# dead callback and an "ECONNREFUSED 127.0.0.1:<port>" pair in the editor's
+# remote log for every attempt. Dropping IPv6 from the .NET socket stack moves
+# the listener onto 127.0.0.1, where the forwarder can reach it: verified, the
+# bind goes from [::1]:46263 to 127.0.0.1:35597.
 #
-# Prefer this over device code, which needs no callback but makes every sign-in
-# a manual code-typing exercise.
-export DOTNET_SYSTEM_NET_DISABLEIPV6=1
+# Hand that variable to azureauth alone. Exporting it put it in PathInstaller's
+# environment too, which tipped the installer into a qemu SIGSEGV -- four
+# crashes in four runs, against three clean runs immediately before and fifteen
+# here that never reproduced it. The emulator's mappings are sensitive to the
+# environment block, the same fragility that makes rustc unusable here, so the
+# installer's environment has to stay exactly what it was. That rules out
+# prepending a PATH entry as well; shim azureauth into a directory already ahead
+# of it on PATH instead, and take the shim back out on the way through.
+azureauth_shim=""
+
+install_azureauth_shim() {
+	local real shim_dir=/usr/local/bin shim=/usr/local/bin/azureauth
+
+	if [ -e "$shim" ]; then
+		# A shim left behind by an interrupted run is ours to reuse. Anything
+		# else in that slot belongs to the system and is not ours to shadow.
+		if grep -q DOTNET_SYSTEM_NET_DISABLEIPV6 "$shim" 2>/dev/null; then
+			azureauth_shim=$shim
+		fi
+		return 0
+	fi
+
+	real=$(command -v azureauth 2>/dev/null)
+	if [ -z "$real" ] || [ ! -w "$shim_dir" ]; then
+		return 0
+	fi
+
+	printf '#!/bin/sh\nexport DOTNET_SYSTEM_NET_DISABLEIPV6=1\nexec %s "$@"\n' \
+		"$real" >"$shim" 2>/dev/null || return 0
+	chmod 755 "$shim"
+	azureauth_shim=$shim
+
+	# Worth nothing unless it actually wins the PATH lookup.
+	hash -r 2>/dev/null
+	if [ "$(command -v azureauth)" != "$shim" ]; then
+		rm -f "$shim"
+		azureauth_shim=""
+	fi
+}
 
 # /dev/tty must be *opened*, not just tested with -e: it exists as a device node
 # even in a container with no controlling terminal (install.sh relies on the
@@ -238,7 +273,7 @@ ensure_libicu
 # The installer exits 0 even when sign-in fails, so the exit code alone would
 # report a broken install as success. Scan the output for the failure instead.
 agency_log=$(mktemp)
-trap 'rm -f "$agency_log"' EXIT
+trap 'rm -f "$agency_log"; if [ -n "$azureauth_shim" ]; then rm -f "$azureauth_shim"; fi' EXIT
 
 report_agency_skipped() {
 	echo >&2
@@ -278,6 +313,12 @@ installer_crashed() {
 # once accumulated 1.2GB of them. The emulator is not ours to fix, but it does
 # not get to litter whatever directory the caller happened to be standing in.
 ulimit -c 0 2>/dev/null || true
+
+install_azureauth_shim
+if [ -z "$azureauth_shim" ]; then
+	echo "Warning: could not shim azureauth; the sign-in callback may bind IPv6," >&2
+	echo "  in which case the browser redirect will hang." >&2
+fi
 
 for attempt in 1 2 3; do
 	curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
