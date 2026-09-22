@@ -200,26 +200,23 @@ ensure_interop_shims() {
 }
 
 # PathInstaller can sign in three ways -- AzureAuth, ManagedIdentity or
-# AzureCli -- and defaults to AzureAuth, which is the one method that cannot
-# work in this container. Two independent faults sit on that default.
+# AzureCli -- and defaults to AzureAuth, whose web flow cannot complete in this
+# container.
 #
-# First the browser never got back to us. Web sign-in parks a callback listener
-# on our loopback, and that loop *does* close in a devcontainer: the editor
-# auto-forwards the listener's port. But azureauth binds the callback on [::1]
-# only while the forwarder dials 127.0.0.1, so every redirect arrived and was
+# The browser never gets back to us. Web sign-in parks a callback listener on
+# our loopback, and that loop *does* close in a devcontainer: the editor
+# auto-forwards the listener's port. But AzureAuth binds the callback on [::1]
+# only while the forwarder dials 127.0.0.1, so every redirect arrives and is
 # refused -- one "ECONNREFUSED 127.0.0.1:<port>" pair per attempt in the
-# editor's remote log. Forcing the listener onto IPv4 does fix that much.
+# editor's remote log.
 #
-# Fixing it only exposed the second fault. Sign-in then genuinely succeeded --
-# the installer logged CacheLoadSucceeded and CacheSaveSucceeded -- and it
-# segfaulted immediately afterwards, on every attempt, inside that same
-# library. The crash had looked intermittent only because a run that cannot
-# reach sign-in never reaches the crash either.
+# AzureCli has no such listener: the token comes from `az`, which is already
+# signed in. When az does run its own web flow, msal binds 0.0.0.0 inside a
+# container, which the forwarder can reach.
 #
-# AzureCli sidesteps both: the token comes from `az`, so the azureauth stack is
-# never loaded and neither the bind nor the crash is reachable. It needs a
-# logged-in `az`, whose own callback binds 0.0.0.0 inside a container and so is
-# reachable by the forwarder.
+# Note this is *only* about the redirect. The segfault that dogged this script
+# is unrelated and was never an auth problem at all -- see the W^X note further
+# down, which had to be fixed before any method could finish.
 ensure_azure_cli_login() {
 	# Probe that az *runs*, not merely that the name resolves: a codespace shim
 	# can occupy it on PATH with no real Azure CLI behind it (see az.sh).
@@ -326,48 +323,47 @@ if [ "$interactive_auth" -eq 0 ] && command -v timeout >/dev/null 2>&1; then
 	installer_runner=(timeout 300 sh -s agency "${auth_args[@]}")
 fi
 
-# PathInstaller can still take a SIGSEGV from the qemu layer this container runs
-# under -- the same emulation fragility that makes rustc unusable here. Retry
-# rather than making the caller rerun the whole script.
-#
-# The crash does not reach the exit status. InstallTool.sh ends on an `export`,
-# so the pipeline reports that export's status and a PathInstaller killed by a
-# signal still looks like a clean install -- which is exactly how a crashed run
-# got reported as success. Scan the output for it instead.
+# .NET 7 turned on W^X by default: the runtime maps every page of JITted code
+# twice, once writable and once executable, and qemu-user cannot emulate that
+# double mapping. So the installer segfaulted the moment the JIT reached it --
+# reliably just past sign-in, which is what made this look like an auth problem
+# through several wrong diagnoses. It is not intermittent and it has nothing to
+# do with which sign-in method runs: AzureCli reached "Successfully obtained
+# access token" and died in the same place AzureAuth did. Turning W^X off is
+# the entire fix -- the command that had never once survived now exits 0.
+export DOTNET_EnableWriteXorExecute=0
+
+# Keep detecting a crash anyway. It does not reach the exit status:
+# InstallTool.sh ends on an `export`, so the pipeline reports that export's
+# status and a PathInstaller killed by a signal still looks like a clean
+# install -- which is exactly how a crashed run once got reported as success.
 installer_crashed() {
 	grep -qE 'Segmentation fault|core dumped' "$agency_log"
 }
 
-# Each of those crashes drops a ~270MB core into $PWD; that is how this repo
-# once accumulated 1.2GB of them. The emulator is not ours to fix, but it does
-# not get to litter whatever directory the caller happened to be standing in.
+# A crash drops a ~270MB core into $PWD; that is how this repo once accumulated
+# 1.2GB of them. The emulator is not ours to fix, but it does not get to litter
+# whatever directory the caller happened to be standing in.
 ulimit -c 0 2>/dev/null || true
 
-for attempt in 1 2 3; do
-	curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
-	# Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0
-	# is curl, 1 is the installer. Checking only the installer would let a failed
-	# download pass, because `sh` exits 0 when it reads an empty script on stdin.
-	agency_status=("${PIPESTATUS[@]}")
-	curl_rc=${agency_status[0]}
-	agency_rc=${agency_status[1]}
+curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
+# Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0
+# is curl, 1 is the installer. Checking only the installer would let a failed
+# download pass, because `sh` exits 0 when it reads an empty script on stdin.
+agency_status=("${PIPESTATUS[@]}")
+curl_rc=${agency_status[0]}
+agency_rc=${agency_status[1]}
 
-	if [ "$curl_rc" -ne 0 ]; then
-		echo "ERROR: could not download the agency installer (curl exit $curl_rc)." >&2
-		exit "$curl_rc"
-	fi
-
-	installer_crashed || break
-	if [ "$attempt" -lt 3 ]; then
-		echo "The agency installer crashed; retrying (attempt $attempt of 3)." >&2
-	fi
-done
+if [ "$curl_rc" -ne 0 ]; then
+	echo "ERROR: could not download the agency installer (curl exit $curl_rc)." >&2
+	exit "$curl_rc"
+fi
 
 if installer_crashed; then
 	echo >&2
-	echo "ERROR: the agency installer crashed on all three attempts." >&2
-	echo "  Cause: intermittent SIGSEGV from the qemu layer, not your sign-in." >&2
-	echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
+	echo "ERROR: the agency installer segfaulted under qemu." >&2
+	echo "  Expected: DOTNET_EnableWriteXorExecute=0 prevents this; it is exported above." >&2
+	echo "  Retry:    bash $SCRIPT_DIR/agency.sh" >&2
 	exit 1
 fi
 
