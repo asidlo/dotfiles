@@ -199,57 +199,51 @@ ensure_interop_shims() {
 	fi
 }
 
-# Web sign-in parks a callback listener on our loopback and waits for the
-# browser to redirect back to it. That loop *does* close in a devcontainer: the
-# editor auto-forwards the listener's port, so the Windows browser's redirect to
-# localhost:<port> is tunnelled back in to us.
+# PathInstaller can sign in three ways -- AzureAuth, ManagedIdentity or
+# AzureCli -- and defaults to AzureAuth, which is the one method that cannot
+# work in this container. Two independent faults sit on that default.
 #
-# What broke it was the address family, not the container. azureauth binds the
-# callback on [::1] only, while the editor's port forwarder dials 127.0.0.1 --
-# so the redirect arrived and was refused, leaving the browser spinning on a
-# dead callback and an "ECONNREFUSED 127.0.0.1:<port>" pair in the editor's
-# remote log for every attempt. Dropping IPv6 from the .NET socket stack moves
-# the listener onto 127.0.0.1, where the forwarder can reach it: verified, the
-# bind goes from [::1]:46263 to 127.0.0.1:35597.
+# First the browser never got back to us. Web sign-in parks a callback listener
+# on our loopback, and that loop *does* close in a devcontainer: the editor
+# auto-forwards the listener's port. But azureauth binds the callback on [::1]
+# only while the forwarder dials 127.0.0.1, so every redirect arrived and was
+# refused -- one "ECONNREFUSED 127.0.0.1:<port>" pair per attempt in the
+# editor's remote log. Forcing the listener onto IPv4 does fix that much.
 #
-# Hand that variable to azureauth alone. Exporting it put it in PathInstaller's
-# environment too, which tipped the installer into a qemu SIGSEGV -- four
-# crashes in four runs, against three clean runs immediately before and fifteen
-# here that never reproduced it. The emulator's mappings are sensitive to the
-# environment block, the same fragility that makes rustc unusable here, so the
-# installer's environment has to stay exactly what it was. That rules out
-# prepending a PATH entry as well; shim azureauth into a directory already ahead
-# of it on PATH instead, and take the shim back out on the way through.
-azureauth_shim=""
+# Fixing it only exposed the second fault. Sign-in then genuinely succeeded --
+# the installer logged CacheLoadSucceeded and CacheSaveSucceeded -- and it
+# segfaulted immediately afterwards, on every attempt, inside that same
+# library. The crash had looked intermittent only because a run that cannot
+# reach sign-in never reaches the crash either.
+#
+# AzureCli sidesteps both: the token comes from `az`, so the azureauth stack is
+# never loaded and neither the bind nor the crash is reachable. It needs a
+# logged-in `az`, whose own callback binds 0.0.0.0 inside a container and so is
+# reachable by the forwarder.
+ensure_azure_cli_login() {
+	# Probe that az *runs*, not merely that the name resolves: a codespace shim
+	# can occupy it on PATH with no real Azure CLI behind it (see az.sh).
+	if ! az version >/dev/null 2>&1; then
+		echo "Azure CLI is unavailable; falling back to the AzureAuth sign-in." >&2
+		echo "  For a sign-in that works here, install it: bash $SCRIPT_DIR/az.sh" >&2
+		return 1
+	fi
 
-install_azureauth_shim() {
-	local real shim_dir=/usr/local/bin shim=/usr/local/bin/azureauth
-
-	if [ -e "$shim" ]; then
-		# A shim left behind by an interrupted run is ours to reuse. Anything
-		# else in that slot belongs to the system and is not ours to shadow.
-		if grep -q DOTNET_SYSTEM_NET_DISABLEIPV6 "$shim" 2>/dev/null; then
-			azureauth_shim=$shim
-		fi
+	if az account show >/dev/null 2>&1; then
 		return 0
 	fi
 
-	real=$(command -v azureauth 2>/dev/null)
-	if [ -z "$real" ] || [ ! -w "$shim_dir" ]; then
+	if [ "$interactive_auth" -ne 1 ]; then
+		return 1
+	fi
+
+	echo "Signing in to Azure CLI; a browser window will open..."
+	if az login --only-show-errors >/dev/null; then
 		return 0
 	fi
 
-	printf '#!/bin/sh\nexport DOTNET_SYSTEM_NET_DISABLEIPV6=1\nexec %s "$@"\n' \
-		"$real" >"$shim" 2>/dev/null || return 0
-	chmod 755 "$shim"
-	azureauth_shim=$shim
-
-	# Worth nothing unless it actually wins the PATH lookup.
-	hash -r 2>/dev/null
-	if [ "$(command -v azureauth)" != "$shim" ]; then
-		rm -f "$shim"
-		azureauth_shim=""
-	fi
+	echo "Warning: 'az login' did not complete; falling back to AzureAuth." >&2
+	return 1
 }
 
 # /dev/tty must be *opened*, not just tested with -e: it exists as a device node
@@ -273,7 +267,7 @@ ensure_libicu
 # The installer exits 0 even when sign-in fails, so the exit code alone would
 # report a broken install as success. Scan the output for the failure instead.
 agency_log=$(mktemp)
-trap 'rm -f "$agency_log"; if [ -n "$azureauth_shim" ]; then rm -f "$azureauth_shim"; fi' EXIT
+trap 'rm -f "$agency_log"' EXIT
 
 report_agency_skipped() {
 	echo >&2
@@ -283,23 +277,30 @@ report_agency_skipped() {
 }
 
 # With no terminal at all nobody can complete the sign-in, so bound the
-# installer: left alone azureauth still starts its web flow and blocks through
-# three five-minute timeouts.
-installer_runner=(sh -s agency)
+# installer: left alone it still starts its web flow and blocks through three
+# five-minute timeouts.
 if has_controlling_terminal; then
 	interactive_auth=1
 else
 	interactive_auth=0
 	echo "No terminal available for the agency sign-in; skipping this step." >&2
-	if command -v timeout >/dev/null 2>&1; then
-		installer_runner=(timeout 300 sh -s agency)
-	fi
 fi
 
-# PathInstaller takes an intermittent SIGSEGV from the qemu layer this container
-# runs under -- the same emulation fragility that makes rustc unusable here. It
-# is transient: twelve back-to-back runs reproduced it zero times, then it hit
-# once in the wild. Retry rather than making the caller rerun the whole script.
+# Falls back to the installer's own default when az cannot carry the sign-in,
+# so a machine without Azure CLI still gets the behaviour it had before.
+auth_args=()
+if ensure_azure_cli_login; then
+	auth_args=(--auth-method=AzureCli)
+fi
+
+installer_runner=(sh -s agency "${auth_args[@]}")
+if [ "$interactive_auth" -eq 0 ] && command -v timeout >/dev/null 2>&1; then
+	installer_runner=(timeout 300 sh -s agency "${auth_args[@]}")
+fi
+
+# PathInstaller can still take a SIGSEGV from the qemu layer this container runs
+# under -- the same emulation fragility that makes rustc unusable here. Retry
+# rather than making the caller rerun the whole script.
 #
 # The crash does not reach the exit status. InstallTool.sh ends on an `export`,
 # so the pipeline reports that export's status and a PathInstaller killed by a
@@ -313,12 +314,6 @@ installer_crashed() {
 # once accumulated 1.2GB of them. The emulator is not ours to fix, but it does
 # not get to litter whatever directory the caller happened to be standing in.
 ulimit -c 0 2>/dev/null || true
-
-install_azureauth_shim
-if [ -z "$azureauth_shim" ]; then
-	echo "Warning: could not shim azureauth; the sign-in callback may bind IPv6," >&2
-	echo "  in which case the browser redirect will hang." >&2
-fi
 
 for attempt in 1 2 3; do
 	curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
@@ -372,6 +367,11 @@ if grep -qE 'Error obtaining access token|Authentication failed' "$agency_log"; 
 	if is_wsl && ! command -v cmd.exe >/dev/null 2>&1; then
 		echo "  Cause: cmd.exe is not on PATH (etc/wsl.conf sets appendWindowsPath=false)." >&2
 		echo "  Fix:   bash $SCRIPT_DIR/wsl-interop-shims.sh && bash $SCRIPT_DIR/agency.sh" >&2
+	elif [ ${#auth_args[@]} -gt 0 ]; then
+		# az answered `account show` or we would not be on this path, so the
+		# account exists and its token is the part that did not hold up.
+		echo "  Cause: the Azure CLI token was rejected -- expired, or the wrong tenant." >&2
+		echo "  Fix:   az login && bash $SCRIPT_DIR/agency.sh" >&2
 	else
 		echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
 	fi
