@@ -107,7 +107,10 @@ ubuntu)
 	fi
 	;;
 mariner | azurelinux)
-	sudo tdnf update -y
+	# makecache, not update: tdnf's `update` upgrades every installed package (it is
+	# apt's `upgrade`, not apt's `update`). See scripts/dependencies.sh. We only
+	# need fresh metadata before the install below.
+	sudo tdnf makecache
 	sudo tdnf install build-essential tmux wget curl zip unzip python3 python3-pip python3-venv -y
 	case "$(uname -m)" in
 		x86_64) NVIM_ARCH="x86_64" ;;

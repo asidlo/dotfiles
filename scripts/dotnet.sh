@@ -15,7 +15,10 @@ OS_ID=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')
 case "$OS_ID" in
 mariner | azurelinux)
     echo "Detected $OS_ID. Installing latest LTS .NET SDK via tdnf..."
-    sudo tdnf update -y
+    # makecache, not update: tdnf's `update` upgrades every installed package (it is
+    # apt's `upgrade`, not apt's `update`). See scripts/dependencies.sh. The
+    # `tdnf list available` below only needs fresh metadata.
+    sudo tdnf makecache
     latest_sdk=$(tdnf list available dotnet-sdk* 2>/dev/null | awk '/dotnet-sdk-[0-9]+\.[0-9]+/ {print $1}' | sort -V | tail -n1)
     if [ -n "$latest_sdk" ]; then
         sudo tdnf install -y "$latest_sdk"
