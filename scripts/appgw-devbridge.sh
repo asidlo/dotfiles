@@ -173,11 +173,32 @@ RestartSec=2
 [Install]
 WantedBy=default.target
 UNIT
-  # Keep the listener alive across login sessions (best effort; needs sudo).
-  sudo -n loginctl enable-linger "$USER" >/dev/null 2>&1 || true
+  # Keep the listener alive across login sessions. Without linger the user
+  # manager (user@UID.service) stops when the last session exits and takes this
+  # service down with it, so browser redirects die silently until the next
+  # login. polkit's set-self-linger grants this to an active user with no sudo
+  # at all; the sudo -n path is only a fallback for hosts without polkit, and it
+  # fails outright whenever sudo wants a password -- which is why this was a
+  # silent no-op for a day. Report the outcome rather than swallowing it: a
+  # no-op here is otherwise indistinguishable from a durable install.
+  # --no-ask-password everywhere: this runs from install.sh and must fail fast
+  # rather than block on an interactive polkit agent. $USER is not guaranteed
+  # (cron, su, CI), so resolve identity once via id -un and degrade quietly.
+  linger_user="${USER:-$(id -un 2>/dev/null)}"
+  _linger_on() { [ -n "$linger_user" ] && loginctl --no-ask-password show-user "$linger_user" --property=Linger 2>/dev/null | grep -q '^Linger=yes$'; }
+  if [ -n "$linger_user" ] && ! _linger_on; then
+    loginctl --no-ask-password enable-linger "$linger_user" >/dev/null 2>&1 ||
+      sudo -n loginctl --no-ask-password enable-linger "$linger_user" >/dev/null 2>&1 || true
+  fi
+  if _linger_on; then
+    linger_note=" (linger on)"
+  else
+    linger_note=""
+    echo "appgw-devbridge: warning - linger is off for ${linger_user:-this user}; the listener will stop when your last shell exits. Enable it with: sudo loginctl enable-linger ${linger_user:-\$(id -un)}" >&2
+  fi
   systemctl --user daemon-reload >/dev/null 2>&1 || true
   if systemctl --user enable --now appgw-url-opener.service >/dev/null 2>&1; then
-    echo "appgw-devbridge: host listener enabled on :$PORT (systemd --user)."
+    echo "appgw-devbridge: host listener enabled on :$PORT (systemd --user)$linger_note."
   else
     echo "appgw-devbridge: could not enable systemd --user service; see 'systemctl --user status appgw-url-opener'." >&2
   fi
