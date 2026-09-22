@@ -207,15 +207,50 @@ ensure_interop_shims() {
 # What broke it was the address family, not the container. azureauth binds the
 # callback on [::1] only, while the editor's port forwarder dials 127.0.0.1 --
 # so the redirect arrived and was refused, leaving the browser spinning on a
-# dead callback and three "Failed to connect tunnel to localhost:<port> ...
-# ECONNREFUSED 127.0.0.1:<port>" pairs in the editor's remote log, one per
-# attempt. Dropping IPv6 from the .NET socket stack moves the listener onto
-# 127.0.0.1, where the forwarder can actually reach it. Verified: the listener
-# goes from [::1]:46263 to 127.0.0.1:35597 with this set.
+# dead callback and an "ECONNREFUSED 127.0.0.1:<port>" pair in the editor's
+# remote log for every attempt. Dropping IPv6 from the .NET socket stack moves
+# the listener onto 127.0.0.1, where the forwarder can reach it: verified, the
+# bind goes from [::1]:46263 to 127.0.0.1:35597.
 #
-# Prefer this over device code, which needs no callback but makes every sign-in
-# a manual code-typing exercise.
-export DOTNET_SYSTEM_NET_DISABLEIPV6=1
+# Hand that variable to azureauth alone. Exporting it put it in PathInstaller's
+# environment too, which tipped the installer into a qemu SIGSEGV -- four
+# crashes in four runs, against three clean runs immediately before and fifteen
+# here that never reproduced it. The emulator's mappings are sensitive to the
+# environment block, the same fragility that makes rustc unusable here, so the
+# installer's environment has to stay exactly what it was. That rules out
+# prepending a PATH entry as well; shim azureauth into a directory already ahead
+# of it on PATH instead, and take the shim back out on the way through.
+azureauth_shim=""
+
+install_azureauth_shim() {
+	local real shim_dir=/usr/local/bin shim=/usr/local/bin/azureauth
+
+	if [ -e "$shim" ]; then
+		# A shim left behind by an interrupted run is ours to reuse. Anything
+		# else in that slot belongs to the system and is not ours to shadow.
+		if grep -q DOTNET_SYSTEM_NET_DISABLEIPV6 "$shim" 2>/dev/null; then
+			azureauth_shim=$shim
+		fi
+		return 0
+	fi
+
+	real=$(command -v azureauth 2>/dev/null)
+	if [ -z "$real" ] || [ ! -w "$shim_dir" ]; then
+		return 0
+	fi
+
+	printf '#!/bin/sh\nexport DOTNET_SYSTEM_NET_DISABLEIPV6=1\nexec %s "$@"\n' \
+		"$real" >"$shim" 2>/dev/null || return 0
+	chmod 755 "$shim"
+	azureauth_shim=$shim
+
+	# Worth nothing unless it actually wins the PATH lookup.
+	hash -r 2>/dev/null
+	if [ "$(command -v azureauth)" != "$shim" ]; then
+		rm -f "$shim"
+		azureauth_shim=""
+	fi
+}
 
 # /dev/tty must be *opened*, not just tested with -e: it exists as a device node
 # even in a container with no controlling terminal (install.sh relies on the
@@ -238,7 +273,7 @@ ensure_libicu
 # The installer exits 0 even when sign-in fails, so the exit code alone would
 # report a broken install as success. Scan the output for the failure instead.
 agency_log=$(mktemp)
-trap 'rm -f "$agency_log"' EXIT
+trap 'rm -f "$agency_log"; if [ -n "$azureauth_shim" ]; then rm -f "$azureauth_shim"; fi' EXIT
 
 report_agency_skipped() {
 	echo >&2
@@ -261,17 +296,56 @@ else
 	fi
 fi
 
-curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
-# Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0 is
-# curl, 1 is the installer. Checking only the installer would let a failed
-# download pass, because `sh` exits 0 when it reads an empty script on stdin.
-agency_status=("${PIPESTATUS[@]}")
-curl_rc=${agency_status[0]}
-agency_rc=${agency_status[1]}
+# PathInstaller takes an intermittent SIGSEGV from the qemu layer this container
+# runs under -- the same emulation fragility that makes rustc unusable here. It
+# is transient: twelve back-to-back runs reproduced it zero times, then it hit
+# once in the wild. Retry rather than making the caller rerun the whole script.
+#
+# The crash does not reach the exit status. InstallTool.sh ends on an `export`,
+# so the pipeline reports that export's status and a PathInstaller killed by a
+# signal still looks like a clean install -- which is exactly how a crashed run
+# got reported as success. Scan the output for it instead.
+installer_crashed() {
+	grep -qE 'Segmentation fault|core dumped' "$agency_log"
+}
 
-if [ "$curl_rc" -ne 0 ]; then
-	echo "ERROR: could not download the agency installer (curl exit $curl_rc)." >&2
-	exit "$curl_rc"
+# Each of those crashes drops a ~270MB core into $PWD; that is how this repo
+# once accumulated 1.2GB of them. The emulator is not ours to fix, but it does
+# not get to litter whatever directory the caller happened to be standing in.
+ulimit -c 0 2>/dev/null || true
+
+install_azureauth_shim
+if [ -z "$azureauth_shim" ]; then
+	echo "Warning: could not shim azureauth; the sign-in callback may bind IPv6," >&2
+	echo "  in which case the browser redirect will hang." >&2
+fi
+
+for attempt in 1 2 3; do
+	curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
+	# Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0
+	# is curl, 1 is the installer. Checking only the installer would let a failed
+	# download pass, because `sh` exits 0 when it reads an empty script on stdin.
+	agency_status=("${PIPESTATUS[@]}")
+	curl_rc=${agency_status[0]}
+	agency_rc=${agency_status[1]}
+
+	if [ "$curl_rc" -ne 0 ]; then
+		echo "ERROR: could not download the agency installer (curl exit $curl_rc)." >&2
+		exit "$curl_rc"
+	fi
+
+	installer_crashed || break
+	if [ "$attempt" -lt 3 ]; then
+		echo "The agency installer crashed; retrying (attempt $attempt of 3)." >&2
+	fi
+done
+
+if installer_crashed; then
+	echo >&2
+	echo "ERROR: the agency installer crashed on all three attempts." >&2
+	echo "  Cause: intermittent SIGSEGV from the qemu layer, not your sign-in." >&2
+	echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
+	exit 1
 fi
 
 if [ "$agency_rc" -ne 0 ]; then
@@ -301,5 +375,21 @@ if grep -qE 'Error obtaining access token|Authentication failed' "$agency_log"; 
 	else
 		echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
 	fi
+	exit 1
+fi
+
+# The installer's exit status cannot be trusted (see the crash note above), so
+# confirm the tool actually landed instead of inferring it from a quiet run.
+# InstallTool.sh unpacks into ~/.config/agency/CurrentVersion and only puts that
+# on PATH inside its own shell, so check the directory as well as PATH.
+if ! command -v agency >/dev/null 2>&1 &&
+	[ -z "$(ls -A "$HOME/.config/agency/CurrentVersion" 2>/dev/null)" ]; then
+	if [ "$interactive_auth" -eq 0 ]; then
+		report_agency_skipped
+		exit 0
+	fi
+	echo >&2
+	echo "ERROR: the installer reported success but no agency binary was installed." >&2
+	echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
 	exit 1
 fi
