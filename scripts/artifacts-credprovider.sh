@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# NOT part of install.sh -- kept as a manual escape hatch only.
+#
+# This installs Microsoft's artifacts-credprovider, which can do an interactive
+# DeviceFlow sign-in. dotfiles installs the silent devcontainer-credprovider
+# instead (scripts/devcontainer-credprovider.sh); running both together makes
+# NuGet stall ~87s on a DeviceFlow prompt per restore whenever this provider's
+# session-token cache is cold. Only run this by hand on a machine that has no
+# Azure identity for DefaultAzureCredential to pick up, and expect the prompt.
+
 set -e -o pipefail
 
 nuget_netcore_dir="$HOME/.nuget/plugins/netcore"
