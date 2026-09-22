@@ -279,6 +279,17 @@ done
 
 mkdir -p ~/.config && ln -sfnv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
+# Docker CLI presentation defaults are MERGED, never symlinked. `docker login`
+# writes registry credentials into the same ~/.docker/config.json, and this repo
+# is public, so a symlink here would publish them on the next login. The helper
+# copies only the keys docker/config.json declares and leaves any existing
+# "auths"/"credsStore" exactly as found.
+if command -v python3 >/dev/null 2>&1; then
+  "$DOTFILES_DIR/bin/docker-config-merge" "$DOTFILES_DIR/docker/config.json"
+else
+  echo "docker-config-merge: python3 not found, skipping ~/.docker/config.json"
+fi
+
 # Full-environment-only configs (paired with the tools installed below).
 if [ "$MINIMAL_ENV" -eq 0 ]; then
   ln -sfnv "$DOTFILES_DIR/misc/tmux.conf" ~/.tmux.conf

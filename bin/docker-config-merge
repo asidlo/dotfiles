@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""Merge presentation-only Docker CLI keys into ~/.docker/config.json.
+
+Docker keeps registry credentials in the very same file it keeps CLI formatting
+preferences, so this config can never be symlinked out of a public dotfiles
+repo the way the rest of them are: the next `docker login` would write an
+`auths` block straight into the checkout and publish it.
+
+Merging sidesteps that. Only the keys the dotfiles file actually declares are
+copied; everything else in the destination -- `auths`, `credsStore`,
+`currentContext`, plugin settings -- is left exactly as found.
+
+Usage: docker-config-merge <source.json> [dest.json]
+       dest defaults to ~/.docker/config.json
+"""
+
+import json
+import os
+import sys
+
+
+def main() -> int:
+    if not 2 <= len(sys.argv) <= 3:
+        print(__doc__.strip(), file=sys.stderr)
+        return 2
+
+    src = sys.argv[1]
+    dest = sys.argv[2] if len(sys.argv) == 3 else os.path.expanduser("~/.docker/config.json")
+
+    try:
+        with open(src) as fh:
+            incoming = json.load(fh)
+    except (OSError, ValueError) as err:
+        print(f"docker-config-merge: cannot read source {src}: {err}", file=sys.stderr)
+        return 1
+
+    if not isinstance(incoming, dict):
+        print(f"docker-config-merge: {src} is not a JSON object", file=sys.stderr)
+        return 1
+
+    existing = {}
+    if os.path.exists(dest):
+        try:
+            with open(dest) as fh:
+                existing = json.load(fh)
+        except ValueError as err:
+            # Never clobber a file we cannot parse -- it may hold the only copy
+            # of the user's credentials.
+            print(f"docker-config-merge: {dest} is not valid JSON ({err}); leaving it alone", file=sys.stderr)
+            return 1
+        except OSError as err:
+            print(f"docker-config-merge: cannot read {dest}: {err}", file=sys.stderr)
+            return 1
+
+    if not isinstance(existing, dict):
+        print(f"docker-config-merge: {dest} is not a JSON object; leaving it alone", file=sys.stderr)
+        return 1
+
+    if all(existing.get(k) == v for k, v in incoming.items()):
+        print(f"docker-config-merge: {dest} already up to date")
+        return 0
+
+    merged = dict(existing)
+    merged.update(incoming)
+
+    os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
+    # Write via a temp file in the same directory so an interrupted run cannot
+    # truncate a config that holds credentials.
+    tmp = dest + ".tmp"
+    with open(tmp, "w") as fh:
+        json.dump(merged, fh, indent=2)
+        fh.write("\n")
+    os.replace(tmp, dest)
+
+    print(f"docker-config-merge: updated {dest} ({', '.join(sorted(incoming))})")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,4 @@
+{
+  "psFormat": "table {{.Names}}\t{{.Status}}\t{{truncate .Image 38}}\t{{.RunningFor}}",
+  "imagesFormat": "table {{truncate .Repository 42}}\t{{truncate .Tag 24}}\t{{.Size}}\t{{.CreatedSince}}"
+}
