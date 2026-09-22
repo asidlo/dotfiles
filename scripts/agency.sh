@@ -261,17 +261,50 @@ else
 	fi
 fi
 
-curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
-# Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0 is
-# curl, 1 is the installer. Checking only the installer would let a failed
-# download pass, because `sh` exits 0 when it reads an empty script on stdin.
-agency_status=("${PIPESTATUS[@]}")
-curl_rc=${agency_status[0]}
-agency_rc=${agency_status[1]}
+# PathInstaller takes an intermittent SIGSEGV from the qemu layer this container
+# runs under -- the same emulation fragility that makes rustc unusable here. It
+# is transient: twelve back-to-back runs reproduced it zero times, then it hit
+# once in the wild. Retry rather than making the caller rerun the whole script.
+#
+# The crash does not reach the exit status. InstallTool.sh ends on an `export`,
+# so the pipeline reports that export's status and a PathInstaller killed by a
+# signal still looks like a clean install -- which is exactly how a crashed run
+# got reported as success. Scan the output for it instead.
+installer_crashed() {
+	grep -qE 'Segmentation fault|core dumped' "$agency_log"
+}
 
-if [ "$curl_rc" -ne 0 ]; then
-	echo "ERROR: could not download the agency installer (curl exit $curl_rc)." >&2
-	exit "$curl_rc"
+# Each of those crashes drops a ~270MB core into $PWD; that is how this repo
+# once accumulated 1.2GB of them. The emulator is not ours to fix, but it does
+# not get to litter whatever directory the caller happened to be standing in.
+ulimit -c 0 2>/dev/null || true
+
+for attempt in 1 2 3; do
+	curl -sSfL https://aka.ms/InstallTool.sh | "${installer_runner[@]}" 2>&1 | tee "$agency_log"
+	# Snapshot immediately: PIPESTATUS is clobbered by the next command. Index 0
+	# is curl, 1 is the installer. Checking only the installer would let a failed
+	# download pass, because `sh` exits 0 when it reads an empty script on stdin.
+	agency_status=("${PIPESTATUS[@]}")
+	curl_rc=${agency_status[0]}
+	agency_rc=${agency_status[1]}
+
+	if [ "$curl_rc" -ne 0 ]; then
+		echo "ERROR: could not download the agency installer (curl exit $curl_rc)." >&2
+		exit "$curl_rc"
+	fi
+
+	installer_crashed || break
+	if [ "$attempt" -lt 3 ]; then
+		echo "The agency installer crashed; retrying (attempt $attempt of 3)." >&2
+	fi
+done
+
+if installer_crashed; then
+	echo >&2
+	echo "ERROR: the agency installer crashed on all three attempts." >&2
+	echo "  Cause: intermittent SIGSEGV from the qemu layer, not your sign-in." >&2
+	echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
+	exit 1
 fi
 
 if [ "$agency_rc" -ne 0 ]; then
@@ -301,5 +334,21 @@ if grep -qE 'Error obtaining access token|Authentication failed' "$agency_log"; 
 	else
 		echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
 	fi
+	exit 1
+fi
+
+# The installer's exit status cannot be trusted (see the crash note above), so
+# confirm the tool actually landed instead of inferring it from a quiet run.
+# InstallTool.sh unpacks into ~/.config/agency/CurrentVersion and only puts that
+# on PATH inside its own shell, so check the directory as well as PATH.
+if ! command -v agency >/dev/null 2>&1 &&
+	[ -z "$(ls -A "$HOME/.config/agency/CurrentVersion" 2>/dev/null)" ]; then
+	if [ "$interactive_auth" -eq 0 ]; then
+		report_agency_skipped
+		exit 0
+	fi
+	echo >&2
+	echo "ERROR: the installer reported success but no agency binary was installed." >&2
+	echo "  Retry: bash $SCRIPT_DIR/agency.sh" >&2
 	exit 1
 fi
