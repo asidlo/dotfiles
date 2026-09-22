@@ -284,8 +284,13 @@ mkdir -p ~/.config && ln -sfnv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/stars
 # is public, so a symlink here would publish them on the next login. The helper
 # copies only the keys docker/config.json declares and leaves any existing
 # "auths"/"credsStore" exactly as found.
+# Never fatal: this is cosmetic CLI formatting, and the helper exits non-zero on
+# purpose when ~/.docker/config.json is unparseable. Under `set -e` at top level
+# that would abort the install before print_summary runs, so a broken Docker
+# config would silently cost you the whole step report.
 if command -v python3 >/dev/null 2>&1; then
-  "$DOTFILES_DIR/bin/docker-config-merge" "$DOTFILES_DIR/docker/config.json"
+  "$DOTFILES_DIR/bin/docker-config-merge" "$DOTFILES_DIR/docker/config.json" ||
+    echo "docker-config-merge: failed (exit $?), leaving ~/.docker/config.json untouched" >&2
 else
   echo "docker-config-merge: python3 not found, skipping ~/.docker/config.json"
 fi
