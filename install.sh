@@ -277,6 +277,40 @@ for shim in pbcopy pbpaste open xdg-open; do
   ln -sfnv "$DOTFILES_DIR/bin/$shim" ~/.local/bin/"$shim"
 done
 
+# ...and shadow comfort-shell's copies in ~/bin, which outranks ~/.local/bin.
+#
+# comfort-shell (vendor/WindowsDeveloperConfig/wsl-comfort) prepends ~/bin to
+# PATH from its managed ~/.zprofile block and drops its own open/xdg-open there,
+# so ours never win the lookup no matter what BROWSER points at. Theirs hands
+# the URL to `cmd.exe /c start`, where an unquoted & is a command separator:
+# WSL interop does not quote it, so cmd truncates an OAuth authorize URL at the
+# first parameter. The browser then gets ?client_id=... with no scope, and Entra
+# refuses the sign-in with "AADSTS900144: The request body must contain the
+# following parameter: 'scope'" -- which is what broke `az login`.
+# bin/open prefers wslview (powershell.exe), which preserves the query string.
+#
+# Only take over a name that is genuinely free, already ours, or comfort-shell's.
+# Anything else -- a hand-written script, or a symlink pointing somewhere we do
+# not own (including a dangling one, which is still somebody's deliberate
+# choice) -- is left alone and reported, since silently clobbering it would be
+# worse than losing the PATH race. Note this only shadows comfort-shell;
+# re-running its bootstrap will overwrite ~/bin again, and re-running this
+# script is the way back.
+if [ -d ~/bin ]; then
+  for shim in pbcopy pbpaste open xdg-open; do
+    shim_src="$DOTFILES_DIR/bin/$shim"
+    shim_dest=~/bin/"$shim"
+    if { [ ! -e "$shim_dest" ] && [ ! -L "$shim_dest" ]; } ||
+      [ "$(readlink -f "$shim_dest" 2>/dev/null)" = "$(readlink -f "$shim_src")" ] ||
+      grep -qs 'comfort-shell shim' "$shim_dest"; then
+      ln -sfnv "$shim_src" "$shim_dest"
+    else
+      echo "skipping ~/bin/$shim: not ours and not a comfort-shell shim" >&2
+    fi
+  done
+  unset shim_src shim_dest
+fi
+
 mkdir -p ~/.config && ln -sfnv "$DOTFILES_DIR/zsh/starship.toml" ~/.config/starship.toml
 
 # Docker CLI presentation defaults are MERGED, never symlinked. `docker login`
