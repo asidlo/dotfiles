@@ -12,6 +12,7 @@
     Phase 4  Personal layer ....... this repo's catalog/* tasks (the delta)
     Phase 5  WSL provisioning ..... non-root default user, dev-drive move, /root cleanup
     Phase 6  WSL install.sh ....... clone this repo *into* the distro, then run its install.sh
+    Phase 7  Verify baseline ...... catalog/verify-baseline, once everything above has run
 
   Microsoft's WindowsDeveloperConfig (vendored under vendor\WindowsDeveloperConfig)
   is the base "full setup"; this repo layers only the personal delta on top. Every
@@ -32,7 +33,9 @@
 .PARAMETER WslUser
   Non-root default user to create inside the distro. wsl-comfort suppresses the
   Ubuntu OOBE, so without this the distro has no user and install.sh would run as
-  root. Default: your Windows username, lower-cased and sanitised.
+  root. Default: your Windows username, lower-cased and sanitised -- or, when the
+  distro already has a non-root default user, that user. Must be a valid Linux
+  user name.
 
 .PARAMETER WslPassword
   Password for -WslUser, as a SecureString. Prompted for during Phase 0 when
@@ -120,7 +123,7 @@
   Skip Phase 3 (the vendored wsl-comfort setup).
 
 .PARAMETER SkipPersonal
-  Skip Phase 4 (the personal catalog/* layer).
+  Skip Phase 4 (the personal catalog/* layer) and Phase 7 (verify-baseline).
 
 .PARAMETER SkipWsl
   Skip Phases 5 and 6 (WSL provisioning and install.sh).
@@ -338,6 +341,98 @@ function Update-SessionPath {
     $user = [System.Environment]::GetEnvironmentVariable('Path', 'User')
     $env:Path = (@($machine, $user) | Where-Object { $_ }) -join ';'
 }
+
+# Some installers show modal prompts that no silent switch can suppress (NVM for
+# Windows 2.0.0 uses a plain Inno Setup MsgBox rather than SuppressibleMsgBox, so
+# winget's /SUPPRESSMSGBOXES is ignored). These block `winget configure` until
+# someone clicks, so a background watcher answers exactly these known dialogs.
+$AutoConfirmDialogs = @(
+    @{ Text = 'An existing NVM for Windows installation was detected'; Button = 6 }  # IDYES
+)
+
+function Start-DialogAutoConfirm {
+    if (-not ('DotfilesDialogAutoConfirm' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+
+public static class DotfilesDialogAutoConfirm {
+    private delegate bool EnumProc(IntPtr hWnd, IntPtr lParam);
+    [DllImport("user32.dll")] private static extern bool EnumWindows(EnumProc cb, IntPtr lParam);
+    [DllImport("user32.dll")] private static extern bool EnumChildWindows(IntPtr parent, EnumProc cb, IntPtr lParam);
+    [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr hWnd);
+    [DllImport("user32.dll")] private static extern IntPtr GetDlgItem(IntPtr hDlg, int id);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern int GetClassName(IntPtr hWnd, StringBuilder sb, int max);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr SendMessageTimeout(IntPtr hWnd, uint msg, IntPtr wParam, StringBuilder lParam, uint flags, uint timeoutMs, out IntPtr result);
+    [DllImport("user32.dll")] private static extern bool PostMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+    private const uint WM_GETTEXT = 0x000D;
+    private const uint WM_COMMAND = 0x0111;
+    private const uint SMTO_ABORTIFHUNG = 0x0002;
+
+    private static string ClassOf(IntPtr hWnd) {
+        var sb = new StringBuilder(256);
+        GetClassName(hWnd, sb, sb.Capacity);
+        return sb.ToString();
+    }
+
+    // WM_GETTEXT (not GetWindowText) is required to read controls owned by another process.
+    private static string TextOf(IntPtr hWnd) {
+        var sb = new StringBuilder(4096);
+        IntPtr ignored;
+        SendMessageTimeout(hWnd, WM_GETTEXT, (IntPtr)sb.Capacity, sb, SMTO_ABORTIFHUNG, 1000, out ignored);
+        return sb.ToString();
+    }
+
+    // Clicks buttonId on every visible dialog (#32770) whose text contains textFragment.
+    public static int Confirm(string textFragment, int buttonId) {
+        int confirmed = 0;
+        EnumWindows((top, _) => {
+            if (!IsWindowVisible(top) || ClassOf(top) != "#32770") return true;
+            IntPtr button = GetDlgItem(top, buttonId);
+            if (button == IntPtr.Zero) return true;
+            bool match = false;
+            EnumChildWindows(top, (child, __) => {
+                if (TextOf(child).IndexOf(textFragment, StringComparison.OrdinalIgnoreCase) >= 0) { match = true; return false; }
+                return true;
+            }, IntPtr.Zero);
+            if (match && PostMessage(top, WM_COMMAND, (IntPtr)buttonId, button)) confirmed++;
+            return true;
+        }, IntPtr.Zero);
+        return confirmed;
+    }
+}
+'@
+    }
+
+    $state = [hashtable]::Synchronized(@{ Stop = $false; Confirmed = 0 })
+    $ps = [powershell]::Create()
+    [void]$ps.AddScript({
+            param($state, $dialogs)
+            while (-not $state.Stop) {
+                foreach ($d in $dialogs) {
+                    $state.Confirmed += [DotfilesDialogAutoConfirm]::Confirm($d.Text, $d.Button)
+                }
+                Start-Sleep -Milliseconds 500
+            }
+        }).AddArgument($state).AddArgument($AutoConfirmDialogs)
+    $handle = $ps.BeginInvoke()
+    return @{ State = $state; PowerShell = $ps; Handle = $handle }
+}
+
+function Stop-DialogAutoConfirm($Watcher) {
+    if (-not $Watcher) { return }
+    $Watcher.State.Stop = $true
+    try { [void]$Watcher.PowerShell.EndInvoke($Watcher.Handle) } catch { }
+    $Watcher.PowerShell.Dispose()
+    if ($Watcher.State.Confirmed -gt 0) {
+        Write-Host "[wdc] auto-confirmed $($Watcher.State.Confirmed) installer prompt(s)"
+    }
+}
+
+# useradd's default NAME_REGEX; also what `wsl.exe -u` can pass through intact.
+$LinuxUserPattern = '^[a-z_][a-z0-9_-]{0,31}$'
 
 function ConvertFrom-SecureStringPlain([securestring]$Secure) {
     if (-not $Secure) { return '' }
@@ -595,13 +690,31 @@ https://github.com/microsoft/winget-cli/releases/latest), then re-run this scrip
     # account. An explicit -WslUser always wins. Done before the banner so the
     # reported name -- and the password prompt below -- reference the real user.
     if (-not $SkipWsl -and -not $PSBoundParameters.ContainsKey('WslUser') -and (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
-        $existingUser = (& wsl.exe -d $Distro -- whoami 2>$null | Select-Object -First 1)
+        # wsl.exe prints its own errors (e.g. "There is no distribution with the
+        # supplied name." on a fresh machine, before Phase 3 creates the distro)
+        # to *stdout* as UTF-16LE, so 2>$null does not hide them. Trust the output
+        # only on exit 0, and only if it is a real Linux user name: adopting that
+        # error text once made every later `wsl -u` call fail, because its NUL
+        # bytes truncate the command line (`getpwnam("T)`).
+        $whoamiOut = @(& wsl.exe -d $Distro -- whoami 2>$null)
+        $whoamiOk = ($LASTEXITCODE -eq 0)
         $global:LASTEXITCODE = 0
-        if ($existingUser) { $existingUser = "$existingUser".Trim() }
-        if ($existingUser -and $existingUser -ne 'root' -and $existingUser -ne $WslUser) {
-            Write-Info "Adopting '$Distro' existing default user '$existingUser' (pass -WslUser to override)"
-            $WslUser = $existingUser
+        $existingUser = ''
+        if ($whoamiOk) {
+            $existingUser = "$($whoamiOut | Where-Object { "$_".Trim() } | Select-Object -First 1)".Trim()
         }
+        if ($existingUser -and $existingUser -ne 'root' -and $existingUser -ne $WslUser) {
+            if ($existingUser -cmatch $LinuxUserPattern) {
+                Write-Info "Adopting '$Distro' existing default user '$existingUser' (pass -WslUser to override)"
+                $WslUser = $existingUser
+            } else {
+                Write-Warning "Ignoring unexpected 'whoami' output from '$Distro'; keeping WSL user '$WslUser'."
+            }
+        }
+    }
+
+    if (-not $SkipWsl -and $WslUser -cnotmatch $LinuxUserPattern) {
+        throw "WSL user '$WslUser' is not a valid Linux user name (must match $LinuxUserPattern). Pass -WslUser <name>."
     }
 
     Write-Info "Distro       : $Distro"
@@ -660,7 +773,12 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             # Flags mirror WindowsDeveloperConfig's own apply-configuration.ps1.
             # NOTE: --accept-package-agreements is NOT valid on `winget configure`;
             # package consent flows through --accept-configuration-agreements.
-            winget configure --file $wdcConfig --accept-configuration-agreements --disable-interactivity
+            $dialogWatcher = Start-DialogAutoConfirm
+            try {
+                winget configure --file $wdcConfig --accept-configuration-agreements --disable-interactivity
+            } finally {
+                Stop-DialogAutoConfirm $dialogWatcher
+            }
         }
         Update-SessionPath
     }
@@ -713,16 +831,8 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
         # appx-prune is deliberately absent: it is too destructive to run here.
         # powershell-profiles is deliberately absent: the profiles already sync
         # down from OneDrive, so copying them over is redundant.
-
-        # Anything the caller opted out of must not be reported as a missing
-        # baseline item, or an intentional -Skip turns into a false failure.
-        $verifySkips = @()
-        if ($SkipVisualStudio) { $verifySkips += 'VS 2022 Enterprise', 'NFV.vsconfig present' }
-        if ($SkipNfvClone) { $verifySkips += 'Networking-nfv repo', 'NFV.vsconfig present' }
-        if ($SkipDevDriveEnv) { $verifySkips += 'Dev-drive env vars', 'Dev-drive src var' }
-        if ($SkipWsl) { $verifySkips += 'WSL default user non-root', 'WSL VHDX off C:' }
-        if (-not $MoveWslToDevDrive) { $verifySkips += 'WSL VHDX off C:' }
-        $verifySkips = @($verifySkips | Select-Object -Unique)
+        # verify-baseline is deliberately absent: it runs as Phase 7, after the
+        # WSL phases have created the items it checks.
 
         $catalogPlan = @(
             @{ Task = 'winget-core'; Args = @{}
@@ -772,10 +882,6 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             }
             @{ Task = 'terminal-profiles'; Args = @{}
                 Hint = 'Close every Windows Terminal window first, then re-run: catalog\terminal-profiles\script.ps1'
-            }
-            @{ Task = 'verify-baseline'; ExitCodeIsContract = $true
-                Args = @{ ArtifactRoot = $ArtifactRoot; SrcRoot = $SrcRoot; VsInstallPath = $VsInstallPath; NfvRepoPath = $NfvRepoPath; Distro = $Distro; SkipChecks = $verifySkips }
-                Hint = 'Missing items above were not installed; check the earlier task failures'
             }
         )
 
@@ -1031,6 +1137,35 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             }
         } finally {
             Revoke-WslTempSudo -Phase '6'
+        }
+    }
+
+    # --- Phase 7: Verify baseline ------------------------------------------
+    # Last, not in Phase 4: it checks the WSL default user and the VHDX
+    # location, which Phase 5 only creates -- so inside Phase 4 it failed on
+    # every fresh machine.
+    if ($SkipPersonal) {
+        Write-Phase '7' 'Verify baseline [SKIPPED -SkipPersonal]'
+        Add-Result -Phase '7' -Task 'verify-baseline' -Status 'Skipped' -Message '-SkipPersonal'
+    } else {
+        Write-Phase '7' 'Verify baseline'
+
+        # Anything the caller opted out of must not be reported as a missing
+        # baseline item, or an intentional -Skip turns into a false failure.
+        $verifySkips = @()
+        if ($SkipVisualStudio) { $verifySkips += 'VS 2022 Enterprise', 'NFV.vsconfig present' }
+        if ($SkipNfvClone) { $verifySkips += 'Networking-nfv repo', 'NFV.vsconfig present' }
+        if ($SkipDevDriveEnv) { $verifySkips += 'Dev-drive env vars', 'Dev-drive src var' }
+        if ($SkipWsl) { $verifySkips += 'WSL default user non-root', 'WSL VHDX off C:' }
+        if (-not $MoveWslToDevDrive) { $verifySkips += 'WSL VHDX off C:' }
+        $verifySkips = @($verifySkips | Select-Object -Unique)
+
+        $verifyScript = Join-Path $repoRoot 'catalog\verify-baseline\script.ps1'
+        $verifyArgs = @{ ArtifactRoot = $ArtifactRoot; SrcRoot = $SrcRoot; VsInstallPath = $VsInstallPath; NfvRepoPath = $NfvRepoPath; Distro = $Distro; SkipChecks = $verifySkips }
+        Update-SessionPath
+        Invoke-Step -Phase '7' -Task 'verify-baseline' -ExitCodeIsContract `
+            -Hint 'Missing items above were not installed; check the earlier task failures' -Action {
+            & $verifyScript @verifyArgs
         }
     }
 

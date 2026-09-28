@@ -49,7 +49,11 @@ Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 # Start menu & privacy
 $exportStartLayout = Get-Command Export-StartLayout -ErrorAction SilentlyContinue
 $importStartLayout = Get-Command Import-StartLayout -ErrorAction SilentlyContinue
-if ($exportStartLayout -and $importStartLayout) {
+if ([Environment]::OSVersion.Version.Build -ge 22000) {
+  # Windows 11's Start menu ignores XML layouts (Import-StartLayout rejects them as
+  # "not a valid layout file"); pinning there is policy-only (ConfigureStartPins).
+  Write-Host '[dev-settings] skipped: Start layout import does not apply to the Windows 11 Start menu.'
+} elseif ($exportStartLayout -and $importStartLayout) {
   try { $startMenuPath = "$env:APPDATA\Microsoft\Windows\StartMenu\Programs"; if (Test-Path $startMenuPath) { Get-ChildItem -Path $startMenuPath -Recurse -Include *.lnk | Remove-Item -Force }; $startMenuLayout = "$env:USERPROFILE\blankStart.xml"; if (-not (Test-Path $startMenuLayout)) { Export-StartLayout -Path $startMenuLayout }; Import-StartLayout -LayoutPath $startMenuLayout -MountPath $env:SystemDrive\ } catch { Write-Host "[dev-settings] skipped: Could not blank Start Menu ($($_.Exception.Message))" }
 } else { Write-Host '[dev-settings] skipped: Start layout cmdlets are unavailable on this Windows version.' }
 Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Search' -Name 'CortanaConsent' -Value 0 -Force

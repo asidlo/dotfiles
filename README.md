@@ -38,13 +38,14 @@ back in — every phase is idempotent, so re-running is safe.
 | 4 | Personal layer: the `catalog\*` tasks below (the delta on top of WDC). |
 | 5 | WSL provisioning: create the non-root user, clean stale `/root` dotfiles, move the VHDX to the Dev Drive. |
 | 6 | Run this repo's `install.sh` inside WSL as that user. |
+| 7 | `verify-baseline`: confirm everything above landed (last, so the WSL user and VHDX move are in place first). |
 
 ### Parameters
 
 | Parameter | Default | Effect |
 |-----------|---------|--------|
 | `-Distro <name>` | `Ubuntu` | WSL distro to target for Phases 3, 5 and 6. |
-| `-WslUser <name>` | `$env:USERNAME` (lowercased) | Non-root WSL user to create and run `install.sh` as. |
+| `-WslUser <name>` | `$env:USERNAME` (lowercased), or the distro's existing non-root default user | Non-root WSL user to create and run `install.sh` as. Must be a valid Linux user name. |
 | `-WslPassword <SecureString>` | prompted | Password for that user. Piped to `chpasswd` over **stdin** — never on a command line, never in the transcript. |
 | `-ArtifactRoot <path>` | `Q:\.tools` | Dev Drive root for package caches, toolchains, the WSL VHDX and logs. |
 | `-SrcRoot <path>` | `Q:\src` | Where repos are cloned. |
@@ -58,7 +59,7 @@ back in — every phase is idempotent, so re-running is safe.
 | `-ContinueOnError` | `$true` | Collect failures and report at the end instead of aborting on the first one. |
 | `-RestartExplorer` | off | Let `dev-settings` restart Explorer (off by default so it can't kill Explorer mid-install). |
 | `-NonInteractive` | off | Never prompt; skip anything that would need input. |
-| `-SkipWdc` / `-SkipWslComfort` / `-SkipPersonal` / `-SkipWsl` | off | Skip Phase 2 / 3 / 4 / 5+6. |
+| `-SkipWdc` / `-SkipWslComfort` / `-SkipPersonal` / `-SkipWsl` | off | Skip Phase 2 / 3 / 4+7 / 5+6. |
 | `-SkipDevDriveEnv` / `-SkipNfvClone` / `-SkipVisualStudio` | off | Skip individual Phase 4 tasks. |
 
 ```powershell
@@ -186,7 +187,7 @@ catalog tasks.
 | `sudo-inline` | Put Sudo for Windows into **inline** mode so the elevated `Networking-nfv` profile stays a tab instead of taking over a new window. | ✅ |
 | `dotfiles-links` | Symlink gitconfig, starship, clink, nvim, Terminal settings, icons. | ✅ |
 | `terminal-profiles` | Clear Windows Terminal's `generatedProfiles` so its fragment/dynamic profiles (Ubuntu, Comfort Shell, Copilot, VS prompts) stop being auto-hidden. | ✅ |
-| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user, the Terminal fragment profiles, the NFV profile and sudo's mode are present. | ✅ |
+| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user, the Terminal fragment profiles, the NFV profile and sudo's mode are present. | ✅ as Phase 7, after the WSL phases |
 | `appx-prune` | Remove non-essential AppX packages (curated keep-list). | ❌ too destructive; run by hand |
 | `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ❌ profiles already sync from OneDrive |
 
@@ -319,6 +320,7 @@ under a second with instructions instead of hanging for five minutes.
 |---------|------------|
 | `winget configure` not available | Update **App Installer** from the Microsoft Store; Phase 0 also runs `winget configure --enable`. |
 | WDC step rebooted | Log back in and re-run `.\install.ps1`. |
+| WDC step paused on an *"existing NVM for Windows installation was detected"* dialog | NVM for Windows 2.0.0's installer shows that prompt even when silent. Phase 2 now answers **Yes** automatically; if it still appears (e.g. running `winget configure` by hand), click **Yes**. |
 | A step failed | Read the summary table at the end of the run; each failure lists captured output and a remediation hint. Full detail is in `<ArtifactRoot>\logs\install-<stamp>.log`. |
 | `nfv-clone` failed on auth | Sign in to Git Credential Manager, then `git clone <NfvRepoUrl> <NfvRepoPath>` by hand, or re-run `install.ps1`. |
 | `visualstudio` skipped the `--config` step | `NFV.vsconfig` wasn't found — fix `nfv-clone` first, then re-run. |
