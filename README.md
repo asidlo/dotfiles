@@ -324,10 +324,13 @@ shim hands the URL to the VS Code client's browser helper.
 `etc/wsl.conf` sets `appendWindowsPath=false` so the ~15 Windows directories stay out of `$PATH` inside WSL. The side
 effect is that Windows executables stop resolving by name, which silently breaks anything that looks them up with
 `command -v` — the Agency installer shells out to `cmd.exe` and fails sign-in with *"Error obtaining access token …
-Authentication failed"*, `bin/pbcopy` degrades to its OSC52 fallback, and `bin/open`'s `cmd.exe /c start` fallback dies.
+Authentication failed"*, `bin/pbcopy` degrades to its OSC52 fallback, `bin/open`'s `cmd.exe /c start` fallback dies,
+and `docker login` (so `az acr login` and devcontainer `initializeCommand`s that call it) fails with *"error storing
+credentials … `docker-credential-desktop.exe`: executable file not found in $PATH"*.
 
 `scripts/wsl-interop-shims.sh` (the first step `install.sh` runs) symlinks `cmd.exe`, `clip.exe`, `wsl.exe`,
-`powershell.exe` and `explorer.exe` into `~/.local/bin`. That keeps the clean `$PATH`, needs no `sudo`, and leaves
+`powershell.exe` and `explorer.exe` into `~/.local/bin`, plus VS Code's `code` launcher and Docker Desktop's
+`docker-credential-desktop.exe` when they're installed. That keeps the clean `$PATH`, needs no `sudo`, and leaves
 interop itself untouched — the symlinks still execute through `binfmt_misc`. Run it by hand any time:
 
 ```bash
@@ -418,6 +421,7 @@ under a second with instructions instead of hanging for five minutes.
 | `Networking-nfv` prompts for UAC every time | Expected — `sudo` elevates per launch. Use the `Developer PowerShell for VS 2022` profile when you don't need admin. |
 | `agency` reports "Error obtaining access token" / "Authentication failed" | The Agency installer runs `cmd.exe`, which `appendWindowsPath=false` removes from `$PATH`. Run `bash scripts/wsl-interop-shims.sh`, then `bash scripts/agency.sh` — see [Windows interop shims](#windows-interop-shims). `install.sh` now does both automatically. |
 | `pbcopy` doesn't reach the Windows clipboard, or `open` fails in WSL | Same cause as the row above: `clip.exe` / `cmd.exe` aren't on `$PATH`. Run `bash scripts/wsl-interop-shims.sh` and open a new shell. |
+| Devcontainer build, `az acr login` or `docker login` in WSL fails: *"error storing credentials … `docker-credential-desktop.exe`: executable file not found in $PATH"* | Docker Desktop sets `"credsStore": "desktop.exe"`, and the helper isn't on `$PATH`. Docker's WSL integration links it into `/usr/bin`, but only as a symlink into `/Docker/host`, which dangles whenever that mount is missing, so turning the integration on doesn't fix it reliably. Run `bash scripts/wsl-interop-shims.sh` to link the Windows binary into `~/.local/bin`, then retry (**Dev Containers: Rebuild and Reopen in Container**). New installs do this automatically if Docker Desktop is installed before `install.sh` runs. |
 | `install.sh` hangs on `copilot.sh` until you press Enter | Fixed. VS Code's Copilot Chat extension puts its own `copilot` shim on `$PATH` in integrated terminals; `command -v` found it, so the script skipped the install and the shim then asked *"Install GitHub Copilot CLI? ['y/N']"* on a stdin nobody was reading. `scripts/copilot.sh` now resolves past that shim, and every step runs with stdin closed. |
 | `dotnet.sh` fails with `/usr/local/bin/xdg-open: Permission denied` | Fixed. The devcontainer-credprovider installer writes its own `xdg-open` shim to `/usr/local/bin`, which a non-root user cannot do, and its `set -e` failed the whole step over it. `scripts/dotnet.sh` now links `bin/xdg-open` into `~/.local/bin` and passes `SKIP_XDG_OPEN=true`. |
 | Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |

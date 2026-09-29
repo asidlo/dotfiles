@@ -12,6 +12,13 @@
 #                            ("Authentication failed, please try again.")
 #   * bin/pbcopy          -> falls back to OSC52 instead of the real clipboard
 #   * bin/open            -> `cmd.exe /c start` fallback fails
+#   * docker login / az acr login (e.g. a devcontainer's initializeCommand)
+#                         -> Docker Desktop's `"credsStore": "desktop.exe"`
+#                            execs docker-credential-desktop.exe. The copy its
+#                            WSL integration puts in /usr/bin is a symlink into
+#                            /Docker/host, which dangles whenever that isn't
+#                            mounted: "error storing credentials ... executable
+#                            file not found in $PATH"
 #
 # Symlinking just these few into ~/.local/bin keeps the clean $PATH and needs no
 # sudo. Interop itself is untouched (`enabled=true`), so the symlinks execute
@@ -72,6 +79,39 @@ SHIMS=(
 linked=0
 skipped=0
 
+# Link $BIN_DIR/$1 -> $2. Never clobber a real Linux binary or a hand-rolled
+# shim that isn't ours.
+link_shim() {
+	local name="$1" target="$2"
+
+	if [ -e "$BIN_DIR/$name" ] && [ ! -L "$BIN_DIR/$name" ]; then
+		echo "  skip    $name (a non-symlink already exists at $BIN_DIR/$name)"
+		skipped=$((skipped + 1))
+		return
+	fi
+
+	ln -sfn "$target" "$BIN_DIR/$name"
+	echo "  link    $name -> $target"
+	linked=$((linked + 1))
+}
+
+# For tools installed outside %WINDIR%: link $1 to the first executable among
+# the remaining candidates; $2 describes the install for the skip message.
+link_first_found() {
+	local name="$1" what="$2" candidate
+	shift 2
+
+	for candidate in "$@"; do
+		if [ -x "$candidate" ]; then
+			link_shim "$name" "$candidate"
+			return
+		fi
+	done
+
+	echo "  skip    $name ($what not found)"
+	skipped=$((skipped + 1))
+}
+
 for entry in "${SHIMS[@]}"; do
 	name="${entry%%:*}"
 	rel="${entry#*:}"
@@ -83,43 +123,21 @@ for entry in "${SHIMS[@]}"; do
 		continue
 	fi
 
-	# Never clobber a real Linux binary or a hand-rolled shim that isn't ours.
-	if [ -e "$BIN_DIR/$name" ] && [ ! -L "$BIN_DIR/$name" ]; then
-		echo "  skip    $name (a non-symlink already exists at $BIN_DIR/$name)"
-		skipped=$((skipped + 1))
-		continue
-	fi
-
-	ln -sfn "$target" "$BIN_DIR/$name"
-	echo "  link    $name -> $target"
-	linked=$((linked + 1))
+	link_shim "$name" "$target"
 done
 
-# VS Code's WSL launcher lives outside %WINDIR%, so discover either the
-# system-wide install or the current Windows user's install separately.
 drive_root=${WINDIR%/Windows}
-code_target=""
-for candidate in \
+
+# VS Code's WSL launcher: the system-wide install or a Windows user's install.
+link_first_found code "Windows VS Code installation" \
 	"$drive_root/Program Files/Microsoft VS Code/bin/code" \
 	"$drive_root/Program Files (x86)/Microsoft VS Code/bin/code" \
-	"$drive_root"/Users/*/AppData/Local/Programs/Microsoft\ VS\ Code/bin/code; do
-	if [ -x "$candidate" ]; then
-		code_target="$candidate"
-		break
-	fi
-done
+	"$drive_root"/Users/*/AppData/Local/Programs/Microsoft\ VS\ Code/bin/code
 
-if [ -z "$code_target" ]; then
-	echo "  skip    code (Windows VS Code installation not found)"
-	skipped=$((skipped + 1))
-elif [ -e "$BIN_DIR/code" ] && [ ! -L "$BIN_DIR/code" ]; then
-	echo "  skip    code (a non-symlink already exists at $BIN_DIR/code)"
-	skipped=$((skipped + 1))
-else
-	ln -sfn "$code_target" "$BIN_DIR/code"
-	echo "  link    code -> $code_target"
-	linked=$((linked + 1))
-fi
+# Docker Desktop's credential helper (see the header). Linking the Windows
+# binary directly works whether or not the integration's mount is up.
+link_first_found docker-credential-desktop.exe "Docker Desktop installation" \
+	"$drive_root/Program Files/Docker/Docker/resources/bin/docker-credential-desktop.exe"
 
 echo "Interop shims: $linked linked, $skipped skipped (in $BIN_DIR)."
 
