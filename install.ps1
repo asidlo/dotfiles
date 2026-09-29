@@ -972,7 +972,10 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
         # WSL phases have created the items it checks.
 
         $catalogPlan = @(
-            @{ Task = 'winget-core'; Args = @{}
+            @{ Task = 'winget-core'
+                # Docker Desktop's WSL disk can only be placed cleanly at install time;
+                # devdrive-env then checks it landed there.
+                Args = $(if ($SkipDevDriveEnv) { @{} } else { @{ DockerDataRoot = (Join-Path $ArtifactRoot 'docker\data') } })
                 Hint = 'Re-run: catalog\winget-core\script.ps1'
             }
             @{ Task = 'choco-fonts'; Args = @{}

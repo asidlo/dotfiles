@@ -143,8 +143,20 @@ The `devdrive-env` task keeps large build artifacts off `C:` by pointing the too
 | Python | `PIP_CACHE_DIR`, `UV_CACHE_DIR` |
 | vcpkg | `VCPKG_DEFAULT_BINARY_CACHE`, `VCPKG_DOWNLOADS` |
 | JVM | `GRADLE_USER_HOME`, `MAVEN_OPTS` |
-| Docker | `DOCKER_CONFIG`, `BUILDX_CONFIG`, plus `dataFolder` in Docker Desktop's `settings-store.json` |
+| Docker | `DOCKER_CONFIG`, `BUILDX_CONFIG`, plus Docker Desktop's WSL disk in `<ArtifactRoot>\docker\data` (see below) |
 | Locations | `DEVDRIVE_SRC` (= `-SrcRoot`), `DEVDRIVE_ARTIFACTS` (= `-ArtifactRoot`) |
+
+**Docker Desktop's WSL disk** is placed at install time. Docker only creates its settings on first launch, so there's
+nothing for `devdrive-env` to edit when it runs. Instead, `install.ps1` has `winget-core` pass `--wsl-default-data-root=<ArtifactRoot>\docker\data`
+to the Docker Desktop installer (via winget `--custom`, on top of the manifest's own switches). `devdrive-env` then only
+*checks* where the disk lives and warns if it's elsewhere. It never edits Docker's files, because re-pointing an existing
+install by hand orphans its disk. If Docker Desktop was already installed without the flag:
+
+- **Never launched:** `winget uninstall Docker.DockerDesktop`, then re-run `install.ps1`.
+- **Already launched:** in Docker Desktop, open **Settings → Resources → Advanced → Disk image location**. Docker moves
+  the disk itself.
+
+`-SkipDevDriveEnv` also leaves Docker's disk location at its default.
 
 `DEVDRIVE_SRC` exists so nothing has to hard-code a drive letter. Windows Terminal expands environment variables in
 `startingDirectory`, so `powershell\settings.json` uses `%DEVDRIVE_SRC%` and the profiles follow the Dev Drive wherever
@@ -218,7 +230,8 @@ catalog tasks.
 
 `winget-core` takes a real string **array**: `-Packages 'Neovim.Neovim','Microsoft.AzureCLI'`. Omit it to use the
 curated list. Packages already installed by WDC (Python, Node.js, Windows Terminal, PowerToys, Git, VS Code, PowerShell,
-uv, …) are intentionally left out of `winget-core`.
+uv, …) are intentionally left out of `winget-core`. `-DockerDataRoot <path>` sets Docker Desktop's WSL disk location on a
+fresh install. `install.ps1` passes `<ArtifactRoot>\docker\data` unless `-SkipDevDriveEnv` is set.
 
 ## Using tasks in Dev Box
 
@@ -363,5 +376,6 @@ under a second with instructions instead of hanging for five minutes.
 | `install.sh` hangs on `copilot.sh` until you press Enter | Fixed. VS Code's Copilot Chat extension puts its own `copilot` shim on `$PATH` in integrated terminals; `command -v` found it, so the script skipped the install and the shim then asked *"Install GitHub Copilot CLI? ['y/N']"* on a stdin nobody was reading. `scripts/copilot.sh` now resolves past that shim, and every step runs with stdin closed. |
 | `dotnet.sh` fails with `/usr/local/bin/xdg-open: Permission denied` | Fixed. The devcontainer-credprovider installer writes its own `xdg-open` shim to `/usr/local/bin`, which a non-root user cannot do, and its `set -e` failed the whole step over it. `scripts/dotnet.sh` now links `bin/xdg-open` into `~/.local/bin` and passes `SKIP_XDG_OPEN=true`. |
 | Missing tool after `winget-core` | Confirm the winget ID (`winget search <name> --source winget`); re-run with an explicit `-Packages` override. |
+| `devdrive-env` warns *"Docker Desktop … WSL disk …"* | Docker Desktop was installed before it could be given `--wsl-default-data-root`. See [Dev Drive layout](#dev-drive-layout) for the uninstall-and-re-run or Settings-UI fix. |
 | Font not in terminal | Log off / rebuild font cache; verify Meslo under `%WINDIR%\Fonts`. |
 | Symlink errors | Ensure the repo path is accessible; check permissions and OneDrive sync state. |

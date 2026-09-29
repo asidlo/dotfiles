@@ -1,5 +1,8 @@
 param(
-  [string[]]$Packages
+  [string[]]$Packages,
+  # Where Docker Desktop keeps its WSL 2 disk. Only honoured on a fresh install:
+  # it becomes the installer's --wsl-default-data-root.
+  [string]$DockerDataRoot
 )
 $ErrorActionPreference = 'Stop'
 
@@ -59,23 +62,45 @@ function Get-WingetResult {
 }
 
 function Install-WingetPackage {
-  param([string]$Id, [string]$Source, [switch]$TolerateFailure)
+  param([string]$Id, [string]$Source, [string]$Custom, [switch]$TolerateFailure)
 
   if (Test-WingetInstalled -Id $Id -Source $Source) {
     Write-Host "[winget] already installed $Id ($Source)"
     return [PSCustomObject]@{ Package = $Id; Source = $Source; Result = 'Already installed'; Exit = 0; Output = @(); Fatal = $false }
   }
 
-  Write-Host "[winget] installing $Id ($Source)"
-  $output = & winget install --id $Id --exact --source $Source --accept-source-agreements --accept-package-agreements --disable-interactivity -h 2>&1
+  $wingetArgs = @('install', '--id', $Id, '--exact', '--source', $Source, '--accept-source-agreements', '--accept-package-agreements', '--disable-interactivity', '-h')
+  if ($Custom) {
+    # --custom is appended to the manifest's own installer switches, not a replacement for them.
+    $wingetArgs += @('--custom', $Custom)
+    Write-Host "[winget] installing $Id ($Source) with $Custom"
+  } else {
+    Write-Host "[winget] installing $Id ($Source)"
+  }
+  $output = & winget @wingetArgs 2>&1
   $exit = $LASTEXITCODE
   $result = Get-WingetResult -ExitCode $exit
   $fatal = ($result -eq 'Failed') -and (-not $TolerateFailure)
   return [PSCustomObject]@{ Package = $Id; Source = $Source; Result = $result; Exit = $exit; Output = @($output); Fatal = $fatal }
 }
 
+# Docker Desktop reads its WSL disk location from settings it only creates on first
+# launch, so the one clean place to set it is the installer.
+$customArgs = @{}
+if ($DockerDataRoot) {
+  $root = $DockerDataRoot.TrimEnd('\')
+  # winget splices --custom into the installer's command line verbatim, and how an
+  # embedded quote survives that differs between Windows PowerShell and pwsh 7.3+.
+  if ($root -match '\s') {
+    Write-Warning "[winget] DockerDataRoot '$root' contains whitespace; not passing --wsl-default-data-root, so Docker Desktop keeps its default disk location."
+  } else {
+    New-Item -ItemType Directory -Force -Path $root | Out-Null
+    $customArgs['Docker.DockerDesktop'] = "--wsl-default-data-root=$root"
+  }
+}
+
 $results = @()
-foreach ($p in $wingetPackages) { $results += Install-WingetPackage -Id $p -Source 'winget' }
+foreach ($p in $wingetPackages) { $results += Install-WingetPackage -Id $p -Source 'winget' -Custom $customArgs[$p] }
 foreach ($p in $msstorePackages) { $results += Install-WingetPackage -Id $p -Source 'msstore' -TolerateFailure }
 
 foreach ($r in $results.Where({ $_.Result -eq 'Failed' })) {

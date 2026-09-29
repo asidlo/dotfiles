@@ -6,5 +6,9 @@ parameters:
     type: array
     description: Optional override list of winget-source package ids. A single space-delimited string is also accepted.
     required: false
+  DockerDataRoot:
+    type: string
+    description: Docker Desktop WSL 2 disk location, passed as --wsl-default-data-root on a fresh install only.
+    required: false
 command: |
   powershell -ExecutionPolicy Bypass -File script.ps1

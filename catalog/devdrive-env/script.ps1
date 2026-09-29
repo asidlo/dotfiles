@@ -89,37 +89,44 @@ if ($missing.Count -eq 0) {
 }
 
 try {
+  # Docker Desktop's WSL 2 disk. winget-core sets it at install time via the
+  # installer's --wsl-default-data-root (recorded as wslDefaultDataRoot in
+  # install-settings.json); settings-store.json's CustomWslDistroDir overrides it
+  # once the disk has been moved in the UI. Neither is edited here: pointing Docker
+  # at a new folder by hand orphans the existing disk, and settings-store.json does
+  # not exist until Docker Desktop's first launch anyway. (The `dataFolder` setting
+  # this used to write is the Hyper-V backend's disk, which WSL 2 ignores.)
   $dockerData = Join-Path $ArtifactRoot 'docker\data'
   New-Item -ItemType Directory -Force -Path $dockerData | Out-Null
-  $settings = @(
-    (Join-Path $env:APPDATA 'Docker\settings-store.json'),
-    (Join-Path $env:APPDATA 'Docker\settings.json')
-  ) | Where-Object { Test-Path $_ }
+  $installSettings = Join-Path $env:ProgramData 'DockerDesktop\install-settings.json'
+  $userSettings = Join-Path $env:APPDATA 'Docker\settings-store.json'
 
-  # Docker Desktop rewrites its settings file on shutdown, so editing it while the
-  # app is running silently loses the change. Warn instead of pretending it worked.
-  $dockerRunning = @(Get-Process -Name 'Docker Desktop' -ErrorAction SilentlyContinue).Count -gt 0
-
-  if ($settings.Count -eq 0) {
-    Write-Warning '[devdrive] Docker Desktop settings not found; re-run after Docker Desktop is installed/configured to move its WSL data disk.'
-  } elseif ($dockerRunning) {
-    Write-Warning "[devdrive] Docker Desktop is running; not editing its settings (it would overwrite them on exit). Quit Docker Desktop and re-run this task, or set Settings > Resources > Disk image location to $dockerData."
+  if (-not (Test-Path -LiteralPath $installSettings)) {
+    Write-Host '[devdrive] Docker Desktop not installed; nothing to relocate'
   } else {
-    foreach ($path in $settings) {
-      $json = Get-Content -Raw -Path $path | ConvertFrom-Json
-      if ($json.PSObject.Properties.Name -contains 'dataFolder') {
-        $json.dataFolder = $dockerData
-      } else {
-        $json | Add-Member -NotePropertyName dataFolder -NotePropertyValue $dockerData
-      }
-
-      $json | ConvertTo-Json -Depth 32 | Set-Content -Path $path -Encoding UTF8
-      Write-Host "[devdrive] set Docker dataFolder = $dockerData ($path)"
+    $dockerDisk = $null
+    if (Test-Path -LiteralPath $userSettings) {
+      $user = Get-Content -Raw -LiteralPath $userSettings | ConvertFrom-Json
+      $dockerDisk = @($user.CustomWslDistroDir, $user.customWslDistroDir) | Where-Object { $_ } | Select-Object -First 1
     }
-    Write-Host '[devdrive] restart Docker Desktop for the new data folder to take effect.'
+    if (-not $dockerDisk) {
+      $dockerDisk = (Get-Content -Raw -LiteralPath $installSettings | ConvertFrom-Json).wslDefaultDataRoot
+    }
+    $wanted = $dockerData.TrimEnd('\')
+
+    if ($dockerDisk -and ($dockerDisk.TrimEnd('\') -ieq $wanted)) {
+      Write-Host '[devdrive] ok Docker Desktop WSL disk location'
+    } else {
+      $where = if ($dockerDisk) { $dockerDisk } else { 'its default under %LOCALAPPDATA%\Docker\wsl' }
+      if (Test-Path -LiteralPath $userSettings) {
+        Write-Warning "[devdrive] Docker Desktop keeps its WSL disk in $where. Move it with Docker Desktop > Settings > Resources > Advanced > Disk image location -> $wanted."
+      } else {
+        Write-Warning "[devdrive] Docker Desktop was installed without --wsl-default-data-root, so its WSL disk will land in $where. Before first launch: winget uninstall Docker.DockerDesktop, then re-run install.ps1. After: Settings > Resources > Advanced > Disk image location -> $wanted."
+      }
+    }
   }
 } catch {
-  Write-Warning "[devdrive] could not update Docker Desktop dataFolder: $($_.Exception.Message)"
+  Write-Warning "[devdrive] could not check Docker Desktop's disk location: $($_.Exception.Message)"
 }
 
 Write-Host "[devdrive] $set variable(s) set, $ok already correct"
