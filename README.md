@@ -62,7 +62,7 @@ With `-Restart`, the machine restarts 60 seconds after a clean run.
 | `-WslTempPasswordlessSudo` | `$true` | Grant `-WslUser` NOPASSWD sudo for the duration of the WSL phases (3 onward), then revoke it. See [WSL and sudo](#wsl-and-sudo). |
 | `-ContinueOnError` | `$true` | Collect failures and report at the end instead of aborting on the first one. |
 | `-RestartExplorer` | off | Let `dev-settings` restart Explorer (off by default so it can't kill Explorer mid-install). |
-| `-InstallUpdates` | off | Run Phase 7: upgrade every winget package with an upgrade, then install pending Windows updates. |
+| `-InstallUpdates` | off | Run Phase 7: upgrade every winget package with an upgrade, then install pending Windows updates, including an offered feature update. |
 | `-Restart` | off | Restart 60 seconds after the run, but only if no step failed (`shutdown /a` cancels). |
 | `-NonInteractive` | off | Never prompt; skip anything that would need input (including the Phase 0 Azure DevOps sign-in). |
 | `-SkipWdc` / `-SkipWslComfort` / `-SkipPersonal` / `-SkipWsl` | off | Skip Phase 2 / 3 / 4+8 / 5+6. |
@@ -103,8 +103,15 @@ Both are off by default.
   `winget upgrade --id <id>`. NVM for Windows 2.0.0's *"existing installation"* prompt is answered automatically, as in
   Phase 2.
 - `windows-update` installs what Windows Update would install on its own (security, quality, driver and definition
-  updates) through the Windows Update Agent API. Optional and preview updates are left out. Some updates are only
-  offered after the restart the previous round asks for, so re-run after restarting to catch those.
+  updates) through the Windows Update Agent API, plus the feature update Settings offers with **Download & install**
+  (e.g. *Windows 11, version 26H2*). That offer is an *optional* installation, which a search for regular updates never
+  returns, so it gets a search of its own, against the service Windows 11 installs OS and feature updates from (*DCat
+  Flighting Prod*); regular updates are searched there as well as on Microsoft Update. Optional and preview updates are
+  left out, and so are drivers when the `ExcludeWUDriversInQualityUpdate` policy is set. The feature update goes last;
+  if it won't install because a restart is pending, the step warns instead of failing, so `-Restart` still happens.
+  Some updates are only offered after the restart the previous round asks for, so re-run after restarting to catch
+  those. To see what it would install without installing anything (no elevation needed), run
+  `catalog\windows-update\script.ps1 -ListOnly`; `-SkipFeatureUpdate` leaves the feature update out.
 
 `-Restart` schedules `shutdown /r /t 60` once the summary is written. It only does so after a clean run: if any step
 failed or the run stopped early, the `restart` row in the summary shows `Skipped` with the reason, and the machine stays
@@ -250,7 +257,7 @@ catalog tasks.
 | `terminal-profiles` | Add a `settings.json` entry for every fragment profile (Ubuntu, Comfort Shell, Copilot) and every Visual Studio developer prompt (un-hiding the older instances' prompts Terminal hides), and clear Windows Terminal's `generatedProfiles` if another dynamic profile is still unlisted, so none of them get auto-hidden. | ✅ |
 | `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user, the Terminal fragment profiles, the NFV profile and sudo's mode are present. | ✅ as Phase 8, after the WSL phases |
 | `winget-upgrade` | Upgrade every package `winget upgrade` lists, one at a time, holding back the packages hosting the run. | ✅ as Phase 7, with `-InstallUpdates` |
-| `windows-update` | Install the updates Windows Update would install on its own, via the Windows Update Agent API. | ✅ as Phase 7, with `-InstallUpdates` |
+| `windows-update` | Install the updates Windows Update would install on its own, plus an offered feature update, via the Windows Update Agent API. | ✅ as Phase 7, with `-InstallUpdates` |
 | `appx-prune` | Remove non-essential AppX packages (curated keep-list). | ❌ too destructive; run by hand |
 | `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ❌ profiles already sync from OneDrive |
 
@@ -390,6 +397,7 @@ under a second with instructions instead of hanging for five minutes.
 | `-Restart` didn't restart | The `restart` row in the summary says why: a step failed, or the run stopped early. Fix it, then restart by hand or re-run with `-Restart`. |
 | `winget-upgrade` shows **Warning**: *"held back Microsoft.PowerShell …"* | Expected when a package hosting the run has an upgrade: upgrading it would close the console. Run `winget upgrade --id <id>` from a different shell (for pwsh, from Windows PowerShell). |
 | `windows-update` failed with *"the Windows Update service (wuauserv) is disabled"* | Set the **Windows Update** service back to *Manual* (`Set-Service wuauserv -StartupType Manual`), or drop `-InstallUpdates`. Policy-managed machines may re-disable it; update them through their management tool. |
+| Settings still offers *Windows 11, version …* after `-InstallUpdates` | Fixed: that **Download & install** offer is an optional installation, and `windows-update` used to search only for regular ones. Run `catalog\windows-update\script.ps1 -ListOnly` to see what it finds now. If `windows-update` warns that the feature update was *left for after the restart*, restart, then re-run it. |
 | `nfv-sign-in` failed (or `nfv-clone` shows *"Phase 0 nfv-sign-in failed"*) | Run `git ls-remote <NfvRepoUrl> HEAD` and complete the GCM sign-in, then re-run `install.ps1`. Pass `-SkipNfvClone` if you don't need the repo on this machine. |
 | `nfv-clone` failed on auth | Sign in to Git Credential Manager, then `git clone <NfvRepoUrl> <NfvRepoPath>` by hand, or re-run `install.ps1`. |
 | `visualstudio` skipped the `--config` step | `NFV.vsconfig` wasn't found — fix `nfv-clone` first, then re-run. |

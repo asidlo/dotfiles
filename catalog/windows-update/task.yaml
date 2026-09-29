@@ -1,10 +1,18 @@
 $schema: "1.0"
 name: windows-update
-description: Install the Windows updates Windows Update would install on its own (optional and preview updates excluded).
+description: Install the Windows updates Windows Update would install on its own, plus the feature update Settings offers (optional and preview updates excluded).
 parameters:
   Criteria:
     type: string
     description: Optional Windows Update Agent search criteria.
+    required: false
+  SkipFeatureUpdate:
+    type: boolean
+    description: Leave out the feature update Settings offers with "Download & install". Defaults to false.
+    required: false
+  ListOnly:
+    type: boolean
+    description: Only list the updates that would be installed; needs no elevation. Defaults to false.
     required: false
 command: |
   powershell -ExecutionPolicy Bypass -File script.ps1

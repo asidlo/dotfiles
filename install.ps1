@@ -119,14 +119,15 @@
 .PARAMETER InstallUpdates
   Add Phase 7: upgrade every winget package `winget upgrade` lists
   (catalog/winget-upgrade), then install the updates Windows Update would
-  install on its own (catalog/windows-update; optional and preview updates are
-  left out). Off by default.
+  install on its own, plus the feature update Settings offers with "Download &
+  install" (catalog/windows-update; optional and preview updates are left
+  out). Off by default.
 
   Packages hosting this run (PowerShell 7, Windows Terminal, VS Code) are held
   back, because upgrading them closes the console the run lives in; upgrade
   them afterwards from another shell. Some Windows updates are only offered
-  after the restart the previous round asks for, so re-run after restarting
-  to pick those up.
+  after the restart the previous round asks for, and a feature update can wait
+  for that restart too, so re-run after restarting to pick those up.
 
 .PARAMETER Restart
   Restart the machine 60 seconds after the run finishes (cancel with
