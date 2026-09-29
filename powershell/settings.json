@@ -449,5 +449,5 @@
     "theme": "dark",
     "themes": [],
     "warning.largePaste": false,
-    "warning.multiLinePaste": "never"
+    "warning.multiLinePaste": false
 }
