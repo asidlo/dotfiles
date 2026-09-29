@@ -217,7 +217,7 @@ catalog tasks.
 | `dev-settings` | Registry/UX tweaks: UAC, dark theme, taskbar/Start cleanup, clocks, explorer, privacy. | ✅ |
 | `sudo-inline` | Put Sudo for Windows into **inline** mode so the elevated `Networking-nfv` profile stays a tab instead of taking over a new window. | ✅ |
 | `dotfiles-links` | Symlink gitconfig, starship, clink, nvim, Terminal settings, icons. | ✅ |
-| `terminal-profiles` | Clear Windows Terminal's `generatedProfiles` so its fragment/dynamic profiles (Ubuntu, Comfort Shell, Copilot, VS prompts) stop being auto-hidden. | ✅ |
+| `terminal-profiles` | Add a `settings.json` entry for every fragment profile (Ubuntu, Comfort Shell, Copilot), and clear Windows Terminal's `generatedProfiles` if a dynamic one (VS prompts) is still unlisted, so none of them get auto-hidden. | ✅ |
 | `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user, the Terminal fragment profiles, the NFV profile and sudo's mode are present. | ✅ as Phase 7, after the WSL phases |
 | `appx-prune` | Remove non-essential AppX packages (curated keep-list). | ❌ too destructive; run by hand |
 | `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ❌ profiles already sync from OneDrive |
@@ -344,7 +344,7 @@ under a second with instructions instead of hanging for five minutes.
 - `devdrive-env` skips any variable already pointing at the right place.
 - `nfv-clone`, `visualstudio`, `agency` and `copilot-plugins` all no-op when the target is already there.
 - `verify-baseline` exits non-zero if any required item is missing (useful in CI/image validation), and `install.ps1`
-  propagates that as a failed step.
+  propagates that as a failed step, listing the missing items under it in the run summary.
 
 ## Troubleshooting
 
@@ -365,8 +365,9 @@ under a second with instructions instead of hanging for five minutes.
 | `install.sh` errors on `\r` | Ensure `*.sh` files are `LF` (enforced by `.gitattributes`; run `git add --renormalize .` if needed). |
 | `wsl-install-sh` failed after ~5 minutes on sudo | Fixed: the run now grants temporary passwordless sudo, see [WSL and sudo](#wsl-and-sudo). If `wsl-sudo-revoke` reported a warning, remove `/etc/sudoers.d/99-dotfiles-install` by hand. |
 | Prompted for your WSL sudo password during `wsl-comfort` | Fixed: the grant moved from Phase 6 to before Phase 3. If `wsl-sudo-temp` shows `Skipped`, the distro or user did not exist yet — expected on a first run. |
-| Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Terminal remembers every generated profile in `state.json` and force-hides the ones that are no longer in `settings.json`, so deleting a `profiles.list` entry by hand hides that profile *permanently*. Close **every** Terminal window, run `catalog\terminal-profiles\script.ps1`, then start Terminal again (fragments are only scanned at process start). |
-| Terminal wrote new `profiles.list` entries into `powershell\settings.json` | Expected. Terminal persists its own stub for each generated profile, and their GUIDs are machine-specific (the WSL one is derived from the local distro ID). Commit or ignore them, but don't prune them — see the row above. |
+| Terminal profiles (WSL, Comfort Shell, VS dev shells) missing from the dropdown | Terminal remembers every generated profile in `state.json` and force-hides the ones that are no longer in `settings.json`, so deleting a `profiles.list` entry by hand hides that profile *permanently*. Run `catalog\terminal-profiles\script.ps1`: it adds fragment profiles (WSL distros, Comfort Shell, Copilot) back to `settings.json`, which works with Terminal open. For a dynamic profile such as a VS developer prompt, close **every** Terminal window first, run it, then start Terminal again. |
+| `verify-baseline` reports **Terminal fragment profiles** missing on a first run | Fixed. The WSL profile's GUID is derived from the local distro ID, and Terminal remembered it (via `wsl-comfort`'s reload) before `dotfiles-links` swapped in the repo's `settings.json`, which only has other machines' Ubuntu entries. `terminal-profiles` now appends the missing entry. On a machine set up before the fix, run `catalog\terminal-profiles\script.ps1`; Terminal can stay open. |
+| Terminal wrote new `profiles.list` entries into `powershell\settings.json` | Expected. Terminal (or `terminal-profiles`) persists a stub for each generated profile, and their GUIDs are machine-specific (the WSL one is derived from the local distro ID). Commit or ignore them, but don't prune them — see the row above. |
 | Terminal opens in the wrong drive | `%DEVDRIVE_SRC%` isn't set in that process. Re-run `devdrive-env`, then restart Windows Terminal (machine variables only reach new processes). |
 | `Networking-nfv` opens in a **separate window** instead of a tab | Sudo isn't in inline mode on that machine. Run `catalog\sudo-inline\script.ps1` from an elevated shell (`sudo config` reports the current mode). |
 | `Networking-nfv` warns "repo not found" or "Visual Studio not found" | The launcher degrades instead of dying, so the tab stays usable. Run `catalog\nfv-clone\script.ps1` or `catalog\visualstudio\script.ps1`, then open a new tab. |

@@ -220,7 +220,9 @@ if ($missing.Count -eq 0) {
   Write-Host '[verify] All baseline items present.'
   $global:LASTEXITCODE = 0
 } else {
-  Write-Host '[verify] Missing items:'
-  $missing | ForEach-Object { Write-Host " - $($_.Item)" }
+  # Write-Output, not Write-Host: install.ps1's run summary only shows what
+  # reaches the pipeline, so Write-Host left it with a bare "exited with code 1".
+  Write-Output '[verify] Missing items:'
+  $missing | ForEach-Object { Write-Output " - $($_.Item)" }
   exit 1
 }
