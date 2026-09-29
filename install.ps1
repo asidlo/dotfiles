@@ -5,7 +5,8 @@
 .DESCRIPTION
   A thin, idempotent, phased orchestrator:
 
-    Phase 0  Preflight ............ admin guard, assert winget, enable configure, start log
+    Phase 0  Preflight ............ admin guard, assert winget, enable configure, start log,
+                                    up-front prompts (WSL password, ADO sign-in for nfv-clone)
     Phase 1  Resolve vendored WDC . verify vendored WindowsDeveloperConfig assets
     Phase 2  WDC base setup ....... `winget configure` the vendored dev-config.winget
     Phase 3  wsl-comfort .......... WSL + "Comfort Shell" + Terminal scheme
@@ -114,7 +115,8 @@
 
 .PARAMETER NonInteractive
   Never prompt. -WslPassword is left unset and the WSL user is created without a
-  password (set one later with `sudo passwd <user>`).
+  password (set one later with `sudo passwd <user>`). The Phase 0 Azure DevOps
+  sign-in for nfv-clone is skipped too, so the clone relies on a cached credential.
 
 .PARAMETER SkipWdc
   Skip Phase 2 (the vendored WindowsDeveloperConfig base setup).
@@ -132,7 +134,13 @@
   Skip the devdrive-env catalog task.
 
 .PARAMETER SkipNfvClone
-  Skip the nfv-clone catalog task.
+  Leave Networking-nfv alone: no check for the clone, no Phase 0 sign-in, and no
+  nfv-clone task.
+
+  Without it, Phase 0 checks for "<NfvRepoPath>\.git". When the clone is missing,
+  Phase 0 has you sign in to Git Credential Manager (installing Git first
+  if needed) so the Phase 4 clone runs unattended. If that sign-in fails, the
+  clone is skipped instead of prompting mid-run.
 
 .PARAMETER SkipVisualStudio
   Skip the visualstudio catalog task.
@@ -148,6 +156,10 @@
 .EXAMPLE
   # Re-apply just the personal layer, leaving the WSL disk where it is:
   .\install.ps1 -SkipWdc -SkipWslComfort -SkipWsl
+
+.EXAMPLE
+  # Personal machine: don't check for, sign in for, or clone Networking-nfv:
+  .\install.ps1 -SkipNfvClone -SkipVisualStudio
 
 .EXAMPLE
   # Unattended, artifacts on a different Dev Drive, keep the WSL disk on C::
@@ -621,6 +633,66 @@ function Revoke-WslTempSudo {
     if ($script:WslSudoGranted) { $script:ExitCode = 1 }
 }
 
+<#
+.SYNOPSIS
+  Signs in to Azure DevOps during Phase 0 when Networking-nfv still has to be cloned.
+
+  Otherwise Git Credential Manager's sign-in only appears when nfv-clone runs in
+  Phase 4, long after whoever started the run has walked away, so the clone
+  either waits on an unattended window or fails on auth. `git ls-remote` drives
+  the same GCM flow the clone uses, and git stores the credential on success, so
+  the Phase 4 clone reuses it without prompting. With a cached credential this
+  returns without prompting at all.
+
+  Git normally arrives with the WDC base setup in Phase 2, which is too late, so
+  a fresh machine gets Git.Git from winget here first. WDC then finds it present.
+#>
+function Invoke-NfvSignIn {
+    # Mark before the attempt: anything short of a confirmed sign-in skips the
+    # Phase 4 clone rather than letting it prompt mid-run.
+    $script:NfvSignInFailed = $true
+
+    Invoke-Step -Phase '0' -Task 'nfv-sign-in' `
+        -Hint "Sign in by hand with: git ls-remote $NfvRepoUrl HEAD -- then re-run install.ps1 (or pass -SkipNfvClone)" -Action {
+        Update-SessionPath
+        if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+            Write-Host '[nfv] git not found; installing Git.Git now so you can sign in before the long phases start'
+            $wingetOut = @(& winget install --id Git.Git --exact --source winget --accept-source-agreements --accept-package-agreements --disable-interactivity -h 2>&1)
+            $wingetExit = $LASTEXITCODE
+            $global:LASTEXITCODE = 0
+            Update-SessionPath
+            if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+                $tail = @($wingetOut | ForEach-Object { $(if ($_ -is [System.Management.Automation.ErrorRecord]) { "$($_.Exception.Message)" } else { "$_" }) } |
+                        Where-Object { $_.Trim() } | Select-Object -Last 5) -join ' | '
+                throw "Could not install Git (winget exit $wingetExit): $tail"
+            }
+        }
+
+        Write-Host "[nfv] $NfvRepoPath is missing; signing in to $NfvRepoUrl now so the Phase 4 clone runs unattended"
+        Write-Host '[nfv] complete the Git Credential Manager sign-in if a window opens'
+        $gitLines = New-Object System.Collections.Generic.List[string]
+        # Streamed rather than collected so a device-code or browser hint from GCM
+        # shows up while it is waiting, not after.
+        & git ls-remote $NfvRepoUrl HEAD 2>&1 | ForEach-Object {
+            # Exception.Message, not "$_": Windows PowerShell renders a blank stderr
+            # line as "System.Management.Automation.RemoteException".
+            $line = $(if ($_ -is [System.Management.Automation.ErrorRecord]) { "$($_.Exception.Message)" } else { "$_" }).TrimEnd()
+            if (-not $line) { return }
+            $gitLines.Add($line)
+            if ($line -notmatch '^[0-9a-f]{40}\s') { Write-Host "[nfv] $line" }
+        }
+        $gitExit = $LASTEXITCODE
+        $global:LASTEXITCODE = 0
+        if ($gitExit -ne 0) {
+            $tail = @($gitLines | Select-Object -Last 5) -join ' | '
+            throw "Sign-in to $NfvRepoUrl failed (git exit $gitExit); nfv-clone will be skipped. $tail"
+        }
+
+        $script:NfvSignInFailed = $false
+        Write-Host '[nfv] signed in; repository access confirmed'
+    }
+}
+
 function Write-RunSummary {
     Write-Host ''
     Write-Host '=== Run summary ===' -ForegroundColor Cyan
@@ -751,13 +823,26 @@ https://github.com/microsoft/winget-cli/releases/latest), then re-run this scrip
     Write-Info "WSL user     : $WslUser"
     Write-Info "ArtifactRoot : $ArtifactRoot"
     Write-Info "SrcRoot      : $SrcRoot"
-    Write-Info "NFV repo     : $NfvRepoPath"
+    Write-Info ("NFV repo     : $NfvRepoPath" + $(if ($SkipNfvClone) { ' [-SkipNfvClone]' } else { '' }))
 
     # Prompt now rather than 40 minutes into the run.
     if (-not $SkipWsl -and -not $WslPassword -and -not $NonInteractive) {
         Write-Host ''
         Write-Host "A password is needed for the WSL user '$WslUser' (leave blank to skip)." -ForegroundColor Cyan
         $WslPassword = Read-Host -Prompt "Password for $WslUser" -AsSecureString
+    }
+
+    # Same reasoning for the Azure DevOps sign-in nfv-clone needs in Phase 4.
+    $script:NfvSignInFailed = $false
+    $nfvWillClone = -not $SkipPersonal -and -not $SkipNfvClone -and
+        -not (Test-Path -LiteralPath (Join-Path $NfvRepoPath '.git'))
+    if ($nfvWillClone) {
+        if ($NonInteractive) {
+            Add-Result -Phase '0' -Task 'nfv-sign-in' -Status 'Skipped' `
+                -Message '-NonInteractive; nfv-clone will rely on an already-cached credential'
+        } else {
+            Invoke-NfvSignIn
+        }
     }
 
     Invoke-Step -Phase '0' -Task 'winget-configure-enable' -Hint 'Run: winget configure --enable' -Action {
@@ -900,7 +985,8 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
                 Args = @{ ArtifactRoot = $ArtifactRoot; SrcRoot = $SrcRoot }
                 Hint = "Re-run: catalog\devdrive-env\script.ps1 -ArtifactRoot '$ArtifactRoot' -SrcRoot '$SrcRoot'"
             }
-            @{ Task = 'nfv-clone'; Skip = $SkipNfvClone
+            @{ Task = 'nfv-clone'; Skip = ($SkipNfvClone -or $script:NfvSignInFailed)
+                SkipMessage = $(if ($SkipNfvClone) { 'skipped by parameter' } else { 'Phase 0 nfv-sign-in failed; not prompting mid-run' })
                 Args = @{ RepoUrl = $NfvRepoUrl; RepoPath = $NfvRepoPath }
                 Hint = "Sign in to Git Credential Manager, then: git clone $NfvRepoUrl `"$NfvRepoPath`""
             }
@@ -942,9 +1028,10 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             $taskScript = Join-Path $repoRoot "catalog\$task\script.ps1"
 
             if ($entry.Skip) {
+                $skipMessage = if ($entry.SkipMessage) { [string]$entry.SkipMessage } else { 'skipped by parameter' }
                 Write-Host ''
                 Write-Host "--- $task [SKIPPED] ---" -ForegroundColor DarkGray
-                Add-Result -Phase '4' -Task $task -Status 'Skipped' -Message 'skipped by parameter'
+                Add-Result -Phase '4' -Task $task -Status 'Skipped' -Message $skipMessage
                 continue
             }
             if (-not (Test-Path -LiteralPath $taskScript)) {

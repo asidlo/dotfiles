@@ -31,7 +31,7 @@ back in — every phase is idempotent, so re-running is safe.
 
 | Phase | Action |
 |------:|--------|
-| 0 | Preflight: require admin, assert `winget`, enable `winget configure`, start the transcript. |
+| 0 | Preflight: require admin, assert `winget`, enable `winget configure`, start the transcript, and ask for everything interactive up front: the WSL password, plus an Azure DevOps sign-in when `Networking-nfv` still has to be cloned (see [Networking-nfv sign-in](#networking-nfv-sign-in)). |
 | 1 | Resolve the vendored WindowsDeveloperConfig assets under `vendor\WindowsDeveloperConfig\`. |
 | 2 | WDC base setup: `winget configure` the vendored `dev-config.winget`. |
 | 3 | `wsl-comfort`: WSL + distro + Comfort Shell + Terminal scheme. |
@@ -58,9 +58,10 @@ back in — every phase is idempotent, so re-running is safe.
 | `-WslTempPasswordlessSudo` | `$true` | Grant `-WslUser` NOPASSWD sudo for the duration of the WSL phases (3 onward), then revoke it. See [WSL and sudo](#wsl-and-sudo). |
 | `-ContinueOnError` | `$true` | Collect failures and report at the end instead of aborting on the first one. |
 | `-RestartExplorer` | off | Let `dev-settings` restart Explorer (off by default so it can't kill Explorer mid-install). |
-| `-NonInteractive` | off | Never prompt; skip anything that would need input. |
+| `-NonInteractive` | off | Never prompt; skip anything that would need input (including the Phase 0 Azure DevOps sign-in). |
 | `-SkipWdc` / `-SkipWslComfort` / `-SkipPersonal` / `-SkipWsl` | off | Skip Phase 2 / 3 / 4+7 / 5+6. |
-| `-SkipDevDriveEnv` / `-SkipNfvClone` / `-SkipVisualStudio` | off | Skip individual Phase 4 tasks. |
+| `-SkipNfvClone` | off | Leave `Networking-nfv` alone: no check for the clone, no Phase 0 sign-in, and no `nfv-clone` task. |
+| `-SkipDevDriveEnv` / `-SkipVisualStudio` | off | Skip individual Phase 4 tasks. |
 
 ```powershell
 # Windows only; run install.sh yourself later inside WSL:
@@ -74,7 +75,25 @@ back in — every phase is idempotent, so re-running is safe.
 
 # Unattended (no prompts, no VHDX move):
 .\install.ps1 -NonInteractive -MoveWslToDevDrive:$false
+
+# Personal machine: don't check for, sign in for, or clone Networking-nfv:
+.\install.ps1 -SkipNfvClone -SkipVisualStudio
 ```
+
+### Networking-nfv sign-in
+
+`nfv-clone` runs in Phase 4, typically after you've stopped watching the run. If Git Credential Manager (GCM) prompts
+then, the clone waits on an unattended sign-in window or fails on auth. So Phase 0 checks for `<NfvRepoPath>\.git` and,
+when the clone is missing, runs an `nfv-sign-in` step:
+
+1. If `git` isn't on `PATH` yet (fresh machine; WDC only installs it in Phase 2), it installs `Git.Git` with winget.
+2. It runs `git ls-remote <NfvRepoUrl> HEAD`, which starts the same GCM sign-in the clone would. Git stores the credential
+   on success, so the Phase 4 clone reuses it without prompting. If a credential is already cached, nothing prompts.
+3. If the sign-in fails, `nfv-clone` shows as `Skipped` instead of prompting mid-run, and `verify-baseline` reports the repo as
+   missing.
+
+The step doesn't run when the repo already exists, with `-SkipNfvClone` or `-SkipPersonal`, or with `-NonInteractive`
+(it records as `Skipped`).
 
 If Phases 5/6 are skipped (or WSL wasn't ready), run the WSL side by hand from inside the distro:
 
@@ -323,6 +342,7 @@ under a second with instructions instead of hanging for five minutes.
 | WDC step paused on an *"existing NVM for Windows installation was detected"* dialog | NVM for Windows 2.0.0's installer shows that prompt even when silent. Phase 2 now answers **Yes** automatically; if it still appears (e.g. running `winget configure` by hand), click **Yes**. |
 | `wdc-base-setup` shows **Warning**: *"WDC NodeJS unit tried to install OpenJS.NodeJS.LTS … over the newer Node.js …"* | A newer Node.js MSI is already installed (e.g. via nvm), winget doesn't match it to `OpenJS.NodeJS.LTS`, and the LTS MSI won't downgrade it (1603, "A later version of Node.js is already installed"). This is harmless and Node is present. It only counts as a warning when `NodeJS` is the *only* failed unit. To silence it, uninstall the standalone "Node.js" entry and let nvm manage Node. |
 | A step failed | Read the summary table at the end of the run; each failure lists captured output and a remediation hint. Full detail is in `<ArtifactRoot>\logs\install-<stamp>.log`. |
+| `nfv-sign-in` failed (or `nfv-clone` shows *"Phase 0 nfv-sign-in failed"*) | Run `git ls-remote <NfvRepoUrl> HEAD` and complete the GCM sign-in, then re-run `install.ps1`. Pass `-SkipNfvClone` if you don't need the repo on this machine. |
 | `nfv-clone` failed on auth | Sign in to Git Credential Manager, then `git clone <NfvRepoUrl> <NfvRepoPath>` by hand, or re-run `install.ps1`. |
 | `visualstudio` skipped the `--config` step | `NFV.vsconfig` wasn't found — fix `nfv-clone` first, then re-run. |
 | VS 2026 changed unexpectedly | It shouldn't: the task scopes vswhere to `[17.0,18.0)` and only ever modifies the 2022 install path. |
