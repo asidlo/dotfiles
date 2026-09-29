@@ -434,6 +434,36 @@ function Stop-DialogAutoConfirm($Watcher) {
 # useradd's default NAME_REGEX; also what `wsl.exe -u` can pass through intact.
 $LinuxUserPattern = '^[a-z_][a-z0-9_-]{0,31}$'
 
+<#
+  Names of the units `winget configure` reported as failed. Each unit prints a
+  header ending in "[<name>]" followed by its result line.
+#>
+function Get-WdcFailedUnits([string[]]$Lines) {
+    $unit = $null
+    foreach ($line in $Lines) {
+        if ($line -match '\[([^\]]+)\]\s*$') { $unit = $Matches[1] }
+        elseif ($unit -and $line -match 'configuration unit failed') { $unit; $unit = $null }
+    }
+}
+
+# Highest machine-installed Node.js MSI version, or $null.
+function Get-InstalledNodeVersion {
+    $versions = Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*',
+    'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue |
+        Where-Object { $_.DisplayName -eq 'Node.js' -and $_.DisplayVersion } |
+        ForEach-Object { $_.DisplayVersion -as [version] } | Where-Object { $_ }
+    $versions | Sort-Object -Descending | Select-Object -First 1
+}
+
+# The version `winget install --id <Id>` would install, or $null.
+function Get-WingetLatestVersion([string]$Id) {
+    $out = @(winget show --id $Id --exact --accept-source-agreements --disable-interactivity 2>$null)
+    $global:LASTEXITCODE = 0
+    $line = $out | Where-Object { "$_" -match '^\s*Version:\s*(\S+)' } | Select-Object -First 1
+    if ($line -and "$line" -match '^\s*Version:\s*(\S+)') { return $Matches[1] -as [version] }
+    return $null
+}
+
 function ConvertFrom-SecureStringPlain([securestring]$Secure) {
     if (-not $Secure) { return '' }
     $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($Secure)
@@ -774,11 +804,33 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             # NOTE: --accept-package-agreements is NOT valid on `winget configure`;
             # package consent flows through --accept-configuration-agreements.
             $dialogWatcher = Start-DialogAutoConfirm
+            $wdcOutput = New-Object System.Collections.Generic.List[string]
+            $wdcExit = 0
             try {
-                winget configure --file $wdcConfig --accept-configuration-agreements --disable-interactivity
+                # Pass every record straight through (so it still streams and
+                # Invoke-Step still sees stderr as errors) while keeping a copy
+                # to work out which units failed.
+                winget configure --file $wdcConfig --accept-configuration-agreements --disable-interactivity 2>&1 |
+                    ForEach-Object { $wdcOutput.Add("$_"); $_ }
+                $wdcExit = $LASTEXITCODE
             } finally {
                 Stop-DialogAutoConfirm $dialogWatcher
             }
+            if ($wdcExit -ne 0) {
+                $failedUnits = @(Get-WdcFailedUnits $wdcOutput)
+                if ($failedUnits.Count -eq 1 -and $failedUnits[0] -eq 'NodeJS') {
+                    $nodeVersion = Get-InstalledNodeVersion
+                    $ltsVersion = Get-WingetLatestVersion 'OpenJS.NodeJS.LTS'
+                    if ($nodeVersion -and $ltsVersion -and $nodeVersion -ge $ltsVersion) {
+                        # Non-terminating error: Invoke-Step records the step as a
+                        # Warning (visible in the summary) rather than Failed.
+                        Write-Error ("WDC NodeJS unit tried to install OpenJS.NodeJS.LTS $ltsVersion over the newer Node.js $nodeVersion already installed; " +
+                            "the MSI refuses downgrades ('A later version of Node.js is already installed', 1603). Node.js is present; nothing to fix.")
+                        $wdcExit = 0
+                    }
+                }
+            }
+            $global:LASTEXITCODE = $wdcExit
         }
         Update-SessionPath
     }

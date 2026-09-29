@@ -321,6 +321,7 @@ under a second with instructions instead of hanging for five minutes.
 | `winget configure` not available | Update **App Installer** from the Microsoft Store; Phase 0 also runs `winget configure --enable`. |
 | WDC step rebooted | Log back in and re-run `.\install.ps1`. |
 | WDC step paused on an *"existing NVM for Windows installation was detected"* dialog | NVM for Windows 2.0.0's installer shows that prompt even when silent. Phase 2 now answers **Yes** automatically; if it still appears (e.g. running `winget configure` by hand), click **Yes**. |
+| `wdc-base-setup` shows **Warning**: *"WDC NodeJS unit tried to install OpenJS.NodeJS.LTS … over the newer Node.js …"* | A newer Node.js MSI is already installed (e.g. via nvm), winget doesn't match it to `OpenJS.NodeJS.LTS`, and the LTS MSI won't downgrade it (1603, "A later version of Node.js is already installed"). This is harmless and Node is present. It only counts as a warning when `NodeJS` is the *only* failed unit. To silence it, uninstall the standalone "Node.js" entry and let nvm manage Node. |
 | A step failed | Read the summary table at the end of the run; each failure lists captured output and a remediation hint. Full detail is in `<ArtifactRoot>\logs\install-<stamp>.log`. |
 | `nfv-clone` failed on auth | Sign in to Git Credential Manager, then `git clone <NfvRepoUrl> <NfvRepoPath>` by hand, or re-run `install.ps1`. |
 | `visualstudio` skipped the `--config` step | `NFV.vsconfig` wasn't found — fix `nfv-clone` first, then re-run. |
