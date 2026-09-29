@@ -13,7 +13,10 @@
     Phase 4  Personal layer ....... this repo's catalog/* tasks (the delta)
     Phase 5  WSL provisioning ..... non-root default user, dev-drive move, /root cleanup
     Phase 6  WSL install.sh ....... clone this repo *into* the distro, then run its install.sh
-    Phase 7  Verify baseline ...... catalog/verify-baseline, once everything above has run
+    Phase 7  Updates .............. opt-in (-InstallUpdates): winget upgrades, then Windows Update
+    Phase 8  Verify baseline ...... catalog/verify-baseline, once everything above has run
+
+  With -Restart, the machine restarts after a clean run.
 
   Microsoft's WindowsDeveloperConfig (vendored under vendor\WindowsDeveloperConfig)
   is the base "full setup"; this repo layers only the personal delta on top. Every
@@ -113,6 +116,23 @@
   Let the dev-settings task restart Explorer. Off by default -- killing Explorer
   mid-install is disruptive, and the affected settings apply on next sign-in.
 
+.PARAMETER InstallUpdates
+  Add Phase 7: upgrade every winget package `winget upgrade` lists
+  (catalog/winget-upgrade), then install the updates Windows Update would
+  install on its own (catalog/windows-update; optional and preview updates are
+  left out). Off by default.
+
+  Packages hosting this run (PowerShell 7, Windows Terminal, VS Code) are held
+  back, because upgrading them closes the console the run lives in; upgrade
+  them afterwards from another shell. Some Windows updates are only offered
+  after the restart the previous round asks for, so re-run after restarting
+  to pick those up.
+
+.PARAMETER Restart
+  Restart the machine 60 seconds after the run finishes (cancel with
+  `shutdown /a`). Off by default. Only after a clean run: when a step failed or
+  the run stopped early, the machine stays up so the summary stays on screen.
+
 .PARAMETER NonInteractive
   Never prompt. -WslPassword is left unset and the WSL user is created without a
   password (set one later with `sudo passwd <user>`). The Phase 0 Azure DevOps
@@ -125,7 +145,7 @@
   Skip Phase 3 (the vendored wsl-comfort setup).
 
 .PARAMETER SkipPersonal
-  Skip Phase 4 (the personal catalog/* layer) and Phase 7 (verify-baseline).
+  Skip Phase 4 (the personal catalog/* layer) and Phase 8 (verify-baseline).
 
 .PARAMETER SkipWsl
   Skip Phases 5 and 6 (WSL provisioning and install.sh).
@@ -164,6 +184,10 @@
 .EXAMPLE
   # Unattended, artifacts on a different Dev Drive, keep the WSL disk on C::
   .\install.ps1 -NonInteractive -ArtifactRoot 'D:\.tools' -MoveWslToDevDrive:$false
+
+.EXAMPLE
+  # New machine: set everything up, install all updates, then restart if nothing failed:
+  .\install.ps1 -InstallUpdates -Restart
 #>
 [CmdletBinding()]
 param(
@@ -183,6 +207,8 @@ param(
     [bool]$WslTempPasswordlessSudo = $true,
     [bool]$ContinueOnError = $true,
     [switch]$RestartExplorer,
+    [switch]$InstallUpdates,
+    [switch]$Restart,
     [switch]$NonInteractive,
     [switch]$SkipWdc,
     [switch]$SkipWslComfort,
@@ -356,8 +382,9 @@ function Update-SessionPath {
 
 # Some installers show modal prompts that no silent switch can suppress (NVM for
 # Windows 2.0.0 uses a plain Inno Setup MsgBox rather than SuppressibleMsgBox, so
-# winget's /SUPPRESSMSGBOXES is ignored). These block `winget configure` until
-# someone clicks, so a background watcher answers exactly these known dialogs.
+# winget's /SUPPRESSMSGBOXES is ignored). These block `winget configure` (and an
+# upgrade to 2.0.0 in Phase 7) until someone clicks, so a background watcher
+# answers exactly these known dialogs.
 $AutoConfirmDialogs = @(
     @{ Text = 'An existing NVM for Windows installation was detected'; Button = 6 }  # IDYES
 )
@@ -439,7 +466,7 @@ function Stop-DialogAutoConfirm($Watcher) {
     try { [void]$Watcher.PowerShell.EndInvoke($Watcher.Handle) } catch { }
     $Watcher.PowerShell.Dispose()
     if ($Watcher.State.Confirmed -gt 0) {
-        Write-Host "[wdc] auto-confirmed $($Watcher.State.Confirmed) installer prompt(s)"
+        Write-Host "[dialogs] auto-confirmed $($Watcher.State.Confirmed) installer prompt(s)"
     }
 }
 
@@ -753,8 +780,47 @@ function Save-Ledger {
     }
 }
 
+$script:RestartDelaySeconds = 60
+
+<#
+  -Restart. Only after a clean, complete run: when a step failed or the run
+  stopped early, the machine stays up so the summary can be read. Runs before
+  the summary so the decision is in it and in the JSON ledger.
+#>
+function Request-Restart {
+    $failed = @($script:Ledger | Where-Object { $_.Status -eq 'Failed' })
+    $reason = $null
+    if (-not $script:RunCompleted) { $reason = 'the run stopped early' }
+    elseif ($failed.Count) { $reason = "$($failed.Count) step(s) failed" }
+    elseif ($script:ExitCode -ne 0) { $reason = 'the run did not finish cleanly' }
+    if ($reason) {
+        Add-Result -Phase '-' -Task 'restart' -Status 'Skipped' -Message "-Restart: not restarting because $reason" `
+            -Hint 'Fix the failures above, then restart (or re-run with -Restart)'
+        return
+    }
+
+    $output = @(& shutdown.exe /r /t $script:RestartDelaySeconds /d p:0:0 /c 'install.ps1 finished; restarting to finish setup.' 2>&1 |
+            ForEach-Object { "$_" })
+    $code = $LASTEXITCODE
+    $global:LASTEXITCODE = 0
+    if ($code -eq 0) {
+        $script:RestartScheduled = $true
+        Add-Result -Phase '-' -Task 'restart' -Status 'Ok' `
+            -Message "restarting in $($script:RestartDelaySeconds)s; run 'shutdown /a' to cancel"
+    } elseif ($code -eq 1190) {
+        # ERROR_SHUTDOWN_IS_SCHEDULED
+        Add-Result -Phase '-' -Task 'restart' -Status 'Warning' -ExitCode $code `
+            -Message 'a restart or shutdown was already scheduled; leaving it in place'
+    } else {
+        Add-Result -Phase '-' -Task 'restart' -Status 'Warning' -ExitCode $code `
+            -Message "shutdown.exe exited with code $code; restart by hand" -Detail $output
+    }
+}
+
 # ===========================================================================
 $script:ExitCode = 0
+$script:RunCompleted = $false
+$script:RestartScheduled = $false
 try {
 
     # --- Phase 0: Preflight ------------------------------------------------
@@ -968,7 +1034,7 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
         # appx-prune is deliberately absent: it is too destructive to run here.
         # powershell-profiles is deliberately absent: the profiles already sync
         # down from OneDrive, so copying them over is redundant.
-        # verify-baseline is deliberately absent: it runs as Phase 7, after the
+        # verify-baseline is deliberately absent: it runs as Phase 8, after the
         # WSL phases have created the items it checks.
 
         $catalogPlan = @(
@@ -1282,15 +1348,38 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
         }
     }
 
-    # --- Phase 7: Verify baseline ------------------------------------------
+    # --- Phase 7: Updates ---------------------------------------------------
+    # Opt-in. After setup, so an upgrade that restarts WSL or an app cannot
+    # disturb the phases above, but before verify-baseline, so the verify sees
+    # the machine as the updates left it.
+    if (-not $InstallUpdates) {
+        Write-Phase '7' 'Updates [SKIPPED; pass -InstallUpdates to run]'
+    } else {
+        Write-Phase '7' 'Updates (winget upgrades, then Windows Update)'
+
+        $upgradeScript = Join-Path $repoRoot 'catalog\winget-upgrade\script.ps1'
+        Invoke-Step -Phase '7' -Task 'winget-upgrade' -Hint 'Re-run: catalog\winget-upgrade\script.ps1' -Action {
+            $dialogWatcher = Start-DialogAutoConfirm
+            try { & $upgradeScript } finally { Stop-DialogAutoConfirm $dialogWatcher }
+        }
+        Update-SessionPath
+
+        $windowsUpdateScript = Join-Path $repoRoot 'catalog\windows-update\script.ps1'
+        Invoke-Step -Phase '7' -Task 'windows-update' `
+            -Hint 'Re-run: catalog\windows-update\script.ps1, or use Settings > Windows Update' -Action {
+            & $windowsUpdateScript
+        }
+    }
+
+    # --- Phase 8: Verify baseline ------------------------------------------
     # Last, not in Phase 4: it checks the WSL default user and the VHDX
     # location, which Phase 5 only creates -- so inside Phase 4 it failed on
     # every fresh machine.
     if ($SkipPersonal) {
-        Write-Phase '7' 'Verify baseline [SKIPPED -SkipPersonal]'
-        Add-Result -Phase '7' -Task 'verify-baseline' -Status 'Skipped' -Message '-SkipPersonal'
+        Write-Phase '8' 'Verify baseline [SKIPPED -SkipPersonal]'
+        Add-Result -Phase '8' -Task 'verify-baseline' -Status 'Skipped' -Message '-SkipPersonal'
     } else {
-        Write-Phase '7' 'Verify baseline'
+        Write-Phase '8' 'Verify baseline'
 
         # Anything the caller opted out of must not be reported as a missing
         # baseline item, or an intentional -Skip turns into a false failure.
@@ -1305,12 +1394,13 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
         $verifyScript = Join-Path $repoRoot 'catalog\verify-baseline\script.ps1'
         $verifyArgs = @{ ArtifactRoot = $ArtifactRoot; SrcRoot = $SrcRoot; VsInstallPath = $VsInstallPath; NfvRepoPath = $NfvRepoPath; Distro = $Distro; SkipChecks = $verifySkips }
         Update-SessionPath
-        Invoke-Step -Phase '7' -Task 'verify-baseline' -ExitCodeIsContract `
+        Invoke-Step -Phase '8' -Task 'verify-baseline' -ExitCodeIsContract `
             -Hint 'Missing items above were not installed; check the earlier task failures' -Action {
             & $verifyScript @verifyArgs
         }
     }
 
+    $script:RunCompleted = $true
 } catch {
     $script:ExitCode = 1
     Write-Host ''
@@ -1323,12 +1413,17 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
     # sudo. No-op when Phase 6 already cleaned up.
     Revoke-WslTempSudo -Phase '6'
 
+    if ($Restart) { Request-Restart }
+
     Write-RunSummary
     Save-Ledger
 
     Write-Host ''
     Write-Host '=== install.ps1 finished ===' -ForegroundColor Cyan
     Write-Info 'If the WDC base setup reboots the machine, re-run install.ps1 after logging back in.'
+    if ($script:RestartScheduled) {
+        Write-Host "Restarting in $($script:RestartDelaySeconds) seconds. Run 'shutdown /a' to cancel." -ForegroundColor Yellow
+    }
 
     if ($script:Ledger | Where-Object { $_.Status -eq 'Failed' }) { $script:ExitCode = 1 }
 

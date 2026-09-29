@@ -1,0 +1,10 @@
+$schema: "1.0"
+name: winget-upgrade
+description: Upgrade every winget package with an available upgrade, one at a time, holding back any package that hosts the running shell.
+parameters:
+  Exclude:
+    type: array
+    description: Optional package ids to leave alone.
+    required: false
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1

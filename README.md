@@ -23,6 +23,7 @@ That single command runs everything, end to end:
 3. This repo's personal layer (winget packages, fonts, Dev Drive redirection, VS 2022, registry tweaks, symlinks).
 4. WSL provisioning: create a **non-root** user and (by default) move the distro's VHDX onto the Dev Drive.
 5. This repo's WSL-side `install.sh`, run **inside** the distro as that user, automatically.
+6. Optionally (`-InstallUpdates`, `-Restart`), every pending winget and Windows update, then a restart.
 
 On a fresh machine the WDC step may reboot (it resumes itself). If it does, just re-run `.\install.ps1` after logging
 back in — every phase is idempotent, so re-running is safe.
@@ -38,7 +39,10 @@ back in — every phase is idempotent, so re-running is safe.
 | 4 | Personal layer: the `catalog\*` tasks below (the delta on top of WDC). |
 | 5 | WSL provisioning: create the non-root user, clean stale `/root` dotfiles, move the VHDX to the Dev Drive. |
 | 6 | Run this repo's `install.sh` inside WSL as that user. |
-| 7 | `verify-baseline`: confirm everything above landed (last, so the WSL user and VHDX move are in place first). |
+| 7 | Opt-in with `-InstallUpdates`: `winget-upgrade`, then `windows-update` (see [Updates and restart](#updates-and-restart)). |
+| 8 | `verify-baseline`: confirm everything above landed (last, so the WSL user, the VHDX move and any updates are in place first). |
+
+With `-Restart`, the machine restarts 60 seconds after a clean run.
 
 ### Parameters
 
@@ -58,8 +62,10 @@ back in — every phase is idempotent, so re-running is safe.
 | `-WslTempPasswordlessSudo` | `$true` | Grant `-WslUser` NOPASSWD sudo for the duration of the WSL phases (3 onward), then revoke it. See [WSL and sudo](#wsl-and-sudo). |
 | `-ContinueOnError` | `$true` | Collect failures and report at the end instead of aborting on the first one. |
 | `-RestartExplorer` | off | Let `dev-settings` restart Explorer (off by default so it can't kill Explorer mid-install). |
+| `-InstallUpdates` | off | Run Phase 7: upgrade every winget package with an upgrade, then install pending Windows updates. |
+| `-Restart` | off | Restart 60 seconds after the run, but only if no step failed (`shutdown /a` cancels). |
 | `-NonInteractive` | off | Never prompt; skip anything that would need input (including the Phase 0 Azure DevOps sign-in). |
-| `-SkipWdc` / `-SkipWslComfort` / `-SkipPersonal` / `-SkipWsl` | off | Skip Phase 2 / 3 / 4+7 / 5+6. |
+| `-SkipWdc` / `-SkipWslComfort` / `-SkipPersonal` / `-SkipWsl` | off | Skip Phase 2 / 3 / 4+8 / 5+6. |
 | `-SkipNfvClone` | off | Leave `Networking-nfv` alone: no check for the clone, no Phase 0 sign-in, and no `nfv-clone` task. |
 | `-SkipDevDriveEnv` / `-SkipVisualStudio` | off | Skip individual Phase 4 tasks. |
 
@@ -78,7 +84,31 @@ back in — every phase is idempotent, so re-running is safe.
 
 # Personal machine: don't check for, sign in for, or clone Networking-nfv:
 .\install.ps1 -SkipNfvClone -SkipVisualStudio
+
+# New machine: set up, install all updates, then restart if nothing failed:
+.\install.ps1 -InstallUpdates -Restart
 ```
+
+### Updates and restart
+
+Both are off by default.
+
+`-InstallUpdates` adds Phase 7, which runs two catalog tasks:
+
+- `winget-upgrade` upgrades each package `winget upgrade` lists, one at a time, so the summary names any that failed.
+  Like `winget upgrade --all`, it leaves pinned packages, packages that need explicit targeting (Chocolatey) and
+  packages with an unknown version alone. It **holds back** the packages hosting the run (PowerShell 7, Windows Terminal,
+  VS Code), because upgrading one closes the console the run lives in. It also holds back App Installer (winget itself),
+  which the Store updates. The step shows a warning naming them; upgrade them afterwards from another shell with
+  `winget upgrade --id <id>`. NVM for Windows 2.0.0's *"existing installation"* prompt is answered automatically, as in
+  Phase 2.
+- `windows-update` installs what Windows Update would install on its own (security, quality, driver and definition
+  updates) through the Windows Update Agent API. Optional and preview updates are left out. Some updates are only
+  offered after the restart the previous round asks for, so re-run after restarting to catch those.
+
+`-Restart` schedules `shutdown /r /t 60` once the summary is written. It only does so after a clean run: if any step
+failed or the run stopped early, the `restart` row in the summary shows `Skipped` with the reason, and the machine stays
+up so you can read it. Warnings don't block the restart.
 
 ### Networking-nfv sign-in
 
@@ -218,7 +248,9 @@ catalog tasks.
 | `sudo-inline` | Put Sudo for Windows into **inline** mode so the elevated `Networking-nfv` profile stays a tab instead of taking over a new window. | ✅ |
 | `dotfiles-links` | Symlink gitconfig, starship, clink, nvim, Terminal settings, icons. | ✅ |
 | `terminal-profiles` | Add a `settings.json` entry for every fragment profile (Ubuntu, Comfort Shell, Copilot), and clear Windows Terminal's `generatedProfiles` if a dynamic one (VS prompts) is still unlisted, so none of them get auto-hidden. | ✅ |
-| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user, the Terminal fragment profiles, the NFV profile and sudo's mode are present. | ✅ as Phase 7, after the WSL phases |
+| `verify-baseline` | Post-check that core tools, links, VS 2022, NFV, agency, anvil, dev-drive vars, the WSL user, the Terminal fragment profiles, the NFV profile and sudo's mode are present. | ✅ as Phase 8, after the WSL phases |
+| `winget-upgrade` | Upgrade every package `winget upgrade` lists, one at a time, holding back the packages hosting the run. | ✅ as Phase 7, with `-InstallUpdates` |
+| `windows-update` | Install the updates Windows Update would install on its own, via the Windows Update Agent API. | ✅ as Phase 7, with `-InstallUpdates` |
 | `appx-prune` | Remove non-essential AppX packages (curated keep-list). | ❌ too destructive; run by hand |
 | `powershell-profiles` | Deploy `WindowsPowerShell` & `PowerShell` profile scripts from the repo. | ❌ profiles already sync from OneDrive |
 
@@ -355,6 +387,9 @@ under a second with instructions instead of hanging for five minutes.
 | WDC step paused on an *"existing NVM for Windows installation was detected"* dialog | NVM for Windows 2.0.0's installer shows that prompt even when silent. Phase 2 now answers **Yes** automatically; if it still appears (e.g. running `winget configure` by hand), click **Yes**. |
 | `wdc-base-setup` shows **Warning**: *"WDC NodeJS unit tried to install OpenJS.NodeJS.LTS … over the newer Node.js …"* | A newer Node.js MSI is already installed (e.g. via nvm), winget doesn't match it to `OpenJS.NodeJS.LTS`, and the LTS MSI won't downgrade it (1603, "A later version of Node.js is already installed"). This is harmless and Node is present. It only counts as a warning when `NodeJS` is the *only* failed unit. To silence it, uninstall the standalone "Node.js" entry and let nvm manage Node. |
 | A step failed | Read the summary table at the end of the run; each failure lists captured output and a remediation hint. Full detail is in `<ArtifactRoot>\logs\install-<stamp>.log`. |
+| `-Restart` didn't restart | The `restart` row in the summary says why: a step failed, or the run stopped early. Fix it, then restart by hand or re-run with `-Restart`. |
+| `winget-upgrade` shows **Warning**: *"held back Microsoft.PowerShell …"* | Expected when a package hosting the run has an upgrade: upgrading it would close the console. Run `winget upgrade --id <id>` from a different shell (for pwsh, from Windows PowerShell). |
+| `windows-update` failed with *"the Windows Update service (wuauserv) is disabled"* | Set the **Windows Update** service back to *Manual* (`Set-Service wuauserv -StartupType Manual`), or drop `-InstallUpdates`. Policy-managed machines may re-disable it; update them through their management tool. |
 | `nfv-sign-in` failed (or `nfv-clone` shows *"Phase 0 nfv-sign-in failed"*) | Run `git ls-remote <NfvRepoUrl> HEAD` and complete the GCM sign-in, then re-run `install.ps1`. Pass `-SkipNfvClone` if you don't need the repo on this machine. |
 | `nfv-clone` failed on auth | Sign in to Git Credential Manager, then `git clone <NfvRepoUrl> <NfvRepoPath>` by hand, or re-run `install.ps1`. |
 | `visualstudio` skipped the `--config` step | `NFV.vsconfig` wasn't found — fix `nfv-clone` first, then re-run. |

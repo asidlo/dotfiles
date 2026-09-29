@@ -1,0 +1,10 @@
+$schema: "1.0"
+name: windows-update
+description: Install the Windows updates Windows Update would install on its own (optional and preview updates excluded).
+parameters:
+  Criteria:
+    type: string
+    description: Optional Windows Update Agent search criteria.
+    required: false
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1
