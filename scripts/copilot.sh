@@ -67,7 +67,18 @@ else
     exit 1
   fi
 
-  bash "$installer" </dev/null || exit 1
+  # The installer asks "Would you like to add it to ~/.zprofile? [y/N]" when the
+  # binary is not on $PATH afterwards, and reads the answer from /dev/tty -- so
+  # </dev/null alone does not stop it blocking a terminal run. Put its install
+  # dir (same PREFIX rule it uses) on $PATH for the run so it never asks; the
+  # dotfiles' zsh/bash configs already add ~/.local/bin themselves.
+  if [ "$(id -u)" -eq 0 ]; then
+    install_prefix="${PREFIX:-/usr/local}"
+  else
+    install_prefix="${PREFIX:-$HOME/.local}"
+  fi
+
+  PATH="$install_prefix/bin:$PATH" bash "$installer" </dev/null || exit 1
 
   copilot_bin=$(find_copilot) || {
     echo "GitHub Copilot CLI installer finished, but no copilot binary was found." >&2
