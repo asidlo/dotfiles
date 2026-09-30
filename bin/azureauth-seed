@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""Seed the azureauth MSAL cache with the identities Agency's MCP servers need.
+
+Run this once per machine, after scripts/azureauth-signin-fix.sh has installed
+the wrapper. It is deliberately NOT part of install.sh: it needs a browser and a
+human, and install.sh must stay unattended.
+
+    azureauth-seed            # sign in for whatever is missing
+    azureauth-seed --check    # report status only, never signs in
+    azureauth-seed --force    # re-run every sign-in even if cached
+
+Why more than one sign-in: MSAL stores refresh tokens per client id, and these
+clients are not in the same FOCI family -- seeding the Azure CLI client does not
+unlock the Visual Studio or VS Code ones. That was measured, not assumed: after
+seeding only 04b07795 (Azure CLI), 3 of the 8 identities Agency requests still
+went interactive. Each distinct (client, tenant) pair needs its own pass.
+
+This drives /usr/bin/azureauth, so it inherits the wrapper's sign-in lock and
+IPv4 redirect bridge; it deliberately does not reimplement either. Without that
+wrapper in place the sign-ins here will hang exactly as they did before -- see
+scripts/azureauth-signin-fix.sh.
+"""
+
+import glob
+import json
+import os
+import subprocess
+import sys
+
+AZUREAUTH = "/usr/bin/azureauth"
+CACHE_DIR = os.path.expanduser("~/.azureauth")
+
+# (label, client, tenant, scopes)
+TARGETS = [
+    ("Azure CLI / ADO",
+     "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
+     "72f988bf-86f1-41af-91ab-2d7cd011db47",
+     ["499b84ac-1321-427f-aa17-267ca6975798/.default"]),
+    ("VS Code (organizations)",
+     "aebc6443-996d-45c2-90f0-388ff96faa56",
+     "organizations",
+     ["api://29f3c95d-3262-44e4-b1c4-de5ba513b6c0/.default"]),
+    ("Visual Studio / ADO",
+     "872cd9fa-d31f-45e0-9eab-6e460a02d1f1",
+     "72f988bf-86f1-41af-91ab-2d7cd011db47",
+     ["499b84ac-1321-427f-aa17-267ca6975798/.default"]),
+    ("VS Code (corp tenant)",
+     "aebc6443-996d-45c2-90f0-388ff96faa56",
+     "72f988bf-86f1-41af-91ab-2d7cd011db47",
+     ["api://72aecc37-3d81-4f5e-8577-21eb399fcca3/access_as_user"]),
+    ("WorkIQ",
+     "ba081686-5d24-4bc6-a0d6-d034ecffed87",
+     "organizations",
+     ["fdcc1f02-fc51-4226-8753-f668596af7f7/WorkIQAgent.Ask"]),
+]
+
+
+def cached_clients(tenant):
+    """Client ids holding a refresh token in the cache for this tenant.
+
+    Reading the cache rather than probing with a real token request keeps
+    --check free of side effects: a probe that missed would open a browser.
+    MSAL key shape is <account>-<env>-refreshtoken-<client>-<tenant>-<target>.
+    """
+    found = set()
+    paths = [os.path.join(CACHE_DIR, "msal_%s_cache.json" % tenant)]
+    if tenant == "organizations":
+        # azureauth has used both spellings for the multi-tenant cache.
+        paths += glob.glob(os.path.join(CACHE_DIR, "msal_common_cache.json"))
+    marker = "-refreshtoken-"
+    for path in paths:
+        try:
+            with open(path) as fh:
+                data = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        for key in data.get("RefreshToken", {}):
+            if marker in key:
+                # The client id is the 36-char GUID right after the marker.
+                found.add(key.split(marker, 1)[1][:36].lower())
+    return found
+
+
+def is_cached(client, tenant):
+    return client.lower() in cached_clients(tenant)
+
+
+def sign_in(label, client, tenant, scopes):
+    args = [AZUREAUTH, "aad",
+            "--client", client,
+            "--tenant", tenant,
+            "--mode", "web",
+            "--output", "none",
+            "--timeout", "10"]
+    for scope in scopes:
+        args += ["--scope", scope]
+
+    print("\n=== %s ===" % label, flush=True)
+    print("    client %s  tenant %s" % (client, tenant), flush=True)
+    print("    A browser will open. If it dead-ends on an unreachable",
+          flush=True)
+    print("    http://localhost:<port>/?code=... page, copy that whole URL and",
+          flush=True)
+    print("    run:  azureauth-replay-redirect '<url>'", flush=True)
+
+    rc = subprocess.call(args)
+    print("    -> %s" % ("OK" if rc == 0 else "FAILED (exit %d)" % rc),
+          flush=True)
+    return rc == 0
+
+
+def main(argv):
+    check_only = "--check" in argv
+    force = "--force" in argv
+
+    if not os.path.exists(AZUREAUTH):
+        print("azureauth not found at %s" % AZUREAUTH, file=sys.stderr)
+        return 1
+
+    wrapped = False
+    try:
+        real = os.path.realpath(AZUREAUTH)
+        with open(real, "rb") as fh:
+            wrapped = b"dotfiles-azureauth-signin-fix" in fh.read(4096)
+    except OSError:
+        pass
+    if not wrapped and not check_only:
+        print("warning: /usr/bin/azureauth is not the serializing wrapper.",
+              file=sys.stderr)
+        print("         Run scripts/azureauth-signin-fix.sh first, or these",
+              file=sys.stderr)
+        print("         sign-ins will hang on the redirect.", file=sys.stderr)
+
+    missing = []
+    cached = 0
+    print("identity status:")
+    for label, client, tenant, scopes in TARGETS:
+        ok = is_cached(client, tenant)
+        cached += 1 if ok else 0
+        print("  [%s] %s" % ("cached" if ok else "  --  ", label))
+        if force or not ok:
+            missing.append((label, client, tenant, scopes))
+
+    if check_only:
+        print("\n%d of %d cached." % (cached, len(TARGETS)))
+        return 0 if cached == len(TARGETS) else 1
+
+    if not missing:
+        print("\nnothing to do.")
+        return 0
+
+    print("\n%d sign-in(s) needed. They run one at a time." % len(missing))
+    for target in missing:
+        if not sign_in(*target):
+            print("\nstopping: that sign-in did not complete.", file=sys.stderr)
+            return 1
+
+    print("\ndone. Verify with: azureauth-seed --check")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
