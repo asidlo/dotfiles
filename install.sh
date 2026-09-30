@@ -216,9 +216,21 @@ if [ "$(id -u)" -ne 0 ]; then
   trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT
 fi
 
-# Only update locale if os is ubuntu or debian
-if [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
-  sudo locale-gen "en_US.UTF-8"
+# Ensure the UTF-8 locale selected by zshrc.min is available.
+if [ "$(LC_ALL=en_US.UTF-8 locale charmap 2>/dev/null)" != "UTF-8" ]; then
+  if command -v locale-gen >/dev/null 2>&1; then
+    sudo locale-gen "en_US.UTF-8"
+  elif command -v localedef >/dev/null 2>&1; then
+    sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+  else
+    echo "ERROR: cannot generate en_US.UTF-8: locale-gen and localedef are unavailable." >&2
+    exit 1
+  fi
+
+  if [ "$(LC_ALL=en_US.UTF-8 locale charmap 2>/dev/null)" != "UTF-8" ]; then
+    echo "ERROR: en_US.UTF-8 is unavailable after locale generation." >&2
+    exit 1
+  fi
 fi
 
 # Detect minimal/container environments (codespaces, devcontainers) once so the
