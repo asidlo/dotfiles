@@ -363,6 +363,9 @@ run_step "$SCRIPT_DIR/devcontainer-credprovider.sh"
 run_step "$SCRIPT_DIR/az.sh"
 run_step "$SCRIPT_DIR/copilot.sh"
 run_step "$SCRIPT_DIR/agency.sh"
+# Must follow agency.sh: that step is what puts azureauth on the box, and this
+# one wraps the binary it installed (see the wrapper's rationale in its header).
+run_step "$SCRIPT_DIR/azureauth-signin-fix.sh"
 # agency.sh installs wslview (wslu), which appgw-devbridge's host listener needs.
 run_step "$SCRIPT_DIR/appgw-devbridge.sh"
 run_step "$SCRIPT_DIR/npm.sh"
