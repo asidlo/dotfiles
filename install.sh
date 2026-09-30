@@ -343,6 +343,10 @@ fi
 # removes from $PATH. agency.sh below shells out to cmd.exe and fails its
 # sign-in without them; docker login fails without the credential helper.
 run_step "$SCRIPT_DIR/wsl-interop-shims.sh"
+# Before every other install: on a Microsoft-managed device the public npm and
+# PyPI registries are blocked at the TLS layer, so anything that npm- or
+# pip-installs below fails until the CFS proxy is configured.
+run_step "$SCRIPT_DIR/package-registries.sh"
 run_step "$SCRIPT_DIR/dependencies.sh"
 run_step "$SCRIPT_DIR/fd.sh"
 run_step "$SCRIPT_DIR/fzf.sh"
