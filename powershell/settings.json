@@ -302,6 +302,59 @@
                 "hidden": false,
                 "name": "Ubuntu",
                 "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{2d60b5d3-2f5b-564b-b4cd-659ef6a39bc0}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{953fa8dc-af1b-5677-9039-bc02b2efe6a2}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 18",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{e447a312-a27d-548d-a16d-d6658d8549f0}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 18",
+                "source": "Windows.Terminal.VisualStudio",
+                "startingDirectory": "D:\\src"
+            },
+            {
+                "guid": "{2417cbe6-1905-5c49-aed4-8a20699ca6fd}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio",
+                "startingDirectory": "D:\\src"
+            },
+            {
+                "guid": "{24602ed3-5760-5b4e-89f5-164ba40f9c5d}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio",
+                "startingDirectory": "D:\\src"
+            },
+            {
+                "guid": "{3934df50-4ebb-5c05-8d53-2392cf4c86e2}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio",
+                "startingDirectory": "D:\\src"
+            },
+            {
+                "guid": "{76ea8027-25ac-579d-96a6-17a536896749}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio",
+                "startingDirectory": "D:\\src"
+            },
+            {
+                "guid": "{5fd89a63-5aa4-5127-8251-a9725779f459}",
+                "hidden": false,
+                "name": "docker-desktop-data",
+                "source": "Microsoft.WSL"
             }
         ]
     },
