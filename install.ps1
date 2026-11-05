@@ -1079,6 +1079,9 @@ Restore it per vendor\WindowsDeveloperConfig\PROVENANCE.md, then re-run.
             @{ Task = 'wsl-bootstrap'; Args = @{ Distro = $Distro; WslUser = $WslUser }
                 Hint = 'Needs the WSL optional features enabled (reboot pending?)'
             }
+            @{ Task = 'docker-wsl-integration'; Args = @{ Distro = $Distro }
+                Hint = "Docker Desktop > Settings > Resources > WSL Integration: enable '$Distro', or quit Docker Desktop and re-run catalog\docker-wsl-integration\script.ps1"
+            }
             @{ Task = 'dev-settings'; Args = @{ RestartExplorer = [bool]$RestartExplorer }
                 Hint = 'Some settings only apply after an Explorer restart or sign-in'
             }

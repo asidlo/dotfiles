@@ -1,0 +1,10 @@
+$schema: "1.0"
+name: docker-wsl-integration
+description: Keep Docker Desktop's WSL integration enabled for the default distro and the named distro.
+parameters:
+  Distro:
+    type: string
+    description: WSL distro that must have Docker integration. Defaults to Ubuntu.
+    required: false
+command: |
+  powershell -ExecutionPolicy Bypass -File script.ps1 -Distro ${{ parameters.Distro }}

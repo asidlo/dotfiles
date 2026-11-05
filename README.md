@@ -251,6 +251,7 @@ catalog tasks.
 | `agency` | Install the `agency` CLI via `aka.ms/InstallTool.ps1` and rehydrate PATH. | ✅ |
 | `copilot-plugins` | Ensure the GitHub Copilot CLI is present and install the `anvil` plugin. | ✅ |
 | `wsl-bootstrap` | WSL distro install/config + `etc\wsl.conf` + `win32yank`. | ✅ |
+| `docker-wsl-integration` | Turn on Docker Desktop's WSL integration for the default distro and `-Distro` in `settings-store.json`. Skips with a warning if Docker Desktop has never been launched or is running. | ✅ |
 | `dev-settings` | Registry/UX tweaks: UAC, dark theme, taskbar/Start cleanup, clocks, explorer, privacy. | ✅ |
 | `sudo-inline` | Put Sudo for Windows into **inline** mode so the elevated `Networking-nfv` profile stays a tab instead of taking over a new window. | ✅ |
 | `dotfiles-links` | Symlink gitconfig, starship, clink, nvim, Terminal settings, icons. | ✅ |
