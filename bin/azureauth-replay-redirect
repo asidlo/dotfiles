@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""Replay a stranded OAuth redirect URL into azureauth's loopback listener.
+
+Escape hatch for the failure mode scripts/azureauth-signin-fix.sh normally
+prevents: MSAL binds its redirect listener to [::1]:<port>, so if the browser
+finishes sign-in but dead-ends on an unreachable
+http://localhost:<port>/?code=...  page, the waiting azureauth never receives
+the authorization code.
+
+Copy that full URL out of the address bar and pass it here; this delivers it
+over IPv6 loopback inside the container so the sign-in can complete.
+
+    azureauth-replay-redirect 'http://localhost:45193/?code=0.AR8...&state=...'
+
+Nothing is printed from the query string: it carries a single-use
+authorization code, and this runs in terminals that get pasted into bugs.
+"""
+
+import http.client
+import sys
+from urllib.parse import urlsplit
+
+
+def main():
+    if len(sys.argv) != 2 or sys.argv[1] in ("-h", "--help"):
+        print(__doc__.strip())
+        return 0 if len(sys.argv) == 2 else 2
+
+    raw = sys.argv[1].strip().strip('"').strip("'")
+    parts = urlsplit(raw)
+
+    if parts.scheme not in ("http", "https"):
+        print("error: expected an http(s) URL", file=sys.stderr)
+        return 2
+
+    port = parts.port
+    if not port:
+        print("error: no port in URL - it should look like "
+              "http://localhost:45193/?code=...", file=sys.stderr)
+        return 2
+
+    if "code=" not in (parts.query or ""):
+        print("error: URL has no ?code= parameter - is the sign-in actually "
+              "finished?", file=sys.stderr)
+        return 2
+
+    path = parts.path or "/"
+    if parts.query:
+        path = "%s?%s" % (path, parts.query)
+
+    # azureauth listens on IPv6 loopback; that is the whole reason the browser
+    # could not deliver this itself.
+    for host in ("::1", "127.0.0.1"):
+        conn = http.client.HTTPConnection(host, port, timeout=15)
+        try:
+            conn.request("GET", path)
+            resp = conn.getresponse()
+            resp.read()
+            print("delivered to [%s]:%d -> HTTP %d" % (host, port, resp.status))
+            print("the waiting azureauth process should now complete.")
+            return 0
+        except OSError:
+            continue
+        finally:
+            conn.close()
+
+    print("error: nothing is listening on port %d - the azureauth process "
+          "has probably already timed out. Re-run the sign-in." % port,
+          file=sys.stderr)
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

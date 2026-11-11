@@ -98,6 +98,7 @@
   directory = %(prefix)///wsl.localhost/Ubuntu/azure/appgw
   directory = %(prefix)///wsl.localhost/Ubuntu/azure/AppGwPerf
   directory = C:/src/dotfiles
+	directory = %(prefix)///wsl.localhost/Ubuntu/azure/burndown
 [credential]
   helper = manager
   useHttpPath = true
@@ -108,11 +109,11 @@
   azureAuthority = https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47
   username = andrewsidlo@microsoft.com
 [credential "https://github.com"]
-  helper = 
-  helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+	helper = 
+	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
 [credential "https://gist.github.com"]
-  helper = 
-  helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
+	helper = 
+	helper = !'C:\\Program Files\\GitHub CLI\\gh.exe' auth git-credential
 [init]
   defaultBranch = main
 [rerere]

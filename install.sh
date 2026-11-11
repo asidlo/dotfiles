@@ -216,9 +216,21 @@ if [ "$(id -u)" -ne 0 ]; then
   trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT
 fi
 
-# Only update locale if os is ubuntu or debian
-if [ "$ID" == "ubuntu" ] || [ "$ID" == "debian" ]; then
-  sudo locale-gen "en_US.UTF-8"
+# Ensure the UTF-8 locale selected by zshrc.min is available.
+if [ "$(LC_ALL=en_US.UTF-8 locale charmap 2>/dev/null)" != "UTF-8" ]; then
+  if command -v locale-gen >/dev/null 2>&1; then
+    sudo locale-gen "en_US.UTF-8"
+  elif command -v localedef >/dev/null 2>&1; then
+    sudo localedef -i en_US -f UTF-8 en_US.UTF-8
+  else
+    echo "ERROR: cannot generate en_US.UTF-8: locale-gen and localedef are unavailable." >&2
+    exit 1
+  fi
+
+  if [ "$(LC_ALL=en_US.UTF-8 locale charmap 2>/dev/null)" != "UTF-8" ]; then
+    echo "ERROR: en_US.UTF-8 is unavailable after locale generation." >&2
+    exit 1
+  fi
 fi
 
 # Detect minimal/container environments (codespaces, devcontainers) once so the
@@ -343,6 +355,10 @@ fi
 # removes from $PATH. agency.sh below shells out to cmd.exe and fails its
 # sign-in without them; docker login fails without the credential helper.
 run_step "$SCRIPT_DIR/wsl-interop-shims.sh"
+# Before every other install: on a Microsoft-managed device the public npm and
+# PyPI registries are blocked at the TLS layer, so anything that npm- or
+# pip-installs below fails until the CFS proxy is configured.
+run_step "$SCRIPT_DIR/package-registries.sh"
 run_step "$SCRIPT_DIR/dependencies.sh"
 run_step "$SCRIPT_DIR/fd.sh"
 run_step "$SCRIPT_DIR/fzf.sh"
@@ -363,6 +379,12 @@ run_step "$SCRIPT_DIR/devcontainer-credprovider.sh"
 run_step "$SCRIPT_DIR/az.sh"
 run_step "$SCRIPT_DIR/copilot.sh"
 run_step "$SCRIPT_DIR/agency.sh"
+# Agency authenticates through azureauth, but only installs it itself on WSL --
+# on headless Linux it skips azureauth and falls back to the Azure CLI. Install
+# it explicitly so the wrapper below has something to wrap: a copy that appears
+# later, on Agency's first use, would never get wrapped.
+run_step "$SCRIPT_DIR/azureauth.sh"
+run_step "$SCRIPT_DIR/azureauth-signin-fix.sh"
 # agency.sh installs wslview (wslu), which appgw-devbridge's host listener needs.
 run_step "$SCRIPT_DIR/appgw-devbridge.sh"
 run_step "$SCRIPT_DIR/npm.sh"
