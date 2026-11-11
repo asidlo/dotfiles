@@ -299,10 +299,10 @@ tasks:
 ## WSL side (`install.sh`)
 
 `install.sh` (auto-run by Phase 6, or runnable by hand inside WSL) symlinks shell configs and best-effort installs CLI
-tooling (fd, fzf, bat, ripgrep, zoxide, direnv, eza, btop, starship, zsh, gh, az, and — outside codespaces/devcontainers
-— rust, lazygit, nvim, go, npm, dotnet, tmux, agency, copilot + anvil). It self-locates via `realpath`, so running it
-from the repo (including the `/mnt/...` Windows mount) works. `.gitattributes` keeps repo `*.sh` files `LF` so they run
-correctly under WSL.
+tooling (fd, fzf, bat, ripgrep, zoxide, direnv, treehouse, eza, btop, starship, zsh, gh, az, and — outside
+codespaces/devcontainers — rust, lazygit, nvim, go, npm, dotnet, tmux, agency, copilot + anvil). It self-locates via
+`realpath`, so running it from the repo (including the `/mnt/...` Windows mount) works. `.gitattributes` keeps repo
+`*.sh` files `LF` so they run correctly under WSL.
 
 Like the Windows side, it records every tool install in a ledger and prints a summary at the end rather than aborting on
 the first failure; only symlink creation stays fail-fast. It may prompt for your WSL `sudo` password (e.g. `locale-gen`);
