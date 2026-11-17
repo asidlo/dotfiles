@@ -6,6 +6,7 @@
   editor = code --wait
   fsmonitor = true
   autocrlf = true
+  longpaths = true
 	preloadindex = true
 	fscache = true
 	untrackedcache = true
